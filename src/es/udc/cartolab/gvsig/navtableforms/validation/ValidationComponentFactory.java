@@ -17,7 +17,9 @@ package es.udc.cartolab.gvsig.navtableforms.validation;
  * 
  * You should have received a copy of the GNU General Public License
  * along with extArqueoPonte.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
+import java.awt.event.ActionListener;
+
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -84,6 +86,17 @@ public class ValidationComponentFactory {
 		ComboBoxAdapter adapter = new ComboBoxAdapter(sil);
 		comp.setModel(adapter);
 		comp.setSelectedIndex(0);
+		//Bindings.bind(comp, sil);
+	}
+
+	public static void bindCBWithListener(
+			JComboBox comp,
+			SelectionInList<String> sil,
+			ActionListener actionListener) {
+		ComboBoxAdapter adapter = new ComboBoxAdapter(sil);
+		comp.setModel(adapter);
+		comp.setSelectedIndex(0);
+		comp.addActionListener(actionListener);
 		//Bindings.bind(comp, sil);
 	}
 
