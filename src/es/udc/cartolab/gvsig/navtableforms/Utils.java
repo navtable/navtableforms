@@ -596,53 +596,30 @@ public class Utils {
 		return getValuesFromLayer(layer, pos, new String[]{field})[0];
 	}
 
-	/**
-	 * build a Value array with some initial values
-	 * @param layer
-	 * @param attNames
-	 * @param attValues
-	 * @return
-	 * @throws DriverException
-	 * @throws com.hardcode.gdbms.engine.data.driver.DriverException
-	 * @throws ParseException
-	 */
-	public static Value[] getValues(FLyrVect layer, String[] attNames, String[] attValues) throws DriverException, com.hardcode.gdbms.engine.data.driver.DriverException, ParseException {
+	public static String getValue(SelectableDataSource recordset, long pos, String field){
+	    return getValues(recordset, pos, new String[]{field})[0];
+	}
 
-		SelectableDataSource recordset = null;
-		try {
-			recordset = layer.getRecordset();
-		} catch (ReadDriverException e) {
-			logger.error(e.getMessage(), e);
-		}
-		Value[] values = null;
-		try {
-			values = new Value[recordset.getFieldCount()];
-		} catch (ReadDriverException e) {
-			logger.error(e.getMessage(), e);
-		}
-
-		for (int i=0; i<values.length; i++) {
-			values[i] = ValueFactory.createNullValue();
-		}
-
-		for (int i=0; i<attNames.length; i++) {
-			int pos = 0;
-			try {
-				pos = recordset.getFieldIndexByName(attNames[i]);
-			} catch (ReadDriverException e) {
-				logger.error(e.getMessage(), e);
-			}
-			// this is a workaround as we know that the id are integer but it should be checked
-			int type = 0;
-			try {
-				type = recordset.getFieldType(pos);
-			} catch (ReadDriverException e) {
-				logger.error(e.getMessage(), e);
-			}
-			values[pos] = ValueFactory.createValueByType(attValues[i], type);
-		}
-
-		return values;
+    public static String[] getValues(SelectableDataSource recordset, long pos, String[] fields) {
+        ArrayList<String> values = new ArrayList<String>();
+        try {
+            for (String field : fields) {
+                int index = recordset.getFieldIndexByName(field);
+                if (index>-1) {
+                    Value val = recordset.getFieldValue(pos, index);
+                    String aux = val.getStringValue(ValueWriter.internalValueWriter);
+                    if ((val.getSQLType() == Types.CHAR) || (val.getSQLType() == Types.VARCHAR) || (val.getSQLType() == Types.LONGVARCHAR) || (val.getSQLType() == Types.LONGNVARCHAR)){
+                        //remove quotation marks
+                        values.add(aux.substring(1, aux.length() - 1));
+                    } else {
+                        values.add(aux);
+                    }
+                }
+            }
+        } catch (ReadDriverException e) {
+            logger.error(e.getMessage(), e);
+        }
+        return values.toArray(new String[0]);
 	}
 
 	public static boolean deleteDirectory(File directory) {
