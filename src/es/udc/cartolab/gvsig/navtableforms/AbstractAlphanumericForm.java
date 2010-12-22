@@ -272,33 +272,21 @@ public abstract class AbstractAlphanumericForm extends AbstractNavTable
     }
 
     public void initWidgets() {
-
 	widgetsVector = FormParserUtils
 		.getWidgetsWithContentFromContainer(formBody);
 	for (int i = 0; i < widgetsVector.size(); i++) {
-
 	    JComponent comp = widgetsVector.get(i);
-
 	    if (comp instanceof JFormattedTextField) {
 		initJFormattedTextField((JFormattedTextField) comp);
-	    }
-
-	    else if (comp instanceof JTextField) {
+	    } else if (comp instanceof JTextField) {
 		initJTextField((JTextField) comp);
-	    }
-
-	    else if (comp instanceof JTextArea) {
+	    } else if (comp instanceof JTextArea) {
 		initJTextArea((JTextArea) comp);
-	    }
-
-	    else if (comp instanceof JCheckBox) {
+	    } else if (comp instanceof JCheckBox) {
 		initJCheckBox((JCheckBox) comp);
-	    }
-
-	    else if (comp instanceof JComboBox) {
+	    } else if (comp instanceof JComboBox) {
 		initJComboBox((JComboBox) comp);
 	    }
-
 	}
     }
 
