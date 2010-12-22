@@ -28,6 +28,12 @@ import es.udc.cartolab.gvsig.navtableforms.ormlite.ORMLiteDataBase.ORMLiteTable;
  */
 public class XMLSAXParser extends DefaultHandler{
 
+    // TODO check where gvSIG do that and take values from there
+    static final String GVSIG_DEFAULT_STRING = "";
+    static final int GVSIG_DEFAULT_INT = 0;
+    static final double GVSIG_DEFAULT_DOUBLE = 0.0;
+    static final boolean GVSIG_DEFAULT_BOOLEAN = false;
+
     String xmlFile = null;
     private ORMLiteDataBase dbo = null;
     private ORMLiteLayerSet fls = null;
@@ -187,7 +193,7 @@ public class XMLSAXParser extends DefaultHandler{
 	    case Types.INTEGER:
 		if (tmpVal == "") {
 		    tmpFieldDescription.setDefaultValue(ValueFactory
-			    .createNullValue());
+			    .createValue(GVSIG_DEFAULT_INT));
 		} else {
 		    tmpFieldDescription.setDefaultValue(ValueFactory
 			    .createValue(Integer.parseInt(tmpVal)));
@@ -196,7 +202,7 @@ public class XMLSAXParser extends DefaultHandler{
 	    case Types.DOUBLE:
 		if (tmpVal == "") {
 		    tmpFieldDescription.setDefaultValue(ValueFactory
-			    .createNullValue());
+			    .createValue(GVSIG_DEFAULT_DOUBLE));
 		} else {
 		    tmpFieldDescription.setDefaultValue(ValueFactory
 			    .createValue(Double.parseDouble(tmpVal)));
@@ -205,7 +211,7 @@ public class XMLSAXParser extends DefaultHandler{
 	    case Types.BOOLEAN:
 		if (tmpVal == "") {
 		    tmpFieldDescription.setDefaultValue(ValueFactory
-			    .createNullValue());
+			    .createValue(GVSIG_DEFAULT_BOOLEAN));
 		} else {
 		    tmpFieldDescription.setDefaultValue(ValueFactory
 			    .createValue(Boolean.parseBoolean(tmpVal)));
@@ -214,7 +220,7 @@ public class XMLSAXParser extends DefaultHandler{
 	    case Types.DATE:
 		if (tmpVal == "") {
 		    tmpFieldDescription.setDefaultValue(ValueFactory
-			    .createNullValue());
+			    .createValue(GVSIG_DEFAULT_STRING));
 		} else {
 		    tmpFieldDescription.setDefaultValue(ValueFactory
 			    .createValue(Date.parse(tmpVal)));
