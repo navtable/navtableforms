@@ -13,7 +13,7 @@
  * 
  * You should have received a copy of the GNU General Public License along with extNavTableForms.
  * If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 package es.udc.cartolab.gvsig.navtableforms;
 
 import java.awt.BorderLayout;
@@ -70,17 +70,16 @@ import com.jgoodies.validation.view.ValidationComponentUtils;
 
 import es.udc.cartolab.gvsig.navtable.AbstractNavTable;
 import es.udc.cartolab.gvsig.navtable.ToggleEditing;
-import es.udc.cartolab.gvsig.navtableforms.validation.Binding;
+import es.udc.cartolab.gvsig.navtableforms.validation.FormBinding;
 import es.udc.cartolab.gvsig.navtableforms.validation.FormModel;
 import es.udc.cartolab.gvsig.navtableforms.validation.FormParserUtils;
 import es.udc.cartolab.gvsig.navtableforms.validation.ValidationComponentFactory;
-
 
 public abstract class AbstractAlphanumericForm extends AbstractNavTable
 	implements ItemListener, KeyListener {
 
     protected final FormModel formModel;
-    protected final Binding formBinding;
+    protected final FormBinding formBinding;
     protected IEditableSource model;
     protected final FormPanel formBody;
 
@@ -94,7 +93,8 @@ public abstract class AbstractAlphanumericForm extends AbstractNavTable
     private ValidationChangeHandler validationChangeHandler;
     private boolean isFillingValues;
 
-    public AbstractAlphanumericForm(IEditableSource model) throws ReadDriverException {
+    public AbstractAlphanumericForm(IEditableSource model)
+	    throws ReadDriverException {
 	super(model.getRecordset());
 	this.model = model;
 	formBody = getFormBody();
@@ -104,7 +104,7 @@ public abstract class AbstractAlphanumericForm extends AbstractNavTable
     }
 
     @Override
-    protected JPanel getActionsToolBar(){
+    protected JPanel getActionsToolBar() {
 	JPanel actionsToolBar = new JPanel(new FlowLayout());
 	actionsToolBar.add(getButton(BUTTON_COPY_SELECTED));
 	actionsToolBar.add(getButton(BUTTON_COPY_PREVIOUS));
@@ -128,7 +128,7 @@ public abstract class AbstractAlphanumericForm extends AbstractNavTable
 
     public abstract FormModel getFormModel(Container c);
 
-    public abstract Binding getFormBinding(FormModel model);
+    public abstract FormBinding getFormBinding(FormModel model);
 
     public abstract Logger getLoggerName();
 
@@ -387,7 +387,6 @@ public abstract class AbstractAlphanumericForm extends AbstractNavTable
 	textArea.setText(fieldValue);
     }
 
-
     protected void fillJComboBox(JComboBox combobox) {
 	String colName = getNameBeforeDots(combobox.getName());
 	String fieldValue = Utils.getValue(recordset, currentPosition, colName);
@@ -613,7 +612,7 @@ public abstract class AbstractAlphanumericForm extends AbstractNavTable
     }
 
     @Override
-    public void actionPerformed (ActionEvent e) {
+    public void actionPerformed(ActionEvent e) {
 	if (e.getSource() == newB) {
 	    addRecord();
 	} else if (e.getSource() == removeB) {
@@ -695,12 +694,12 @@ public abstract class AbstractAlphanumericForm extends AbstractNavTable
 	}
 	return changedValues;
     }
-    
+
     @Override
     public Object getWindowProfile() {
 	return null;
     }
-    
+
     @Override
     public void selectRow(int row) {
 	// TODO Auto-generated method stub

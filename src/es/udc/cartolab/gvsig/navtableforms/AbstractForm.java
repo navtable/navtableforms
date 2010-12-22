@@ -13,7 +13,7 @@
  * 
  * You should have received a copy of the GNU General Public License along with extNavTableForms.
  * If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 package es.udc.cartolab.gvsig.navtableforms;
 
 import java.awt.BorderLayout;
@@ -58,7 +58,7 @@ import com.jgoodies.validation.view.ValidationComponentUtils;
 
 import es.udc.cartolab.gvsig.navtable.AbstractNavTable;
 import es.udc.cartolab.gvsig.navtable.ToggleEditing;
-import es.udc.cartolab.gvsig.navtableforms.validation.Binding;
+import es.udc.cartolab.gvsig.navtableforms.validation.FormBinding;
 import es.udc.cartolab.gvsig.navtableforms.validation.FormModel;
 import es.udc.cartolab.gvsig.navtableforms.validation.FormParserUtils;
 import es.udc.cartolab.gvsig.navtableforms.validation.ValidationComponentFactory;
@@ -67,7 +67,7 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	KeyListener, ItemListener {
 
     protected final FormModel formModel;
-    protected final Binding formBinding;
+    protected final FormBinding formBinding;
 
     protected final FormPanel formBody;
 
@@ -97,7 +97,7 @@ public abstract class AbstractForm extends AbstractNavTable implements
 
     public abstract FormModel getFormModel(Container c);
 
-    public abstract Binding getFormBinding(FormModel model);
+    public abstract FormBinding getFormBinding(FormModel model);
 
     public abstract Logger getLoggerName();
 
@@ -362,7 +362,6 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	textArea.setText(fieldValue);
     }
 
-
     protected void fillJComboBox(JComboBox combobox) {
 	String colName = getNameBeforeDots(combobox.getName());
 	String fieldValue = Utils.getValueFromLayer(layer, currentPosition,
@@ -590,12 +589,12 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	    setChangedValues();
 	}
     }
-    
+
     @Override
     public Object getWindowProfile() {
 	return null;
     }
-    
+
     @Override
     public void selectRow(int row) {
 	// TODO Auto-generated method stub

@@ -26,14 +26,14 @@ import com.jgoodies.validation.ValidationResultModel;
 import com.jgoodies.validation.Validator;
 import com.jgoodies.validation.util.DefaultValidationResultModel;
 
-public abstract class Binding<FormModel> extends PresentationModel<Model> {
+public abstract class FormBinding<FormModel> extends PresentationModel<Model> {
 
     private final ValidationResultModel validationResultModel;
 
 
     // Instance Creation ******************************************************
 
-    public Binding(Model model) {
+    public FormBinding(Model model) {
 	super(model);
 	validationResultModel = new DefaultValidationResultModel();
 	initEventHandling();
