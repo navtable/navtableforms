@@ -54,6 +54,7 @@ import com.hardcode.gdbms.engine.values.Value;
 import com.hardcode.gdbms.engine.values.ValueFactory;
 import com.hardcode.gdbms.engine.values.ValueWriter;
 import com.iver.andami.PluginServices;
+import com.iver.andami.ui.mdiManager.IWindow;
 import com.iver.cit.gvsig.exceptions.visitors.StartWriterVisitorException;
 import com.iver.cit.gvsig.exceptions.visitors.StopWriterVisitorException;
 import com.iver.cit.gvsig.fmap.core.DefaultRow;
@@ -64,7 +65,6 @@ import com.iver.cit.gvsig.fmap.edition.IEditableSource;
 import com.iver.cit.gvsig.fmap.edition.IWriteable;
 import com.iver.cit.gvsig.fmap.edition.IWriter;
 import com.iver.cit.gvsig.fmap.layers.SelectableDataSource;
-import com.iver.cit.gvsig.project.documents.view.gui.BaseView;
 import com.jeta.forms.components.panel.FormPanel;
 import com.jgoodies.validation.ValidationResult;
 import com.jgoodies.validation.ValidationResultModel;
@@ -91,8 +91,6 @@ public abstract class AbstractAlphanumericForm extends AbstractNavTable
     private JPanel CenterPanel;
     protected JButton newB = null;
     protected Vector<JComponent> widgetsVector;
-
-    protected static BaseView view;
 
     protected static Logger logger = null;
     private ValidationChangeHandler validationChangeHandler;
@@ -306,9 +304,6 @@ public abstract class AbstractAlphanumericForm extends AbstractNavTable
 
     @Override
     public boolean init() {
-
-	view = (BaseView) PluginServices.getMDIManager().getActiveWindow();
-
 	initGUI();
 
 	JPanel northPanel = getNorthPanel();
@@ -344,6 +339,15 @@ public abstract class AbstractAlphanumericForm extends AbstractNavTable
 	super.enableSaveButton(true);
 
 	return true;
+    }
+
+    private void showErrorTableIsMainWindow() {
+	// TODO Auto-generated method stub
+
+    }
+
+    private IWindow getActiveWindow() {
+	return PluginServices.getMDIManager().getActiveWindow();
     }
 
     @Override
