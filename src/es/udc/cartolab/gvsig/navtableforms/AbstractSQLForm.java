@@ -144,10 +144,12 @@ public abstract class AbstractSQLForm extends AbstractForm {
 				combobox.setSelectedIndex(0);
 			}
 
-			for (int j=0; j<combobox.getItemCount(); j++){
-				if (combobox.getItemAt(j).toString().compareTo(fieldValue.trim()) == 0){
-					combobox.setSelectedIndex(j);
-					break;
+			if(fieldValue != null){ // typically it's due to layer has a bad attribute name
+				for (int j=0; j<combobox.getItemCount(); j++){
+					if (combobox.getItemAt(j).toString().compareTo(fieldValue.trim()) == 0){
+						combobox.setSelectedIndex(j);
+						break;
+					}
 				}
 			}
 		}
