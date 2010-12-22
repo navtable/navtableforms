@@ -337,7 +337,7 @@ public abstract class AbstractAlphanumericForm extends AbstractNavTable
 
 	super.setChangedValues(false);
 	super.enableSaveButton(true);
-
+	setOpenNavTableForm(true);
 	return true;
     }
 

@@ -320,7 +320,7 @@ public abstract class AbstractForm extends AbstractNavTable implements
 
 	super.setChangedValues(false);
 	super.enableSaveButton(true);
-
+	setOpenNavTableForm(true);
 	return true;
     }
 
