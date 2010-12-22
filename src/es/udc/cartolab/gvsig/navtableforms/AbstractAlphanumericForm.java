@@ -446,7 +446,7 @@ public abstract class AbstractAlphanumericForm extends AbstractNavTable
 	fillValues();
     }
 
-    private boolean validationHasErrors() {
+    protected boolean validationHasErrors() {
 	boolean hasError = false;
 	ValidationResult vr = formBinding.getValidationResultModel()
 		.getResult();

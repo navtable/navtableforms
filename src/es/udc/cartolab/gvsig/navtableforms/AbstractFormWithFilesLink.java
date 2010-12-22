@@ -15,7 +15,7 @@ import es.udc.cartolab.gvsig.navtableforms.ormlite.ORMLite;
 public abstract class AbstractFormWithFilesLink extends AbstractForm {
 
     JButton filesLinkB = null;
-    SelectableDataSource recordset = null;
+    protected SelectableDataSource recordset = null;
 
     public AbstractFormWithFilesLink(FLyrVect layer) {
 	super(layer);
