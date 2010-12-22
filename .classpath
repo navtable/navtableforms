@@ -18,6 +18,5 @@
 	<classpathentry kind="lib" path="lib/jgoodies-common-0.9.9.jar"/>
 	<classpathentry kind="lib" path="lib/validation-2.1.0.jar"/>
 	<classpathentry kind="lib" path="lib/formsrt.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/extFilesLink"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

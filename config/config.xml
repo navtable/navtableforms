@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<plugin-config>
+	<depends plugin-name="es.udc.cartolab.gvsig.navtable"/>
+	<libraries library-dir="lib"/>
+	<resourceBundle name="text"/>
+</plugin-config>
