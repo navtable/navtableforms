@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <plugin-config>
+	<depends plugin-name="com.iver.cit.gvsig" />
+	<depends plugin-name="com.iver.cit.gvsig.cad" />
 	<depends plugin-name="es.udc.cartolab.gvsig.navtable"/>
+	<depends plugin-name="es.udc.cartolab.gvsig.fileslink" />
 	<libraries library-dir="lib"/>
 	<resourceBundle name="text"/>
+	<extensions>
+		<extension class-name="es.udc.cartolab.gvsig.navtableforms.MockExtension" active="false" />
+	</extensions>
 </plugin-config>

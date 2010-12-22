@@ -42,6 +42,8 @@
 	</target>
 
 	<target name="copy-data-files">
+		<copy file="config/config.xml" todir="${dist}" />
+		
 		<copy todir="${dist}/lib">
 	  	    	<fileset dir="lib" includes="*"/>
 	  	</copy>
