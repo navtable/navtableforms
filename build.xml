@@ -1,0 +1,77 @@
+<project name="NavTableForms" default="default" basedir=".">
+	<description>
+        Instala el plugin
+    </description>
+	<!-- set global properties for this build -->
+	<property name="src" location="src"/>
+	<property name="build" location="bin"/>
+	<property name="dist" location="dist"/>
+	<property name="lib" location="lib"/>
+	<property name="lib-dist" location="${dist}/lib"/>
+	<property name="navtableforms-targetdir" location="../_fwAndami/gvSIG/extensiones/es.udc.cartolab.gvsig.navtable/" />
+	<property name="jarName" value="navtableforms.jar"/>
+	<import file="../binaries/ant/utilities.xml"/>
+	
+	<target name="init">
+		<!-- Create the time stamp -->
+		<tstamp />
+		<echo>
+			Compiling ${ant.project.name}...</echo>
+		<mkdir dir="${dist}"/>
+		<mkdir dir="${lib-dist}"/>
+	</target>
+
+	<target name="default" depends="init, compile, copy-navtableforms" description="Genera los jars de todos los drivers ">
+	</target>
+
+	<target name="copy-navtableforms" >
+		<copy todir="${navtableforms-targetdir}">
+			<fileset dir="${build}" />
+		</copy>
+	</target>
+
+	<target name="batch-build"
+			description="compile the sources, create the jar file"
+			depends="compile,create-jar,default">
+	</target>
+
+	<target name="compile" description="compile the source" >
+		<!-- Compile the Java code from ${src} to ${build} -->
+		<mkdir dir="${build}" />
+		<loadEclipseClasspath project="${basedir}"/>
+		<gvSIG-javac
+			classpath="${eclipseClasspath}"
+		/>
+
+		<!--<javac  srcdir="${src}"
+			destdir="${build}"
+			source="${JavaSourceVersion}"
+			target="${JavaTargetVersion}"
+			debug="${debug}"
+			debuglevel="${debuglevel}">
+	    	<classpath refid="libFMap.compile-classpath"/>
+		</javac>-->
+		<!-- copy data files -->
+		<copy todir="${build}">
+			<fileset
+				dir="src"
+				excludes="**/*.java"/>
+		</copy>
+	</target>
+
+	<target name="create-jar"
+	   description="Creates the plugin jar">
+	     <jar jarfile="${dist}/lib/${jarName}" basedir="${build}" />
+	 </target>
+
+	<target name="clean" description="clean up" depends="clean-dist">
+		<!-- Delete the ${build} and ${dist} directory trees -->
+		<delete dir="${build}"/>
+	</target>
+
+	<target name="clean-dist" description="clean up dist" >
+		<!-- Delete the ${build} and ${dist} directory trees -->
+		<delete dir="${dist}"/>
+	</target>
+
+</project>

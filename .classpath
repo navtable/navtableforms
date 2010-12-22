@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/extNavTable_1_9"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/libFMap"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/libGDBMS"/>
+	<classpathentry kind="lib" path="/extNavTable_1_9/lib/log4j-1.2.8.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/extCAD"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/libExceptions"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/libProjection"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/libDriverManager"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/_fwAndami"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/appgvSIG"/>
+	<classpathentry kind="lib" path="/libFMap/lib/jts-1.9.jar"/>
+	<classpathentry kind="lib" path="/extNavTable_1_9/lib/miglayout-3.7.3.1.jar"/>
+	<classpathentry kind="lib" path="lib/jgoodies-binding-2.1.0rc.jar"/>
+	<classpathentry kind="lib" path="lib/jgoodies-common-0.9.9.jar"/>
+	<classpathentry kind="lib" path="lib/validation-2.1.0.jar"/>
+	<classpathentry kind="lib" path="lib/formsrt.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/extFilesLink"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
