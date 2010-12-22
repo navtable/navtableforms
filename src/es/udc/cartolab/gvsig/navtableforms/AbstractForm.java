@@ -590,5 +590,14 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	    setChangedValues();
 	}
     }
-
+    
+    @Override
+    public Object getWindowProfile() {
+	return null;
+    }
+    
+    @Override
+    public void selectRow(int row) {
+	// TODO Auto-generated method stub
+    }
 }
