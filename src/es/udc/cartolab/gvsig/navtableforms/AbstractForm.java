@@ -43,8 +43,11 @@ import net.miginfocom.swing.MigLayout;
 import org.apache.log4j.Logger;
 
 import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
+import com.hardcode.gdbms.engine.values.Value;
+import com.hardcode.gdbms.engine.values.ValueWriter;
 import com.iver.andami.PluginServices;
 import com.iver.cit.gvsig.fmap.layers.FLyrVect;
+import com.iver.cit.gvsig.fmap.layers.SelectableDataSource;
 import com.iver.cit.gvsig.project.documents.view.gui.BaseView;
 import com.jeta.forms.components.panel.FormPanel;
 import com.jgoodies.validation.ValidationResult;
@@ -77,6 +80,7 @@ public abstract class AbstractForm extends AbstractNavTable {
 
 	protected static Logger logger = null;
     private ValidationChangeHandler validationChangeHandler;
+    private boolean isFillingValues;
 
 	public AbstractForm(FLyrVect layer) {
 		super(layer);
@@ -132,18 +136,18 @@ public abstract class AbstractForm extends AbstractNavTable {
 		}
 	}
 
-	protected String getPropertyKey(String widgetName) {
+	protected String getNameOfPropertyKey(String widgetName) {
 		String name = getNameBeforeDots(widgetName);
 		return name.trim().toUpperCase();
 	}
 
-	private String getValidateKey(String widgetName) {
+	private String getNameOfValidateKey(String widgetName) {
 		return formModel.getModelName() + "." +  getNameBeforeDots(widgetName);
 	}
 
 	protected void initJFormattedTextField(JFormattedTextField field) {
-		String propertyKey = getPropertyKey(field.getName());
-		String validateKey = getValidateKey(field.getName());
+		String propertyKey = getNameOfPropertyKey(field.getName());
+		String validateKey = getNameOfValidateKey(field.getName());
 		ValidationComponentFactory.bindFormattedTextField(
 				field,
 				formBinding.getModel(FormModel.PROPERTIES_MAP.get(propertyKey)),
@@ -153,8 +157,8 @@ public abstract class AbstractForm extends AbstractNavTable {
 	}
 
 	protected void initJTextField(JTextField field) {
-		String propertyKey = getPropertyKey(field.getName());
-		String validateKey = getValidateKey(field.getName());
+		String propertyKey = getNameOfPropertyKey(field.getName());
+		String validateKey = getNameOfValidateKey(field.getName());
 		ValidationComponentFactory.bindTextField(
 				field,
 				formBinding.getModel(FormModel.PROPERTIES_MAP.get(propertyKey)),
@@ -164,7 +168,7 @@ public abstract class AbstractForm extends AbstractNavTable {
 	}
 
 	protected void initJTextArea(JTextArea textArea) {
-		String propertyKey = getPropertyKey(textArea.getName());
+		String propertyKey = getNameOfPropertyKey(textArea.getName());
 		//		String validateKey = getValidateKey(textArea.getName());
 		ValidationComponentFactory.bindTextArea(
 				textArea,
@@ -173,7 +177,7 @@ public abstract class AbstractForm extends AbstractNavTable {
 	}
 
 	protected void initJCheckBox(JCheckBox checkBox) {
-		String propertyKey = getPropertyKey(checkBox.getName());
+		String propertyKey = getNameOfPropertyKey(checkBox.getName());
 		//		String validateKey = getValidateKey(checkBox.getName());
 
 		ValidationComponentFactory.bindCheckBox(
@@ -196,7 +200,7 @@ public abstract class AbstractForm extends AbstractNavTable {
 	}
 
 	protected void initJComboBox(JComboBox comboBox) {
-		String propertyKey = getPropertyKey(comboBox.getName());
+		String propertyKey = getNameOfPropertyKey(comboBox.getName());
 		String[] values = getJComboBoxValues(comboBox);
 		ValidationComponentFactory.bindComboBox(
 				comboBox,
@@ -361,6 +365,7 @@ public abstract class AbstractForm extends AbstractNavTable {
 	@Override
 	public void fillValues() {
 		try {
+            setFillingValues(true);
 			if (currentPosition >= recordset.getRowCount()) {
 				currentPosition =  recordset.getRowCount()-1;
 			}
@@ -389,9 +394,20 @@ public abstract class AbstractForm extends AbstractNavTable {
 		} catch (ReadDriverException e) {
 			logger.error(e.getMessage(), e);
 		}
+		finally{
+		    setFillingValues(false);
+		}
 	}
 
-	@Override
+    private boolean isFillingValues() {
+        return isFillingValues;
+    }
+
+	private void setFillingValues(boolean b) {
+        isFillingValues = b;
+	}
+
+    @Override
 	public void fillValues(long currentPos){
 		currentPosition = currentPos;
 		fillValues();
@@ -416,6 +432,37 @@ public abstract class AbstractForm extends AbstractNavTable {
 		}
 		return true;
 	}
+
+    protected Vector<Integer> getIndexesOfChangedValues() {
+        Vector<Integer> changedValues = new Vector<Integer>();
+        try {
+            SelectableDataSource rs = layer.getRecordset();
+            Map<String, String> widgetValues = formModel.getWidgetValues();
+            for (int index = 0; index < rs.getFieldCount(); index++) {
+                Value value = rs.getFieldValue(currentPosition, index);
+                String valueInRecordSet = 
+                    value.getStringValue(ValueWriter.internalValueWriter);
+                String key = rs.getFieldName(index);
+                String valueInModel = widgetValues.get(key);
+                if (!valueInRecordSet.equals(valueInModel)) {
+                    changedValues.add(new Integer(index));
+                }
+            }
+        } catch (ReadDriverException e) {
+            logger.error(e.getMessage(), e);
+        }
+        return changedValues;
+    }
+
+    protected void setChangedValues() {
+        Vector<Integer> indexes = getIndexesOfChangedValues();
+        if (indexes.size() > 0) {
+            setChangedValues(true);
+        } else {
+            setChangedValues(false);
+        }
+        enableSaveButton(isChangedValues());
+    }
 
 	protected String[] getValues(){
 		Map<String, String> layerValues;
@@ -461,6 +508,7 @@ public abstract class AbstractForm extends AbstractNavTable {
 				if(layer.isEditing()){
 					te.stopEditing(layer, false);
 				}
+                setChangedValues(false);
 				return true;
 			} catch (Exception e) {
 				logger.error(e.getMessage(), e);
@@ -490,6 +538,9 @@ public abstract class AbstractForm extends AbstractNavTable {
 		public void propertyChange(PropertyChangeEvent evt) {
 			updateComponentTreeMandatoryAndSeverity(
 					(ValidationResult) evt.getNewValue());
+            if (!isFillingValues()) {
+                setChangedValues();
+            }
 		}
 	}
 
