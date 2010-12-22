@@ -24,10 +24,12 @@ import java.util.Map;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
+import com.iver.andami.PluginServices;
 import com.iver.cit.gvsig.exceptions.expansionfile.ExpansionFileReadException;
 import com.iver.cit.gvsig.fmap.layers.FLyrVect;
 
@@ -255,17 +257,13 @@ public abstract class AbstractSQLForm extends AbstractForm {
 		return true;
 	}
 
-	@Override
 	protected boolean isPKAlreadyInUse() {
-
 		if(isPKRecordChanged()) {
-
 			boolean bool = true;
 			LinkedHashMap<String, String> pkFieldsInDialog = new LinkedHashMap<String, String>();
 			for (String key : primarykey.keySet()){
 				pkFieldsInDialog.put(key, formModel.getWidgetValue(key));
 			}
-
 			try {
 				bool = dao.existsRecord(
 						ORMLite.getDataBaseObject(getXmlFileName()).getTable(aliasInXML).getTableName(),
@@ -282,5 +280,30 @@ public abstract class AbstractSQLForm extends AbstractForm {
 		}
 		return false;
 	}
+
+    protected boolean primaryKeyHasErrors() {
+        if (isPKAlreadyInUse()) {
+            JOptionPane
+                    .showMessageDialog(
+                            this,
+                            "La clave primaria que ha elegido ya está en uso, por favor, elija otra",
+                            PluginServices.getText(this,
+                                    "Clave primaria en uso"),
+                            JOptionPane.ERROR_MESSAGE);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    protected boolean isSaveable() {
+        if (validationHasErrors()) {
+            return false;
+        } else if (primaryKeyHasErrors()) {
+            return false;
+        }
+        return true;
+    }
 
 }

@@ -79,7 +79,6 @@ public abstract class AbstractForm extends AbstractNavTable {
 
 	public AbstractForm(FLyrVect layer) {
 		super(layer);
-
 		formBody = getFormBody();
 		formModel = getFormModel(formBody);
 		formBinding = getFormBinding(formModel);
@@ -110,9 +109,7 @@ public abstract class AbstractForm extends AbstractNavTable {
 	public JPanel getCenterPanel() {
 		JPanel panel = new JPanel(new BorderLayout());
 		JScrollPane scrollPane = new JScrollPane(formBody);
-
 		panel.add(scrollPane);
-
 		return panel;
 	}
 
@@ -144,38 +141,30 @@ public abstract class AbstractForm extends AbstractNavTable {
 	}
 
 	protected void initJFormattedTextField(JFormattedTextField field) {
-
 		String propertyKey = getPropertyKey(field.getName());
 		String validateKey = getValidateKey(field.getName());
-
 		ValidationComponentFactory.bindFormattedTextField(
 				field,
 				formBinding.getModel(FormModel.PROPERTIES_MAP.get(propertyKey)),
 				false);
-
 		//ValidationComponentUtils.setMandatory(comp, true);
 		ValidationComponentUtils.setMessageKey(field, validateKey);
 	}
 
 	protected void initJTextField(JTextField field) {
-
 		String propertyKey = getPropertyKey(field.getName());
 		String validateKey = getValidateKey(field.getName());
-
 		ValidationComponentFactory.bindTextField(
 				field,
 				formBinding.getModel(FormModel.PROPERTIES_MAP.get(propertyKey)),
 				false);
-
 		//ValidationComponentUtils.setMandatory(comp, true);
 		ValidationComponentUtils.setMessageKey(field, validateKey);
 	}
 
 	protected void initJTextArea(JTextArea textArea) {
-
 		String propertyKey = getPropertyKey(textArea.getName());
 		//		String validateKey = getValidateKey(textArea.getName());
-
 		ValidationComponentFactory.bindTextArea(
 				textArea,
 				formBinding.getModel(FormModel.PROPERTIES_MAP.get(propertyKey)),
@@ -183,18 +172,15 @@ public abstract class AbstractForm extends AbstractNavTable {
 	}
 
 	protected void initJCheckBox(JCheckBox checkBox) {
-
 		String propertyKey = getPropertyKey(checkBox.getName());
 		//		String validateKey = getValidateKey(checkBox.getName());
 
 		ValidationComponentFactory.bindCheckBox(
 				checkBox,
 				formBinding.getModel(FormModel.PROPERTIES_MAP.get(propertyKey)));
-
 	}
 
 	protected String[] getJComboBoxValues(JComboBox comboBox){
-
 		int nvalues = comboBox.getItemCount();
 		String[] values;
 		if (nvalues > 0) {
@@ -205,15 +191,12 @@ public abstract class AbstractForm extends AbstractNavTable {
 		} else {
 			values = new String[]{""};
 		}
-
 		return values;
 	}
 
 	protected void initJComboBox(JComboBox comboBox) {
-
 		String propertyKey = getPropertyKey(comboBox.getName());
 		String[] values = getJComboBoxValues(comboBox);
-
 		ValidationComponentFactory.bindComboBox(
 				comboBox,
 				values,
@@ -223,32 +206,24 @@ public abstract class AbstractForm extends AbstractNavTable {
 	protected abstract void setListeners();
 
 	public void initWidgets() {
-
 		widgetsVector = FormParserUtils.getWidgetsWithContentFromContainer(formBody);
 		for (int i = 0; i < widgetsVector.size(); i++){
-
 			JComponent comp = widgetsVector.get(i);
-
 			if (comp instanceof JFormattedTextField){
 				initJFormattedTextField((JFormattedTextField) comp);
 			}
-
 			else if (comp instanceof JTextField){
 				initJTextField((JTextField) comp);
 			}
-
 			else if (comp instanceof JTextArea){
 				initJTextArea((JTextArea) comp);
 			}
-
 			else if (comp instanceof JCheckBox){
 				initJCheckBox((JCheckBox) comp);
 			}
-
 			else if (comp instanceof JComboBox){
 				initJComboBox((JComboBox) comp);
 			}
-
 		}
 		setListeners();
 	}
@@ -325,12 +300,10 @@ public abstract class AbstractForm extends AbstractNavTable {
 	@Override
 	public void fillEmptyValues() {
 		super.fillEmptyValues();
-
 		for (JComponent widget : widgetsVector) {
 			if (widget instanceof JFormattedTextField){
 				((JFormattedTextField) widget).setText("");
 			}
-
 			if (widget instanceof JComboBox) {
 				if ((((JComboBox) widget).getItemCount() > 0)) {
 					((JComboBox) widget).setSelectedIndex(0);
@@ -365,11 +338,9 @@ public abstract class AbstractForm extends AbstractNavTable {
 	protected void fillJComboBox(JComboBox combobox) {
 		String colName = getNameBeforeDots(combobox.getName());
 		String fieldValue = Utils.getValueFromLayer(layer, currentPosition, colName);
-
 		if (combobox.getItemCount() > 0) {
 			combobox.setSelectedIndex(0);
 		}
-
 		for (int j=0; j<combobox.getItemCount(); j++){
 			if (combobox.getItemAt(j).toString().compareTo(fieldValue.trim()) == 0){
 				combobox.setSelectedIndex(j);
@@ -382,7 +353,6 @@ public abstract class AbstractForm extends AbstractNavTable {
 
 	@Override
 	public void fillValues() {
-
 		try {
 			if (currentPosition >= recordset.getRowCount()) {
 				currentPosition =  recordset.getRowCount()-1;
@@ -390,35 +360,25 @@ public abstract class AbstractForm extends AbstractNavTable {
 			if (currentPosition < 0) {
 				currentPosition = 0;
 			}
-
 			for (int i=0; i<widgetsVector.size(); i++){
-
 				JComponent comp = widgetsVector.get(i);
-
 				if (comp instanceof JFormattedTextField){
 					fillJFormattedTextField((JFormattedTextField) comp);
 				}
-
 				else if (comp instanceof JTextField){
 					fillJTextField((JTextField) comp);
 				}
-
 				else if (comp instanceof JCheckBox){
 					fillJCheckBox((JCheckBox) comp);
 				}
-
 				else if (comp instanceof JTextArea){
 					fillJTextArea((JTextArea) comp);
 				}
-
 				else if (comp instanceof JComboBox){
 					fillJComboBox((JComboBox) comp);
 				}
-
 			}
-
 			fillSpecificValues();
-
 		} catch (ReadDriverException e) {
 			logger.error(e.getMessage(), e);
 		}
@@ -430,23 +390,7 @@ public abstract class AbstractForm extends AbstractNavTable {
 		fillValues();
 	}
 
-	protected abstract boolean isPKAlreadyInUse();
-
-	protected boolean primaryKeyHasErrors(){
-		if (isPKAlreadyInUse()){
-
-			JOptionPane.showMessageDialog(this,
-					"La clave primaria que ha elegido ya está en uso, por favor, elija otra",
-					PluginServices.getText(this, "Clave primaria en uso"),
-					JOptionPane.ERROR_MESSAGE);
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-
-	private boolean validationHasErrors() {
+    protected boolean validationHasErrors() {
 		boolean hasError = false;
 		ValidationResult vr = formBinding.getValidationResultModel().getResult();
 		if(vr.hasErrors()){
@@ -463,9 +407,6 @@ public abstract class AbstractForm extends AbstractNavTable {
 		if(validationHasErrors()) {
 			return false;
 		}
-		else if (primaryKeyHasErrors()){
-			return false;
-		}
 		return true;
 	}
 
@@ -478,10 +419,8 @@ public abstract class AbstractForm extends AbstractNavTable {
 	}
 
 	public int[] getIndexes() {
-
 		String[] names = null;
 		int[] indexes = null;
-
 		try {
 			Set<String> widgetsValuesKeys = formModel.getWidgetValues().keySet();
 			names =  new String[widgetsValuesKeys.size()];
@@ -501,9 +440,7 @@ public abstract class AbstractForm extends AbstractNavTable {
 
 	@Override
 	protected boolean saveRecord(){
-
 		if(isSaveable()){
-
 			int currentPos = Long.valueOf(currentPosition).intValue();
 			int[] attIndexes = getIndexes();
 			String[] attValues = getValues();
