@@ -64,490 +64,494 @@ import es.udc.cartolab.gvsig.navtableforms.validation.ValidationComponentFactory
 
 public abstract class AbstractForm extends AbstractNavTable {
 
-	protected final FormModel formModel;
-	protected final Binding formBinding;
+    protected final FormModel formModel;
+    protected final Binding formBinding;
 
-	protected final FormPanel formBody;
+    protected final FormPanel formBody;
 
-	private JPanel NorthPanel;
-	private JPanel SouthPanel;
-	private JPanel CenterPanel;
+    private JPanel NorthPanel;
+    private JPanel SouthPanel;
+    private JPanel CenterPanel;
 
-	protected Vector<JComponent> widgetsVector;
+    protected Vector<JComponent> widgetsVector;
 
-	protected static BaseView view;
-	protected FLyrVect layer = null;
+    protected static BaseView view;
+    protected FLyrVect layer = null;
 
-	protected static Logger logger = null;
+    protected static Logger logger = null;
     private ValidationChangeHandler validationChangeHandler;
     private boolean isFillingValues;
 
-	public AbstractForm(FLyrVect layer) {
-		super(layer);
-		formBody = getFormBody();
-		formModel = getFormModel(formBody);
-		formBinding = getFormBinding(formModel);
-		logger = getLoggerName();
-		this.layer = layer;
+    public AbstractForm(FLyrVect layer) {
+	super(layer);
+	formBody = getFormBody();
+	formModel = getFormModel(formBody);
+	formBinding = getFormBinding(formModel);
+	logger = getLoggerName();
+	this.layer = layer;
+    }
+
+    public abstract FormPanel getFormBody();
+
+    public abstract FormModel getFormModel(Container c);
+
+    public abstract Binding getFormBinding(FormModel model);
+
+    public abstract Logger getLoggerName();
+
+    private JPanel getThisNorthPanel() {
+	if (NorthPanel == null) {
+	    NorthPanel = new JPanel();
 	}
+	return NorthPanel;
+    }
 
-	public abstract FormPanel getFormBody();
-	public abstract FormModel getFormModel(Container c);
-	public abstract Binding getFormBinding(FormModel model);
-	public abstract Logger getLoggerName();
-
-	private JPanel getThisNorthPanel() {
-		if(NorthPanel == null) {
-			NorthPanel = new JPanel();
-		}
-		return NorthPanel;
+    private JPanel getThisSouthPanel() {
+	if (SouthPanel == null) {
+	    SouthPanel = new JPanel();
 	}
+	return SouthPanel;
+    }
 
-	private JPanel getThisSouthPanel() {
-		if(SouthPanel == null) {
-			SouthPanel = new JPanel();
-		}
-		return SouthPanel;
+    @Override
+    public JPanel getCenterPanel() {
+	JPanel panel = new JPanel(new BorderLayout());
+	JScrollPane scrollPane = new JScrollPane(formBody);
+	panel.add(scrollPane);
+	return panel;
+    }
+
+    private JPanel getThisCenterPanel() {
+	if (CenterPanel == null) {
+	    CenterPanel = new JPanel();
+	    BorderLayout CenterPanelLayout = new BorderLayout();
+	    CenterPanel.setLayout(CenterPanelLayout);
 	}
+	return CenterPanel;
+    }
 
-	@Override
-	public JPanel getCenterPanel() {
-		JPanel panel = new JPanel(new BorderLayout());
-		JScrollPane scrollPane = new JScrollPane(formBody);
-		panel.add(scrollPane);
-		return panel;
+    protected String getNameBeforeDots(String widgetName) {
+	if (widgetName.contains(".")) {
+	    return widgetName.substring(0, widgetName.indexOf("."));
 	}
-
-	private JPanel getThisCenterPanel() {
-		if (CenterPanel == null) {
-			CenterPanel = new JPanel();
-			BorderLayout CenterPanelLayout = new BorderLayout();
-			CenterPanel.setLayout(CenterPanelLayout);
-		}
-		return CenterPanel;
+ else {
+	    return widgetName;
 	}
+    }
 
-	protected String getNameBeforeDots(String widgetName) {
-		if (widgetName.contains(".")){
-			return widgetName.substring(0, widgetName.indexOf("."));
-		}
-		else {
-			return widgetName;
-		}
+    protected String getNameOfPropertyKey(String widgetName) {
+	String name = getNameBeforeDots(widgetName);
+	return name.trim().toUpperCase();
+    }
+
+    private String getNameOfValidateKey(String widgetName) {
+	return formModel.getModelName() + "." + getNameBeforeDots(widgetName);
+    }
+
+    protected void initJFormattedTextField(JFormattedTextField field) {
+	String propertyKey = getNameOfPropertyKey(field.getName());
+	String validateKey = getNameOfValidateKey(field.getName());
+	ValidationComponentFactory
+		.bindFormattedTextField(field, formBinding
+			.getModel(FormModel.PROPERTIES_MAP.get(propertyKey)),
+			false);
+	// ValidationComponentUtils.setMandatory(comp, true);
+	ValidationComponentUtils.setMessageKey(field, validateKey);
+    }
+
+    protected void initJTextField(JTextField field) {
+	String propertyKey = getNameOfPropertyKey(field.getName());
+	String validateKey = getNameOfValidateKey(field.getName());
+	ValidationComponentFactory
+		.bindTextField(field, formBinding
+			.getModel(FormModel.PROPERTIES_MAP.get(propertyKey)),
+			false);
+	// ValidationComponentUtils.setMandatory(comp, true);
+	ValidationComponentUtils.setMessageKey(field, validateKey);
+    }
+
+    protected void initJTextArea(JTextArea textArea) {
+	String propertyKey = getNameOfPropertyKey(textArea.getName());
+	// String validateKey = getValidateKey(textArea.getName());
+	ValidationComponentFactory
+		.bindTextArea(textArea, formBinding
+			.getModel(FormModel.PROPERTIES_MAP.get(propertyKey)),
+			true);
+    }
+
+    protected void initJCheckBox(JCheckBox checkBox) {
+	String propertyKey = getNameOfPropertyKey(checkBox.getName());
+	// String validateKey = getValidateKey(checkBox.getName());
+
+	ValidationComponentFactory
+		.bindCheckBox(checkBox, formBinding
+			.getModel(FormModel.PROPERTIES_MAP.get(propertyKey)));
+    }
+
+    protected String[] getJComboBoxValues(JComboBox comboBox) {
+	int nvalues = comboBox.getItemCount();
+	String[] values;
+	if (nvalues > 0) {
+	    values = new String[nvalues];
+	    for (int j = 0; j < nvalues; j++) {
+		values[j] = comboBox.getItemAt(j).toString();
+	    }
+	} else {
+	    values = new String[] { "" };
 	}
+	return values;
+    }
 
-	protected String getNameOfPropertyKey(String widgetName) {
-		String name = getNameBeforeDots(widgetName);
-		return name.trim().toUpperCase();
-	}
-
-	private String getNameOfValidateKey(String widgetName) {
-		return formModel.getModelName() + "." +  getNameBeforeDots(widgetName);
-	}
-
-	protected void initJFormattedTextField(JFormattedTextField field) {
-		String propertyKey = getNameOfPropertyKey(field.getName());
-		String validateKey = getNameOfValidateKey(field.getName());
-		ValidationComponentFactory.bindFormattedTextField(
-				field,
-				formBinding.getModel(FormModel.PROPERTIES_MAP.get(propertyKey)),
-				false);
-		//ValidationComponentUtils.setMandatory(comp, true);
-		ValidationComponentUtils.setMessageKey(field, validateKey);
-	}
-
-	protected void initJTextField(JTextField field) {
-		String propertyKey = getNameOfPropertyKey(field.getName());
-		String validateKey = getNameOfValidateKey(field.getName());
-		ValidationComponentFactory.bindTextField(
-				field,
-				formBinding.getModel(FormModel.PROPERTIES_MAP.get(propertyKey)),
-				false);
-		//ValidationComponentUtils.setMandatory(comp, true);
-		ValidationComponentUtils.setMessageKey(field, validateKey);
-	}
-
-	protected void initJTextArea(JTextArea textArea) {
-		String propertyKey = getNameOfPropertyKey(textArea.getName());
-		//		String validateKey = getValidateKey(textArea.getName());
-		ValidationComponentFactory.bindTextArea(
-				textArea,
-				formBinding.getModel(FormModel.PROPERTIES_MAP.get(propertyKey)),
-				true);
-	}
-
-	protected void initJCheckBox(JCheckBox checkBox) {
-		String propertyKey = getNameOfPropertyKey(checkBox.getName());
-		//		String validateKey = getValidateKey(checkBox.getName());
-
-		ValidationComponentFactory.bindCheckBox(
-				checkBox,
-				formBinding.getModel(FormModel.PROPERTIES_MAP.get(propertyKey)));
-	}
-
-	protected String[] getJComboBoxValues(JComboBox comboBox){
-		int nvalues = comboBox.getItemCount();
-		String[] values;
-		if (nvalues > 0) {
-			values = new String[nvalues];
-			for (int j=0; j<nvalues; j++){
-				values[j] = comboBox.getItemAt(j).toString();
-			}
-		} else {
-			values = new String[]{""};
-		}
-		return values;
-	}
-
-	protected void initJComboBox(JComboBox comboBox) {
-		String propertyKey = getNameOfPropertyKey(comboBox.getName());
-		String[] values = getJComboBoxValues(comboBox);
-		ValidationComponentFactory.bindComboBox(
-				comboBox,
-				values,
-				formBinding.getModel(FormModel.PROPERTIES_MAP.get(propertyKey)));
-	}
+    protected void initJComboBox(JComboBox comboBox) {
+	String propertyKey = getNameOfPropertyKey(comboBox.getName());
+	String[] values = getJComboBoxValues(comboBox);
+	ValidationComponentFactory
+		.bindComboBox(comboBox, values, formBinding
+			.getModel(FormModel.PROPERTIES_MAP.get(propertyKey)));
+    }
 
     protected void setListeners() {
-        validationChangeHandler = new ValidationChangeHandler();
+	validationChangeHandler = new ValidationChangeHandler();
     }
 
     protected void removeListeners() {
-        formBinding.removePropertyChangeListener(validationChangeHandler);
+	formBinding.removePropertyChangeListener(validationChangeHandler);
     }
 
-	public void initWidgets() {
-		widgetsVector = FormParserUtils.getWidgetsWithContentFromContainer(formBody);
-		for (int i = 0; i < widgetsVector.size(); i++){
-			JComponent comp = widgetsVector.get(i);
-			if (comp instanceof JFormattedTextField){
-				initJFormattedTextField((JFormattedTextField) comp);
-			}
-			else if (comp instanceof JTextField){
-				initJTextField((JTextField) comp);
-			}
-			else if (comp instanceof JTextArea){
-				initJTextArea((JTextArea) comp);
-			}
-			else if (comp instanceof JCheckBox){
-				initJCheckBox((JCheckBox) comp);
-			}
-			else if (comp instanceof JComboBox){
-				initJComboBox((JComboBox) comp);
-			}
-		}
+    public void initWidgets() {
+	widgetsVector = FormParserUtils
+		.getWidgetsWithContentFromContainer(formBody);
+	for (int i = 0; i < widgetsVector.size(); i++) {
+	    JComponent comp = widgetsVector.get(i);
+	    if (comp instanceof JFormattedTextField) {
+		initJFormattedTextField((JFormattedTextField) comp);
+	    } else if (comp instanceof JTextField) {
+		initJTextField((JTextField) comp);
+	    } else if (comp instanceof JTextArea) {
+		initJTextArea((JTextArea) comp);
+	    } else if (comp instanceof JCheckBox) {
+		initJCheckBox((JCheckBox) comp);
+	    } else if (comp instanceof JComboBox) {
+		initJComboBox((JComboBox) comp);
+	    }
 	}
+    }
 
-	protected void initEventHandling() {
-        formBinding.getValidationResultModel().addPropertyChangeListener(
-				ValidationResultModel.PROPERTYNAME_RESULT,
-				validationChangeHandler);
-	}
+    protected void initEventHandling() {
+	formBinding.getValidationResultModel().addPropertyChangeListener(
+		ValidationResultModel.PROPERTYNAME_RESULT,
+		validationChangeHandler);
+    }
 
-	private void initGUI(){
-		MigLayout thisLayout = new MigLayout("inset 0, align center",
-				"[grow]",
+    private void initGUI() {
+	MigLayout thisLayout = new MigLayout("inset 0, align center", "[grow]",
 		"[][grow][]");
-		this.setLayout(thisLayout);
+	this.setLayout(thisLayout);
 
-		this.add(getThisNorthPanel(), "shrink, wrap, align center");
-		this.add(getThisCenterPanel(), "shrink, growx, growy, wrap");
-		this.add(getThisSouthPanel(), "shrink, align center" );
-	}
-
-	@Override
-	public boolean init() {
-
-		view = (BaseView) PluginServices.getMDIManager().getActiveWindow();
-
-		try {
-			if (recordset.getRowCount() <= 0){
-				JOptionPane.showMessageDialog(this, PluginServices.getText(this, "emptyLayer"));
-				return false;
-			}
-		} catch (HeadlessException e) {
-			logger.error(e.getMessage(), e);
-		} catch (ReadDriverException e) {
-			logger.error(e.getMessage(), e);
-		}
-
-		initGUI();
-
-		JPanel northPanel = getNorthPanel();
-		getThisNorthPanel().add(northPanel);
-
-		JPanel centerPanel = getCenterPanel();
-		getThisCenterPanel().add(centerPanel);
-
-		JPanel southPanel = getSouthPanel();
-		getThisSouthPanel().add(southPanel);
-
-		initWidgets();
-        setListeners();
-		initEventHandling();
-
-		// Synchronize the presentation with the current validation state.
-		// If you want to show no validation info before the user has typed
-		// anything in the form, use the commented EMPTY result
-		// instead of the model's validation result.
-		updateComponentTreeMandatoryAndSeverity(
-				formBinding.getValidationResultModel().getResult()
-				// ValidationResult.EMPTY
-		);
-
-		currentPosition = 0;
-		//super.last();
-		refreshGUI();
-		super.repaint();
-		super.setVisible(true);
-		super.setFocusCycleRoot(true);
-
-		super.setChangedValues(false);
-		super.enableSaveButton(true);
-
-		return true;
-	}
-
-	@Override
-	public void fillEmptyValues() {
-		super.fillEmptyValues();
-		for (JComponent widget : widgetsVector) {
-			if (widget instanceof JFormattedTextField){
-				((JFormattedTextField) widget).setText("");
-			}
-			if (widget instanceof JComboBox) {
-				if ((((JComboBox) widget).getItemCount() > 0)) {
-					((JComboBox) widget).setSelectedIndex(0);
-				}
-			}
-		}
-	}
-
-	protected void fillJTextField(JTextField field) {
-		String colName = getNameBeforeDots(field.getName());
-		String fieldValue = Utils.getValueFromLayer(layer, currentPosition, colName);
-		field.setText(fieldValue);
-	}
-
-	protected void fillJFormattedTextField(JFormattedTextField field) {
-		fillJTextField(field);
-	}
-
-	protected void fillJCheckBox(JCheckBox checkBox) {
-		String colName = getNameBeforeDots(checkBox.getName());
-		String fieldValue = Utils.getValueFromLayer(layer, currentPosition, colName);
-		checkBox.setSelected(Boolean.parseBoolean(fieldValue));
-	}
-
-	protected void fillJTextArea(JTextArea textArea) {
-		String colName = getNameBeforeDots(textArea.getName());
-		String fieldValue = Utils.getValueFromLayer(layer, currentPosition, colName);
-		textArea.setText(fieldValue);
-	}
-
-
-	protected void fillJComboBox(JComboBox combobox) {
-		String colName = getNameBeforeDots(combobox.getName());
-		String fieldValue = Utils.getValueFromLayer(layer, currentPosition, colName);
-		if (combobox.getItemCount() > 0) {
-			combobox.setSelectedIndex(0);
-		}
-		for (int j=0; j<combobox.getItemCount(); j++){
-			if (combobox.getItemAt(j).toString().compareTo(fieldValue.trim()) == 0){
-				combobox.setSelectedIndex(j);
-				break;
-			}
-		}
-	}
-
-	protected abstract void fillSpecificValues();
-
-	@Override
-	public void fillValues() {
-		try {
-            setFillingValues(true);
-			if (currentPosition >= recordset.getRowCount()) {
-				currentPosition =  recordset.getRowCount()-1;
-			}
-			if (currentPosition < 0) {
-				currentPosition = 0;
-			}
-			for (int i=0; i<widgetsVector.size(); i++){
-				JComponent comp = widgetsVector.get(i);
-				if (comp instanceof JFormattedTextField){
-					fillJFormattedTextField((JFormattedTextField) comp);
-				}
-				else if (comp instanceof JTextField){
-					fillJTextField((JTextField) comp);
-				}
-				else if (comp instanceof JCheckBox){
-					fillJCheckBox((JCheckBox) comp);
-				}
-				else if (comp instanceof JTextArea){
-					fillJTextArea((JTextArea) comp);
-				}
-				else if (comp instanceof JComboBox){
-					fillJComboBox((JComboBox) comp);
-				}
-			}
-			fillSpecificValues();
-		} catch (ReadDriverException e) {
-			logger.error(e.getMessage(), e);
-		}
-		finally{
-		    setFillingValues(false);
-		}
-	}
-
-    private boolean isFillingValues() {
-        return isFillingValues;
+	this.add(getThisNorthPanel(), "shrink, wrap, align center");
+	this.add(getThisCenterPanel(), "shrink, growx, growy, wrap");
+	this.add(getThisSouthPanel(), "shrink, align center");
     }
-
-	private void setFillingValues(boolean b) {
-        isFillingValues = b;
-	}
 
     @Override
-	public void fillValues(long currentPos){
-		currentPosition = currentPos;
-		fillValues();
+    public boolean init() {
+
+	view = (BaseView) PluginServices.getMDIManager().getActiveWindow();
+
+	try {
+	    if (recordset.getRowCount() <= 0) {
+		JOptionPane.showMessageDialog(this,
+			PluginServices.getText(this, "emptyLayer"));
+		return false;
+	    }
+	} catch (HeadlessException e) {
+	    logger.error(e.getMessage(), e);
+	} catch (ReadDriverException e) {
+	    logger.error(e.getMessage(), e);
 	}
+
+	initGUI();
+
+	JPanel northPanel = getNorthPanel();
+	getThisNorthPanel().add(northPanel);
+
+	JPanel centerPanel = getCenterPanel();
+	getThisCenterPanel().add(centerPanel);
+
+	JPanel southPanel = getSouthPanel();
+	getThisSouthPanel().add(southPanel);
+
+	initWidgets();
+	setListeners();
+	initEventHandling();
+
+	// Synchronize the presentation with the current validation state.
+	// If you want to show no validation info before the user has typed
+	// anything in the form, use the commented EMPTY result
+	// instead of the model's validation result.
+	updateComponentTreeMandatoryAndSeverity(formBinding
+		.getValidationResultModel().getResult()
+	// ValidationResult.EMPTY
+	);
+
+	currentPosition = 0;
+	// super.last();
+	refreshGUI();
+	super.repaint();
+	super.setVisible(true);
+	super.setFocusCycleRoot(true);
+
+	super.setChangedValues(false);
+	super.enableSaveButton(true);
+
+	return true;
+    }
+
+    @Override
+    public void fillEmptyValues() {
+	super.fillEmptyValues();
+	for (JComponent widget : widgetsVector) {
+	    if (widget instanceof JFormattedTextField) {
+		((JFormattedTextField) widget).setText("");
+	    }
+	    if (widget instanceof JComboBox) {
+		if ((((JComboBox) widget).getItemCount() > 0)) {
+		    ((JComboBox) widget).setSelectedIndex(0);
+		}
+	    }
+	}
+    }
+
+    protected void fillJTextField(JTextField field) {
+	String colName = getNameBeforeDots(field.getName());
+	String fieldValue = Utils.getValueFromLayer(layer, currentPosition,
+		colName);
+	field.setText(fieldValue);
+    }
+
+    protected void fillJFormattedTextField(JFormattedTextField field) {
+	fillJTextField(field);
+    }
+
+    protected void fillJCheckBox(JCheckBox checkBox) {
+	String colName = getNameBeforeDots(checkBox.getName());
+	String fieldValue = Utils.getValueFromLayer(layer, currentPosition,
+		colName);
+	checkBox.setSelected(Boolean.parseBoolean(fieldValue));
+    }
+
+    protected void fillJTextArea(JTextArea textArea) {
+	String colName = getNameBeforeDots(textArea.getName());
+	String fieldValue = Utils.getValueFromLayer(layer, currentPosition,
+		colName);
+	textArea.setText(fieldValue);
+    }
+
+
+    protected void fillJComboBox(JComboBox combobox) {
+	String colName = getNameBeforeDots(combobox.getName());
+	String fieldValue = Utils.getValueFromLayer(layer, currentPosition,
+		colName);
+	if (combobox.getItemCount() > 0) {
+	    combobox.setSelectedIndex(0);
+	}
+	for (int j = 0; j < combobox.getItemCount(); j++) {
+	    if (combobox.getItemAt(j).toString().compareTo(fieldValue.trim()) == 0) {
+		combobox.setSelectedIndex(j);
+		break;
+	    }
+	}
+    }
+
+    protected abstract void fillSpecificValues();
+
+    @Override
+    public void fillValues() {
+	try {
+	    setFillingValues(true);
+	    if (currentPosition >= recordset.getRowCount()) {
+		currentPosition = recordset.getRowCount() - 1;
+	    }
+	    if (currentPosition < 0) {
+		currentPosition = 0;
+	    }
+	    for (int i = 0; i < widgetsVector.size(); i++) {
+		JComponent comp = widgetsVector.get(i);
+		if (comp instanceof JFormattedTextField) {
+		    fillJFormattedTextField((JFormattedTextField) comp);
+		} else if (comp instanceof JTextField) {
+		    fillJTextField((JTextField) comp);
+		}
+ else if (comp instanceof JCheckBox) {
+		    fillJCheckBox((JCheckBox) comp);
+		}
+ else if (comp instanceof JTextArea) {
+		    fillJTextArea((JTextArea) comp);
+		}
+ else if (comp instanceof JComboBox) {
+		    fillJComboBox((JComboBox) comp);
+		}
+	    }
+	    fillSpecificValues();
+	} catch (ReadDriverException e) {
+	    logger.error(e.getMessage(), e);
+	} finally {
+	    setFillingValues(false);
+	}
+    }
+
+    private boolean isFillingValues() {
+	return isFillingValues;
+    }
+
+    private void setFillingValues(boolean b) {
+	isFillingValues = b;
+    }
+
+    @Override
+    public void fillValues(long currentPos) {
+	currentPosition = currentPos;
+	fillValues();
+    }
 
     protected boolean validationHasErrors() {
-		boolean hasError = false;
-		ValidationResult vr = formBinding.getValidationResultModel().getResult();
-		if(vr.hasErrors()){
-			hasError = true;
-			JOptionPane.showMessageDialog(this,
-					vr.getMessagesText(),
-					PluginServices.getText(this, "Error de validacion"),
-					JOptionPane.ERROR_MESSAGE);
-		}
-		return hasError;
+	boolean hasError = false;
+	ValidationResult vr = formBinding.getValidationResultModel()
+		.getResult();
+	if (vr.hasErrors()) {
+	    hasError = true;
+	    JOptionPane.showMessageDialog(this, vr.getMessagesText(),
+		    PluginServices.getText(this, "Error de validacion"),
+		    JOptionPane.ERROR_MESSAGE);
 	}
+	return hasError;
+    }
 
-	protected boolean isSaveable(){
-		if(validationHasErrors()) {
-			return false;
-		}
-		return true;
+    protected boolean isSaveable() {
+	if (validationHasErrors()) {
+	    return false;
 	}
+	return true;
+    }
 
     protected Vector<Integer> getIndexesOfChangedValues() {
-        Vector<Integer> changedValues = new Vector<Integer>();
-        try {
-            SelectableDataSource rs = layer.getRecordset();
-            Map<String, String> widgetValues = formModel.getWidgetValues();
-            for (int index = 0; index < rs.getFieldCount(); index++) {
-                Value value = rs.getFieldValue(currentPosition, index);
-                String valueInRecordSet = 
-                    value.getStringValue(ValueWriter.internalValueWriter);
-                String key = rs.getFieldName(index);
-                String valueInModel = widgetValues.get(key);
-                if (!valueInRecordSet.equals(valueInModel)) {
-                    changedValues.add(new Integer(index));
-                }
-            }
-        } catch (ReadDriverException e) {
-            logger.error(e.getMessage(), e);
-        }
-        return changedValues;
+	Vector<Integer> changedValues = new Vector<Integer>();
+	try {
+	    SelectableDataSource rs = layer.getRecordset();
+	    Map<String, String> widgetValues = formModel.getWidgetValues();
+	    for (int index = 0; index < rs.getFieldCount(); index++) {
+		Value value = rs.getFieldValue(currentPosition, index);
+		String valueInRecordSet = value
+			.getStringValue(ValueWriter.internalValueWriter);
+		String key = rs.getFieldName(index);
+		String valueInModel = widgetValues.get(key);
+		if (!valueInRecordSet.equals(valueInModel)) {
+		    changedValues.add(new Integer(index));
+		}
+	    }
+	} catch (ReadDriverException e) {
+	    logger.error(e.getMessage(), e);
+	}
+	return changedValues;
     }
 
     protected void setChangedValues() {
-        Vector<Integer> indexes = getIndexesOfChangedValues();
-        if (indexes.size() > 0) {
-            setChangedValues(true);
-        } else {
-            setChangedValues(false);
-        }
-        enableSaveButton(isChangedValues());
+	Vector<Integer> indexes = getIndexesOfChangedValues();
+	if (indexes.size() > 0) {
+	    setChangedValues(true);
+	} else {
+	    setChangedValues(false);
+	}
+	enableSaveButton(isChangedValues());
     }
 
-	protected String[] getValues(){
-		Map<String, String> layerValues;
-		String[] attValues;
-		layerValues = formModel.getWidgetValues();
-		attValues = layerValues.values().toArray(new String[0]);
-		return attValues;
+    protected String[] getValues() {
+	Map<String, String> layerValues;
+	String[] attValues;
+	layerValues = formModel.getWidgetValues();
+	attValues = layerValues.values().toArray(new String[0]);
+	return attValues;
+    }
+
+    public int[] getIndexes() {
+	String[] names = null;
+	int[] indexes = null;
+	try {
+	    Set<String> widgetsValuesKeys = formModel.getWidgetValues()
+		    .keySet();
+	    names = new String[widgetsValuesKeys.size()];
+	    Iterator<String> it = widgetsValuesKeys.iterator();
+	    int i = 0;
+	    while (it.hasNext()) {
+		names[i] = it.next();
+		i++;
+	    }
+	    indexes = Utils.getIndexes(layer, names);
+	    return indexes;
+	} catch (Exception e) {
+	    logger.error(e.getMessage(), e);
+	    return indexes;
 	}
+    }
 
-	public int[] getIndexes() {
-		String[] names = null;
-		int[] indexes = null;
-		try {
-			Set<String> widgetsValuesKeys = formModel.getWidgetValues().keySet();
-			names =  new String[widgetsValuesKeys.size()];
-			Iterator<String> it = widgetsValuesKeys.iterator();
-			int i=0;
-			while (it.hasNext()) {
-				names[i] = it.next();
-				i++;
-			}
-			indexes = Utils.getIndexes(layer, names);
-			return indexes;
-		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
-			return indexes;
+    @Override
+    protected boolean saveRecord() {
+	if (isSaveable()) {
+	    int currentPos = Long.valueOf(currentPosition).intValue();
+	    int[] attIndexes = getIndexes();
+	    String[] attValues = getValues();
+
+	    try {
+		ToggleEditing te = new ToggleEditing();
+		if (!layer.isEditing()) {
+		    te.startEditing(layer);
 		}
-	}
-
-	@Override
-	protected boolean saveRecord(){
-		if(isSaveable()){
-			int currentPos = Long.valueOf(currentPosition).intValue();
-			int[] attIndexes = getIndexes();
-			String[] attValues = getValues();
-
-			try {
-				ToggleEditing te = new ToggleEditing();
-				if(!layer.isEditing()){
-					te.startEditing(layer);
-				}
-				te.modifyValues(layer, currentPos, attIndexes, attValues);
-				if(layer.isEditing()){
-					te.stopEditing(layer, false);
-				}
-                setChangedValues(false);
-				return true;
-			} catch (Exception e) {
-				logger.error(e.getMessage(), e);
-				return false;
-			}
+		te.modifyValues(layer, currentPos, attIndexes, attValues);
+		if (layer.isEditing()) {
+		    te.stopEditing(layer, false);
 		}
+		setChangedValues(false);
+		return true;
+	    } catch (Exception e) {
+		logger.error(e.getMessage(), e);
 		return false;
+	    }
 	}
+	return false;
+    }
 
-	// Listeners
-	// Properties Event Handling *********************************************************
-	protected void updateComponentTreeMandatoryAndSeverity(ValidationResult result) {
-		//				ValidationComponentUtils.updateComponentTreeMandatoryAndBlankBackground(
-		//						CenterPanel);
-		ValidationComponentUtils.updateComponentTreeSeverityBackground(
-				CenterPanel,
-				result);
+    // Listeners
+    // Properties Event Handling
+    // *********************************************************
+    protected void updateComponentTreeMandatoryAndSeverity(
+	    ValidationResult result) {
+	// ValidationComponentUtils.updateComponentTreeMandatoryAndBlankBackground(
+	// CenterPanel);
+	ValidationComponentUtils.updateComponentTreeSeverityBackground(
+		CenterPanel, result);
+    }
+
+    /**
+     * Updates the component background in the mandatory panel and the
+     * validation background in the severity panel. Invoked whenever the
+     * observed validation result changes.
+     */
+    protected final class ValidationChangeHandler implements
+	    PropertyChangeListener {
+
+	public void propertyChange(PropertyChangeEvent evt) {
+	    updateComponentTreeMandatoryAndSeverity((ValidationResult) evt
+		    .getNewValue());
+	    if (!isFillingValues()) {
+		setChangedValues();
+	    }
 	}
-
-	/**
-	 * Updates the component background in the mandatory panel and the
-	 * validation background in the severity panel. Invoked whenever
-	 * the observed validation result changes.
-	 */
-	protected final class ValidationChangeHandler implements PropertyChangeListener {
-
-		public void propertyChange(PropertyChangeEvent evt) {
-			updateComponentTreeMandatoryAndSeverity(
-					(ValidationResult) evt.getNewValue());
-            if (!isFillingValues()) {
-                setChangedValues();
-            }
-		}
-	}
+    }
 
     @Override
     public void windowClosed() {
-        removeListeners();
-        super.windowClosed();
+	removeListeners();
+	super.windowClosed();
     }
 
 }

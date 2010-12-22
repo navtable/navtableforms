@@ -13,127 +13,130 @@ import com.iver.cit.gvsig.fmap.drivers.FieldDescription;
  */
 public class ORMLiteLayerSet {
 
-	private HashMap<String, CartoLayer> layerSet = null;
+    private HashMap<String, CartoLayer> layerSet = null;
 
-	ORMLiteLayerSet(){
-		layerSet = new HashMap<String, CartoLayer>();
+    ORMLiteLayerSet() {
+	layerSet = new HashMap<String, CartoLayer>();
+    }
+
+    public void addLayer(String key, CartoLayer value) {
+	this.layerSet.put(key, value);
+    }
+
+    public HashMap<String, CartoLayer> getLayerSet() {
+	return this.layerSet;
+    }
+
+    /**
+     * @param key
+     *            . The same as the layerAlias.
+     * @return the Layer
+     */
+    public CartoLayer getLayer(String key) {
+	return this.layerSet.get(key);
+    }
+
+    public CartoLayer getLayerByName(String layerName) {
+	for (CartoLayer fl : layerSet.values()) {
+	    if (layerName.equals(fl.getLayerName())) {
+		return fl;
+	    }
+	}
+	return null;
+    }
+
+    /**
+     * Class storing the metadata of one layer.
+     * 
+     * @author Andrés Maneiro <amaneiro@cartolab.es>
+     * 
+     */
+    public class CartoLayer {
+
+	/* indexes for recordSet are the index in the DBF of that field */
+	private HashMap<Integer, FieldDescription> recordSet = null;
+	private String layerName = "";
+	private String layerAlias = "";
+	private int layerGeometry = -1;
+
+	private final HashMap<String, Integer> geometry = new HashMap<String, Integer>();
+
+	CartoLayer() {
+	    recordSet = new HashMap<Integer, FieldDescription>();
+	    geometry.put("Null", FShape.NULL);
+	    geometry.put("Point", FShape.POINT);
+	    geometry.put("Line", FShape.LINE);
+	    geometry.put("Polygon", FShape.POLYGON);
+	    // geometry.put("Text", FShape.TEXT);
+	    // geometry.put("Multi", FShape.MULTI);
+	    // geometry.put("Multipoint", FShape.MULTIPOINT);
+	    // geometry.put("Circle", FShape.CIRCLE);
+	    // geometry.put("Arc", FShape.ARC);
+	    // geometry.put("Ellipse", FShape.ELLIPSE);
 	}
 
-	public void addLayer(String key, CartoLayer value){
-		this.layerSet.put(key, value);
+	public String getLayerName() {
+	    return layerName;
 	}
 
-	public HashMap<String, CartoLayer> getLayerSet(){
-		return this.layerSet;
+	public void setLayerName(String layerName) {
+	    this.layerName = layerName;
 	}
 
 	/**
-	 * @param key. The same as the layerAlias.
-	 * @return the Layer
-	 */
-	public CartoLayer getLayer(String key){
-		return this.layerSet.get(key);
-	}
-
-	public CartoLayer getLayerByName(String layerName){
-		for (CartoLayer fl : layerSet.values()){
-			if (layerName.equals(fl.getLayerName())){
-				return fl;
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Class storing the metadata of one layer.
+	 * Layer alias. The same as the key from XML.
 	 * 
-	 * @author Andrés Maneiro <amaneiro@cartolab.es>
-	 *
+	 * @return the alias of the layer
 	 */
-	public class CartoLayer {
-
-		/* indexes for recordSet are the index in the DBF of that field */
-		private HashMap<Integer, FieldDescription> recordSet = null;
-		private String layerName = "";
-		private String layerAlias = "";
-		private int layerGeometry = -1;
-
-		private HashMap<String, Integer> geometry = new HashMap<String, Integer>();
-
-		CartoLayer(){
-			recordSet = new HashMap<Integer, FieldDescription>();
-			geometry.put("Null", FShape.NULL);
-			geometry.put("Point", FShape.POINT);
-			geometry.put("Line", FShape.LINE);
-			geometry.put("Polygon", FShape.POLYGON);
-			//geometry.put("Text", FShape.TEXT);
-			//geometry.put("Multi", FShape.MULTI);
-			//geometry.put("Multipoint", FShape.MULTIPOINT);
-			//geometry.put("Circle", FShape.CIRCLE);
-			//geometry.put("Arc", FShape.ARC);
-			//geometry.put("Ellipse", FShape.ELLIPSE);
-		}
-
-		public String getLayerName() {
-			return layerName;
-		}
-
-		public void setLayerName(String layerName) {
-			this.layerName = layerName;
-		}
-
-		/**
-		 * Layer alias. The same as the key from XML.
-		 * @return the alias of the layer
-		 */
-		public String getLayerAlias() {
-			return layerAlias;
-		}
-
-		public void setLayerAlias(String layerAlias) {
-			this.layerAlias = layerAlias;
-		}
-
-		public int getLayerGeometry() {
-			return layerGeometry;
-		}
-
-		public void setLayerGeometryFromString(String layerGeometry) {
-			this.layerGeometry = geometry.get(layerGeometry);
-		}
-
-		public void setLayerGeometry(int layerGeometry) {
-			this.layerGeometry = layerGeometry;
-		}
-
-		public void addField(Integer key, FieldDescription ff){
-			this.recordSet.put(key, ff);
-		}
-
-		public HashMap<Integer, FieldDescription> getRecordSet(){
-			return this.recordSet;
-		}
-
-		public int getRecordSetCount(){
-			return recordSet.size();
-		}
-
-		/**
-		 * 
-		 * @param key. The same as the fieldAlias from FieldDescription class.
-		 * @return the fieldDescription
-		 */
-		public FieldDescription getField(Integer key){
-			return recordSet.get(key);
-		}
-
-		public FieldDescription getFieldByName(String fieldName){
-			for (FieldDescription ff : recordSet.values()){
-				if (fieldName.equals(ff.getFieldName())){
-					return ff;
-				}
-			}
-			return null;
-		}
+	public String getLayerAlias() {
+	    return layerAlias;
 	}
+
+	public void setLayerAlias(String layerAlias) {
+	    this.layerAlias = layerAlias;
+	}
+
+	public int getLayerGeometry() {
+	    return layerGeometry;
+	}
+
+	public void setLayerGeometryFromString(String layerGeometry) {
+	    this.layerGeometry = geometry.get(layerGeometry);
+	}
+
+	public void setLayerGeometry(int layerGeometry) {
+	    this.layerGeometry = layerGeometry;
+	}
+
+	public void addField(Integer key, FieldDescription ff) {
+	    this.recordSet.put(key, ff);
+	}
+
+	public HashMap<Integer, FieldDescription> getRecordSet() {
+	    return this.recordSet;
+	}
+
+	public int getRecordSetCount() {
+	    return recordSet.size();
+	}
+
+	/**
+	 * 
+	 * @param key
+	 *            . The same as the fieldAlias from FieldDescription class.
+	 * @return the fieldDescription
+	 */
+	public FieldDescription getField(Integer key) {
+	    return recordSet.get(key);
+	}
+
+	public FieldDescription getFieldByName(String fieldName) {
+	    for (FieldDescription ff : recordSet.values()) {
+		if (fieldName.equals(ff.getFieldName())) {
+		    return ff;
+		}
+	    }
+	    return null;
+	}
+    }
 }

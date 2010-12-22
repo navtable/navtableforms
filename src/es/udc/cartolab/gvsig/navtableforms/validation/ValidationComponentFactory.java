@@ -36,83 +36,72 @@ import com.jgoodies.binding.value.ValueModel;
 
 public class ValidationComponentFactory {
 
-	protected ValidationComponentFactory(){
-	}
+    protected ValidationComponentFactory() {
+    }
 
-	public static JFormattedTextField createFormattedTextField(
-			ValueModel valueModel,     // model to connect to
-			boolean commitOnFocusLost, // whether checking is on focus lost OR key typed
-			FormPanel form,            // container form
-			String componentName) {    // widget name
+    public static JFormattedTextField createFormattedTextField(
+	    ValueModel valueModel, // model to connect to
+	    boolean commitOnFocusLost, // whether checking is on focus lost OR
+				       // key typed
+	    FormPanel form, // container form
+	    String componentName) { // widget name
 
-		JFormattedTextField formattedTextField = (JFormattedTextField) form.getComponentByName(componentName);
-		Bindings.bind(formattedTextField, valueModel, commitOnFocusLost);
-		return formattedTextField;
-	}
+	JFormattedTextField formattedTextField = (JFormattedTextField) form
+		.getComponentByName(componentName);
+	Bindings.bind(formattedTextField, valueModel, commitOnFocusLost);
+	return formattedTextField;
+    }
 
-	public static void bindFormattedTextField(
-			JFormattedTextField comp,
-			ValueModel valueModel,
-			boolean commitOnFocusLost){
+    public static void bindFormattedTextField(JFormattedTextField comp,
+	    ValueModel valueModel, boolean commitOnFocusLost) {
 
-		Bindings.bind(comp, valueModel, commitOnFocusLost);
-	}
+	Bindings.bind(comp, valueModel, commitOnFocusLost);
+    }
 
-	public static void bindTextField(
-			JTextField comp,
-			ValueModel valueModel,
-			boolean commitOnFocusLost){
+    public static void bindTextField(JTextField comp, ValueModel valueModel,
+	    boolean commitOnFocusLost) {
 
-		Bindings.bind(comp, valueModel, commitOnFocusLost);
-	}
+	Bindings.bind(comp, valueModel, commitOnFocusLost);
+    }
 
-	public static void bindCheckBox(
-			JCheckBox comp,
-			ValueModel valueModel){
+    public static void bindCheckBox(JCheckBox comp, ValueModel valueModel) {
 
-		Bindings.bind(comp, valueModel);
-	}
+	Bindings.bind(comp, valueModel);
+    }
 
-	public static void bindComboBox(JComboBox comp,
-			String[] values,
-			ValueModel valueModel) {
-		ComboBoxAdapter adapter = new ComboBoxAdapter(values, valueModel);
-		comp.setModel(adapter);
-		comp.setSelectedIndex(0);
-	}
+    public static void bindComboBox(JComboBox comp, String[] values,
+	    ValueModel valueModel) {
+	ComboBoxAdapter adapter = new ComboBoxAdapter(values, valueModel);
+	comp.setModel(adapter);
+	comp.setSelectedIndex(0);
+    }
 
-	public static void bindComboBoxAsSIL(JComboBox comp,
-			SelectionInList<String> sil) {
-		ComboBoxAdapter adapter = new ComboBoxAdapter(sil);
-		comp.setModel(adapter);
-		comp.setSelectedIndex(0);
-		//Bindings.bind(comp, sil);
-	}
+    public static void bindComboBoxAsSIL(JComboBox comp,
+	    SelectionInList<String> sil) {
+	ComboBoxAdapter adapter = new ComboBoxAdapter(sil);
+	comp.setModel(adapter);
+	comp.setSelectedIndex(0);
+	// Bindings.bind(comp, sil);
+    }
 
-	public static void bindCBWithListener(
-			JComboBox comp,
-			SelectionInList<String> sil,
-			ActionListener actionListener) {
-		ComboBoxAdapter adapter = new ComboBoxAdapter(sil);
-		comp.setModel(adapter);
-		comp.setSelectedIndex(0);
-		comp.addActionListener(actionListener);
-		//Bindings.bind(comp, sil);
-	}
+    public static void bindCBWithListener(JComboBox comp,
+	    SelectionInList<String> sil, ActionListener actionListener) {
+	ComboBoxAdapter adapter = new ComboBoxAdapter(sil);
+	comp.setModel(adapter);
+	comp.setSelectedIndex(0);
+	comp.addActionListener(actionListener);
+	// Bindings.bind(comp, sil);
+    }
 
-	public static void bindTable(
-			JTable comp,
-			ValueModel valueModel){
+    public static void bindTable(JTable comp, ValueModel valueModel) {
 
-		Bindings.bind((JComponent) comp, "model", valueModel);
-	}
+	Bindings.bind((JComponent) comp, "model", valueModel);
+    }
 
-	public static void bindTextArea(
-			JTextArea comp,
-			ValueModel valueModel,
-			boolean commitOnFocusLost){
+    public static void bindTextArea(JTextArea comp, ValueModel valueModel,
+	    boolean commitOnFocusLost) {
 
-		Bindings.bind(comp, valueModel, commitOnFocusLost);
-	}
+	Bindings.bind(comp, valueModel, commitOnFocusLost);
+    }
 
 }

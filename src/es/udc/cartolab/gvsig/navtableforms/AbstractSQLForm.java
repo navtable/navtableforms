@@ -38,272 +38,257 @@ import es.udc.cartolab.gvsig.navtableforms.ormlite.ORMLite;
 
 public abstract class AbstractSQLForm extends AbstractForm {
 
-	protected DAOGeneric dao;
-	protected LinkedHashMap<String, String> primarykey;
-	protected String aliasInXML;
-	protected boolean useSQLite;
+    protected DAOGeneric dao;
+    protected LinkedHashMap<String, String> primarykey;
+    protected String aliasInXML;
+    protected boolean useSQLite;
 
-	public AbstractSQLForm(FLyrVect layer) {
-		super(layer);
+    public AbstractSQLForm(FLyrVect layer) {
+	super(layer);
 
-		aliasInXML = getAliasInXML();
-		dao = getDAO();
+	aliasInXML = getAliasInXML();
+	dao = getDAO();
+    }
+
+    protected abstract String getAliasInXML();
+
+    protected abstract DAOGeneric getDAO();
+
+    protected abstract String getXmlFileName();
+
+    @Override
+    protected void fillJTextField(JTextField field) {
+	String colName = getNameBeforeDots(field.getName());
+	String fieldValue = null;
+	try {
+	    fieldValue = dao.getDBForSQLiteValue(layer, aliasInXML,
+		    currentPosition, colName, primarykey, useSQLite);
+	} catch (SQLException e) {
+	    logger.error(e.getMessage(), e);
+	    fieldValue = null;
+	} catch (ClassNotFoundException e) {
+	    logger.error(e.getMessage(), e);
+	    fieldValue = null;
+	} finally {
+	    field.setText(fieldValue);
 	}
+    }
 
-	protected abstract String getAliasInXML();
-	protected abstract DAOGeneric getDAO();
-	protected abstract String getXmlFileName();
-
-	@Override
-	protected void fillJTextField(JTextField field) {
-		String colName = getNameBeforeDots(field.getName());
-		String fieldValue = null;
-		try {
-			fieldValue = dao.getDBForSQLiteValue(
-					layer,
-					aliasInXML,
-					currentPosition,
-					colName,
-					primarykey,
-					useSQLite);
-		} catch (SQLException e) {
-			logger.error(e.getMessage(), e);
-			fieldValue = null;
-		} catch (ClassNotFoundException e) {
-			logger.error(e.getMessage(), e);
-			fieldValue = null;
-		} finally {
-			field.setText(fieldValue);
-		}
+    @Override
+    protected void fillJCheckBox(JCheckBox checkBox) {
+	String colName = getNameBeforeDots(checkBox.getName());
+	String fieldValue = null;
+	try {
+	    fieldValue = dao.getDBForSQLiteValue(layer, aliasInXML,
+		    currentPosition, colName, primarykey, useSQLite);
+	} catch (SQLException e) {
+	    logger.error(e.getMessage(), e);
+	    fieldValue = null;
+	} catch (ClassNotFoundException e) {
+	    logger.error(e.getMessage(), e);
+	    fieldValue = null;
+	} finally {
+	    checkBox.setSelected(Boolean.parseBoolean(fieldValue));
 	}
+    }
 
-	@Override
-	protected void fillJCheckBox(JCheckBox checkBox) {
-		String colName = getNameBeforeDots(checkBox.getName());
-		String fieldValue = null;
-		try {
-			fieldValue = dao.getDBForSQLiteValue(
-					layer,
-					aliasInXML,
-					currentPosition,
-					colName,
-					primarykey,
-					useSQLite);
-		} catch (SQLException e) {
-			logger.error(e.getMessage(), e);
-			fieldValue = null;
-		} catch (ClassNotFoundException e) {
-			logger.error(e.getMessage(), e);
-			fieldValue = null;
-		} finally {
-			checkBox.setSelected(Boolean.parseBoolean(fieldValue));
-		}
+    @Override
+    protected void fillJTextArea(JTextArea textArea) {
+	String colName = getNameBeforeDots(textArea.getName());
+	String fieldValue = null;
+	try {
+	    fieldValue = dao.getDBForSQLiteValue(layer, aliasInXML,
+		    currentPosition, colName, primarykey, useSQLite);
+	} catch (SQLException e) {
+	    logger.error(e.getMessage(), e);
+	    fieldValue = null;
+	} catch (ClassNotFoundException e) {
+	    logger.error(e.getMessage(), e);
+	    fieldValue = null;
+	} finally {
+	    textArea.setText(fieldValue);
 	}
+    }
 
-	@Override
-	protected void fillJTextArea(JTextArea textArea) {
-		String colName = getNameBeforeDots(textArea.getName());
-		String fieldValue = null;
-		try {
-			fieldValue = dao.getDBForSQLiteValue(
-					layer,
-					aliasInXML,
-					currentPosition,
-					colName,
-					primarykey,
-					useSQLite);
-		} catch (SQLException e) {
-			logger.error(e.getMessage(), e);
-			fieldValue = null;
-		} catch (ClassNotFoundException e) {
-			logger.error(e.getMessage(), e);
-			fieldValue = null;
-		} finally {
-			textArea.setText(fieldValue);
+    @Override
+    protected void fillJComboBox(JComboBox combobox) {
+	String colName = getNameBeforeDots(combobox.getName());
+	String fieldValue = null;
+	try {
+	    fieldValue = dao.getDBForSQLiteValue(layer, aliasInXML,
+		    currentPosition, colName, primarykey, useSQLite);
+	} catch (SQLException e) {
+	    logger.error(e.getMessage(), e);
+	    fieldValue = null;
+	} catch (ClassNotFoundException e) {
+	    logger.error(e.getMessage(), e);
+	    fieldValue = null;
+	} finally {
+	    if (combobox.getItemCount() > 0) {
+		combobox.setSelectedIndex(0);
+	    }
+
+	    if (fieldValue != null) { // typically it's due to layer has a bad
+				      // attribute name
+		for (int j = 0; j < combobox.getItemCount(); j++) {
+		    if (combobox.getItemAt(j).toString()
+			    .compareTo(fieldValue.trim()) == 0) {
+			combobox.setSelectedIndex(j);
+			break;
+		    }
 		}
+	    }
 	}
+    }
 
-	@Override
-	protected void fillJComboBox(JComboBox combobox) {
-		String colName = getNameBeforeDots(combobox.getName());
-		String fieldValue = null;
-		try {
-			fieldValue = dao.getDBForSQLiteValue(
-					layer,
-					aliasInXML,
-					currentPosition,
-					colName,
-					primarykey,
-					useSQLite);
-		} catch (SQLException e) {
-			logger.error(e.getMessage(), e);
-			fieldValue = null;
-		} catch (ClassNotFoundException e) {
-			logger.error(e.getMessage(), e);
-			fieldValue = null;
-		} finally {
-			if (combobox.getItemCount() > 0) {
-				combobox.setSelectedIndex(0);
-			}
+    @Override
+    public void fillValues() {
+	setPrimaryKey();
+	useSQLite = useSQLite();
 
-			if(fieldValue != null){ // typically it's due to layer has a bad attribute name
-				for (int j=0; j<combobox.getItemCount(); j++){
-					if (combobox.getItemAt(j).toString().compareTo(fieldValue.trim()) == 0){
-						combobox.setSelectedIndex(j);
-						break;
-					}
-				}
-			}
-		}
+	super.fillValues();
+
+
+    }
+
+    protected void setPrimaryKey() {
+	primarykey = new LinkedHashMap<String, String>();
+	String[] pkfields = ORMLite.getDataBaseObject(getXmlFileName())
+		.getTable(aliasInXML).getPrimaryKey();
+	for (String pkfield : pkfields) {
+	    primarykey.put(pkfield,
+		    Utils.getValueFromLayer(layer, currentPosition, pkfield));
 	}
+    }
 
-	@Override
-	public void fillValues() {
-		setPrimaryKey();
-		useSQLite = useSQLite();
-
-		super.fillValues();
-
-
+    protected boolean useSQLite() {
+	String tablename = ORMLite.getDataBaseObject(getXmlFileName())
+		.getTable(aliasInXML).getTableName();
+	String[] pkfields = primarykey.keySet().toArray(new String[0]);
+	String[] pkvalues = primarykey.values().toArray(new String[0]);
+	try {
+	    return dao.existsRecord(tablename, pkfields, pkvalues);
+	} catch (Exception e) {
+	    logger.error(e.getMessage(), e);
+	    return false;
 	}
+    }
 
-	protected void setPrimaryKey() {
-		primarykey = new LinkedHashMap<String, String>();
-		String[] pkfields = ORMLite.getDataBaseObject(getXmlFileName()).getTable(aliasInXML).getPrimaryKey();
-		for (String pkfield : pkfields) {
-			primarykey.put(pkfield, Utils.getValueFromLayer(layer, currentPosition, pkfield));
-		}
-	}
+    @Override
+    public boolean saveRecord() {
 
-	protected boolean useSQLite() {
-		String tablename = ORMLite.getDataBaseObject(getXmlFileName()).getTable(aliasInXML).getTableName();
-		String[] pkfields = primarykey.keySet().toArray(new String[0]);
-		String[] pkvalues = primarykey.values().toArray(new String[0]);
-		try {
-			return dao.existsRecord(tablename, pkfields, pkvalues);
-		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
-			return false;
-		}
-	}
+	if (isSaveable()) {
 
-	@Override
-	public boolean saveRecord() {
+	    int currentPos = Long.valueOf(currentPosition).intValue();
+	    int[] indexes = getIndexes();
+	    Map<String, String> layerValues = formModel.getWidgetValues();
+	    String[] attNames = layerValues.keySet().toArray(new String[0]);
+	    String[] attValues = layerValues.values().toArray(new String[0]);
+	    String[] pkNames = ORMLite.getDataBaseObject(getXmlFileName())
+		    .getTable(aliasInXML).getPrimaryKey();
+	    String[] pkValues = Utils.getValuesFromLayer(
+		    layer,
+		    currentPosition,
+		    ORMLite.getDataBaseObject(getXmlFileName())
+			    .getTable(aliasInXML).getPrimaryKey());
 
-		if(isSaveable()){
-
-			int currentPos = Long.valueOf(currentPosition).intValue();
-			int[] indexes = getIndexes();
-			Map<String, String> layerValues = formModel.getWidgetValues();
-			String[] attNames  = layerValues.keySet().toArray(new String[0]);
-			String[] attValues = layerValues.values().toArray(new String[0]);
-			String[] pkNames = ORMLite.getDataBaseObject(getXmlFileName()).getTable(aliasInXML).getPrimaryKey();
-			String[] pkValues = Utils.getValuesFromLayer(layer, currentPosition, ORMLite.getDataBaseObject(getXmlFileName()).getTable(aliasInXML).getPrimaryKey());
-
-			try {
-				dao.saveDBFandSQLiteValues(
-						layer,
-						currentPos,
-						indexes,
-						attNames,
-						attValues,
-						pkNames,
-						pkValues);
-				return true;
-			} catch (Exception e) {
-				logger.error(e.getMessage(), e);
-				return false;
-			}
-		}
-		return false;
-	}
-
-	@Override
-	protected void deleteRecord(){
-		try {
-			dao.deleteDBFAndSQLRecord(
-					view.getMapControl(),
-					layer,
-					Long.valueOf(currentPosition).intValue(),
-					primarykey.keySet().toArray(new String[0]),
-					primarykey.values().toArray(new String[0])
-			);
-			refreshGUI();
-		} catch (ExpansionFileReadException e) {
-			logger.error(e.getMessage(), e);
-		} catch (ReadDriverException e) {
-			logger.error(e.getMessage(), e);
-		} catch (SQLException e) {
-			logger.error(e.getMessage(), e);
-		} catch (ClassNotFoundException e) {
-			logger.error(e.getMessage(), e);
-		}
-	}
-
-	/**
-	 * @return true if Primary Key of current record has been modified, false otherwise
-	 */
-	protected boolean isPKRecordChanged(){
-
-		setPrimaryKey();
-		LinkedHashMap<String, String> pkFieldsInDialog = new LinkedHashMap<String, String>();
-		for (String key : primarykey.keySet()){
-			pkFieldsInDialog.put(key, formModel.getWidgetValue(key));
-		}
-
-		if(pkFieldsInDialog.equals(primarykey)){
-			return false;
-		}
+	    try {
+		dao.saveDBFandSQLiteValues(layer, currentPos, indexes,
+			attNames, attValues, pkNames, pkValues);
 		return true;
+	    } catch (Exception e) {
+		logger.error(e.getMessage(), e);
+		return false;
+	    }
+	}
+	return false;
+    }
+
+    @Override
+    protected void deleteRecord() {
+	try {
+	    dao.deleteDBFAndSQLRecord(view.getMapControl(), layer, Long
+		    .valueOf(currentPosition).intValue(), primarykey.keySet()
+		    .toArray(new String[0]),
+		    primarykey.values().toArray(new String[0]));
+	    refreshGUI();
+	} catch (ExpansionFileReadException e) {
+	    logger.error(e.getMessage(), e);
+	} catch (ReadDriverException e) {
+	    logger.error(e.getMessage(), e);
+	} catch (SQLException e) {
+	    logger.error(e.getMessage(), e);
+	} catch (ClassNotFoundException e) {
+	    logger.error(e.getMessage(), e);
+	}
+    }
+
+    /**
+     * @return true if Primary Key of current record has been modified, false
+     *         otherwise
+     */
+    protected boolean isPKRecordChanged() {
+
+	setPrimaryKey();
+	LinkedHashMap<String, String> pkFieldsInDialog = new LinkedHashMap<String, String>();
+	for (String key : primarykey.keySet()) {
+	    pkFieldsInDialog.put(key, formModel.getWidgetValue(key));
 	}
 
-	protected boolean isPKAlreadyInUse() {
-		if(isPKRecordChanged()) {
-			boolean bool = true;
-			LinkedHashMap<String, String> pkFieldsInDialog = new LinkedHashMap<String, String>();
-			for (String key : primarykey.keySet()){
-				pkFieldsInDialog.put(key, formModel.getWidgetValue(key));
-			}
-			try {
-				bool = dao.existsRecord(
-						ORMLite.getDataBaseObject(getXmlFileName()).getTable(aliasInXML).getTableName(),
-						pkFieldsInDialog.keySet().toArray(new String[0]),
-						pkFieldsInDialog.values().toArray(new String[0]));
-				return bool;
-			} catch (SQLException e) {
-				logger.error(e.getMessage(), e);
-				return true;
-			} catch (ClassNotFoundException e) {
-				logger.error(e.getMessage(), e);
-				return true;
-			}
-		}
-		return false;
+	if (pkFieldsInDialog.equals(primarykey)) {
+	    return false;
 	}
+	return true;
+    }
+
+    protected boolean isPKAlreadyInUse() {
+	if (isPKRecordChanged()) {
+	    boolean bool = true;
+	    LinkedHashMap<String, String> pkFieldsInDialog = new LinkedHashMap<String, String>();
+	    for (String key : primarykey.keySet()) {
+		pkFieldsInDialog.put(key, formModel.getWidgetValue(key));
+	    }
+	    try {
+		bool = dao.existsRecord(
+			ORMLite.getDataBaseObject(getXmlFileName())
+				.getTable(aliasInXML).getTableName(),
+			pkFieldsInDialog.keySet().toArray(new String[0]),
+			pkFieldsInDialog.values().toArray(new String[0]));
+		return bool;
+	    } catch (SQLException e) {
+		logger.error(e.getMessage(), e);
+		return true;
+	    } catch (ClassNotFoundException e) {
+		logger.error(e.getMessage(), e);
+		return true;
+	    }
+	}
+	return false;
+    }
 
     protected boolean primaryKeyHasErrors() {
-        if (isPKAlreadyInUse()) {
-            JOptionPane
-                    .showMessageDialog(
-                            this,
-                            "La clave primaria que ha elegido ya está en uso, por favor, elija otra",
-                            PluginServices.getText(this,
-                                    "Clave primaria en uso"),
-                            JOptionPane.ERROR_MESSAGE);
-            return true;
-        } else {
-            return false;
-        }
+	if (isPKAlreadyInUse()) {
+	    JOptionPane
+		    .showMessageDialog(
+			    this,
+			    "La clave primaria que ha elegido ya está en uso, por favor, elija otra",
+			    PluginServices.getText(this,
+				    "Clave primaria en uso"),
+			    JOptionPane.ERROR_MESSAGE);
+	    return true;
+	} else {
+	    return false;
+	}
     }
 
     @Override
     protected boolean isSaveable() {
-        if (validationHasErrors()) {
-            return false;
-        } else if (primaryKeyHasErrors()) {
-            return false;
-        }
-        return true;
+	if (validationHasErrors()) {
+	    return false;
+	} else if (primaryKeyHasErrors()) {
+	    return false;
+	}
+	return true;
     }
 
 }
