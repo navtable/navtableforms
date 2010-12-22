@@ -526,12 +526,6 @@ public abstract class AbstractForm extends AbstractNavTable {
 		return false;
 	}
 
-	@Override
-	public Vector<Integer> getChangedValues() {
-		//TODO: fill vector with values changed
-		return new Vector<Integer>();
-	}
-
 	// Listeners
 	// Properties Event Handling *********************************************************
 	protected void updateComponentTreeMandatoryAndSeverity(ValidationResult result) {
