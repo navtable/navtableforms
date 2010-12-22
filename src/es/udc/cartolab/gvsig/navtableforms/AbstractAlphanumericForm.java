@@ -21,7 +21,6 @@ package es.udc.cartolab.gvsig.navtableforms;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.FlowLayout;
-import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -50,7 +49,6 @@ import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
 import com.hardcode.gdbms.engine.values.Value;
 import com.hardcode.gdbms.engine.values.ValueFactory;
 import com.iver.andami.PluginServices;
-import com.iver.andami.ui.mdiManager.IWindow;
 import com.iver.cit.gvsig.exceptions.visitors.StartWriterVisitorException;
 import com.iver.cit.gvsig.exceptions.visitors.StopWriterVisitorException;
 import com.iver.cit.gvsig.fmap.core.DefaultRow;
@@ -60,6 +58,7 @@ import com.iver.cit.gvsig.fmap.edition.EditionEvent;
 import com.iver.cit.gvsig.fmap.edition.IEditableSource;
 import com.iver.cit.gvsig.fmap.edition.IWriteable;
 import com.iver.cit.gvsig.fmap.edition.IWriter;
+import com.iver.cit.gvsig.project.documents.view.gui.BaseView;
 import com.jeta.forms.components.panel.FormPanel;
 import com.jgoodies.validation.ValidationResult;
 import com.jgoodies.validation.ValidationResultModel;
@@ -86,7 +85,7 @@ public abstract class AbstractAlphanumericForm extends AbstractNavTable {
     protected JButton newB = null;
 	protected Vector<JComponent> widgetsVector;
 
-    protected static IWindow view;
+    protected static BaseView view;
 
 	protected static Logger logger = null;
 
@@ -306,18 +305,7 @@ public abstract class AbstractAlphanumericForm extends AbstractNavTable {
 	@Override
 	public boolean init() {
 
-        view = PluginServices.getMDIManager().getActiveWindow();
-
-		try {
-			if (recordset.getRowCount() <= 0){
-				JOptionPane.showMessageDialog(this, PluginServices.getText(this, "emptyLayer"));
-				return false;
-			}
-		} catch (HeadlessException e) {
-			logger.error(e.getMessage(), e);
-		} catch (ReadDriverException e) {
-			logger.error(e.getMessage(), e);
-		}
+        view = (BaseView) PluginServices.getMDIManager().getActiveWindow();
 
 		initGUI();
 
