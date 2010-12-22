@@ -1,3 +1,2 @@
-[ ] Check headers: license and copyright.
+[X] Check headers: license and copyright.
 [ ] Ant: enable this project to be imported as a proper library, not as a jar.
-[ ] Review and clean code up.
