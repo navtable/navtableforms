@@ -451,22 +451,6 @@ public abstract class AbstractAlphanumericForm extends AbstractNavTable {
 		fillValues();
 	}
 
-	protected abstract boolean isPKAlreadyInUse();
-
-	protected boolean primaryKeyHasErrors(){
-		if (isPKAlreadyInUse()){
-
-			JOptionPane.showMessageDialog(this,
-					"La clave primaria que ha elegido ya está en uso, por favor, elija otra",
-					PluginServices.getText(this, "Clave primaria en uso"),
-					JOptionPane.ERROR_MESSAGE);
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-
 	private boolean validationHasErrors() {
 		boolean hasError = false;
 		ValidationResult vr = formBinding.getValidationResultModel().getResult();
@@ -482,9 +466,6 @@ public abstract class AbstractAlphanumericForm extends AbstractNavTable {
 
 	protected boolean isSaveable(){
 		if(validationHasErrors()) {
-			return false;
-		}
-		else if (primaryKeyHasErrors()){
 			return false;
 		}
 		return true;
