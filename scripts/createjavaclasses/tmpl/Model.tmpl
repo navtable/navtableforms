@@ -1,0 +1,166 @@
+package $packagename;
+
+import java.awt.Container;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Map;
+import java.util.Vector;
+
+import javax.swing.JComponent;
+
+import com.jgoodies.binding.beans.Model;
+
+import es.udc.cartolab.gvsig.arqueoponte.utils.FormParserUtils;
+
+/*
+ * Some notes of JValidation framework:
+ * 1) it gets the Getters and Setters methods from introspection, so the names of these methods are quite strict.
+ *    i.e.:
+ *    - variable "idaltrio" has to be: getIdalt and setIdalt as its getter and setter
+ *    - variable "idAltrio" has to be: getIdAlt and setIdAlt as its getter and setter
+ */
+public class $classmodel extends Model {
+
+    // Hastable with properties connecting view and model ********************************
+    public static final Hashtable<String,String> PROPERTIES_MAP = new Hashtable<String,String>();
+
+    // maps holding on the values needed to store in every layer
+    private final Map<String, String> widgetValues = new HashMap<String, String>(){};
+    private final Map<String, String> nonWidgetValues = new HashMap<String, String>() {};
+
+    // Each map represents a layer to store values in.
+    // They are pointers to values stored in either widgetValues or nonWidgetValues maps
+    #for $i in range(len($enumlayers.keys())):
+    private final Map<String, String> ${enumlayers.keys()[$i]} = new HashMap<String, String>() {};
+    #end for
+
+    // Private variables needed for framework ********************************************
+    #for $i in range(len($varsstring)):
+    private String $varsstring[$i];
+    #end for
+
+    #for $i in range(len($varsboolean)):
+    private boolean $varsboolean[$i];
+    #end for
+
+    // Constructor and initialization methods *************************************************************
+    public ${classmodel}(Container c){
+        createPropertiesVectorFromWidgets(c);
+        setDefaultValues();
+    }
+
+    /*
+     * Every private variable has a PROPERTY associated (_public static final_ variable).
+     * This method gets all widgets from xml form and creates the properties.
+     * i.e.: PROPERTIES_MAP.put("IDALTRIO", "idaltrio");
+     */
+    private void createPropertiesVectorFromWidgets(Container c) {
+
+        String aux;
+        String name;
+
+        Vector<JComponent>  widgetsVector;
+        widgetsVector       = FormParserUtils.getWidgetsWithContentFromContainer(c);
+
+        for (int i = 0; i < widgetsVector.size(); i++){
+            aux  = widgetsVector.get(i).getName(); // aux = "name_widget.TYPE.CHECKING"
+            name = aux.substring(0, aux.indexOf(".")).trim();
+            PROPERTIES_MAP.put(name.toUpperCase(), name);
+        }
+    }
+
+    /*
+     * Setting all model values. The model represent ALL values from Modulo
+     * and the forms don't have all the values but SOME of them.
+     *
+     * So, it's necessary to set a default value for every model property
+     * in order to validation doesn't depend on properties not being in a particular form.
+     * i.e.: "rios form" could not have the property "altura". If "altura" is not initialized,
+     * validation will break because the variable doesn't obey the constraints.
+     *
+     */
+    private void setDefaultValues(){
+    	#for $i in range(len($varsstring)):
+        $varsstring[$i] = "0";
+    	#end for
+
+    	#for $i in range(len($varsboolean)):
+        $varsboolean[$i] = false;
+    	#end for
+
+	#if len($varsnonwidget) > 0
+	#for $i in range(len($varsnonwidget)):
+	nonWidgetValues.put("${varsnonwidget[$i]}", "");
+	#end for
+	#end if
+    }
+
+    // Getters & Setters *************************************************************
+    #for $i in range(len($varsstring)):
+    public String get${varsstring[$i][0].upper()}${varsstring[$i][1:]}(){
+        return $varsstring[$i];
+    }
+
+    public void set${varsstring[$i][0].upper()}${varsstring[$i][1:]}(String newValue) {
+        String oldValue = get${varsstring[$i][0].upper()}${varsstring[$i][1:]}();
+        $varsstring[$i] = newValue;
+        firePropertyChange((String) PROPERTIES_MAP.get("${varsstring[$i].upper()}"), oldValue, newValue);
+    }
+
+    #end for
+
+    #for $i in range(len($varsboolean)):
+    public boolean get${varsboolean[$i][0].upper()}${varsboolean[$i][1:]}(){
+        return $varsboolean[$i];
+    }
+
+    public void set${varsboolean[$i][0].upper()}${varsboolean[$i][1:]}(boolean newValue) {
+        boolean oldValue = get${varsboolean[$i][0].upper()}${varsboolean[$i][1:]}();
+        $varsboolean[$i] = newValue;
+        firePropertyChange((String) PROPERTIES_MAP.get("${varsboolean[$i].upper()}"), oldValue, newValue);
+    }
+
+    #end for
+
+    // Maps **************************************************************************
+
+	#if len($varsnonwidget) > 0
+	//map with non-widget values
+	public Map<String, String> getNonwidgetvalues(){
+		return nonWidgetValues;
+	}
+
+	public String getNonwidgetvalues(String key) {
+		return nonWidgetValues.get(key);
+	}
+
+	public void setNonwidgetvalues(String key, String newValue){
+		nonWidgetValues.put(key, newValue);
+	}
+	#end if
+
+	//map with widget values
+	public Map<String, String> getWidgetvalues(){
+		#for $i in range(len($varsstring)):
+		widgetValues.put("${varsstring[$i]}", ${varsstring[$i]});
+		#end for
+		#for $i in range(len($varsboolean)):
+		widgetValues.put("${varsboolean[$i]}", String.valueOf(${varsboolean[$i]}));
+		#end for
+
+		return widgetValues;
+	}
+
+        // maps for every layer
+	#for $i in range(len($enumlayers.keys())):
+	public Map<String, String> get${enumlayers.keys()[$i]} (){
+
+		#for $j in range(len($enumlayers.values()[$i]))
+		${enumlayers.keys()[$i]}.put("${enumlayers.values()[$i][$j]}", ${enumlayers.values()[$i][$j]});
+		#end for
+
+		return ${enumlayers.keys()[$i]};
+	}
+
+	#end for
+}

@@ -1,0 +1,754 @@
+package $packagename;
+
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.HeadlessException;
+import java.awt.event.ActionEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.IOException;
+import java.util.Map;
+import java.util.Vector;
+
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFormattedTextField;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+#if $hasbuttons
+import javax.swing.JButton;
+#end if
+#if $hastables
+import javax.swing.JTable;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.DefaultTableModel;
+#end if
+
+import net.miginfocom.swing.MigLayout;
+
+import org.apache.log4j.Logger;
+
+import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
+import com.hardcode.gdbms.engine.data.driver.DriverException;
+import com.iver.andami.PluginServices;
+import com.iver.andami.ui.mdiManager.WindowInfo;
+import com.iver.cit.gvsig.fmap.layers.FLyrVect;
+import com.iver.cit.gvsig.project.documents.view.gui.BaseView;
+import com.jeta.forms.components.panel.FormPanel;
+import com.jgoodies.validation.ValidationResult;
+import com.jgoodies.validation.ValidationResultModel;
+import com.jgoodies.validation.view.ValidationComponentUtils;
+
+import es.udc.cartolab.gvsig.arqueoponte.forms.utils.DAOArqueoPonte;
+import es.udc.cartolab.gvsig.arqueoponte.forms.utils.SQLAbstractNavTable;
+import es.udc.cartolab.gvsig.arqueoponte.forms.utils.ormlite.ORMLite;
+import es.udc.cartolab.gvsig.arqueoponte.preferences.Preferences;
+import es.udc.cartolab.gvsig.arqueoponte.utils.FormParserUtils;
+import es.udc.cartolab.gvsig.arqueoponte.utils.Utils;
+import es.udc.cartolab.gvsig.arqueoponte.validation.ValidationComponentFactory;
+import es.udc.cartolab.gvsig.arqueoponte.validation.${classbinding};
+import es.udc.cartolab.gvsig.arqueoponte.validation.${classmodel};
+
+
+#if $hastables
+public class $classname extends SQLAbstractNavTable implements TableModelListener {
+#else
+public class $classname extends SQLAbstractNavTable	{
+#end if
+
+	// Model and Binding for this view
+	private final $classmodel   $objectmodel;
+	private final $classbinding $objectbinding;
+
+	//Wrapper components
+	private final FormPanel formBody;
+
+	private JPanel CenterPanel;
+	private JPanel SouthPanel;
+	private JPanel NorthPanel;
+
+	/*
+	 * Vectors used:
+	 * - widgetsVector = storing widgets from Abeille XML file (only texfields, formattedtextfields, comboboxes & textareas)
+	 * - buttonsVector = storing butons from Abeille XML file, if any
+	 *
+	 * - indexesWidgets  = storing column indexes from DBF file (all widgets are in altlinbom layer)
+	 * - indexesAlt*     = storing column indexes from DBF file for every layer to work on in this form
+	 *
+	 * Vectors has to be related. i.e.:
+	 * if widgetsVector[0] contains the field id_config, indexesWidgets[0] has to maintain the same info
+	 *
+	 */
+	Vector<JComponent> widgetsVector;
+	int[] indexesWidgets;
+	#for $i in range(len($enumlayers)):
+	int[] indexes${enumlayers[$i]};
+	#end for
+	#if $hasbuttons
+	Vector<JButton> buttonsVector;
+	#end if
+	#if $hastables
+	//tablesVector and pkFromTable have to be in the same order
+	Vector<JComponent> tablesVector;
+	#end if
+
+	#if $hastables
+	String[][] pkFromTable = {
+		#for $table in $table_pks.keys()
+		{
+		#for $idx_pk in range(len($table_pks[$table]))
+		"$table_pks[$table][$idx_pk]",
+		#end for
+		}, //$table
+		#end for
+	};
+	#end if
+
+	//Database
+	private static DAOArqueoPonte sqlcon = DAOArqueoPonte.getFase2();
+	private static String[] primarykey;
+	private static String aliasInXML = "${layerinxml}";
+
+	private static BaseView view;
+	private FLyrVect layer = null;
+
+	private static Logger logger = Logger.getLogger(Preferences.getProjectName());
+
+        ##CONSTRUCTOR, INIT & OTHER METHODS
+	public $classname (FLyrVect layer) throws IOException {
+	    super(layer,
+			Preferences.getPreferences().getDatabasePath(),
+			ORMLite.getDataBaseObject().getTable(aliasInXML).getTableName(),
+			ORMLite.getDataBaseObject().getTable(aliasIXML).getPrimaryKey());
+		formBody = new FormPanel("${formname}");
+		$objectmodel = new ${classmodel}(formBody);
+		$objectbinding = new ${classbinding}(${objectmodel});
+		primarykey = ORMLite.getDataBaseObject().getTable(aliasInXML).getPrimaryKey();
+		this.layer = layer;
+	}
+
+	private $classmodel get${classmodel}(){
+		return $objectmodel;
+	}
+
+	private $classbinding get${classbinding}(){
+		return $objectbinding;
+	}
+
+	@Override
+	public WindowInfo getWindowInfo() {
+		if (viewInfo == null){
+			viewInfo = new WindowInfo(WindowInfo.MODELESSDIALOG | WindowInfo.RESIZABLE | WindowInfo.PALETTE);
+			viewInfo.setTitle("${formtitle}");
+			viewInfo.setWidth(500);
+			viewInfo.setHeight(490);
+		}
+		return viewInfo;
+	}
+
+	/**
+	 * It creates a panel with a table that shows the
+	 * data linked to a feature of the layer. Each row
+	 * is a attribute-value pair.
+	 *
+	 * @return the panel.
+	 */
+	@Override
+	public JPanel getCenterPanel(){
+		JPanel panel = new JPanel(new BorderLayout());
+		JScrollPane scrollPane = new JScrollPane(formBody);
+		//panel.setMinimumSize(new Dimension(320, 400));
+		panel.add(scrollPane);
+
+		return panel;
+	}
+
+	private JPanel getThisNorthPanel() {
+		if (NorthPanel == null) {
+			NorthPanel =  new JPanel();
+		}
+		return NorthPanel;
+	}
+
+	private JPanel getThisSouthPanel() {
+		if (SouthPanel == null) {
+			SouthPanel =  new JPanel(new FlowLayout());
+		}
+		return SouthPanel;
+	}
+
+	private JPanel getThisCenterPanel() {
+		if (CenterPanel == null) {
+			CenterPanel = new JPanel();
+			BorderLayout CenterPanelLayout = new BorderLayout();
+			CenterPanel.setLayout(CenterPanelLayout);
+		}
+		return CenterPanel;
+	}
+
+	private void initGUI() {
+		MigLayout thisLayout = new MigLayout("inset 0, align center",
+				"[grow]", "[][grow][]");
+
+		this.setLayout(thisLayout);
+
+		this.add(getThisNorthPanel(),  "shrink, wrap, align center");
+		this.add(getThisCenterPanel(), "shrink, growx, growy, wrap");
+		this.add(getThisSouthPanel(),  "shrink, align center" );
+	}
+
+	//Init abeille widgets
+	@Override
+	public void initWidgets() {
+
+		JFormattedTextField comp;
+		JTextField compTF;
+		JTextArea compTA;
+		JComboBox compCB;
+		JCheckBox compCHB;
+
+		#if $hastables
+                JTable compTB;
+                #end if
+		#if $hasbuttons
+		JButton button;
+		#end if
+		String aux;
+		String name;
+		String propertyKey;
+		String validateKey;
+
+		#if $hasbuttons
+		buttonsVector = FonsaguaUtils.getBTFromContainer(formBody);
+		for (int i=0; i < buttonsVector.size(); i++){
+			button = buttonsVector.get(i);
+			aux	   = buttonsVector.get(i).getName();
+			name   = aux.substring(0, aux.indexOf("."));
+			button.setActionCommand(name);
+			button.addActionListener(this);
+		}
+		#end if
+
+		#if $hastables
+		tablesVector  = FonsaguaUtils.getTBsFromContainer(formBody);
+		for (int i=0; i<tablesVector.size(); i++){
+			compTB = (JTable) tablesVector.get(i);
+			aux    = tablesVector.get(i).getName(); // aux = "name_widget.TYPE.CHECKING"
+			name   = aux.substring(0, aux.indexOf("."));
+			//initJTable(compTB, name);
+			//FonsaguaComponentFactory.bindTable(compTB,
+			//	${objectbinding}.getModel((String) ${classmodel}.PROPERTY_TABLE_RALTCAP));
+			//FonsaguaComponentFactory.initJTable(compTB,
+			//			new String[]{"ID", "Capa", "Aforo", "Qutil", "Qusar"},
+			//			4);
+			//	compTB.getModel().addTableModelListener(this);
+		}
+		#end if
+
+		widgetsVector = FormParserUtils.getWidgetsWithContentFromContainer(formBody);
+		for (int i = 0; i < widgetsVector.size(); i++){
+
+			if(widgetsVector.get(i) instanceof JFormattedTextField){
+				comp        = (JFormattedTextField) widgetsVector.get(i);
+				aux         = widgetsVector.get(i).getName(); // aux = "name_widget.TYPE.CHECKING"
+				name        = aux.substring(0, aux.indexOf("."));
+				propertyKey = name.trim().toUpperCase();
+				validateKey = "$classmodel." + name;//propertyKey.toLowerCase();
+
+				FonsaguaComponentFactory.bindFormattedTextField(
+						comp,
+						${objectbinding}.getModel((String) ${classmodel}.PROPERTIES_MAP.get(propertyKey)),
+						false);
+
+				//ValidationComponentUtils.setMandatory(comp, true);
+				ValidationComponentUtils.setMessageKey(comp, validateKey);
+			}
+
+			else if (widgetsVector.get(i) instanceof JTextField){
+				compTF      = (JTextField) widgetsVector.get(i);
+				aux         = widgetsVector.get(i).getName(); // aux = "name_widget.TYPE.CHECKING"
+				name        = aux.substring(0, aux.indexOf("."));
+				propertyKey = name.trim().toUpperCase();
+				validateKey = "$classmodel." + name;//propertyKey.toLowerCase();
+
+				ValidationComponentFactory.bindTextField(
+						compTF,
+						${objectbinding}.getModel((String) ${classmodel}.PROPERTIES_MAP.get(propertyKey)),
+						false);
+
+				//ValidationComponentUtils.setMandatory(comp, true);
+				ValidationComponentUtils.setMessageKey(compTF, validateKey);
+			}
+
+			else if (widgetsVector.get(i) instanceof JTextArea){
+				compTA      = (JTextArea) widgetsVector.get(i);
+				aux         = widgetsVector.get(i).getName(); // aux = "name_widget.TYPE.CHECKING"
+				name        = aux.substring(0, aux.indexOf("."));
+				propertyKey = name.trim().toUpperCase();
+				validateKey = "$classmodel." + name;//propertyKey.toLowerCase();
+
+				ValidationComponentFactory.bindTextArea(
+						compTA,
+						${objectbinding}.getModel((String) ${classmodel}.PROPERTIES_MAP.get(propertyKey)),
+						true);
+
+				//ValidationComponentUtils.setMandatory(comp, true);
+				//ValidationComponentUtils.setMessageKey(compTA, validateKey);
+			}
+
+			else if (widgetsVector.get(i) instanceof JCheckBox){
+				compCHB     = (JCheckBox) widgetsVector.get(i);
+				aux         = widgetsVector.get(i).getName(); // aux = "name_widget.TYPE.CHECKING"
+				name        = aux.substring(0, aux.indexOf("."));
+				propertyKey = name.trim().toUpperCase();
+				validateKey = "$classmodel." + name;//propertyKey.toLowerCase();
+
+				ValidationComponentFactory.bindCheckBox(
+						compCHB,
+						${objectbinding}.getModel((String) ${classmodel}.PROPERTIES_MAP.get(propertyKey)));
+
+				//ValidationComponentUtils.setMandatory(comp, true);
+				//ValidationComponentUtils.setMessageKey(compTA, validateKey);
+			}
+
+			else if(widgetsVector.get(i) instanceof JComboBox){
+				compCB      = (JComboBox) widgetsVector.get(i);
+				aux         = compCB.getName(); // aux = "name_widget.TYPE.CHECKING"
+				name        = aux.substring(0, aux.indexOf("."));
+				propertyKey = name.trim().toUpperCase();
+
+				// get combobox values
+				int nvalues = compCB.getItemCount();
+				String[] values;
+				if (nvalues > 0) {
+					values = new String[nvalues];
+					for (int j=0; j<nvalues; j++){
+						values[j] = compCB.getItemAt(j).toString();
+					}
+				} else {
+					values = new String[]{""};
+				}
+
+				ValidationComponentFactory.bindComboBox(
+						compCB,
+						values,
+						${objectbinding}.getModel((String) ${classmodel}.PROPERTIES_MAP.get(propertyKey)));
+			}
+
+		}
+	}
+
+	@Override
+	public void getIndexes() {
+		Map<String, String> aux;
+		String[] names = null;
+		FLyrVect auxLayer;
+
+		String auxStr = null;
+		try {
+			names =  new String[widgetsVector.size()];
+			for (int i=0; i<widgetsVector.size(); i++) {
+				auxStr = widgetsVector.get(i).getName();
+				names[i] = auxStr.substring(0, auxStr.indexOf("."));
+			}
+			indexesWidgets = Utils.getIndexes(layer, names);
+
+			#for $i in range(len($enumlayers)):
+			aux = get${classmodel}().get${enumlayers[$i]}();
+			names = new String[aux.size()];
+			names = aux.keySet().toArray(names);
+			auxLayer = Utils.getFlyrVect(view, ORMLite.getLayerSetObject().getLayer(aliasInXML).getLayerName());
+			indexes${enumlayers[$i]} = Utils.getIndexes(auxLayer, names);
+			#end for
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
+	}
+
+	private void initEventHandling() {
+		get${classbinding}().getValidationResultModel().addPropertyChangeListener(
+				ValidationResultModel.PROPERTYNAME_RESULT,
+				new ValidationChangeHandler());
+	}
+
+	@Override
+	public boolean init() {
+
+		view = (BaseView) PluginServices.getMDIManager().getActiveWindow();
+
+		try {
+			if (recordset.getRowCount() <= 0){
+				JOptionPane.showMessageDialog(this, PluginServices.getText(this, "emptyLayer"));
+				return false;
+			}
+		} catch (HeadlessException e) {
+			logger.error(e.getMessage(), e);
+		} catch (ReadDriverException e) {
+			logger.error(e.getMessage(), e);
+		}
+
+		//Getting NavTable parent panels and adding them on the tableLayoutPanels
+		JPanel northPanel = getNorthPanel();
+		getThisNorthPanel().add(northPanel);
+
+		JPanel centerPanel = getCenterPanel();
+		getThisCenterPanel().add(centerPanel);
+
+		JPanel southPanel = getSouthPanel();
+		getThisSouthPanel().add(southPanel);
+
+		initGUI();
+		initWidgets();
+		initEventHandling();
+		getIndexes();
+
+		// Synchronize the presentation with the current validation state.
+		// If you want to show no validation info before the user has typed
+		// anything in the form, use the commented EMPTY result
+		// instead of the model's validation result.
+		updateComponentTreeMandatoryAndSeverity(
+				get${classbinding}().getValidationResultModel().getResult()
+				// ValidationResult.EMPTY
+		);
+
+		//currentPosition = 0;
+		super.last();
+		refreshGUI();
+		super.repaint();
+		super.setVisible(true);
+		super.setFocusCycleRoot(true);
+		return true;
+	}
+
+	@Override
+	public void fillEmptyValues() {
+		JFormattedTextField compFTF;
+		JComboBox compCB;
+		#if $hastables
+		JTable compTB;
+		String aux;
+		String name;
+        #end if
+
+		super.fillEmptyValues();
+
+		for (int i=0; i < widgetsVector.size(); i++) {
+			if (widgetsVector.get(i) instanceof JFormattedTextField){
+				compFTF = (JFormattedTextField) widgetsVector.get(i);
+				compFTF.setText("");
+			}
+
+			if (widgetsVector.get(i) instanceof JComboBox) {
+				compCB = (JComboBox) widgetsVector.get(i);
+				if (compCB.getItemCount() > 0) {
+					compCB.setSelectedIndex(0);
+				}
+			}
+		}
+		#if $hastables
+		for (int j=0; j<tablesVector.size(); j++){
+			compTB = (JTable) tablesVector.get(j);
+			aux    = tablesVector.get(j).getName(); // aux = "name_widget.TYPE.CHECKING"
+			name   = aux.substring(0, aux.indexOf("."));
+			//fillEmptyJTable(compTB);
+			//FonsaguaComponentFactory.fillJTable(compTB,
+			//		new String[]   {"ID", "Poblacion total", "Poblacion alternativa"},
+			//			new String[][] {{""}}
+			//	);
+		}
+		#end if
+	}
+
+	@Override
+	public void fillValues(long currentPos){
+		currentPosition = currentPos;
+		fillValues();
+	}
+
+	@Override
+	public void fillValues() {
+
+		String name;
+		String aux;
+		String text = "";
+		JFormattedTextField compFTF;
+		JTextField compTF;
+		JComboBox compCB;
+		JTextArea compTA;
+		JCheckBox compCHB;
+		#if $hastables
+		JTable compTB;
+		#end if
+		String[] keyValues;
+
+		try {
+			if (currentPosition >= recordset.getRowCount()) {
+				currentPosition =  recordset.getRowCount()-1;
+			}
+			if (currentPosition < 0) {
+				currentPosition = 0;
+			}
+
+			keyValues = new String[primarykey.length];
+			for (int i=0; i<primarykey.length; i++) {
+				keyValues[i] = getDBFValue(primarykey[i]);
+			}
+
+			setPrimaryKeyValue(keyValues);
+			boolean useSQLite = existsKeyValue(primarykey, keyValues);
+
+			for (int i=0; i<widgetsVector.size(); i++){
+
+				if (widgetsVector.get(i) instanceof JFormattedTextField){
+					compFTF = (JFormattedTextField) widgetsVector.get(i);
+					aux     = compFTF.getName(); // name_widget.TYPE.CHECKING
+					name    = aux.substring(0, aux.indexOf("."));
+
+					text    = getDBForSQLiteValue(name, indexesWidgets[i], keyValues, useSQLite);
+					compFTF.setText(text);
+				}
+
+				else if (widgetsVector.get(i) instanceof JTextField){
+					compTF = (JTextField) widgetsVector.get(i);
+					aux     = compTF.getName(); // name_widget.TYPE.CHECKING
+					name    = aux.substring(0, aux.indexOf("."));
+
+					text    = getDBForSQLiteValue(name, indexesWidgets[i], keyValues, useSQLite);
+					compTF.setText(text);
+				}
+
+				else if (widgetsVector.get(i) instanceof JCheckBox){
+					compCHB = (JCheckBox) widgetsVector.get(i);
+					aux     = compCHB.getName(); // name_widget.TYPE.CHECKING
+					name    = aux.substring(0, aux.indexOf("."));
+
+					text    = getDBForSQLiteValue(name, indexesWidgets[i], keyValues, useSQLite);
+					compCHB.setSelected(Boolean.parseBoolean(text));
+				}
+
+				else if (widgetsVector.get(i) instanceof JComboBox){
+					compCB = (JComboBox) widgetsVector.get(i);
+					aux    = compCB.getName(); // name_widget.TYPE.CHECKING
+					name   = aux.substring(0, aux.indexOf("."));
+
+					text = getDBForSQLiteValue(name, indexesWidgets[i], keyValues, useSQLite);
+					if (compCB.getItemCount() > 0) {
+						compCB.setSelectedIndex(0);
+					}
+
+					for (int j=0; j<compCB.getItemCount(); j++){
+						if (compCB.getItemAt(j).toString().compareTo(text.trim()) == 0){
+							compCB.setSelectedIndex(j);
+							break;
+						}
+					}
+				}
+
+				else if (widgetsVector.get(i) instanceof JTextArea){
+					compTA = (JTextArea) widgetsVector.get(i);
+					aux    = compTA.getName(); // nameWidget.TYPE.CHECKING
+					name   = aux.substring(0, aux.indexOf("."));
+
+					text = getDBForSQLiteValue(name, indexesWidgets[i], keyValues, useSQLite);
+					compTA.setText(text);
+				}
+			}
+
+			#if $hastables
+			for (int j=0; j<tablesVector.size(); j++){
+				compTB = (JTable) tablesVector.get(j);
+				aux    = tablesVector.get(j).getName(); // aux = "name_widget.TYPE.CHECKING"
+				name   = aux.substring(0, aux.indexOf("."));
+				// fillJTable(compTB, name);
+				// FonsaguaComponentFactory.fillJTable();
+			}
+			#end if
+
+			String[] fields;
+			try {
+				#for $i in range(len($enumlayers)):
+				fields = sqlcon.getColumnNames(ORMLite.getDataBaseObject().getTable(aliasInXML).getTableName());
+				for (int j=0; j<fields.length; j++){
+					if (get${classmodel}().get${enumlayers[$i]}().containsKey(fields[j])){
+						String value = sqlcon.getSQLValue(
+								ORMLite.getDataBaseObject().getTable(aliasInXML).getTableName(),
+								fields[j],
+								ORMLite.getDataBaseObject().getTable(aliasInXML).getPrimaryKey(),
+								keyValues);
+						get${classmodel}().setNonwidgetvalues(fields[j], value);
+					}
+				}
+
+				#end for
+
+			} catch (Exception e) {
+				logger.error(e.getMessage(), e);
+			}
+
+		} catch (DriverException e) {
+			logger.error(e.getMessage(), e);
+		} catch (ReadDriverException e) {
+			logger.error(e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public void saveRecord() {
+
+			Map<String, String> layerValues;
+			String[] attNames, attValues;
+
+			#for $i in range(len($enumlayers)):
+			layerValues = get${classmodel}().get${enumlayers[$i]}();
+			attNames  = new String[indexes${enumlayers[$i]}.length];
+			attValues = new String[indexes${enumlayers[$i]}.length];
+			attNames  = layerValues.keySet().toArray(attNames);
+			attValues = layerValues.values().toArray(attValues);
+			FLyrVect auxLayer = Utils.getFlyrVect(view, ORMLite.getDataBaseObject().getTable(aliasInXML).getTableName());
+			try {
+				sqlcon.saveDBFandSQLiteValues(
+					auxLayer,
+					(int) currentPosition,
+					indexes${enumlayers[$i]},
+					attNames,
+					attValues,
+					ORMLite.getDataBaseObject().getTable(aliasInXML).getPrimaryKey(),
+					Utils.getValuesFromLayer(layer, currentPosition, ORMLite.getDataBaseObject().getTable(aliasInXML).getPrimaryKey()));
+			} catch (Exception e) {
+				logger.error(e.getMessage(), e);
+			}
+
+			#end for
+
+		}
+
+	@Override
+	public void sync() {
+	}
+
+	@Override
+	public void selectRow(int row) {
+	}
+
+	@Override
+	public Vector checkChangedValues() {
+		return new Vector();
+	}
+
+	// Listeners
+	// Properties Event Handling *********************************************************
+	private void updateComponentTreeMandatoryAndSeverity(ValidationResult result) {
+		//		ValidationComponentUtils.updateComponentTreeMandatoryAndBlankBackground(
+		//				CenterPanel);
+		ValidationComponentUtils.updateComponentTreeSeverityBackground(
+				CenterPanel,
+				result);
+	}
+
+	/**
+	 * Updates the component background in the mandatory panel and the
+	 * validation background in the severity panel. Invoked whenever
+	 * the observed validation result changes.
+	 */
+	private final class ValidationChangeHandler implements PropertyChangeListener {
+
+		public void propertyChange(PropertyChangeEvent evt) {
+			updateComponentTreeMandatoryAndSeverity(
+					(ValidationResult) evt.getNewValue());
+		}
+	}
+
+    #if $hastables
+	private void removeSelectedRows(JTable table) {
+		DefaultTableModel model = (DefaultTableModel) table.getModel();
+		int[] selRows = table.getSelectedRows();
+		while (selRows.length > 0) {
+			model.removeRow(selRows[0]);
+			selRows = table.getSelectedRows();
+		}
+	}
+
+	private JTable findTable(String name) {
+		JTable table = null;
+		for (JComponent c : tablesVector) {
+			String aux = c.getName();
+			String nameC = aux.substring(0, aux.indexOf("."));
+			if (name.equals(nameC)) {
+				table = (JTable) c;
+				break;
+			}
+		}
+		return table;
+	}
+
+	public void tableChanged(TableModelEvent e) {
+		JTable compTB;
+		String aux;
+		String name;
+		for (int i = 0; i < widgetsVector.size(); i++){
+
+			if (widgetsVector.get(i) instanceof JTable){
+				compTB = (JTable) widgetsVector.get(i);
+				aux    = widgetsVector.get(i).getName(); // aux = "name_widget.TYPE.CHECKING"
+				name   = aux.substring(0, aux.indexOf("."));
+
+                #for $i in range(len($tablewidgets)):
+				if (name.equals("$tablewidgets[$i]")) {
+				}
+				#end for
+			}
+		}
+	}
+	#end if
+
+	private boolean validationHasErrors() {
+		boolean hasError = false;
+		ValidationResult vr = ${objectbinding}.getValidationResultModel().getResult();
+		if(vr.hasErrors()){
+			hasError = true;
+			JOptionPane.showMessageDialog(this,
+				vr.getMessagesText(),
+				PluginServices.getText(this, "Error de validacion"),
+				JOptionPane.ERROR_MESSAGE);
+		  }
+		return hasError;
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+
+	    if (e.getSource() == saveB && validationHasErrors()) {
+	       return;
+	    }
+
+		super.actionPerformed(e);
+
+		#if $hastables
+		//tables actions
+		#for $i in range(len($tablewidgets))
+		if (e.getActionCommand().equals("$tablewidgets[$i]")) {
+		}
+		#end for
+		#end if
+
+		#if $hasbuttons
+		//buttons action
+		#for $i in range(len($buttonwidgets))
+		if (e.getActionCommand().equals("$buttonwidgets[$i]")) {
+		}
+		#end for
+		#end if
+		}
+
+	}
+
+   	@Override
+	public Object getWindowProfile() {
+		return null;
+	}
+}
