@@ -1,3 +1,20 @@
+/*
+ * Copyright (c) 2010. Cartolab (Universidade da Coruña)
+ *
+ * This file is part of extNavTableForms
+ *
+ * extNavTableForms is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU General Public License as published by the Free Software Foundation, either
+ * version 3 of the License, or any later version.
+ *
+ * extNavTableForms is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with extNavTableForms.
+ * If not, see <http://www.gnu.org/licenses/>.
+*/
+
 package es.udc.cartolab.gvsig.navtableforms;
 
 import java.awt.Graphics2D;
@@ -133,7 +150,7 @@ public class Utils {
 	} catch (DriverLoadException e) {
 	    logger.error(e.getMessage(), e);
 	}
-	FLayer layer = (FLyrVect) LayerFactory.createLayer(name,
+	FLayer layer = LayerFactory.createLayer(name,
 		(VectorialFileDriver) driver, newFile, proj);
 
 	return layer;
@@ -208,7 +225,7 @@ public class Utils {
     /**
      * Returns codes of every element of a given layer contained on the given
      * geometry
-     * 
+     *
      * @param geom
      *            the geometry (usually it should be a (multi)polygon)
      * @param layer
@@ -434,7 +451,7 @@ public class Utils {
     /**
      * Dummy method that calls getIndexes with the recordset instead of the
      * layer
-     * 
+     *
      * @param layer
      * @return an array that represents the positions of the attributes in the +
      *         recordset
@@ -447,7 +464,7 @@ public class Utils {
 
     /**
      * Get the length of a line
-     * 
+     *
      * @param layer
      *            vectorial layer
      * @param geomPos

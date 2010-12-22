@@ -1,3 +1,20 @@
+/*
+ * Copyright (c) 2010. Cartolab (Universidade da Coruña)
+ *
+ * This file is part of extNavTableForms
+ *
+ * extNavTableForms is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU General Public License as published by the Free Software Foundation, either
+ * version 3 of the License, or any later version.
+ *
+ * extNavTableForms is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with extNavTableForms.
+ * If not, see <http://www.gnu.org/licenses/>.
+*/
+
 package es.udc.cartolab.gvsig.navtableforms.dao;
 
 import java.sql.Connection;
@@ -26,7 +43,7 @@ import es.udc.cartolab.gvsig.navtableforms.ormlite.ORMLite;
 
 /**
  * Abstract class defining Data Access Model for SQLite and DBF.
- * 
+ *
  * How exceptions are managed: along this class -and because it intends to be a library to be reused- any exception is catch
  * but they are thrown, for every specific DAO inheriting from this to manage them.
  *
@@ -43,7 +60,7 @@ public abstract class DAOGeneric {
 
     /**
      * Constructor
-     * 
+     *
      * @param dbpath
      * @throws SQLException
      * @throws ClassNotFoundException
@@ -108,7 +125,7 @@ public abstract class DAOGeneric {
 
     /**
      * Reloads the DAO in case the preferences changed.
-     * 
+     *
      * @throws ClassNotFoundException
      * @throws SQLException
      */
@@ -174,7 +191,7 @@ public abstract class DAOGeneric {
 
     /**
      * Format a resultSet to a one dimension array
-     * 
+     *
      * @param rs
      * @param fieldName
      * @return
@@ -202,7 +219,7 @@ public abstract class DAOGeneric {
 
     /**
      * Format a resultSet to a two dimension array
-     * 
+     *
      * @param rs
      * @param fieldNames
      * @return
@@ -267,7 +284,7 @@ public abstract class DAOGeneric {
     /**
      * @deprecated Use {@link #getSQLValue(String, String, String[], String[])}
      *             instead
-     * 
+     *
      * @param tableName
      * @param name
      * @param idAlt
@@ -329,11 +346,11 @@ public abstract class DAOGeneric {
 
 
     /**
-     * 
+     *
      * This method build a query like: SELECT fieldNames[0], fieldNames[1] FROM
      * tableName WHERE whereFields[0] = whereValues[0] AND whereFields[1] =
      * whereValues[1];
-     * 
+     *
      * @param tableName
      *            = Name of the table to query.
      * @param fieldNames
@@ -346,7 +363,7 @@ public abstract class DAOGeneric {
      * @return A ResultSet containing the registers that match with the query.
      * @throws ClassNotFoundException
      * @throws SQLException
-     * 
+     *
      */
     public String[][] getSQLValues(String tablename, String[] fieldNames,
 	    String[] whereFields, String[] whereValues) throws SQLException,
@@ -357,11 +374,11 @@ public abstract class DAOGeneric {
     }
 
     /**
-     * 
+     *
      * This method build a query like: SELECT fieldNames[0], fieldNames[1] FROM
      * tableName WHERE whereFields[0] = whereValues[0] AND whereFields[1] =
      * whereValues[1] GROUP BY groupByFields[0], groupByFields[1];
-     * 
+     *
      * @param tableName
      *            = Name of the table to query.
      * @param fieldNames
@@ -377,7 +394,7 @@ public abstract class DAOGeneric {
      * @return A ResultSet containing the registers that match with the query.
      * @throws ClassNotFoundException
      * @throws SQLException
-     * 
+     *
      */
     public String[][] getSQLValues(String tableName, String[] fieldNames,
 	    String[] whereFields, String[] whereValues, String[] groupByFields)
@@ -390,10 +407,10 @@ public abstract class DAOGeneric {
 
 
     /**
-     * 
+     *
      * This method build a query like: SELECT fieldName FROM tableName WHERE
      * whereFields[0] = whereValues[0] AND whereFields[1] = whereValues[1];
-     * 
+     *
      * @param tableName
      *            = Name of the table to query.
      * @param fieldName
@@ -406,7 +423,7 @@ public abstract class DAOGeneric {
      * @return A ResultSet containing the registers that match with the query.
      * @throws ClassNotFoundException
      * @throws SQLException
-     * 
+     *
      */
     public String[] getSQLValues(String tableName, String fieldName,
 	    String[] whereFields, String[] whereValues) throws SQLException,
@@ -417,11 +434,11 @@ public abstract class DAOGeneric {
     }
 
     /**
-     * 
+     *
      * This method build a query like: SELECT fieldNames[0], fieldNames[1] FROM
      * tableName WHERE whereFields[0] = whereValues[0] AND whereFields[1] =
      * whereValues[1] GROUP BY groupByFields[0], groupByFields[1];
-     * 
+     *
      * @param tableName
      *            = Name of the table to query.
      * @param fieldNames
@@ -437,7 +454,7 @@ public abstract class DAOGeneric {
      * @return A ResultSet containing the registers that match with the query.
      * @throws ClassNotFoundException
      * @throws SQLException
-     * 
+     *
      */
     protected ResultSet getSQLValuesAsResultSet(String tableName,
 	    String[] fieldNames, String[] whereFields, String[] whereValues,
@@ -482,10 +499,10 @@ public abstract class DAOGeneric {
 
     /**
      * Save values in the DBF file AND SQLite database.
-     * 
+     *
      * @deprecated Use
      *             {@link #saveDBFandSQLiteValues(FLyrVect, int, int[], String[], String[], String[], String[])}
-     * 
+     *
      * @param layer
      *            = layer where save values. The name of the table in the
      *            database is got from it.
@@ -514,7 +531,7 @@ public abstract class DAOGeneric {
 
     /**
      * Save values in the DBF file AND SQLite database.
-     * 
+     *
      * @param layer
      *            = layer where save values. The name of the table in the
      *            database is got from it.
@@ -546,11 +563,11 @@ public abstract class DAOGeneric {
 
     /**
      * Save values in the DBF file AND SQLite database.
-     * 
+     *
      * @deprecated Use
      *             {@link #saveDBFandSQLiteValues(FLyrVect, String, int, int[], String[], String[], String[], String[])}
      *             instead.
-     * 
+     *
      * @param layer
      *            = layer where save values
      * @param tablename
@@ -583,7 +600,7 @@ public abstract class DAOGeneric {
 
     /**
      * Save values in the DBF file AND SQLite database.
-     * 
+     *
      * @param layer
      *            = layer where save values
      * @param tablename
@@ -629,11 +646,11 @@ public abstract class DAOGeneric {
 
     /**
      * Save values into the SQLite database.
-     * 
+     *
      * Build an UPDATE query if whereNames are the «primary key» for the
      * database AND whereValues are an used combination of the «primary key».
      * Build an INSERT query otherwise.
-     * 
+     *
      * @param tablename
      *            = Name of the table to save the values in
      * @param attrNames
@@ -720,7 +737,7 @@ public abstract class DAOGeneric {
 
     /**
      * Deletes a record from the database.
-     * 
+     *
      * @param tableName
      *            name of the table
      * @param pkField
@@ -739,7 +756,7 @@ public abstract class DAOGeneric {
 
     /**
      * Deletes a record from the database.
-     * 
+     *
      * @param tableName
      *            name of the table
      * @param pkFields
@@ -778,11 +795,11 @@ public abstract class DAOGeneric {
 
     /**
      * Deletes a record from the database.
-     * 
+     *
      * @deprecated Use
      *             {@link #deleteDBFAndSQLRecord(MapControl, FLyrVect, int, String[], String[])}
      *             instead
-     * 
+     *
      * @param tableName
      *            name of the table
      * @param pkFields
@@ -806,7 +823,7 @@ public abstract class DAOGeneric {
 
     /**
      * Delete a record from the database & DBF file.
-     * 
+     *
      * @param map
      * @param layer
      * @param rowPosition
@@ -830,7 +847,7 @@ public abstract class DAOGeneric {
 
     /**
      * Delete a record from the database & DBF file.
-     * 
+     *
      * @param map
      * @param layer
      * @param rowPosition

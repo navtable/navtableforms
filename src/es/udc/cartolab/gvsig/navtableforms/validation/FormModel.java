@@ -1,24 +1,21 @@
+/*
+ * Copyright (c) 2010. Cartolab (Universidade da Coruña)
+ *
+ * This file is part of extNavTableForms
+ *
+ * extNavTableForms is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU General Public License as published by the Free Software Foundation, either
+ * version 3 of the License, or any later version.
+ *
+ * extNavTableForms is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with extNavTableForms.
+ * If not, see <http://www.gnu.org/licenses/>.
+*/
 package es.udc.cartolab.gvsig.navtableforms.validation;
 
-/*
- * Copyright (c) 2010. CartoLab (Universidade da Coruña)
- * 
- * This file is part of extArqueoPonte
- * 
- * extArqueoPonte is free software: you can redistribute it and/or
- * modify it under the terms
- * of the GNU General Public License as published by the Free Software
- * Foundation, either
- * version 3 of the License, or (at your option) any later version.
- * 
- * extArqueoPonte is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with extArqueoPonte.  If not, see <http://www.gnu.org/licenses/>.
- */
 import java.awt.Container;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
@@ -52,13 +49,13 @@ public abstract class FormModel extends Model {
     /**
      * Setting all model values. The model represent ALL values from Modulo and
      * the forms don't have all the values but SOME of them.
-     * 
+     *
      * So, it's necessary to set a default value for every model property in
      * order to validation doesn't depend on properties not being in a
      * particular form. i.e.: "rios form" could not have the property "altura".
      * If "altura" is not initialized, validation will break because the
      * variable doesn't obey the constraints.
-     * 
+     *
      */
     protected abstract void setDefaultValues();
 
