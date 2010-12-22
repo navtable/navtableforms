@@ -1,7 +1,6 @@
 package es.udc.cartolab.gvsig.navtableforms;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
-import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -11,8 +10,6 @@ import com.iver.cit.gvsig.fmap.layers.FLyrVect;
 import com.iver.cit.gvsig.fmap.layers.SelectableDataSource;
 
 import es.udc.cartolab.fileslink.FilesLink;
-import es.udc.cartolab.gvsig.arqueoponte.preferences.Preferences;
-import es.udc.cartolab.gvsig.navtableforms.AbstractSQLForm;
 import es.udc.cartolab.gvsig.navtableforms.ormlite.ORMLite;
 
 public abstract class AbstractSQLFormWithFilesLink extends AbstractSQLForm {
@@ -58,6 +55,8 @@ public abstract class AbstractSQLFormWithFilesLink extends AbstractSQLForm {
 		.getTableName();
     }
 
+    protected abstract String getBaseDirectory();
+
     private SelectableDataSource getRecordSet() {
 	return this.recordset;
     }
@@ -68,15 +67,11 @@ public abstract class AbstractSQLFormWithFilesLink extends AbstractSQLForm {
 
 	if (e.getSource() == filesLinkB) {
 	    String baseDirectory;
-	    try {
-		baseDirectory = Preferences.getPreferences().getBaseDirectory();
-		logger.debug("extFilesLink: baseDirectory is: " + baseDirectory);
-		FilesLink fl = new FilesLink(getRecordSet(), baseDirectory,
-			getLayerName(), getPrimaryKey());
-		fl.showFiles(currentPosition);
-	    } catch (IOException e1) {
-		logger.error(e1.getMessage(), e1);
-	    }
+	    baseDirectory = getBaseDirectory();
+	    logger.debug("extFilesLink: baseDirectory is: " + baseDirectory);
+	    FilesLink fl = new FilesLink(getRecordSet(), baseDirectory,
+		    getLayerName(), getPrimaryKey());
+	    fl.showFiles(currentPosition);
 	}
 
     }

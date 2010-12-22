@@ -1,7 +1,6 @@
 package es.udc.cartolab.gvsig.navtableforms;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
-import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -10,8 +9,6 @@ import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
 import com.iver.cit.gvsig.fmap.edition.IEditableSource;
 
 import es.udc.cartolab.fileslink.FilesLink;
-import es.udc.cartolab.gvsig.arqueoponte.preferences.Preferences;
-import es.udc.cartolab.gvsig.navtableforms.AbstractAlphanumericForm;
 import es.udc.cartolab.gvsig.navtableforms.ormlite.ORMLite;
 
 public abstract class AbstractAlphanumericFormWithFilesLink extends AbstractAlphanumericForm {
@@ -43,6 +40,7 @@ public abstract class AbstractAlphanumericFormWithFilesLink extends AbstractAlph
 
     protected abstract String getXmlFileName();
     protected abstract String getAliasInXML();
+    protected abstract String getBaseDirectory();
 
     protected String getPrimaryKey(){
 	return ORMLite.getDataBaseObject(getXmlFileName())
@@ -50,13 +48,10 @@ public abstract class AbstractAlphanumericFormWithFilesLink extends AbstractAlph
     }
 
     private String getLayerName() {
-	return ORMLite.getDataBaseObject(Preferences.getXMLFileName())
+	return ORMLite.getDataBaseObject(getXmlFileName())
 		.getTable(getAliasInXML()).getTableName();
     }
 
-    private String getBaseDirectory() throws IOException {
-	return Preferences.getPreferences().getBaseDirectory();
-    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -71,8 +66,6 @@ public abstract class AbstractAlphanumericFormWithFilesLink extends AbstractAlph
 		FilesLink fl = new FilesLink(model.getRecordset(),
 			baseDirectory, layerName, getPrimaryKey());
 		fl.showFiles(currentPosition);
-	    } catch (IOException e1) {
-		logger.error(e1.getMessage(), e1);
 	    } catch (ReadDriverException e1) {
 		logger.error(e1.getMessage(), e1);
 	    }
