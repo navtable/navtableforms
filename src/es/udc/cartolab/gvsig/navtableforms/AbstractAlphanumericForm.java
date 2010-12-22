@@ -88,6 +88,7 @@ public abstract class AbstractAlphanumericForm extends AbstractNavTable {
     protected static BaseView view;
 
 	protected static Logger logger = null;
+    private ValidationChangeHandler validationChangeHandler;
 
     public AbstractAlphanumericForm(IEditableSource model) throws ReadDriverException {
         super(model.getRecordset());
@@ -252,7 +253,13 @@ public abstract class AbstractAlphanumericForm extends AbstractNavTable {
 				formBinding.getModel(FormModel.PROPERTIES_MAP.get(propertyKey)));
 	}
 
-	protected abstract void setListeners();
+    protected void setListeners() {
+        validationChangeHandler = new ValidationChangeHandler();
+    }
+
+    protected void removeListeners() {
+        formBinding.removePropertyChangeListener(validationChangeHandler);
+    }
 
 	public void initWidgets() {
 
@@ -282,13 +289,12 @@ public abstract class AbstractAlphanumericForm extends AbstractNavTable {
 			}
 
 		}
-		setListeners();
 	}
 
 	protected void initEventHandling() {
-		formBinding.getValidationResultModel().addPropertyChangeListener(
+        formBinding.getValidationResultModel().addPropertyChangeListener(
 				ValidationResultModel.PROPERTYNAME_RESULT,
-				new ValidationChangeHandler());
+				validationChangeHandler);
 	}
 
 	private void initGUI(){
@@ -319,6 +325,7 @@ public abstract class AbstractAlphanumericForm extends AbstractNavTable {
 		getThisSouthPanel().add(southPanel);
 
 		initWidgets();
+        setListeners();
 		initEventHandling();
 
 		// Synchronize the presentation with the current validation state.
@@ -599,4 +606,11 @@ public abstract class AbstractAlphanumericForm extends AbstractNavTable {
             addRecord();
         }
     }
+
+    @Override
+    public void windowClosed() {
+        removeListeners();
+        super.windowClosed();
+    }
+
 }
