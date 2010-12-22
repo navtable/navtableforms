@@ -33,6 +33,12 @@ import com.jgoodies.binding.beans.Model;
 
 public abstract class FormModel extends Model {
 
+    // TODO check where gvSIG do that and take values from there
+    static final String GVSIG_DEFAULT_STRING = "";
+    static final int GVSIG_DEFAULT_INT = 0;
+    static final double GVSIG_DEFAULT_DOUBLE = 0.0;
+    static final boolean GVSIG_DEFAULT_BOOLEAN = false;
+
     public static final Hashtable<String, String> PROPERTIES_MAP = new Hashtable<String, String>();
 
     protected final Map<String, String> widgetValues = new LinkedHashMap<String, String>();
@@ -72,6 +78,18 @@ public abstract class FormModel extends Model {
 	    PROPERTIES_MAP.put(name.toUpperCase(), name);
 	}
 
+    }
+
+    protected int getGvsigDefaultInt() {
+	return GVSIG_DEFAULT_INT;
+    }
+
+    protected boolean getGvsigDefaultBoolean() {
+	return GVSIG_DEFAULT_BOOLEAN;
+    }
+
+    protected String getGvsigDefaultString() {
+	return GVSIG_DEFAULT_STRING;
     }
 
     public abstract Map<String, String> getWidgetValues();

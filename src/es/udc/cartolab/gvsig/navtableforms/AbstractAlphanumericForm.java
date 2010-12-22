@@ -22,6 +22,10 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Iterator;
@@ -48,6 +52,7 @@ import com.hardcode.gdbms.driver.exceptions.InitializeWriterException;
 import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
 import com.hardcode.gdbms.engine.values.Value;
 import com.hardcode.gdbms.engine.values.ValueFactory;
+import com.hardcode.gdbms.engine.values.ValueWriter;
 import com.iver.andami.PluginServices;
 import com.iver.cit.gvsig.exceptions.visitors.StartWriterVisitorException;
 import com.iver.cit.gvsig.exceptions.visitors.StopWriterVisitorException;
@@ -58,6 +63,7 @@ import com.iver.cit.gvsig.fmap.edition.EditionEvent;
 import com.iver.cit.gvsig.fmap.edition.IEditableSource;
 import com.iver.cit.gvsig.fmap.edition.IWriteable;
 import com.iver.cit.gvsig.fmap.edition.IWriter;
+import com.iver.cit.gvsig.fmap.layers.SelectableDataSource;
 import com.iver.cit.gvsig.project.documents.view.gui.BaseView;
 import com.jeta.forms.components.panel.FormPanel;
 import com.jgoodies.validation.ValidationResult;
@@ -72,7 +78,8 @@ import es.udc.cartolab.gvsig.navtableforms.validation.FormParserUtils;
 import es.udc.cartolab.gvsig.navtableforms.validation.ValidationComponentFactory;
 
 
-public abstract class AbstractAlphanumericForm extends AbstractNavTable {
+public abstract class AbstractAlphanumericForm extends AbstractNavTable
+	implements ItemListener, KeyListener {
 
     protected final FormModel formModel;
     protected final Binding formBinding;
@@ -89,6 +96,7 @@ public abstract class AbstractAlphanumericForm extends AbstractNavTable {
 
     protected static Logger logger = null;
     private ValidationChangeHandler validationChangeHandler;
+    private boolean isFillingValues;
 
     public AbstractAlphanumericForm(IEditableSource model) throws ReadDriverException {
 	super(model.getRecordset());
@@ -164,8 +172,7 @@ public abstract class AbstractAlphanumericForm extends AbstractNavTable {
     protected String getNameBeforeDots(String widgetName) {
 	if (widgetName.contains(".")) {
 	    return widgetName.substring(0, widgetName.indexOf("."));
-	}
- else {
+	} else {
 	    return widgetName;
 	}
     }
@@ -180,10 +187,8 @@ public abstract class AbstractAlphanumericForm extends AbstractNavTable {
     }
 
     protected void initJFormattedTextField(JFormattedTextField field) {
-
 	String propertyKey = getPropertyKey(field.getName());
 	String validateKey = getValidateKey(field.getName());
-
 	ValidationComponentFactory
 		.bindFormattedTextField(field, formBinding
 			.getModel(FormModel.PROPERTIES_MAP.get(propertyKey)),
@@ -191,46 +196,41 @@ public abstract class AbstractAlphanumericForm extends AbstractNavTable {
 
 	// ValidationComponentUtils.setMandatory(comp, true);
 	ValidationComponentUtils.setMessageKey(field, validateKey);
+	field.addKeyListener(this);
     }
 
     protected void initJTextField(JTextField field) {
-
 	String propertyKey = getPropertyKey(field.getName());
 	String validateKey = getValidateKey(field.getName());
-
 	ValidationComponentFactory
 		.bindTextField(field, formBinding
 			.getModel(FormModel.PROPERTIES_MAP.get(propertyKey)),
 			false);
-
 	// ValidationComponentUtils.setMandatory(comp, true);
 	ValidationComponentUtils.setMessageKey(field, validateKey);
+	field.addKeyListener(this);
     }
 
     protected void initJTextArea(JTextArea textArea) {
-
 	String propertyKey = getPropertyKey(textArea.getName());
 	// String validateKey = getValidateKey(textArea.getName());
-
 	ValidationComponentFactory
 		.bindTextArea(textArea, formBinding
 			.getModel(FormModel.PROPERTIES_MAP.get(propertyKey)),
 			true);
+	textArea.addKeyListener(this);
     }
 
     protected void initJCheckBox(JCheckBox checkBox) {
-
 	String propertyKey = getPropertyKey(checkBox.getName());
 	// String validateKey = getValidateKey(checkBox.getName());
-
 	ValidationComponentFactory
 		.bindCheckBox(checkBox, formBinding
 			.getModel(FormModel.PROPERTIES_MAP.get(propertyKey)));
-
+	checkBox.addItemListener(this);
     }
 
     protected String[] getJComboBoxValues(JComboBox comboBox) {
-
 	int nvalues = comboBox.getItemCount();
 	String[] values;
 	if (nvalues > 0) {
@@ -241,18 +241,16 @@ public abstract class AbstractAlphanumericForm extends AbstractNavTable {
 	} else {
 	    values = new String[] { "" };
 	}
-
 	return values;
     }
 
     protected void initJComboBox(JComboBox comboBox) {
-
 	String propertyKey = getPropertyKey(comboBox.getName());
 	String[] values = getJComboBoxValues(comboBox);
-
 	ValidationComponentFactory
 		.bindComboBox(comboBox, values, formBinding
 			.getModel(FormModel.PROPERTIES_MAP.get(propertyKey)));
+	comboBox.addItemListener(this);
     }
 
     protected void setListeners() {
@@ -260,6 +258,16 @@ public abstract class AbstractAlphanumericForm extends AbstractNavTable {
     }
 
     protected void removeListeners() {
+	for (JComponent c : widgetsVector) {
+	    if (c instanceof JCheckBox) {
+		((JCheckBox) c).removeItemListener(this);
+	    } else if (c instanceof JComboBox) {
+		((JComboBox) c).removeItemListener(this);
+	    } else if ((c instanceof JTextField)
+		    || (c instanceof JFormattedTextField)) {
+		((JTextField) c).removeKeyListener(this);
+	    }
+	}
 	formBinding.removePropertyChangeListener(validationChangeHandler);
     }
 
@@ -412,45 +420,33 @@ public abstract class AbstractAlphanumericForm extends AbstractNavTable {
 
     @Override
     public void fillValues() {
-
 	try {
+	    setFillingValues(true);
 	    if (currentPosition >= recordset.getRowCount()) {
 		currentPosition = recordset.getRowCount() - 1;
 	    }
 	    if (currentPosition < 0) {
 		currentPosition = 0;
 	    }
-
 	    for (int i = 0; i < widgetsVector.size(); i++) {
-
 		JComponent comp = widgetsVector.get(i);
-
 		if (comp instanceof JFormattedTextField) {
 		    fillJFormattedTextField((JFormattedTextField) comp);
-		}
-
-		else if (comp instanceof JTextField) {
+		} else if (comp instanceof JTextField) {
 		    fillJTextField((JTextField) comp);
-		}
-
-		else if (comp instanceof JCheckBox) {
+		} else if (comp instanceof JCheckBox) {
 		    fillJCheckBox((JCheckBox) comp);
-		}
-
-		else if (comp instanceof JTextArea) {
+		} else if (comp instanceof JTextArea) {
 		    fillJTextArea((JTextArea) comp);
-		}
-
-		else if (comp instanceof JComboBox) {
+		} else if (comp instanceof JComboBox) {
 		    fillJComboBox((JComboBox) comp);
 		}
-
 	    }
-
 	    fillSpecificValues();
-
 	} catch (ReadDriverException e) {
 	    logger.error(e.getMessage(), e);
+	} finally {
+	    setFillingValues(false);
 	}
     }
 
@@ -489,10 +485,8 @@ public abstract class AbstractAlphanumericForm extends AbstractNavTable {
     }
 
     public int[] getIndexes() {
-
 	String[] names = null;
 	int[] indexes = null;
-
 	try {
 	    Set<String> widgetsValuesKeys = formModel.getWidgetValues()
 		    .keySet();
@@ -513,13 +507,10 @@ public abstract class AbstractAlphanumericForm extends AbstractNavTable {
 
     @Override
     protected boolean saveRecord() {
-
 	if (isSaveable()) {
-
 	    int[] attIndexes = getIndexes();
 	    String[] attValues = getValues();
 	    int currentPos = Long.valueOf(currentPosition).intValue();
-
 	    try {
 		ToggleEditing te = new ToggleEditing();
 		if (!model.isEditing()) {
@@ -564,7 +555,6 @@ public abstract class AbstractAlphanumericForm extends AbstractNavTable {
     }
 
     private void addRecord() {
-
 	// Create a new empty record
 	// showWarning();
 	if (onlySelectedCB.isSelected()) {
@@ -618,4 +608,70 @@ public abstract class AbstractAlphanumericForm extends AbstractNavTable {
 	super.windowClosed();
     }
 
+    @Override
+    public void keyPressed(KeyEvent e) {
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+	if (!isFillingValues()) {
+	    setChangedValues();
+	}
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+    }
+
+    @Override
+    public void itemStateChanged(ItemEvent e) {
+	if (!isFillingValues()) {
+	    setChangedValues();
+	}
+    }
+
+    private boolean isFillingValues() {
+	return isFillingValues;
+    }
+
+    private void setFillingValues(boolean b) {
+	isFillingValues = b;
+    }
+
+    protected void setChangedValues() {
+	Vector<Integer> indexes = getIndexesOfChangedValues();
+	if (indexes.size() > 0) {
+	    setChangedValues(true);
+	} else {
+	    setChangedValues(false);
+	}
+	enableSaveButton(isChangedValues());
+    }
+
+    protected Vector<Integer> getIndexesOfChangedValues() {
+	Vector<Integer> changedValues = new Vector<Integer>();
+	try {
+	    SelectableDataSource rs = model.getRecordset();
+	    Map<String, String> widgetValues = formModel.getWidgetValues();
+	    Value value;
+	    String key;
+	    String valueInRecordSet;
+	    String valueInModel;
+	    for (int index = 0; index < rs.getFieldCount(); index++) {
+		value = rs.getFieldValue(currentPosition, index);
+		valueInRecordSet = value
+			.getStringValue(ValueWriter.internalValueWriter);
+		key = rs.getFieldName(index);
+		valueInModel = widgetValues.get(key.toLowerCase());
+		valueInRecordSet = valueInRecordSet.replaceAll("''", "").trim();
+		valueInModel = valueInModel.trim();
+		if (!valueInRecordSet.equals(valueInModel)) {
+		    changedValues.add(new Integer(index));
+		}
+	    }
+	} catch (ReadDriverException e) {
+	    logger.error(e.getMessage(), e);
+	}
+	return changedValues;
+    }
 }

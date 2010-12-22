@@ -188,7 +188,6 @@ public abstract class AbstractForm extends AbstractNavTable implements
     protected void initJCheckBox(JCheckBox checkBox) {
 	String propertyKey = getNameOfPropertyKey(checkBox.getName());
 	// String validateKey = getValidateKey(checkBox.getName());
-
 	ValidationComponentFactory
 		.bindCheckBox(checkBox, formBinding
 			.getModel(FormModel.PROPERTIES_MAP.get(propertyKey)));
@@ -223,6 +222,16 @@ public abstract class AbstractForm extends AbstractNavTable implements
     }
 
     protected void removeListeners() {
+	for (JComponent c : widgetsVector) {
+	    if (c instanceof JCheckBox) {
+		((JCheckBox) c).removeItemListener(this);
+	    } else if (c instanceof JComboBox) {
+		((JComboBox) c).removeItemListener(this);
+	    } else if ((c instanceof JTextField)
+		    || (c instanceof JFormattedTextField)) {
+		((JTextField) c).removeKeyListener(this);
+	    }
+	}
 	formBinding.removePropertyChangeListener(validationChangeHandler);
     }
 
@@ -453,7 +462,7 @@ public abstract class AbstractForm extends AbstractNavTable implements
 		valueInRecordSet = value
 			.getStringValue(ValueWriter.internalValueWriter);
 		key = rs.getFieldName(index);
-		valueInModel = widgetValues.get(key);
+		valueInModel = widgetValues.get(key.toLowerCase());
 		valueInRecordSet = valueInRecordSet.replaceAll("''", "").trim();
 		valueInModel = valueInModel.trim();
 		if (!valueInRecordSet.equals(valueInModel)) {
