@@ -30,11 +30,11 @@ public abstract class AbstractAlphanumericFormWithFilesLink extends AbstractAlph
 	actionsToolBar.add(getButton(BUTTON_SELECTION));
 	actionsToolBar.add(getButton(BUTTON_SAVE));
 	actionsToolBar.add(getButton(BUTTON_REMOVE));
-
+	newB = getNavTableButton(newB, "/table_add.png", "new_register");
+	actionsToolBar.add(newB);
 	filesLinkB = getNavTableButton(filesLinkB, "/fileslink.png",
 		"filesLinkTooltip");
 	actionsToolBar.add(filesLinkB);
-
 	return actionsToolBar;
     }
 

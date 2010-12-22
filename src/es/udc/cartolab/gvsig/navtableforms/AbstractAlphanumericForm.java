@@ -154,9 +154,7 @@ public abstract class AbstractAlphanumericForm extends AbstractNavTable
     public JPanel getCenterPanel() {
 	JPanel panel = new JPanel(new BorderLayout());
 	JScrollPane scrollPane = new JScrollPane(formBody);
-
 	panel.add(scrollPane);
-
 	return panel;
     }
 
@@ -518,6 +516,33 @@ public abstract class AbstractAlphanumericForm extends AbstractNavTable
 	return false;
     }
 
+    @Override
+    protected void deleteRecord() {
+	try {
+	    model.startEdition(EditionEvent.ALPHANUMERIC);
+
+	    IWriteable w = (IWriteable) model;
+	    IWriter writer = w.getWriter();
+
+	    ITableDefinition tableDef = model.getTableDefinition();
+	    writer.initialize(tableDef);
+
+	    model.doRemoveRow((int) currentPosition, EditionEvent.ALPHANUMERIC);
+	    model.stopEdition(writer, EditionEvent.ALPHANUMERIC);
+
+	    refreshGUI();
+
+	} catch (StartWriterVisitorException e) {
+	    logger.error(e.getMessage(), e);
+	} catch (ReadDriverException e) {
+	    logger.error(e.getMessage(), e);
+	} catch (InitializeWriterException e) {
+	    logger.error(e.getMessage(), e);
+	} catch (StopWriterVisitorException e) {
+	    logger.error(e.getMessage(), e);
+	}
+    }
+
     // Listeners
     // Properties Event Handling
     // *********************************************************
@@ -571,6 +596,8 @@ public abstract class AbstractAlphanumericForm extends AbstractNavTable
 
 		model.stopEdition(writer, EditionEvent.ALPHANUMERIC);
 		last();
+		setChangedValues(true);
+		refreshGUI();
 	    }
 	} catch (StartWriterVisitorException e) {
 	    logger.error(e.getMessage(), e);
@@ -585,9 +612,12 @@ public abstract class AbstractAlphanumericForm extends AbstractNavTable
 
     @Override
     public void actionPerformed (ActionEvent e) {
-	super.actionPerformed(e);
 	if (e.getSource() == newB) {
 	    addRecord();
+	} else if (e.getSource() == removeB) {
+	    deleteRecord();
+	} else {
+	    super.actionPerformed(e);
 	}
     }
 
