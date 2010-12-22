@@ -224,6 +224,7 @@ public abstract class AbstractSQLForm extends AbstractForm {
 					primarykey.keySet().toArray(new String[0]),
 					primarykey.values().toArray(new String[0])
 			);
+			refreshGUI();
 		} catch (ExpansionFileReadException e) {
 			logger.error(e.getMessage(), e);
 		} catch (ReadDriverException e) {
