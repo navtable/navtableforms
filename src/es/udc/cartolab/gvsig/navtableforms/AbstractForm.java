@@ -21,6 +21,10 @@ package es.udc.cartolab.gvsig.navtableforms;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.HeadlessException;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Iterator;
@@ -61,8 +65,8 @@ import es.udc.cartolab.gvsig.navtableforms.validation.FormModel;
 import es.udc.cartolab.gvsig.navtableforms.validation.FormParserUtils;
 import es.udc.cartolab.gvsig.navtableforms.validation.ValidationComponentFactory;
 
-
-public abstract class AbstractForm extends AbstractNavTable {
+public abstract class AbstractForm extends AbstractNavTable implements
+	KeyListener, ItemListener {
 
     protected final FormModel formModel;
     protected final Binding formBinding;
@@ -133,8 +137,7 @@ public abstract class AbstractForm extends AbstractNavTable {
     protected String getNameBeforeDots(String widgetName) {
 	if (widgetName.contains(".")) {
 	    return widgetName.substring(0, widgetName.indexOf("."));
-	}
- else {
+	} else {
 	    return widgetName;
 	}
     }
@@ -157,6 +160,7 @@ public abstract class AbstractForm extends AbstractNavTable {
 			false);
 	// ValidationComponentUtils.setMandatory(comp, true);
 	ValidationComponentUtils.setMessageKey(field, validateKey);
+	field.addKeyListener(this);
     }
 
     protected void initJTextField(JTextField field) {
@@ -168,6 +172,7 @@ public abstract class AbstractForm extends AbstractNavTable {
 			false);
 	// ValidationComponentUtils.setMandatory(comp, true);
 	ValidationComponentUtils.setMessageKey(field, validateKey);
+	field.addKeyListener(this);
     }
 
     protected void initJTextArea(JTextArea textArea) {
@@ -176,7 +181,8 @@ public abstract class AbstractForm extends AbstractNavTable {
 	ValidationComponentFactory
 		.bindTextArea(textArea, formBinding
 			.getModel(FormModel.PROPERTIES_MAP.get(propertyKey)),
-			true);
+			false);
+	textArea.addKeyListener(this);
     }
 
     protected void initJCheckBox(JCheckBox checkBox) {
@@ -186,6 +192,7 @@ public abstract class AbstractForm extends AbstractNavTable {
 	ValidationComponentFactory
 		.bindCheckBox(checkBox, formBinding
 			.getModel(FormModel.PROPERTIES_MAP.get(propertyKey)));
+	checkBox.addItemListener(this);
     }
 
     protected String[] getJComboBoxValues(JComboBox comboBox) {
@@ -208,6 +215,7 @@ public abstract class AbstractForm extends AbstractNavTable {
 	ValidationComponentFactory
 		.bindComboBox(comboBox, values, formBinding
 			.getModel(FormModel.PROPERTIES_MAP.get(propertyKey)));
+	comboBox.addItemListener(this);
     }
 
     protected void setListeners() {
@@ -381,14 +389,11 @@ public abstract class AbstractForm extends AbstractNavTable {
 		    fillJFormattedTextField((JFormattedTextField) comp);
 		} else if (comp instanceof JTextField) {
 		    fillJTextField((JTextField) comp);
-		}
- else if (comp instanceof JCheckBox) {
+		} else if (comp instanceof JCheckBox) {
 		    fillJCheckBox((JCheckBox) comp);
-		}
- else if (comp instanceof JTextArea) {
+		} else if (comp instanceof JTextArea) {
 		    fillJTextArea((JTextArea) comp);
-		}
- else if (comp instanceof JComboBox) {
+		} else if (comp instanceof JComboBox) {
 		    fillJComboBox((JComboBox) comp);
 		}
 	    }
@@ -439,12 +444,18 @@ public abstract class AbstractForm extends AbstractNavTable {
 	try {
 	    SelectableDataSource rs = layer.getRecordset();
 	    Map<String, String> widgetValues = formModel.getWidgetValues();
+	    Value value;
+	    String key;
+	    String valueInRecordSet;
+	    String valueInModel;
 	    for (int index = 0; index < rs.getFieldCount(); index++) {
-		Value value = rs.getFieldValue(currentPosition, index);
-		String valueInRecordSet = value
+		value = rs.getFieldValue(currentPosition, index);
+		valueInRecordSet = value
 			.getStringValue(ValueWriter.internalValueWriter);
-		String key = rs.getFieldName(index);
-		String valueInModel = widgetValues.get(key);
+		key = rs.getFieldName(index);
+		valueInModel = widgetValues.get(key);
+		valueInRecordSet = valueInRecordSet.replaceAll("''", "").trim();
+		valueInModel = valueInModel.trim();
 		if (!valueInRecordSet.equals(valueInModel)) {
 		    changedValues.add(new Integer(index));
 		}
@@ -542,9 +553,6 @@ public abstract class AbstractForm extends AbstractNavTable {
 	public void propertyChange(PropertyChangeEvent evt) {
 	    updateComponentTreeMandatoryAndSeverity((ValidationResult) evt
 		    .getNewValue());
-	    if (!isFillingValues()) {
-		setChangedValues();
-	    }
 	}
     }
 
@@ -552,6 +560,28 @@ public abstract class AbstractForm extends AbstractNavTable {
     public void windowClosed() {
 	removeListeners();
 	super.windowClosed();
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+	if (!isFillingValues()) {
+	    setChangedValues();
+	}
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+    }
+
+    @Override
+    public void itemStateChanged(ItemEvent e) {
+	if (!isFillingValues()) {
+	    setChangedValues();
+	}
     }
 
 }
