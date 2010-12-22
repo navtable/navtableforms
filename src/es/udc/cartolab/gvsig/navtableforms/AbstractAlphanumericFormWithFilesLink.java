@@ -55,8 +55,6 @@ public abstract class AbstractAlphanumericFormWithFilesLink extends AbstractAlph
 
     @Override
     public void actionPerformed(ActionEvent e) {
-	super.actionPerformed(e);
-
 	if (e.getSource() == filesLinkB) {
 	    String layerName = getLayerName();
 	    String baseDirectory;
@@ -69,8 +67,9 @@ public abstract class AbstractAlphanumericFormWithFilesLink extends AbstractAlph
 	    } catch (ReadDriverException e1) {
 		logger.error(e1.getMessage(), e1);
 	    }
+	} else {
+	    super.actionPerformed(e);
 	}
-
     }
 
 }
