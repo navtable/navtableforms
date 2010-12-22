@@ -695,4 +695,14 @@ public abstract class AbstractAlphanumericForm extends AbstractNavTable
 	}
 	return changedValues;
     }
+    
+    @Override
+    public Object getWindowProfile() {
+	return null;
+    }
+    
+    @Override
+    public void selectRow(int row) {
+	// TODO Auto-generated method stub
+    }
 }
