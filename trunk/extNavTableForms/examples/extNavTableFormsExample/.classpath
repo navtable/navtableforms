@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/libFMap"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/_fwAndami"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/appgvSIG"/>
+	<classpathentry kind="lib" path="lib/jgoodies-binding-2.1.0rc.jar"/>
+	<classpathentry kind="lib" path="lib/jgoodies-common-0.9.9.jar"/>
+	<classpathentry kind="lib" path="lib/validation-2.1.0.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.8.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/extNavTable"/>
+	<classpathentry kind="lib" path="lib/formsrt.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/extNavTableForms"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
