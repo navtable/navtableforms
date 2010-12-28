@@ -1,5 +1,8 @@
+#if $firstTag
 <?xml version="1.0" encoding="UTF-8"?>
 <METADATA>
+#end if
+#if $layerTag
   <LAYER alias="${layeralias}">
     <NAMEOFLAYER>${layername}</NAMEOFLAYER>
     <GEOMETRY>${layergeom}</GEOMETRY>
@@ -20,4 +23,7 @@
       #end for
     </RECORDSET>
   </LAYER>
+#end if
+#if $lastTag
 </METADATA>
+#end if
