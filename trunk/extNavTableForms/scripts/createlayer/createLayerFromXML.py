@@ -20,23 +20,24 @@ class CreateESRIShapeFileFromXML():
         parser.parse(open(xmlFileName))
 
     def __getGeometryType(self, typeFromXML):
-        if (typeFromXML == "Point"):
+        print typeFromXML
+        if (typeFromXML.upper() == "POINT"):
             return ogr.wkbPoint
-        elif (typeFromXML == "Polygon"):
+        elif (typeFromXML.upper() == "POLYGON"):
             return ogr.wkbPolygon
-        elif (typeFromXML == "Line"):
+        elif (typeFromXML.upper() == "LINE"):
             return ogr.wkbLineString
         else:
             raise InvalidGeometryTypeFromXML(typeFromXML)
 
     def __getFieldType(self, typeFromXML):
-        if (typeFromXML == "Integer"):
+        if (typeFromXML.upper() == "INTEGER"):
             return ogr.OFTInteger
-        elif (typeFromXML == "String"):
+        elif (typeFromXML.upper() == "STRING"):
             return ogr.OFTString
-        elif (typeFromXML == "Boolean"):
+        elif (typeFromXML.upper() == "BOOLEAN"):
             return ogr.OFTString
-        elif (typeFromXML == "Real"):
+        elif (typeFromXML.upper() == "REAL"):
             return ogr.OFTReal
         else:
             raise InvalidFieldTypeFromXML(typeFromXML)
