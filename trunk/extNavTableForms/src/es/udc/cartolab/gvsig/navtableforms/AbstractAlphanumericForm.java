@@ -206,6 +206,8 @@ public abstract class AbstractAlphanumericForm extends AbstractNavTable
     }
 
     protected void initJTextArea(JTextArea textArea) {
+    textArea.setLineWrap(true);
+    textArea.setWrapStyleWord(true);
 	String propertyKey = getPropertyKey(textArea.getName());
 	// String validateKey = getValidateKey(textArea.getName());
 	ValidationComponentFactory
