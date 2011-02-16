@@ -27,6 +27,8 @@ class CreateESRIShapeFileFromXML():
             return ogr.wkbPolygon
         elif (typeFromXML.upper() == "LINE"):
             return ogr.wkbLineString
+        elif (typeFromXML.upper() == "ALPHANUMERIC"):
+            return ogr.wkbNone
         else:
             raise InvalidGeometryTypeFromXML(typeFromXML)
 

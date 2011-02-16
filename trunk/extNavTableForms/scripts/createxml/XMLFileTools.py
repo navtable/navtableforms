@@ -35,6 +35,7 @@ class XMLFileTools():
     admittableStringsForPointType = ['POINT', 'PUNTO']
     admittableStringsForLineType = ['LINE', 'LINEA', 'LÍNEA']
     admittableStringsForPolygonType = ['POLYGON', 'POLIGONO', 'POLÍGONO']
+    admitableStringsForAlphanumericType = ['ALPHANUMERIC', 'ALFANUMERICO', 'ALFANUMÉRICO', 'ALFANUMERICA', 'ALFANUMÉRICA']
 
     admittableStringsForIntegerType = ['INTEGER', 'ENTERO','INT']
     admittableStringsForRealType = ['REAL']
@@ -81,8 +82,10 @@ class XMLFileTools():
             normativizedLayerGeom = 'line'
         elif layerGeom.upper() in self.admittableStringsForPolygonType:
             normativizedLayerGeom = 'polygon'
+        elif layerGeom.upper() in self.admitableStringsForAlphanumericType:
+            normativizedLayerGeom = 'alphanumeric'
         else:
-            sys.stderr.write('Something bad happen!')
+            sys.stderr.write('setLayerGeom: Something bad happen!\n')
             sys.exit(-1)
 
         self._template.layergeom = normativizedLayerGeom
@@ -105,6 +108,10 @@ class XMLFileTools():
             normativizedFieldType = 'boolean'
         elif fieldType.upper() in self.admittableStringsForDateType:
             normativizedFieldType = 'date'
+        else:
+            sys.stderr.write('getNormativizedFieldType: Something bad happen!\n')
+            sys.exit(-1)
+
 
         return normativizedFieldType
 
