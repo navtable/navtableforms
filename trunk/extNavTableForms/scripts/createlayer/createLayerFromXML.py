@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import sys
+import sys, os
 from osgeo import ogr
 import string
 from xml.sax import make_parser
@@ -13,11 +13,30 @@ class InvalidFieldTypeFromXML(Exception): pass
 
 class CreateESRIShapeFileFromXML():
 
-    def __init__(self, xmlFileName):
+    def __init__(self, xmlFileName, dataFolderPath=None):
+
+        if dataFolderPath != None:
+            self.shpFolderPath = dataFolderPath + '/shp/'
+            self.dbfFolderPath = dataFolderPath + '/dbf/'
+            self.ensureDir(dataFolderPath)
+        else:
+            self.shpFolderPath = './'
+            self.dbfFolderPath = './'
+
         parser = make_parser()
         self.xmlParser = XMLSAXParser()
         parser.setContentHandler(self.xmlParser)
         parser.parse(open(xmlFileName))
+
+
+    def ensureDir(self, f):
+        if os.path.isdir(f):
+            sys.stderr.write(f + ' already exists. Remove it before continue\n')
+            sys.exit()
+        else:
+            os.makedirs(self.shpFolderPath)
+            os.makedirs(self.dbfFolderPath)
+
 
     def __getGeometryType(self, typeFromXML):
         print typeFromXML
@@ -68,8 +87,15 @@ class CreateESRIShapeFileFromXML():
     def getDataSource(self):
         drv = self.getDriver()
         #ds = None
-        name = self.getFileName()
-        ds = drv.CreateDataSource(name)
+        filePath = self.getFileName()
+
+        if self.dbfFolderPath != "":
+            if self.layerType == ogr.wkbNone:
+                filePath = self.dbfFolderPath + filePath
+            else:
+                filePath = self.shpFolderPath + filePath
+
+        ds = drv.CreateDataSource(filePath)
         if ds is None:
             print "Creation of output file failed.\n"
             sys.exit( 1 )
@@ -112,5 +138,11 @@ class CreateESRIShapeFileFromXML():
 
 if __name__ == "__main__":
     import sys
-    lyrCreator = CreateESRIShapeFileFromXML(sys.argv[1])
+
+    if len(sys.argv) == 2:
+        lyrCreator = CreateESRIShapeFileFromXML(sys.argv[1])
+    elif len(sys.argv) == 3:
+        lyrCreator = CreateESRIShapeFileFromXML(sys.argv[1], sys.argv[2])
+    else:
+        sys.exit('Error, incorrect number of input parameters')
     lyrCreator.createLayers()
