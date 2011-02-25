@@ -3,13 +3,17 @@
 # Module to create classes related to jgoodies validation framework (model, binding & validator).
 # @author: Andres Maneiro
 
-import os
-import sqlite3
+import os, sys
 from Cheetah.Template import Template
 
 import TemplatesVars
 from TemplatesDefinition import ModelTemplate, ModelValidatorTemplate, BindingTemplate
 from parserAbeille import ParserAbeille
+
+from xml.sax import make_parser
+sys.path.append('../createlayer')
+
+from parserORMLite import XMLSAXParser
 
 class CreateJavaValidationModel:
     """Define the methods to create the classes related to jgoodies validation framework (model & validator).
@@ -25,8 +29,9 @@ class CreateJavaValidationModel:
     varreallist    = []
     outputdir      = ""
 
-    def __init__(self, outputdir, abeillefiles):
+    def __init__(self, outputdir, xmlFileName, abeillefiles):
         self.outputdir = os.path.dirname(outputdir)
+        self.xmlFileName = xmlFileName
 
         # It takes as files as we wanted
         for i in range(len(abeillefiles)):
@@ -72,10 +77,8 @@ class CreateJavaValidationModel:
     def getSqlitePath(self):
         return TemplatesVars.sqlitepath
 
-    def getEnumLayers(self):
-        """Return a dictionary keeping the names of the tables and their fields:
-           enumlayers = {'table1': [field1, field2, field3], 'table2': [field1, field2]}"""
-
+    def getEnumLayersFromSqlite(self):
+        import sqlite3
         dbpath = self.getSqlitePath()
         conn = sqlite3.connect(dbpath)
 
@@ -88,6 +91,32 @@ class CreateJavaValidationModel:
             for j in range(len(aux)):
                 values.append(aux[j][1])
             enumlayers[tables[i]] = values
+
+        return enumlayers
+
+    def getEnumLayers(self):
+        """Return a dictionary keeping the names of the tables and their fields:
+           enumlayers = {'table1': [field1, field2, field3], 'table2': [field1, field2]}"""
+
+
+        values = []
+        tables = TemplatesVars.enumlayers
+        enumlayers = {}
+
+        parser = make_parser()
+        xmlParser = XMLSAXParser()
+        parser.setContentHandler(xmlParser)
+        parser.parse(open(self.xmlFileName))
+
+        ls = xmlParser.getLayerSet()
+        layers = ls.getLayerSet()
+
+        for l in range(len(layers)):
+            if layers[l].getLayerName() in tables:
+                recordset = layers[l].getRecordSet()
+                for r in range(len(recordset)):
+                    values.append(recordset[r]['name'])
+                enumlayers[layers[l].getLayerName()] = values
 
         return enumlayers
 
@@ -221,15 +250,17 @@ if __name__ == "__main__":
 
     Parameters:
     - argv[1]:  output directory
-    - argv[2:]: abeille files
+    - argv[2]: xml data model definition
+    - argv[3:]: abeille files
     """
 
     import sys
 
     outputdir    = sys.argv[1]
-    abeillefiles = sys.argv[2:]
+    xmlFileName  = sys.argv[2]
+    abeillefiles = sys.argv[3:]
 
-    newmodel = CreateJavaValidationModel(outputdir, abeillefiles)
+    newmodel = CreateJavaValidationModel(outputdir, xmlFileName, abeillefiles)
     newmodel.createModel()
     newmodel.createValidator()
     newmodel.createBinding()

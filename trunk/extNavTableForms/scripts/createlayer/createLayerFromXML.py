@@ -16,8 +16,8 @@ class CreateESRIShapeFileFromXML():
     def __init__(self, xmlFileName, dataFolderPath=None):
 
         if dataFolderPath != None:
-            self.shpFolderPath = dataFolderPath + '/shp/'
-            self.dbfFolderPath = dataFolderPath + '/dbf/'
+            self.shpFolderPath = dataFolderPath + '/SHP/'
+            self.dbfFolderPath = dataFolderPath + '/DBF/'
             self.ensureDir(dataFolderPath)
         else:
             self.shpFolderPath = './'
