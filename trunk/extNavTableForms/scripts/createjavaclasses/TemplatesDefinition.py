@@ -3,16 +3,18 @@ from Cheetah.Template import Template
 class JavaCodeTemplateVars(Template):
       # vars to fill out before calling cheetah template to generate code
       packagename    = ""
+      pkgnamevalidation = ""
       classname      = ""
       enumlayers     = [] # array with layers this form will work on. The first is the main one.
       formname       = ""
       formtitle      = ""
-
+      sqlite         = None
       classmodel     = ""
       objectmodel    = ""
       classbinding   = ""
       objectbinding  = ""
       classvalidator = ""
+
 
       nro_widgets    = None
       hastables      = None # boolean, indicates if a form has tables
@@ -41,6 +43,8 @@ class ModelTemplate(Template):
       classmodel    = ""
       varsstring    = [None]
       varsboolean   = [None]
+      varsint       = [None]
+      varsreal      = [None]
       varsnonwidget = ""
       enumlayers    = ""
 

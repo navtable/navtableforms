@@ -26,6 +26,12 @@ class CreateJavaFormFromAbeille:
     def getPackageName(self):
         return TemplatesVars.pkgnameform
 
+    def getPackageNameValidation(self):
+        return TemplatesVars.pkgnamevalidation
+
+    def getUseSqlite(self):
+        return TemplatesVars.sqlite
+
     def getClassName(self):
         return TemplatesVars.classform
 
@@ -174,6 +180,8 @@ class CreateJavaFormFromAbeille:
         t = JavaCodeTemplateVars(template)
 
         t.packagename    = self.getPackageName()
+        t.pkgnamevalidation = self.getPackageNameValidation()
+        t.sqlite         = self.getUseSqlite()
         t.classname      = self.getClassName()
         t.enumlayers     = self.getEnumLayers()
         t.formname       = self.getFormName()

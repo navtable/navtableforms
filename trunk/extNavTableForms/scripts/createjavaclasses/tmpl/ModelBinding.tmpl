@@ -1,71 +1,28 @@
 package $packagename;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import com.jgoodies.binding.beans.Model;
+import com.jgoodies.validation.Validator;
 
-import com.jgoodies.binding.PresentationModel;
-import com.jgoodies.validation.ValidationResult;
-import com.jgoodies.validation.ValidationResultModel;
-import com.jgoodies.validation.util.DefaultValidationResultModel;
+import es.udc.cartolab.gvsig.navtableforms.validation.FormBinding;
+import es.udc.cartolab.gvsig.pmf.forms.validation.model.CentroSaludModel;
+import es.udc.cartolab.gvsig.pmf.validation.validator.CentroSaludValidator;
+
 /**
  * Provides all models to bind the view to its domain model,
- * an instance of {@link ${classmodel}}.
+ * an instance of {@link${classmodel}}.
  *
  */
-public class $classbinding extends PresentationModel<${classmodel}> {
+public class  $classbinding extends FormBinding<${classmodel}> {
 
-	private final ValidationResultModel validationResultModel;
+       // Instance Creation ******************************************************
 
+       public ${classbinding}(Model model) {
+              super(model);
+              }
 
-	// Instance Creation ******************************************************
-
-	public ${classbinding}($classmodel $objectmodel) {
-		super(${objectmodel});
-		validationResultModel = new DefaultValidationResultModel();
-		initEventHandling();
-		updateValidationResult();
-	}
-
-
-	// Exposing Models ********************************************************
-
-	public ValidationResultModel getValidationResultModel() {
-		return validationResultModel;
-	}
-
-
-	// Initialization *********************************************************
-
-	/**
-	 * Listens to changes in all properties of the current Order
-	 * and to Order changes.
-	 */
-	private void initEventHandling() {
-		PropertyChangeListener handler = new ValidationUpdateHandler();
-		addBeanPropertyChangeListener(handler);
-		getBeanChannel().addValueChangeListener(handler);
-	}
-
-
-	// Event Handling *********************************************************
-
-	private void updateValidationResult() {
-		$classmodel $objectmodel = getBean();
-		ValidationResult result = new ${classvalidator}().validate(${objectmodel});
-		validationResultModel.setResult(result);
-	}
-
-
-	/**
-	 * Validates the order using an OrderValidator and
-	 * updates the validation result.
-	 */
-	private final class ValidationUpdateHandler implements PropertyChangeListener {
-
-		public void propertyChange(PropertyChangeEvent evt) {
-			updateValidationResult();
-		}
-
-	}
+              @Override
+              protected Validator getValidator() {
+                        return new ${classvalidator}();
+                        }
 
 }

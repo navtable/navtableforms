@@ -45,20 +45,28 @@ import com.jgoodies.validation.ValidationResultModel;
 import com.jgoodies.validation.view.ValidationComponentUtils;
 
 import es.udc.cartolab.gvsig.arqueoponte.forms.utils.DAOArqueoPonte;
+#if $sqlite
 import es.udc.cartolab.gvsig.arqueoponte.forms.utils.SQLAbstractNavTable;
-import es.udc.cartolab.gvsig.arqueoponte.forms.utils.ormlite.ORMLite;
-import es.udc.cartolab.gvsig.arqueoponte.preferences.Preferences;
-import es.udc.cartolab.gvsig.arqueoponte.utils.FormParserUtils;
-import es.udc.cartolab.gvsig.arqueoponte.utils.Utils;
-import es.udc.cartolab.gvsig.arqueoponte.validation.ValidationComponentFactory;
-import es.udc.cartolab.gvsig.arqueoponte.validation.${classbinding};
-import es.udc.cartolab.gvsig.arqueoponte.validation.${classmodel};
-
-
-#if $hastables
-public class $classname extends SQLAbstractNavTable implements TableModelListener {
 #else
-public class $classname extends SQLAbstractNavTable	{
+import es.udc.cartolab.gvsig.navtableforms.AbstractForm:
+#end if
+import es.udc.cartolab.gvsig.navtableforms.ormlite.ORMLite;
+import es.udc.cartolab.gvsig.navtableforms.validation.FormParserUtils;
+import es.udc.cartolab.gvsig.loadData.preferences.Preferences;
+import es.udc.cartolab.gvsig.navtableforms.Utils;
+import es.udc.cartolab.gvsig.navtableforms.validation.ValidationComponentFactory;
+import ${pkgnamevalidation}.binding.${classbinding};
+import ${pkgnamevalidation}.model.${classmodel};
+
+#if $sqlite
+public class $classname extends SQLAbstractNavTable
+#else
+public class $classname extends AbstractForm
+#end if
+#if $hastables
+implements TableModelListener {
+#else
+{
 #end if
 
 	// Model and Binding for this view
@@ -140,7 +148,6 @@ public class $classname extends SQLAbstractNavTable	{
 		return $objectbinding;
 	}
 
-	@Override
 	public WindowInfo getWindowInfo() {
 		if (viewInfo == null){
 			viewInfo = new WindowInfo(WindowInfo.MODELESSDIALOG | WindowInfo.RESIZABLE | WindowInfo.PALETTE);

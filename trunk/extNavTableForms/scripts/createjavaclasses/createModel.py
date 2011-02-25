@@ -175,6 +175,8 @@ class CreateJavaValidationModel:
         t.packagename   = self.getPackageName()
         t.classmodel    = self.getClassModelName()
         t.varsstring    = self.getVarStringList()
+        t.varsint       = self.getVarIntList()
+        t.varsreal      = self.getVarRealList()
         t.varsboolean   = self.getVarBooleanList()
         t.varsnonwidget = self.getNonWidgetVars()
         t.enumlayers    = self.getEnumLayers()

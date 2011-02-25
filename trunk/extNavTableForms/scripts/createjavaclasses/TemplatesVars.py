@@ -3,22 +3,25 @@ templatemodel     = "./tmpl/Model.tmpl"
 templatevalidator = "./tmpl/ModelValidator.tmpl"
 templatebinding   = "./tmpl/ModelBinding.tmpl"
 
-formname          = "RegistroMaterial.xml"
-sqlitepath        = '/home/amaneiro/cartolab/arqueologiaponte/Data/_DB/arqueoPonteBD.sqlite3'
+formname          = "centro_salud.xml"
+sqlite            = False
+sqlitepath        = ''
 
-pkgnameform       = "es.udc.cartolab.gvsig.arqueoponte.forms"
-pkgnamevalidation = "es.udc.cartolab.gvsig.arqueoponte.validation"
+pkgnameform       = "es.udc.cartolab.gvsig.pmf.forms"
+pkgnamevalidation = "es.udc.cartolab.gvsig.pmf.forms.validation"
 
-classform         = "MaterialRegistrationForm"
-classmodel        = "MaterialRegistrationModel"
-objectmodel       = "materialRegistrationModel"
-classbinding      = "MaterialRegistrationBinding"
-objectbinding     = "materialRegistrationBinding"
-classvalidator    = "MaterialRegistrationValidator"
+baseClassName     = "CentroSalud"
+baseObjectName    = "centroSalud"
+classform         = baseClassName + "Form"
+classmodel        = baseClassName + "Model"
+objectmodel       = baseObjectName + "Model"
+classbinding      = baseClassName + "Binding"
+objectbinding     = baseObjectName + "Binding"
+classvalidator    = baseClassName + "Validator"
 
-formtitle         = "Registro de Material" # title of the java form
-layerinxml        = "Registro_Material"
-enumlayers        = ["Registro_Material"] # array with layers this form will work on. The first is the main one.
+formtitle         = "Centros de Salud" # title of the java form
+layerinxml        = "centros_salud"
+enumlayers        = ["centros_salud"] # array with layers this form will work on. The first is the main one.
 varsnonwidget     = ['']
 
-pks               = "codPie" #i.e.: "id_conf, id_alt"
+pks               = "cod_csalud" #i.e.: "id_conf, id_alt"

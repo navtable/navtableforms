@@ -1,16 +1,14 @@
-package $packagename;
+package ${packagename}.model;
 
 import java.awt.Container;
-import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Map;
-import java.util.Vector;
+
 
 import javax.swing.JComponent;
 
-import com.jgoodies.binding.beans.Model;
+import es.udc.cartolab.gvsig.navtableforms.validation.FormModel;
+import es.udc.cartolab.gvsig.navtableforms.validation.FormParserUtils;
 
-import es.udc.cartolab.gvsig.arqueoponte.utils.FormParserUtils;
 
 /*
  * Some notes of JValidation framework:
@@ -19,22 +17,9 @@ import es.udc.cartolab.gvsig.arqueoponte.utils.FormParserUtils;
  *    - variable "idaltrio" has to be: getIdalt and setIdalt as its getter and setter
  *    - variable "idAltrio" has to be: getIdAlt and setIdAlt as its getter and setter
  */
-public class $classmodel extends Model {
+public class $classmodel extends FormModel {
 
-    // Hastable with properties connecting view and model ********************************
-    public static final Hashtable<String,String> PROPERTIES_MAP = new Hashtable<String,String>();
-
-    // maps holding on the values needed to store in every layer
-    private final Map<String, String> widgetValues = new HashMap<String, String>(){};
-    private final Map<String, String> nonWidgetValues = new HashMap<String, String>() {};
-
-    // Each map represents a layer to store values in.
-    // They are pointers to values stored in either widgetValues or nonWidgetValues maps
-    #for $i in range(len($enumlayers.keys())):
-    private final Map<String, String> ${enumlayers.keys()[$i]} = new HashMap<String, String>() {};
-    #end for
-
-    // Private variables needed for framework ********************************************
+       // Private variables needed for framework ********************************************
     #for $i in range(len($varsstring)):
     private String $varsstring[$i];
     #end for
@@ -45,55 +30,62 @@ public class $classmodel extends Model {
 
     // Constructor and initialization methods *************************************************************
     public ${classmodel}(Container c){
-        createPropertiesVectorFromWidgets(c);
-        setDefaultValues();
+           super(c);
     }
 
-    /*
-     * Every private variable has a PROPERTY associated (_public static final_ variable).
-     * This method gets all widgets from xml form and creates the properties.
-     * i.e.: PROPERTIES_MAP.put("IDALTRIO", "idaltrio");
-     */
-    private void createPropertiesVectorFromWidgets(Container c) {
-
-        String aux;
-        String name;
-
-        Vector<JComponent>  widgetsVector;
-        widgetsVector       = FormParserUtils.getWidgetsWithContentFromContainer(c);
-
-        for (int i = 0; i < widgetsVector.size(); i++){
-            aux  = widgetsVector.get(i).getName(); // aux = "name_widget.TYPE.CHECKING"
-            name = aux.substring(0, aux.indexOf(".")).trim();
-            PROPERTIES_MAP.put(name.toUpperCase(), name);
-        }
+    @Override
+    public String getModelName() {
+    return "${classmodel}";
     }
 
-    /*
-     * Setting all model values. The model represent ALL values from Modulo
-     * and the forms don't have all the values but SOME of them.
-     *
-     * So, it's necessary to set a default value for every model property
-     * in order to validation doesn't depend on properties not being in a particular form.
-     * i.e.: "rios form" could not have the property "altura". If "altura" is not initialized,
-     * validation will break because the variable doesn't obey the constraints.
-     *
-     */
-    private void setDefaultValues(){
-    	#for $i in range(len($varsstring)):
-        $varsstring[$i] = "0";
-    	#end for
-
-    	#for $i in range(len($varsboolean)):
-        $varsboolean[$i] = false;
-    	#end for
-
-	#if len($varsnonwidget) > 0
-	#for $i in range(len($varsnonwidget)):
-	nonWidgetValues.put("${varsnonwidget[$i]}", "");
-	#end for
-	#end if
+  @Override
+    protected void setDefaultValues() {
+    setDefaultValuesForIntFields();
+    setDefaultValuesForStringFields();
+    setDefaultValuesForWidgetMap();
     }
+
+       private void setDefaultValuesForWidgetMap() {
+       //int values
+       #for $i in range(len($varsint)):
+       widgetValues.put("$varsint[$i]", $varsint[$i]);
+       #end for
+       #for $i in range(len($varsreal)):
+       widgetValues.put("$varsreal[$i]", $varsreal[$i]);
+       #end for
+
+       // string values
+       #for $i in range(len($varsstring)):
+       #if not $varsstring[$i] in $varsint:
+           #if not $varsstring[$i] in $varsreal:
+                  widgetValues.put("$varsstring[$i]", $varsstring[$i]);
+           #end if
+       #end if
+       #end for
+
+
+       }
+
+    private void setDefaultValuesForStringFields() {
+      #for $i in range(len($varsstring)):
+       #if not $varsstring[$i] in $varsint:
+           #if not $varsstring[$i] in $varsreal:
+                  $varsstring[$i] = getGvsigDefaultString();
+           #end if
+       #end if
+       #end for
+    }
+
+    private void setDefaultValuesForIntFields() {
+       //int values
+       #for $i in range(len($varsint)):
+       $varsint[$i] = Integer.toString(getGvsigDefaultInt());
+       #end for
+       #for $i in range(len($varsreal)):
+       $varsreal[$i] = Integer.toString(getGvsigDefaultInt());
+       #end for
+    }
+
 
     // Getters & Setters *************************************************************
     #for $i in range(len($varsstring)):
@@ -124,6 +116,7 @@ public class $classmodel extends Model {
 
     // Maps **************************************************************************
 
+/*
 	#if len($varsnonwidget) > 0
 	//map with non-widget values
 	public Map<String, String> getNonwidgetvalues(){
@@ -152,15 +145,10 @@ public class $classmodel extends Model {
 	}
 
         // maps for every layer
-	#for $i in range(len($enumlayers.keys())):
-	public Map<String, String> get${enumlayers.keys()[$i]} (){
-
-		#for $j in range(len($enumlayers.values()[$i]))
-		${enumlayers.keys()[$i]}.put("${enumlayers.values()[$i][$j]}", ${enumlayers.values()[$i][$j]});
-		#end for
-
-		return ${enumlayers.keys()[$i]};
-	}
-
-	#end for
+*/
+   // map with widget values
+    @Override
+    public Map<String, String> getWidgetValues() {
+    return widgetValues;
+    }
 }
