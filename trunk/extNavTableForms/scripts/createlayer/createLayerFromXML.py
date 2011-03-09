@@ -118,10 +118,9 @@ class CreateESRIShapeFileFromXML():
             field_defn = ogr.FieldDefn(
                 str(field['name']),
                 self.__getFieldType(str(field['type'])))
-            if(str(field['type'].lower()) == 'boolean'):
-                field_defn.SetWidth(5)
-            else:
-                field_defn.SetWidth(int(field['length']))
+            field_defn.SetWidth(int(field['length']))
+            field_defn.SetPrecision(int(field['precision']))
+
             if lyr.CreateField(field_defn) != 0:
                 print "Creating Name field failed.\n"
                 sys.exit( 1 )
@@ -133,6 +132,7 @@ class CreateESRIShapeFileFromXML():
             self.fileName = str(layer.getFileName())
             self.layerName = str(layer.getLayerName())
             self.fieldsArray = layer.getRecordSet()
+
             self.layerType = self.__getGeometryType(str(layer.getGeometryType()))
             self.createLayer()
 

@@ -29,10 +29,11 @@ class Table():
     def getDatabaseName(self):
         return self.databaseName
 
-    def addFieldToTable(self, fieldName, fieldType, fieldLength):
+    def addFieldToTable(self, fieldName, fieldType, fieldLength, fieldPrecision):
         newField = {'name': fieldName,
                     'type': fieldType,
-                    'length': fieldLength}
+                    'length': fieldLength,
+                    'precision': fieldPrecision}
         self.fields.append(newField)
 
     def getFields(self):
@@ -76,11 +77,12 @@ class Layer():
     def getRecordSet(self):
         return self.__recordSet
 
-    def addFieldToRecordSet(self, fieldName, fieldType, fieldLength):
+    def addFieldToRecordSet(self, fieldName, fieldType, fieldLength, fieldPrecision):
         newField = {
             'name': fieldName,
             'type': fieldType,
-            'length': fieldLength}
+            'length': fieldLength,
+            'precision': fieldPrecision}
         self.__recordSet.append(newField)
 
 class LayerSet():
@@ -105,6 +107,7 @@ class XMLSAXParser(ContentHandler):
         self.tmpFieldName = ""
         self.tmpFieldType = ""
         self.tmpFieldLength = ""
+        self.tmpFieldDecimalCount = ""
         self.tmpValue = ""
 
     def setNode(self, name):
@@ -129,6 +132,9 @@ class XMLSAXParser(ContentHandler):
             self.setNode(name.lower())
         elif name.lower() == "fieldlength":
             self.setNode(name.lower())
+        elif name.lower() == "fielddecimalcount":
+            self.setNode(name.lower())
+
 
     def characters(self, ch):
         self.tmpValue = ch
@@ -140,11 +146,13 @@ class XMLSAXParser(ContentHandler):
             self.tmpLayer.addFieldToRecordSet(
                 self.tmpFieldName,
                 self.tmpFieldType,
-                self.tmpFieldLength)
+                self.tmpFieldLength,
+                self.tmpFieldDecimalCount)
             self.tmpTable.addFieldToTable(
                 self.tmpFieldName,
                 self.tmpFieldType,
-                self.tmpFieldLength)
+                self.tmpFieldLength,
+                self.tmpFieldDecimalCount)
         elif name.lower() == "layer":
             self.layerSet.addLayer(self.tmpLayer)
             self.database.addTableToDatabase(self.tmpTable)
@@ -163,6 +171,8 @@ class XMLSAXParser(ContentHandler):
             self.tmpFieldType = self.tmpValue
         elif action == "fieldlength":
             self.tmpFieldLength = self.tmpValue
+        elif action == "fielddecimalcount":
+            self.tmpFieldDecimalCount = self.tmpValue
 
     def getLayerSet(self):
         return self.layerSet

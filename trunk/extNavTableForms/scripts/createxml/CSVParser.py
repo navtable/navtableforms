@@ -131,6 +131,7 @@ class CSVParser():
                 oldLayerName = row[self.getLayerNameColumn()]
                 self._template = XMLFileTools()
                 self.addNewLayerTags(row)
+                self.addNewFieldTags(row)
 
             elif actualLayerName == oldLayerName:
                 self.addNewFieldTags(row)
