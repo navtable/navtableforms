@@ -58,7 +58,7 @@ class CreateESRIShapeFileFromXML():
             return ogr.OFTString
         elif (typeFromXML.upper() == "BOOLEAN"):
             return ogr.OFTString
-        elif (typeFromXML.upper() == "REAL"):
+        elif (typeFromXML.upper() == "DOUBLE"):
             return ogr.OFTReal
         else:
             raise InvalidFieldTypeFromXML(typeFromXML)

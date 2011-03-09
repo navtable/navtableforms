@@ -27,7 +27,7 @@ class XMLFileTools():
     defaults = {
         "string": ['', 'VARCHAR', 50, 0, '', ''],
         "integer": ['', 'INTEGER', 12, 0, '', ''],
-        "real":  ['', 'DOUBLE',  18, 6, '', ''],
+        "double":  ['', 'DOUBLE',  18, 6, '', ''],
         "boolean": ['', 'BOOLEAN',  0, 0, '', ''],
         "date":    ['', 'DATE',     0, 0, '', '']
     }
@@ -38,7 +38,7 @@ class XMLFileTools():
     admitableStringsForAlphanumericType = ['ALPHANUMERIC', 'ALFANUMERICO', 'ALFANUMÉRICO', 'ALFANUMERICA', 'ALFANUMÉRICA']
 
     admittableStringsForIntegerType = ['INTEGER', 'ENTERO','INT']
-    admittableStringsForRealType = ['REAL']
+    admittableStringsForRealType = ['REAL', 'DOUBLE']
     admittableStringsForStringType = ['STRING', 'TEXT','TEXTO']
     admittableStringsForBooleanType = ['BOOLEAN', 'BOOL','BOOLEANO']
     admittableStringsForDateType = ['DATE', 'FECHA']
@@ -101,7 +101,7 @@ class XMLFileTools():
         if fieldType.upper() in self.admittableStringsForIntegerType:
             normativizedFieldType = 'integer'
         elif fieldType.upper() in self.admittableStringsForRealType:
-            normativizedFieldType = 'real'
+            normativizedFieldType = 'double'
         elif fieldType.upper() in self.admittableStringsForStringType:
             normativizedFieldType = 'string'
         elif fieldType.upper() in self.admittableStringsForBooleanType:
