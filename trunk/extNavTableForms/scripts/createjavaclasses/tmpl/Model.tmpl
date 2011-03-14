@@ -4,10 +4,7 @@ import java.awt.Container;
 import java.util.Map;
 
 
-import javax.swing.JComponent;
-
 import es.udc.cartolab.gvsig.navtableforms.validation.FormModel;
-import es.udc.cartolab.gvsig.navtableforms.validation.FormParserUtils;
 
 
 /*
@@ -43,12 +40,13 @@ public class $classmodel extends FormModel {
     setDefaultValuesForIntFields();
     setDefaultValuesForStringFields();
     setDefaultValuesForWidgetMap();
+    setDefaultValuesForBooleanFields();
     }
 
        private void setDefaultValuesForWidgetMap() {
        //int values
        #for $i in range(len($varsint)):
-       widgetValues.put("$varsint[$i]", $varsint[$i]);
+            widgetValues.put("$varsint[$i]", $varsint[$i]);
        #end for
        #for $i in range(len($varsreal)):
        widgetValues.put("$varsreal[$i]", $varsreal[$i]);
@@ -58,12 +56,15 @@ public class $classmodel extends FormModel {
        #for $i in range(len($varsstring)):
        #if not $varsstring[$i] in $varsint:
            #if not $varsstring[$i] in $varsreal:
-                  widgetValues.put("$varsstring[$i]", $varsstring[$i]);
+           widgetValues.put("$varsstring[$i]", $varsstring[$i]);
            #end if
        #end if
        #end for
 
-
+       //boolean values
+       #for $i in range(len($varsboolean)):
+       widgetValues.put("$varsboolean[$i]", String.valueOf($varsboolean[$i]));
+       #end for
        }
 
     private void setDefaultValuesForStringFields() {
@@ -85,6 +86,13 @@ public class $classmodel extends FormModel {
        $varsreal[$i] = Integer.toString(getGvsigDefaultInt());
        #end for
     }
+
+    private void setDefaultValuesForBooleanFields() {
+       #for $i in range(len($varsboolean)):
+        $varsboolean[$i] = getGvsigDefaultBoolean();
+       #end for
+    }
+
 
 
     // Getters & Setters *************************************************************
