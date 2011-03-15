@@ -502,11 +502,12 @@ public abstract class AbstractAlphanumericForm extends AbstractNavTable
 	    int currentPos = Long.valueOf(currentPosition).intValue();
 	    try {
 		ToggleEditing te = new ToggleEditing();
-		if (!model.isEditing()) {
+		boolean wasEditing = model.isEditing();
+		if (!wasEditing) {
 		    te.startEditing(model);
 		}
 		te.modifyValues(model, currentPos, attIndexes, attValues);
-		if (model.isEditing()) {
+		if (!wasEditing) {
 		    te.stopEditing(model);
 		}
 		setChangedValues(false);
