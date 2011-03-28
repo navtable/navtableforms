@@ -103,7 +103,13 @@ public class $classmodel extends FormModel {
 
     public void set${varsstring[$i][0].upper()}${varsstring[$i][1:]}(String newValue) {
         String oldValue = get${varsstring[$i][0].upper()}${varsstring[$i][1:]}();
+        if (newValue.equals(null)) {
+           #if ($varsstring[$i] in $varsint) or  ($varsstring[$i] in $varsreal):
+           newValue = getGvsigDefaultString();
+           #end if
+        }
         $varsstring[$i] = newValue;
+        widgetValues.put("$varsstring[$i]",$varsstring[$i]);
         firePropertyChange((String) PROPERTIES_MAP.get("${varsstring[$i].upper()}"), oldValue, newValue);
     }
 
@@ -116,7 +122,11 @@ public class $classmodel extends FormModel {
 
     public void set${varsboolean[$i][0].upper()}${varsboolean[$i][1:]}(boolean newValue) {
         boolean oldValue = get${varsboolean[$i][0].upper()}${varsboolean[$i][1:]}();
+        if (newValue != true && newValue != false) {
+              newValue = getGvsigDefaultBoolean();
+        }
         $varsboolean[$i] = newValue;
+        widgetValues.put("$varsboolean[$i]",String.valueOf($varsboolean[$i]))
         firePropertyChange((String) PROPERTIES_MAP.get("${varsboolean[$i].upper()}"), oldValue, newValue);
     }
 
