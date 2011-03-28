@@ -199,7 +199,7 @@ public class XMLSAXParser extends DefaultHandler{
 		} else if (qName.equalsIgnoreCase("FIELDALIAS")) {
 			tmpFieldDescription.setFieldAlias(tmpVal);
 		} else if (qName.equalsIgnoreCase("FIELDLENGTH")) {
-			tmpFieldDescription.setFieldLength(Integer.parseInt(tmpVal));
+			tmpFieldDescription.setFieldLength(getAsInteger(tmpVal));
 		} else if (qName.equalsIgnoreCase("DEFAULTVALUE")) {
 			switch (tmpType) {
 			case Types.VARCHAR:
@@ -247,7 +247,7 @@ public class XMLSAXParser extends DefaultHandler{
 						.createNullValue());
 			}
 		} else if (qName.equalsIgnoreCase("FIELDDECIMALCOUNT")) {
-			tmpFieldDescription.setFieldDecimalCount(Integer.parseInt(tmpVal));
+			tmpFieldDescription.setFieldDecimalCount(getAsInteger(tmpVal));
 		}
 
 		// set tmp table structure
@@ -280,6 +280,16 @@ public class XMLSAXParser extends DefaultHandler{
 		}
 
 	}
+	
+	 private int getAsInteger(String tmpVal) {
+		int val = 0;
+		try {
+		    val = Integer.parseInt(tmpVal);
+		} catch (NumberFormatException nfe) {
+		    nfe.printStackTrace();
+		}
+		return val;
+	    }
 
 }
 
