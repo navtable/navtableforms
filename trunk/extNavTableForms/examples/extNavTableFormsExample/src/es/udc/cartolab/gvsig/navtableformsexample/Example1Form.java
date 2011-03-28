@@ -1,6 +1,10 @@
 package es.udc.cartolab.gvsig.navtableformsexample;
 
+import java.awt.Component;
 import java.awt.Container;
+import java.awt.event.ActionEvent;
+
+import javax.swing.JCheckBox;
 
 import org.apache.log4j.Logger;
 
@@ -17,7 +21,7 @@ public class Example1Form extends AbstractForm {
 
     public Example1Form(FLyrVect layer) {
 	super(layer);
-	viewInfo.setHeight(300);
+	viewInfo.setHeight(350);
 	viewInfo.setWidth(450);
 	viewInfo.setTitle("Example 1");
     }
@@ -44,7 +48,40 @@ public class Example1Form extends AbstractForm {
 
     @Override
     protected void fillSpecificValues() {
-	// TODO Auto-generated method stub
+	enableComponentIfCheckBoxIsSelected("hay_anali", "resultado");
     }
 
+    protected void enableComponentIfCheckBoxIsSelected(String chbName, String cmpName) {
+	JCheckBox chb = (JCheckBox) formBody.getComponentByName(chbName);
+	Component cmp = formBody.getComponentByName(cmpName);
+
+	if (chb.isSelected()) {
+	    cmp.setEnabled(true);
+	} else {
+	    cmp.setEnabled(false);
+	}
+    }
+
+
+    protected void setListeners() {
+	super.setListeners();
+	JCheckBox hay_anali = (JCheckBox) formBody.getComponentByName("hay_anali");
+	hay_anali.setActionCommand("hay_anali");
+	hay_anali.addActionListener(this);
+    }
+
+    protected void removeListeners() {
+	JCheckBox hay_anali = (JCheckBox) formBody.getComponentByName("hay_anali");
+	hay_anali.removeActionListener(this);
+	super.removeListeners();
+    }
+
+    public void actionPerformed(ActionEvent e) {
+	super.actionPerformed(e);
+	String action = e.getActionCommand();
+	if (action.equals("hay_anali")) {
+	    enableComponentIfCheckBoxIsSelected("hay_anali", "resultado");
+	}
+
+    }
 }

@@ -10,6 +10,8 @@ public class Example1Model extends FormModel {
     private String codigo;
     private String capacidad;
     private String gestion;
+    private boolean hay_anali;
+    private String resultado;
 
     public Example1Model(Container c) {
 	super(c);
@@ -31,19 +33,26 @@ public class Example1Model extends FormModel {
 	// string values
 	widgetValues.put("codigo", codigo);
 	widgetValues.put("gestion", gestion);
+	widgetValues.put("resultado", resultado);
 	// int values
 	widgetValues.put("capacidad", capacidad);
+	//boolean values
+	widgetValues.put("hay_anali", String.valueOf(hay_anali));
     }
 
     private void setDefaultValuesForStringFields() {
 	gestion = getGvsigDefaultString();
 	codigo = getGvsigDefaultString();
+	resultado = getGvsigDefaultString();
     }
 
     private void setDefaultValuesForIntFields() {
 	capacidad = Integer.toString(getGvsigDefaultInt());
     }
 
+    private void setDefaultValuesForBooleanFields() {
+	hay_anali = getGvsigDefaultBoolean();
+    }
     // Getters & Setters
     // *************************************************************
 
@@ -90,6 +99,35 @@ public class Example1Model extends FormModel {
 	widgetValues.put("gestion", gestion);
 	firePropertyChange((String) PROPERTIES_MAP.get("GESTION"), oldValue,
 		newValue);
+    }
+
+
+    public boolean getHay_anali() {
+	return hay_anali;
+    }
+
+    public void setHay_anali(boolean newValue) {
+	boolean oldValue = getHay_anali();
+	if (newValue != true && newValue != false) {
+	    newValue = getGvsigDefaultBoolean();
+	}
+	hay_anali = newValue;
+	widgetValues.put("hay_anali", String.valueOf(hay_anali));
+	firePropertyChange((String) PROPERTIES_MAP.get("HAY_ANALI"), oldValue,
+		newValue);
+    }
+    public String getResultado(){
+	return resultado;
+    }
+
+    public void setResultado(String newValue) {
+	String oldValue = getResultado();
+	if (newValue.equals(null)) {
+	    newValue = getGvsigDefaultString();
+	}
+	resultado = newValue;
+	widgetValues.put("resultado", resultado);
+	firePropertyChange((String) PROPERTIES_MAP.get("RESULTADO"), oldValue, newValue);
     }
 
     // map with widget values
