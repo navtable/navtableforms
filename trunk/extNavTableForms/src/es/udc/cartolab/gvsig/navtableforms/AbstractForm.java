@@ -174,8 +174,8 @@ public abstract class AbstractForm extends AbstractNavTable implements
     }
 
     protected void initJTextArea(JTextArea textArea) {
-    textArea.setLineWrap(true);
-    textArea.setWrapStyleWord(true);
+	textArea.setLineWrap(true);
+	textArea.setWrapStyleWord(true);
 	String propertyKey = getNameOfPropertyKey(textArea.getName());
 	// String validateKey = getValidateKey(textArea.getName());
 	ValidationComponentFactory

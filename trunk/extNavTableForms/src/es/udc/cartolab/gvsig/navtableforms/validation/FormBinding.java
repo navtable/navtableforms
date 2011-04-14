@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU General Public License along with extNavTableForms.
  * If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 package es.udc.cartolab.gvsig.navtableforms.validation;
 
 import java.beans.PropertyChangeEvent;
@@ -30,7 +30,6 @@ public abstract class FormBinding<FormModel> extends PresentationModel<Model> {
 
     private final ValidationResultModel validationResultModel;
 
-
     // Instance Creation ******************************************************
 
     public FormBinding(Model model) {
@@ -40,13 +39,11 @@ public abstract class FormBinding<FormModel> extends PresentationModel<Model> {
 	updateValidationResult();
     }
 
-
     // Exposing Models ********************************************************
 
     public ValidationResultModel getValidationResultModel() {
 	return validationResultModel;
     }
-
 
     // Initialization *********************************************************
 
@@ -60,7 +57,6 @@ public abstract class FormBinding<FormModel> extends PresentationModel<Model> {
 	getBeanChannel().addValueChangeListener(handler);
     }
 
-
     // Event Handling *********************************************************
 
     private void updateValidationResult() {
@@ -70,7 +66,6 @@ public abstract class FormBinding<FormModel> extends PresentationModel<Model> {
     }
 
     protected abstract Validator getValidator();
-
 
     /**
      * Validates the order using an OrderValidator and updates the validation

@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU General Public License along with extNavTableForms.
  * If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 package es.udc.cartolab.gvsig.navtableforms;
 
@@ -21,28 +21,18 @@ import com.iver.andami.plugins.Extension;
 
 public class MockExtension extends Extension {
 
+    public void initialize() {
+    }
 
-	public void initialize() {
-		// TODO Auto-generated method stub
+    public void execute(String actionCommand) {
+    }
 
-	}
+    public boolean isEnabled() {
+	return false;
+    }
 
-
-	public void execute(String actionCommand) {
-		// TODO Auto-generated method stub
-
-	}
-
-
-	public boolean isEnabled() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-
-	public boolean isVisible() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    public boolean isVisible() {
+	return false;
+    }
 
 }

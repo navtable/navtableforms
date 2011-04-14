@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU General Public License along with extNavTableForms.
  * If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 package es.udc.cartolab.gvsig.navtableforms;
 
 import java.sql.SQLException;
@@ -145,7 +145,6 @@ public abstract class AbstractSQLForm extends AbstractForm {
 	useSQLite = useSQLite();
 
 	super.fillValues();
-
 
     }
 

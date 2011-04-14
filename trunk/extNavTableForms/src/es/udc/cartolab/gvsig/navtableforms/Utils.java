@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU General Public License along with extNavTableForms.
  * If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 package es.udc.cartolab.gvsig.navtableforms;
 
@@ -141,7 +141,6 @@ public class Utils {
 		logger.error(e.getMessage(), e);
 	    }
 
-
 	}
 
 	Driver driver = null;
@@ -179,7 +178,6 @@ public class Utils {
 	// System.out.println("values: " + values[i].toString());
 	// }
 
-
 	te.startEditing(vectLayer);
 	VectorialLayerEdited vle = (VectorialLayerEdited) CADExtension
 		.getEditionManager().getActiveLayerEdited();
@@ -214,18 +212,10 @@ public class Utils {
 	}
     }
 
-
-
-
-
-
-
-
-
     /**
      * Returns codes of every element of a given layer contained on the given
      * geometry
-     *
+     * 
      * @param geom
      *            the geometry (usually it should be a (multi)polygon)
      * @param layer
@@ -309,7 +299,6 @@ public class Utils {
 	}
 
     }
-
 
     /**
      * removes all CAD related buttons
@@ -429,7 +418,6 @@ public class Utils {
 
     }
 
-
     /**
      * @param recordset
      * @param attNames
@@ -451,7 +439,7 @@ public class Utils {
     /**
      * Dummy method that calls getIndexes with the recordset instead of the
      * layer
-     *
+     * 
      * @param layer
      * @return an array that represents the positions of the attributes in the +
      *         recordset
@@ -464,7 +452,7 @@ public class Utils {
 
     /**
      * Get the length of a line
-     *
+     * 
      * @param layer
      *            vectorial layer
      * @param geomPos
@@ -562,7 +550,6 @@ public class Utils {
     // }
     // }
 
-
     // /**
     // * Create a new feature, and initialize the attributes indexed on colPos
     // with the values
@@ -606,7 +593,6 @@ public class Utils {
     // CADExtension.getEditionManager().getActiveLayerEdited();
     // return vle;
     // }
-
 
     public final static void insertTheStringsAsValuesInTheirPosition(
 	    Value[] attValues, int[] colPos, String[] attStringValues,
@@ -653,7 +639,6 @@ public class Utils {
 	try {
 	    recordset = layer.getRecordset();
 
-
 	    values = new String[fields.length];
 	    for (int i = 0; i < fields.length; i++) {
 		int fieldIdx = recordset.getFieldIndexByName(fields[i]);
@@ -688,7 +673,8 @@ public class Utils {
 	return getValues(recordset, pos, new String[] { field })[0];
     }
 
-    public static String[] getValues(SelectableDataSource recordset, long pos, String[] fields) {
+    public static String[] getValues(SelectableDataSource recordset, long pos,
+	    String[] fields) {
 	ArrayList<String> values = new ArrayList<String>();
 	try {
 	    for (String field : fields) {

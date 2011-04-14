@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU General Public License along with extNavTableForms.
  * If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 package es.udc.cartolab.gvsig.navtableforms.validation;
 
 import java.awt.Container;
@@ -25,8 +25,6 @@ import java.util.Vector;
 import javax.swing.JComponent;
 
 import com.jgoodies.binding.beans.Model;
-
-
 
 public abstract class FormModel extends Model {
 
@@ -40,7 +38,6 @@ public abstract class FormModel extends Model {
 
     protected final Map<String, String> widgetValues = new LinkedHashMap<String, String>();
 
-
     public FormModel(Container c) {
 	setDefaultValues();
 	createPropertiesVectorFromWidgets(c);
@@ -49,13 +46,13 @@ public abstract class FormModel extends Model {
     /**
      * Setting all model values. The model represent ALL values from Modulo and
      * the forms don't have all the values but SOME of them.
-     *
+     * 
      * So, it's necessary to set a default value for every model property in
      * order to validation doesn't depend on properties not being in a
      * particular form. i.e.: "rios form" could not have the property "altura".
      * If "altura" is not initialized, validation will break because the
      * variable doesn't obey the constraints.
-     *
+     * 
      */
     protected abstract void setDefaultValues();
 
