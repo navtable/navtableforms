@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<METADATA>
+  <LAYER alias="${layeralias}">
+    <NAMEOFLAYER>${layername}</NAMEOFLAYER>
+    <TABLENAME>${tablename}</TABLENAME>
+    <GEOMETRY>${layergeom}</GEOMETRY>
+    <RECORDSET>
+      #for $row in $recordset
+      <FIELD>
+        <FIELDNAME>${row['fieldname']}</FIELDNAME>
+        <FIELDTYPE>${row['fieldtype']}</FIELDTYPE>
+        <FIELDLENGTH>${row['fieldlength']}</FIELDLENGTH>
+        <FIELDDECIMALCOUNT>${row['fielddecimalcount']}</FIELDDECIMALCOUNT>
+        <DEFAULTVALUE>${row['defaultvalue']}</DEFAULTVALUE>
+        <FIELDALIAS>${row['fieldalias']}</FIELDALIAS>
+      </FIELD>
+      #end for
+    </RECORDSET>
+  </LAYER>
+</METADATA>
