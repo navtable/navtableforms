@@ -43,6 +43,7 @@ class XMLFromPostgressFactory():
             'character varying': "string",
             'integer': "integer",
             'double': "double",
+            'double precision': "double",
             'boolean': "boolean",
             'date': "date"
         }
@@ -77,7 +78,7 @@ class XMLFromPostgressFactory():
         cur = conn.cursor()
         cur.execute("SELECT column_name, data_type, character_maximum_length " +
                     "FROM information_schema.columns " +
-                    "WHERE table_schema = %s AND table_name = %s",
+                    "WHERE table_schema = %s AND table_name = %s AND data_type <> 'USER-DEFINED'",
                     (schema, table))
 
         for row in cur.fetchall():
