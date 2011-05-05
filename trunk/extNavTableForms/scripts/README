@@ -31,7 +31,7 @@ Thinkg to keep in mind that you have to follow this naming convention for each c
   - RB  = RadioButton
   - CHB = CheckBox
 
-Example: the name of components for the example could be...
+Example: the name of components for the example could be:
 
 - road_name.TF
 - is_finish.CHB
@@ -43,18 +43,18 @@ Example: the name of components for the example could be...
 
 A XML defining the data model with data types supported by gvsig:
 
-  - fieldname: the name as defined in the data model
-  - fieldtype: type of value (one of gvsig supported types): varchar, integer, double, boolean, date.
-  - fieldalias: alias for the value, as far as I know, gvsig doesn't use this
-  - fieldlength: how long a field can be
-  - defaultvalue: value by default in case no one is provided
-  - fielddecimalcount: number of decimals allowed
+- fieldname: the name as defined in the data model
+- fieldtype: type of value (one of gvsig supported types): varchar, integer, double, boolean, date.
+- fieldalias: alias for the value, as far as I know, gvsig doesn't use this
+- fieldlength: how long a field can be
+- defaultvalue: value by default in case no one is provided
+- fielddecimalcount: number of decimals allowed
 
 Besides you will have to define some general data as:
 
-  - tablename: the name of the table/shape you want to define
-  - nameoflayer: the name of the table/shape you want to define
-  - geometry: type of geometry, the ones allowed are point, line, polygon and alphanumeric (in case is a dbf).
+- tablename: the name of the table/shape you want to define
+- nameoflayer: the name of the table/shape you want to define
+- geometry: type of geometry, the ones allowed are point, line, polygon and alphanumeric (in case is a dbf).
 
 Example of a XML:
 
