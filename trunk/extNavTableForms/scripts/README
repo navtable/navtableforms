@@ -100,3 +100,10 @@ Example of a XML:
 Just create the new extension and compile. Self-explained :)
 
 
+Apendix - Some utilities
+========================
+
+- I have a PostgreSQL database already defined. Is it possible to generate the XML from it?
+
+  Yep! Just use the createXMLFromPostgresDB.py script. Steps to make it work: 1) fill the parameters in ParamsForPostgresBuilder.py and 2) execute the script.
+
