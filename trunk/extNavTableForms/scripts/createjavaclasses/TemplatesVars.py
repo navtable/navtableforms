@@ -5,8 +5,8 @@ formname          = "ejemplo1form.xml"
 pkgnameform       = "es.udc.cartolab.gvsig.navtableformsexample"
 pkgnamevalidation = "es.udc.cartolab.gvsig.navtableformsexample.validation"
 
-baseClassName     = "Example1"
-baseObjectName    = "example1"
+baseclassname     = "Example1"
+baseobjectname    = "example1"
 
 formtitle         = "Example 1" # title of the java form
 layerinxml        = "example1"  # the alias of the layer as defined in the XML
@@ -28,9 +28,9 @@ templatemodel     = "./tmpl/Model.tmpl"
 templatevalidator = "./tmpl/ModelValidator.tmpl"
 templatebinding   = "./tmpl/ModelBinding.tmpl"
 
-classform         = baseClassName  + "Form"
-classmodel        = baseClassName  + "Model"
-objectmodel       = baseObjectName + "Model"
-classbinding      = baseClassName  + "Binding"
-objectbinding     = baseObjectName + "Binding"
-classvalidator    = baseClassName  + "Validator"
+classform         = baseclassname  + "Form"
+classmodel        = baseclassname  + "Model"
+objectmodel       = baseobjectname + "Model"
+classbinding      = baseclassname  + "Binding"
+objectbinding     = baseobjectname + "Binding"
+classvalidator    = baseclassname  + "Validator"
