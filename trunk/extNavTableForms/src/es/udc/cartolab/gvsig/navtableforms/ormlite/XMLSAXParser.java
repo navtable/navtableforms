@@ -174,12 +174,17 @@ public class XMLSAXParser extends DefaultHandler {
 
     /**
      * Callback called every time SAX parser gets text (spaces, text between
-     * tags, ...)
+     * tags, ...).
+     * 
+     * SAX parsers may return all contiguous character data in a single chunk,
+     * or they may split it into several chunks. See:
+     * http://download.oracle.com/javase/1.5.0/docs/api/org/xml/sax/
+     * ContentHandler.html#characters%28char%5b%5d,%20int,%20int%29
      */
     @Override
     public void characters(char[] ch, int start, int length)
 	    throws SAXException {
-	tmpVal = new String(ch, start, length);
+	tmpVal = tmpVal + new String(ch, start, length);
     }
 
     /**
