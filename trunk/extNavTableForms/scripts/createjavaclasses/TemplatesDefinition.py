@@ -4,7 +4,7 @@ class JavaCodeTemplateVars(Template):
       # vars to fill out before calling cheetah template to generate code
       packagename    = ""
       pkgnamevalidation = ""
-      classname      = ""
+      classform      = ""
       enumlayers     = [] # array with layers this form will work on. The first is the main one.
       formname       = ""
       formtitle      = ""
@@ -14,7 +14,6 @@ class JavaCodeTemplateVars(Template):
       classbinding   = ""
       objectbinding  = ""
       classvalidator = ""
-
 
       nro_widgets    = None
       hastables      = None # boolean, indicates if a form has tables

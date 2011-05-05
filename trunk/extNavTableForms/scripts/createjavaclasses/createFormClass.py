@@ -32,7 +32,7 @@ class CreateJavaFormFromAbeille:
     def getUseSqlite(self):
         return TemplatesVars.sqlite
 
-    def getClassName(self):
+    def getClassForm(self):
         return TemplatesVars.classform
 
     def getEnumLayers(self):
@@ -72,7 +72,7 @@ class CreateJavaFormFromAbeille:
         if outputdir == '':
             outputdir = basedir
 
-        javafile = outputdir + '/' + self.getClassName() + '.java'
+        javafile = outputdir + '/' + self.getClassForm() + '.java'
         print javafile
         print basedir
 
@@ -182,7 +182,7 @@ class CreateJavaFormFromAbeille:
         t.packagename    = self.getPackageName()
         t.pkgnamevalidation = self.getPackageNameValidation()
         t.sqlite         = self.getUseSqlite()
-        t.classname      = self.getClassName()
+        t.classform      = self.getClassForm()
         t.enumlayers     = self.getEnumLayers()
         t.formname       = self.getFormName()
         t.formtitle      = self.getFormTitle()
