@@ -66,7 +66,7 @@ public class XMLSAXParser extends DefaultHandler {
     private int tmpDBFIndex = 0;
     private int tmpType = -1;
 
-    private static Logger logger = null;
+    private static Logger logger = Logger.getLogger("SAX Parser");
 
     public XMLSAXParser(String xmlFile) {
 	tmpPK = new ArrayList<String>();
