@@ -447,25 +447,42 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	return true;
     }
 
+    /*
+     * @return an vector whith the values changed. Take into account that this
+     * method will only check the values defined in the form which can be a
+     * subset of the ones in the layer. For example: gid field, which is
+     * something gvsig needs, is not useful for the user so showing it in the
+     * form makes no sense.
+     */
     protected Vector<Integer> getIndexesOfChangedValues() {
 	Vector<Integer> changedValues = new Vector<Integer>();
 	try {
 	    SelectableDataSource rs = layer.getRecordset();
 	    Map<String, String> widgetValues = formModel.getWidgetValues();
 	    Value value;
-	    String key;
 	    String valueInRecordSet;
 	    String valueInModel;
-	    for (int index = 0; index < rs.getFieldCount(); index++) {
-		value = rs.getFieldValue(currentPosition, index);
-		valueInRecordSet = value
-			.getStringValue(ValueWriter.internalValueWriter);
-		key = rs.getFieldName(index);
-		valueInModel = widgetValues.get(key.toLowerCase());
-		valueInRecordSet = valueInRecordSet.replaceAll("''", "").trim();
-		valueInModel = valueInModel.trim();
-		if (!valueInRecordSet.equals(valueInModel)) {
-		    changedValues.add(new Integer(index));
+	    for (String field : widgetValues.keySet()) {
+		int index = -1;
+		String[] modelFields = rs.getFieldNames();
+		for (int i = 0; i < modelFields.length; i++) {
+		    if (modelFields[i].toLowerCase().equals(field)) {
+			index = i;
+		    }
+		}
+		if (index > -1) {
+		    value = rs.getFieldValue(currentPosition, index);
+		    valueInRecordSet = value
+			    .getStringValue(ValueWriter.internalValueWriter);
+		    valueInModel = widgetValues.get(field);
+		    valueInRecordSet = valueInRecordSet.replaceAll("''", "")
+			    .trim();
+		    valueInModel = valueInModel.trim();
+
+		    if (!valueInRecordSet.equals(valueInModel)) {
+			changedValues.add(new Integer(index));
+		    }
+
 		}
 	    }
 	} catch (ReadDriverException e) {
