@@ -183,10 +183,8 @@ public abstract class AbstractAlphanumericForm extends AbstractNavTable
     protected void initJFormattedTextField(JFormattedTextField field) {
 	String propertyKey = getPropertyKey(field.getName());
 	String validateKey = getValidateKey(field.getName());
-	ValidationComponentFactory
-		.bindFormattedTextField(field, formBinding
-			.getModel(FormModel.PROPERTIES_MAP.get(propertyKey)),
-			false);
+	ValidationComponentFactory.bindFormattedTextField(field, formBinding
+		.getModel(FormModel.PROPERTIES_MAP.get(propertyKey)), false);
 
 	// ValidationComponentUtils.setMandatory(comp, true);
 	ValidationComponentUtils.setMessageKey(field, validateKey);
@@ -196,10 +194,8 @@ public abstract class AbstractAlphanumericForm extends AbstractNavTable
     protected void initJTextField(JTextField field) {
 	String propertyKey = getPropertyKey(field.getName());
 	String validateKey = getValidateKey(field.getName());
-	ValidationComponentFactory
-		.bindTextField(field, formBinding
-			.getModel(FormModel.PROPERTIES_MAP.get(propertyKey)),
-			false);
+	ValidationComponentFactory.bindTextField(field, formBinding
+		.getModel(FormModel.PROPERTIES_MAP.get(propertyKey)), false);
 	// ValidationComponentUtils.setMandatory(comp, true);
 	ValidationComponentUtils.setMessageKey(field, validateKey);
 	field.addKeyListener(this);
@@ -210,19 +206,16 @@ public abstract class AbstractAlphanumericForm extends AbstractNavTable
 	textArea.setWrapStyleWord(true);
 	String propertyKey = getPropertyKey(textArea.getName());
 	// String validateKey = getValidateKey(textArea.getName());
-	ValidationComponentFactory
-		.bindTextArea(textArea, formBinding
-			.getModel(FormModel.PROPERTIES_MAP.get(propertyKey)),
-			true);
+	ValidationComponentFactory.bindTextArea(textArea, formBinding
+		.getModel(FormModel.PROPERTIES_MAP.get(propertyKey)), true);
 	textArea.addKeyListener(this);
     }
 
     protected void initJCheckBox(JCheckBox checkBox) {
 	String propertyKey = getPropertyKey(checkBox.getName());
 	// String validateKey = getValidateKey(checkBox.getName());
-	ValidationComponentFactory
-		.bindCheckBox(checkBox, formBinding
-			.getModel(FormModel.PROPERTIES_MAP.get(propertyKey)));
+	ValidationComponentFactory.bindCheckBox(checkBox, formBinding
+		.getModel(FormModel.PROPERTIES_MAP.get(propertyKey)));
 	checkBox.addItemListener(this);
     }
 
@@ -243,9 +236,8 @@ public abstract class AbstractAlphanumericForm extends AbstractNavTable
     protected void initJComboBox(JComboBox comboBox) {
 	String propertyKey = getPropertyKey(comboBox.getName());
 	String[] values = getJComboBoxValues(comboBox);
-	ValidationComponentFactory
-		.bindComboBox(comboBox, values, formBinding
-			.getModel(FormModel.PROPERTIES_MAP.get(propertyKey)));
+	ValidationComponentFactory.bindComboBox(comboBox, values, formBinding
+		.getModel(FormModel.PROPERTIES_MAP.get(propertyKey)));
 	comboBox.addItemListener(this);
     }
 
@@ -677,19 +669,26 @@ public abstract class AbstractAlphanumericForm extends AbstractNavTable
 	    SelectableDataSource rs = model.getRecordset();
 	    Map<String, String> widgetValues = formModel.getWidgetValues();
 	    Value value;
-	    String key;
 	    String valueInRecordSet;
 	    String valueInModel;
-	    for (int index = 0; index < rs.getFieldCount(); index++) {
-		value = rs.getFieldValue(currentPosition, index);
-		valueInRecordSet = value
-			.getStringValue(ValueWriter.internalValueWriter);
-		key = rs.getFieldName(index);
-		valueInModel = widgetValues.get(key.toLowerCase());
-		valueInRecordSet = valueInRecordSet.replaceAll("''", "").trim();
-		valueInModel = valueInModel.trim();
-		if (!valueInRecordSet.equals(valueInModel)) {
-		    changedValues.add(new Integer(index));
+	    for (String field : widgetValues.keySet()) {
+		int index = -1;
+		String[] modelFields = rs.getFieldNames();
+		for (int i = 0; i < modelFields.length; i++) {
+		    if (modelFields[i].toLowerCase().equals(field))
+			index = i;
+		}
+		if (index > -1) {
+		    value = rs.getFieldValue(currentPosition, index);
+		    valueInRecordSet = value
+			    .getStringValue(ValueWriter.internalValueWriter);
+		    valueInModel = widgetValues.get(field);
+		    valueInRecordSet = valueInRecordSet.replaceAll("''", "")
+			    .trim();
+		    valueInModel = valueInModel.trim();
+		    if (!valueInRecordSet.equals(valueInModel)) {
+			changedValues.add(new Integer(index));
+		    }
 		}
 	    }
 	} catch (ReadDriverException e) {
