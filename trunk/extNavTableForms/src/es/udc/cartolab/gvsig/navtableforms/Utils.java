@@ -646,6 +646,11 @@ public class Utils {
 		    Value val = recordset.getFieldValue(pos, fieldIdx);
 		    String aux = val
 			    .getStringValue(ValueWriter.internalValueWriter);
+		    if (aux.equalsIgnoreCase("null")) {
+			aux = "";
+		    } else if (aux.equalsIgnoreCase("'null'")) {
+			aux = "''";
+		    }
 		    if ((val.getSQLType() == Types.CHAR)
 			    || (val.getSQLType() == Types.VARCHAR)
 			    || (val.getSQLType() == Types.LONGVARCHAR)
