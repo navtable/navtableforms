@@ -86,6 +86,10 @@ public abstract class FormModel extends Model {
 	return GVSIG_DEFAULT_STRING;
     }
 
+    protected double getGvsigDefaultDouble() {
+	return GVSIG_DEFAULT_DOUBLE;
+    }
+
     public abstract Map<String, String> getWidgetValues();
 
     public String getWidgetValue(Object key) {
