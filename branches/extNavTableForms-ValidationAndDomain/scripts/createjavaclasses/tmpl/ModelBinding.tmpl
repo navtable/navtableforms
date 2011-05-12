@@ -1,0 +1,26 @@
+package $packagename;
+
+import com.jgoodies.binding.beans.Model;
+import com.jgoodies.validation.Validator;
+
+import es.udc.cartolab.gvsig.navtableforms.validation.FormBinding;
+
+/**
+ * Provides all models to bind the view to its domain model,
+ * an instance of {@link${classmodel}}.
+ *
+ */
+public class  $classbinding extends FormBinding<${classmodel}> {
+
+       // Instance Creation ******************************************************
+
+       public ${classbinding}(Model model) {
+              super(model);
+              }
+
+              @Override
+              protected Validator getValidator() {
+                        return new ${classvalidator}();
+                        }
+
+}

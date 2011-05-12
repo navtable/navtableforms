@@ -1,0 +1,29 @@
+#if $firstTag
+<?xml version="1.0" encoding="UTF-8"?>
+<METADATA>
+#end if
+#if $layerTag
+  <LAYER alias="${layeralias}">
+    <NAMEOFLAYER>${layername}</NAMEOFLAYER>
+    <GEOMETRY>${layergeom}</GEOMETRY>
+    <TABLENAME>${tablename}</TABLENAME>
+    <PRIMARYKEY>
+      <PKELEMENT>${primarykey}</PKELEMENT>
+    </PRIMARYKEY>
+    <RECORDSET>
+      #for $field in $recordset
+      <FIELD>
+        <FIELDNAME>${field[0]}</FIELDNAME>
+        <FIELDTYPE>${field[1]}</FIELDTYPE>
+        <FIELDLENGTH>${field[2]}</FIELDLENGTH>
+        <FIELDDECIMALCOUNT>${field[3]}</FIELDDECIMALCOUNT>
+        <DEFAULTVALUE>${field[4]}</DEFAULTVALUE>
+        <FIELDALIAS>${field[5]}</FIELDALIAS>
+      </FIELD>
+      #end for
+    </RECORDSET>
+  </LAYER>
+#end if
+#if $lastTag
+</METADATA>
+#end if

@@ -1,0 +1,170 @@
+package ${packagename}.model;
+
+import java.awt.Container;
+import java.util.Map;
+
+import es.udc.cartolab.gvsig.navtableforms.validation.FormModel;
+
+/*
+ * Some notes of JValidation framework:
+ * 1) it gets the Getters and Setters methods from introspection, so the names of these methods are quite strict.
+ *    i.e.:
+ *    - variable "idaltrio" has to be: getIdalt and setIdalt as its getter and setter
+ *    - variable "idAltrio" has to be: getIdAlt and setIdAlt as its getter and setter
+ */
+public class $classmodel extends FormModel {
+
+       // Private variables needed for framework ********************************************
+    #for $i in range(len($varsstring)):
+    private String $varsstring[$i];
+    #end for
+
+    #for $i in range(len($varsboolean)):
+    private boolean $varsboolean[$i];
+    #end for
+
+    // Constructor and initialization methods *************************************************************
+    public ${classmodel}(Container c){
+           super(c);
+    }
+
+    @Override
+    public String getModelName() {
+    return "${classmodel}";
+    }
+
+  @Override
+    protected void setDefaultValues() {
+    setDefaultValuesForIntFields();
+    setDefaultValuesForStringFields();
+    setDefaultValuesForWidgetMap();
+    setDefaultValuesForBooleanFields();
+    }
+
+       private void setDefaultValuesForWidgetMap() {
+       //int values
+       #for $i in range(len($varsint)):
+            widgetValues.put("$varsint[$i]", $varsint[$i]);
+       #end for
+       #for $i in range(len($varsreal)):
+       widgetValues.put("$varsreal[$i]", $varsreal[$i]);
+       #end for
+
+       // string values
+       #for $i in range(len($varsstring)):
+       #if not $varsstring[$i] in $varsint:
+           #if not $varsstring[$i] in $varsreal:
+           widgetValues.put("$varsstring[$i]", $varsstring[$i]);
+           #end if
+       #end if
+       #end for
+
+       //boolean values
+       #for $i in range(len($varsboolean)):
+       widgetValues.put("$varsboolean[$i]", String.valueOf($varsboolean[$i]));
+       #end for
+       }
+
+    private void setDefaultValuesForStringFields() {
+      #for $i in range(len($varsstring)):
+       #if not $varsstring[$i] in $varsint:
+           #if not $varsstring[$i] in $varsreal:
+                  $varsstring[$i] = getGvsigDefaultString();
+           #end if
+       #end if
+       #end for
+    }
+
+    private void setDefaultValuesForIntFields() {
+       //int values
+       #for $i in range(len($varsint)):
+       $varsint[$i] = Integer.toString(getGvsigDefaultInt());
+       #end for
+       #for $i in range(len($varsreal)):
+       $varsreal[$i] = Integer.toString(getGvsigDefaultInt());
+       #end for
+    }
+
+    private void setDefaultValuesForBooleanFields() {
+       #for $i in range(len($varsboolean)):
+        $varsboolean[$i] = getGvsigDefaultBoolean();
+       #end for
+    }
+
+
+
+    // Getters & Setters *************************************************************
+    #for $i in range(len($varsstring)):
+    public String get${varsstring[$i][0].upper()}${varsstring[$i][1:]}(){
+        return $varsstring[$i];
+    }
+
+    public void set${varsstring[$i][0].upper()}${varsstring[$i][1:]}(String newValue) {
+        String oldValue = get${varsstring[$i][0].upper()}${varsstring[$i][1:]}();
+        if (newValue.equals(null)) {
+           #if ($varsstring[$i] in $varsint) or  ($varsstring[$i] in $varsreal):
+           newValue = getGvsigDefaultString();
+           #end if
+        }
+        $varsstring[$i] = newValue;
+        widgetValues.put("$varsstring[$i]",$varsstring[$i]);
+        firePropertyChange((String) PROPERTIES_MAP.get("${varsstring[$i].upper()}"), oldValue, newValue);
+    }
+
+    #end for
+
+    #for $i in range(len($varsboolean)):
+    public boolean get${varsboolean[$i][0].upper()}${varsboolean[$i][1:]}(){
+        return $varsboolean[$i];
+    }
+
+    public void set${varsboolean[$i][0].upper()}${varsboolean[$i][1:]}(boolean newValue) {
+        boolean oldValue = get${varsboolean[$i][0].upper()}${varsboolean[$i][1:]}();
+        if (newValue != true && newValue != false) {
+              newValue = getGvsigDefaultBoolean();
+        }
+        $varsboolean[$i] = newValue;
+        widgetValues.put("$varsboolean[$i]",String.valueOf($varsboolean[$i]))
+        firePropertyChange((String) PROPERTIES_MAP.get("${varsboolean[$i].upper()}"), oldValue, newValue);
+    }
+
+    #end for
+
+    // Maps **************************************************************************
+
+/*
+	#if len($varsnonwidget) > 0
+	//map with non-widget values
+	public Map<String, String> getNonwidgetvalues(){
+		return nonWidgetValues;
+	}
+
+	public String getNonwidgetvalues(String key) {
+		return nonWidgetValues.get(key);
+	}
+
+	public void setNonwidgetvalues(String key, String newValue){
+		nonWidgetValues.put(key, newValue);
+	}
+	#end if
+
+	//map with widget values
+	public Map<String, String> getWidgetvalues(){
+		#for $i in range(len($varsstring)):
+		widgetValues.put("${varsstring[$i]}", ${varsstring[$i]});
+		#end for
+		#for $i in range(len($varsboolean)):
+		widgetValues.put("${varsboolean[$i]}", String.valueOf(${varsboolean[$i]}));
+		#end for
+
+		return widgetValues;
+	}
+
+        // maps for every layer
+*/
+   // map with widget values
+    @Override
+    public Map<String, String> getWidgetValues() {
+    return widgetValues;
+    }
+}

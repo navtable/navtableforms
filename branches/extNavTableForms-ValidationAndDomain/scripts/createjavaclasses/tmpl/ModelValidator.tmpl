@@ -1,0 +1,52 @@
+package $packagename;
+
+import com.jgoodies.validation.ValidationResult;
+import com.jgoodies.validation.Validator;
+import com.jgoodies.validation.util.PropertyValidationSupport;
+import com.jgoodies.validation.util.ValidationUtils;
+import es.udc.cartolab.gvsig.navtableforms.validation.ValidationCheckingUtils;
+
+public final class $classvalidator implements Validator<$classmodel> {
+
+
+	// Validation *************************************************************
+
+	/**
+	 * Validates this Validators Order and returns the result
+	 * as an instance of {@link ValidationResult}.
+	 *
+	 * @param order   the Order to be validated
+	 * @return the ValidationResult of the order validation
+	 */
+	public ValidationResult validate($classmodel $objectmodel) {
+		PropertyValidationSupport support =
+			new PropertyValidationSupport($objectmodel, "$classmodel");
+
+		// Check numerics and no black fields ************************************
+	#for $i in range(len($varsint)):
+		//$varsint[i]
+		if (!ValidationUtils.isNumeric(${objectmodel}.get${varsint[$i][0].upper()}${varsint[$i][1:]}())) {
+			support.addError("$varsint[i]", "debe ser un numero");
+		}
+		else if (ValidationUtils.isBlank(${objectmodel}.get${varsint[$i][0].upper()}${varsint[$i][1:]}())) {
+			support.addError("$varsint[i]", "es obligatorio");
+		}
+
+	#end for
+
+		// Check reals and no blank fields ***************************************
+	#for $i in range(len($varsreal)):
+		//$varsreal[i]
+		if (!ValidationCheckingUtils.isReal(${objectmodel}.get${varsreal[$i][0].upper()}${varsreal[$i][1:]}())) {
+			support.addError("$varsreal[i]", "debe ser un numero");
+		}
+		else if (ValidationUtils.isBlank(${objectmodel}.get${varsreal[$i][0].upper()}${varsreal[$i][1:]}())) {
+			support.addError("$varsreal[i]", "es obligatorio");
+		}
+
+	#end for
+
+		return support.getResult();
+	}
+
+}
