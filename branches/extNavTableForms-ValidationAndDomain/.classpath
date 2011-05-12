@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/extNavTable"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/libFMap"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/libGDBMS"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/extCAD"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/libExceptions"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/libProjection"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/libDriverManager"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/_fwAndami"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/appgvSIG"/>
+	<classpathentry kind="lib" path="/libFMap/lib/jts-1.9.jar"/>
+	<classpathentry kind="lib" path="lib/formsrt.jar"/>
+	<classpathentry kind="lib" path="/extNavTable/lib/log4j-1.2.8.jar"/>
+	<classpathentry kind="lib" path="/extNavTable/lib/miglayout-3.7.3.1.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
