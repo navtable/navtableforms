@@ -15,5 +15,6 @@
 	<classpathentry kind="lib" path="lib/formsrt.jar"/>
 	<classpathentry kind="lib" path="/extNavTable/lib/log4j-1.2.8.jar"/>
 	<classpathentry kind="lib" path="/extNavTable/lib/miglayout-3.7.3.1.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/extDBConnection"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
