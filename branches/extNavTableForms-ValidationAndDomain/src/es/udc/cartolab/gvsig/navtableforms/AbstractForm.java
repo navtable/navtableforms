@@ -54,6 +54,7 @@ import es.udc.cartolab.gvsig.navtableforms.ormlite.ORMLite;
 import es.udc.cartolab.gvsig.navtableforms.validation.ComponentValidator;
 import es.udc.cartolab.gvsig.navtableforms.validation.DomainValues;
 import es.udc.cartolab.gvsig.navtableforms.validation.FormValidator;
+import es.udc.cartolab.gvsig.navtableforms.validation.KeyValue;
 
 public abstract class AbstractForm extends AbstractNavTable implements
 	KeyListener {
@@ -155,8 +156,9 @@ public abstract class AbstractForm extends AbstractNavTable implements
 		widgetValues.put(getNameBeforeDots(c.getName()),
 			((JTextField) c).getText());
 	    } else if (c instanceof JComboBox) {
-		widgetValues.put(getNameBeforeDots(c.getName()),
-			((JComboBox) c).getSelectedItem().toString());
+		String key = ((KeyValue) ((JComboBox) c).getSelectedItem())
+			.getKey();
+		widgetValues.put(getNameBeforeDots(c.getName()), key);
 	    }
 	}
 	return widgetValues;
@@ -270,7 +272,7 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	    if (combobox.getItemCount() > 0) {
 		combobox.removeAllItems();
 	    }
-	    for (String value : dv.getValues()) {
+	    for (KeyValue value : dv.getValues()) {
 		combobox.addItem(value);
 	    }
 	    combobox.setSelectedIndex(0);

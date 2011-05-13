@@ -293,10 +293,12 @@ public class XMLSAXParser extends DefaultHandler {
 	}
 
 	// set tmp domain reader configuration
-	else if (qName.equalsIgnoreCase("DOMAINREADERTABLE")) {
+	else if (qName.equalsIgnoreCase("DRTABLE")) {
 	    tmpDomainReader.setTable(tmpVal);
-	} else if (qName.equalsIgnoreCase("DOMAINREADERCOLUMN")) {
-	    tmpDomainReader.setColumn(tmpVal);
+	} else if (qName.equalsIgnoreCase("DRCOLUMNALIAS")) {
+	    tmpDomainReader.setColumnAlias(tmpVal);
+	} else if (qName.equalsIgnoreCase("DRCOLUMNVALUE")) {
+	    tmpDomainReader.setColumnValue(tmpVal);
 	}
 
 	// save tmp values in DBO and FLS objects

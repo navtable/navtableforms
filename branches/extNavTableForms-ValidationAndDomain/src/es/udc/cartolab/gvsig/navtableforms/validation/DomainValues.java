@@ -4,21 +4,21 @@ import java.util.ArrayList;
 
 public class DomainValues {
 
-    ArrayList<String> values;
+    ArrayList<KeyValue> data;
 
-    public DomainValues(ArrayList<String> values) {
-	this.values = values;
+    public DomainValues(ArrayList<KeyValue> values) {
+	this.data = values;
     }
 
-    public ArrayList<String> getValues() {
-	return values;
+    public ArrayList<KeyValue> getValues() {
+	return data;
     }
 
-    public void addValue(String value) {
-	values.add(value);
+    public void addValue(KeyValue value) {
+	data.add(value);
     }
 
-    public void addValues(ArrayList<String> values) {
+    public void addValues(ArrayList<KeyValue> values) {
 	values.addAll(values);
     }
 }
