@@ -156,9 +156,17 @@ public abstract class AbstractForm extends AbstractNavTable implements
 		widgetValues.put(getNameBeforeDots(c.getName()),
 			((JTextField) c).getText());
 	    } else if (c instanceof JComboBox) {
-		String key = ((KeyValue) ((JComboBox) c).getSelectedItem())
-			.getKey();
-		widgetValues.put(getNameBeforeDots(c.getName()), key);
+		JComboBox cb = (JComboBox) c;
+		String key = null;
+		Object object = cb.getSelectedItem();
+		if (object instanceof KeyValue) {
+		    // combobox fill with domain values from keyvalue
+		    key = ((KeyValue) cb.getSelectedItem()).getKey();
+		} else {
+		    // combobox filled with abeille values
+		    key = cb.getSelectedItem().toString();
+		}
+		widgetValues.put(getNameBeforeDots(cb.getName()), key);
 	    }
 	}
 	return widgetValues;
@@ -276,15 +284,26 @@ public abstract class AbstractForm extends AbstractNavTable implements
 		combobox.addItem(value);
 	    }
 	    combobox.setSelectedIndex(0);
+	    for (int j = 0; j < combobox.getItemCount(); j++) {
+		// the value in this case here is the key in the key-value pair
+		// value = alias to be shown
+		// key = value to save in the database
+		String value = ((KeyValue) combobox.getItemAt(j)).getKey();
+		if (value.compareTo(fieldValue.trim()) == 0) {
+		    combobox.setSelectedIndex(j);
+		    break;
+		}
+	    }
 	} else { // got the values from the abeille
 	    if (combobox.getItemCount() > 0) {
 		combobox.setSelectedIndex(0);
 	    }
-	}
-	for (int j = 0; j < combobox.getItemCount(); j++) {
-	    if (combobox.getItemAt(j).toString().compareTo(fieldValue.trim()) == 0) {
-		combobox.setSelectedIndex(j);
-		break;
+	    for (int j = 0; j < combobox.getItemCount(); j++) {
+		if (combobox.getItemAt(j).toString()
+			.compareTo(fieldValue.trim()) == 0) {
+		    combobox.setSelectedIndex(j);
+		    break;
+		}
 	    }
 	}
     }
