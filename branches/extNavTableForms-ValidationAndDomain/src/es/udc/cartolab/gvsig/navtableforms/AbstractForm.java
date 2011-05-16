@@ -45,7 +45,6 @@ import com.hardcode.gdbms.engine.values.ValueWriter;
 import com.iver.andami.PluginServices;
 import com.iver.cit.gvsig.fmap.layers.FLyrVect;
 import com.iver.cit.gvsig.fmap.layers.SelectableDataSource;
-import com.iver.cit.gvsig.project.documents.view.gui.BaseView;
 import com.jeta.forms.components.panel.FormPanel;
 
 import es.udc.cartolab.gvsig.navtable.AbstractNavTable;
@@ -61,20 +60,19 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	ActionListener {
 
     private FormValidator formValidator = null;
-    protected final FormPanel formBody;
+    private final FormPanel formBody;
     private boolean isFillingValues;
 
     private JPanel NorthPanel;
     private JPanel SouthPanel;
     private JPanel CenterPanel;
 
-    protected Vector<JComponent> widgetsVector;
-    protected HashMap<String, String> widgetValues;
+    private HashMap<String, JComponent> widgetsVector;
+    private HashMap<String, String> widgetValues;
 
-    protected static BaseView view;
-    protected FLyrVect layer = null;
+    private FLyrVect layer = null;
 
-    protected static Logger logger = null;
+    private static Logger logger = null;
 
     public AbstractForm(FLyrVect layer) {
 	super(layer);
@@ -122,16 +120,8 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	return CenterPanel;
     }
 
-    protected String getNameBeforeDots(String widgetName) {
-	if (widgetName.contains(".")) {
-	    return widgetName.substring(0, widgetName.indexOf("."));
-	} else {
-	    return widgetName;
-	}
-    }
-
     protected void removeListeners() {
-	for (JComponent c : widgetsVector) {
+	for (JComponent c : widgetsVector.values()) {
 	    if (c instanceof JTextField) {
 		((JTextField) c).removeActionListener(this);
 	    } else if (c instanceof JComboBox) {
@@ -141,42 +131,16 @@ public abstract class AbstractForm extends AbstractNavTable implements
     }
 
     public void initWidgets() {
-	widgetsVector = FormParserUtils
-		.getWidgetsWithContentFromContainer(formBody);
-	for (int i = 0; i < widgetsVector.size(); i++) {
-	    JComponent comp = widgetsVector.get(i);
-	    if (comp instanceof JTextField) {
-		((JTextField) comp).addActionListener(new ValidationHandler());
-		ComponentValidator cv = new ComponentValidator(comp);
-		formValidator.addComponentValidator(cv);
-	    } else if (comp instanceof JComboBox) {
-		((JComboBox) comp).addActionListener(new ValidationHandler());
-	    }
-	}
+	widgetsVector = FormParserUtils.getWidgetsFromContainer(formBody);
+	widgetsVector.size();
     }
 
-    private HashMap<String, String> getWidgetValues() {
-	for (JComponent c : widgetsVector) {
-	    if (c instanceof JTextField) {
-		widgetValues.put(getNameBeforeDots(c.getName()),
-			((JTextField) c).getText());
-	    } else if (c instanceof JComboBox) {
-		JComboBox cb = (JComboBox) c;
-		String key = null;
-		Object object = cb.getSelectedItem();
-		if (object instanceof KeyValue) {
-		    // combobox fill with domain values from keyvalue
-		    key = ((KeyValue) cb.getSelectedItem()).getKey();
-		} else if (object == null) {
-		    key = "";
-		} else {
-		    // combobox filled with abeille values
-		    key = cb.getSelectedItem().toString();
-		}
-		widgetValues.put(getNameBeforeDots(cb.getName()), key);
-	    }
-	}
+    public HashMap<String, String> getWidgetValues() {
 	return widgetValues;
+    }
+
+    public HashMap<String, JComponent> getWidgetComponents() {
+	return widgetsVector;
     }
 
     private void initGUI() {
@@ -190,13 +154,21 @@ public abstract class AbstractForm extends AbstractNavTable implements
     }
 
     protected void setListeners() {
-	// To be used by children
+	for (JComponent comp : widgetsVector.values()) {
+	    if (comp instanceof JTextField) {
+		((JTextField) comp)
+			.addActionListener(new ValidationHandlerForTextFields());
+		ComponentValidator cv = new ComponentValidator(comp);
+		formValidator.addComponentValidator(cv);
+	    } else if (comp instanceof JComboBox) {
+		((JComboBox) comp)
+			.addActionListener(new ValidationHandlerForComboBoxes());
+	    }
+	}
     }
 
     @Override
     public boolean init() {
-
-	view = (BaseView) PluginServices.getMDIManager().getActiveWindow();
 
 	try {
 	    if (recordset.getRowCount() <= 0) {
@@ -221,7 +193,6 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	JPanel southPanel = getSouthPanel();
 	getThisSouthPanel().add(southPanel);
 
-	setFillingValues(true);
 	initWidgets();
 	setListeners();
 
@@ -235,27 +206,26 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	super.setChangedValues(false);
 	super.enableSaveButton(true);
 	setOpenNavTableForm(true);
-	setFillingValues(false);
 	return true;
     }
 
     @Override
     public void fillEmptyValues() {
 	super.fillEmptyValues();
-	for (JComponent widget : widgetsVector) {
-	    if (widget instanceof JFormattedTextField) {
-		((JFormattedTextField) widget).setText("");
+	for (JComponent comp : widgetsVector.values()) {
+	    if (comp instanceof JFormattedTextField) {
+		((JFormattedTextField) comp).setText("");
 	    }
-	    if (widget instanceof JComboBox) {
-		if ((((JComboBox) widget).getItemCount() > 0)) {
-		    ((JComboBox) widget).setSelectedIndex(0);
+	    if (comp instanceof JComboBox) {
+		if ((((JComboBox) comp).getItemCount() > 0)) {
+		    ((JComboBox) comp).setSelectedIndex(0);
 		}
 	    }
 	}
     }
 
     protected void fillJTextField(JTextField field) {
-	String colName = getNameBeforeDots(field.getName());
+	String colName = field.getName();
 	String fieldValue = Utils.getValueFromLayer(layer, currentPosition,
 		colName);
 	field.setText(fieldValue);
@@ -266,21 +236,21 @@ public abstract class AbstractForm extends AbstractNavTable implements
     }
 
     protected void fillJCheckBox(JCheckBox checkBox) {
-	String colName = getNameBeforeDots(checkBox.getName());
+	String colName = checkBox.getName();
 	String fieldValue = Utils.getValueFromLayer(layer, currentPosition,
 		colName);
 	checkBox.setSelected(Boolean.parseBoolean(fieldValue));
     }
 
     protected void fillJTextArea(JTextArea textArea) {
-	String colName = getNameBeforeDots(textArea.getName());
+	String colName = textArea.getName();
 	String fieldValue = Utils.getValueFromLayer(layer, currentPosition,
 		colName);
 	textArea.setText(fieldValue);
     }
 
     protected void fillJComboBox(JComboBox combobox) {
-	String colName = getNameBeforeDots(combobox.getName());
+	String colName = combobox.getName();
 	String fieldValue = Utils.getValueFromLayer(layer, currentPosition,
 		colName);
 	DomainValues dv = ORMLite.getAplicationDomainObject(getXMLPath())
@@ -338,8 +308,7 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	    if (currentPosition < 0) {
 		currentPosition = 0;
 	    }
-	    for (int i = 0; i < widgetsVector.size(); i++) {
-		JComponent comp = widgetsVector.get(i);
+	    for (JComponent comp : widgetsVector.values()) {
 		if (comp instanceof JFormattedTextField) {
 		    fillJFormattedTextField((JFormattedTextField) comp);
 		} else if (comp instanceof JTextField) {
@@ -400,6 +369,7 @@ public abstract class AbstractForm extends AbstractNavTable implements
      * form makes no sense.
      */
     protected Vector<Integer> getIndexesOfChangedValues() {
+	// TODO improve this by reducing the number of loops
 	Vector<Integer> changedValues = new Vector<Integer>();
 	try {
 	    SelectableDataSource rs = layer.getRecordset();
@@ -411,8 +381,10 @@ public abstract class AbstractForm extends AbstractNavTable implements
 		int index = -1;
 		String[] modelFields = rs.getFieldNames();
 		for (int i = 0; i < modelFields.length; i++) {
-		    if (modelFields[i].toLowerCase().equals(field)) {
+		    if (modelFields[i].toLowerCase()
+			    .equals(field.toLowerCase())) {
 			index = i;
+			break;
 		    }
 		}
 		if (index > -1) {
@@ -517,11 +489,35 @@ public abstract class AbstractForm extends AbstractNavTable implements
 
     }
 
-    class ValidationHandler implements ActionListener {
+    class ValidationHandlerForTextFields implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 	    if (!isFillingValues()) {
-		setChangedValues();
+		JTextField c = ((JTextField) e.getSource());
+		widgetValues.put(c.getName().toUpperCase(), c.getText());
 		formValidator.validate();
+		setChangedValues();
+	    }
+	}
+    }
+
+    class ValidationHandlerForComboBoxes implements ActionListener {
+	public void actionPerformed(ActionEvent e) {
+	    if (!isFillingValues()) {
+		JComboBox c = ((JComboBox) e.getSource());
+		if (c.getSelectedItem() instanceof KeyValue) {
+		    widgetValues.put(c.getName().toUpperCase(),
+			    ((KeyValue) c.getSelectedItem()).getKey());
+		} else if (c.getSelectedItem() != null) {
+		    widgetValues.put(c.getName().toUpperCase(), c
+			    .getSelectedItem().toString());
+		} else {
+		    // when remove items from a combobox, if isFillingValues is
+		    // not set to true, we will get a NullPointerException as
+		    // the change provokes this listener to activate
+		    logger.warn("combobox " + c.getName() + " has no value.");
+		    widgetValues.put(c.getName().toUpperCase(), "");
+		}
+		setChangedValues();
 	    }
 	}
     }

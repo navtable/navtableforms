@@ -18,239 +18,54 @@ package es.udc.cartolab.gvsig.navtableforms;
 
 import java.awt.Component;
 import java.awt.Container;
-import java.util.Vector;
+import java.util.HashMap;
 
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollBar;
-import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 public class FormParserUtils {
 
-    public static Vector<JComponent> getTBsFromContainer(Container c) {
-	return getTBsFromContainerRecursive(c, 0);
-    }
-
-    public static Vector<JComponent> getTBsFromContainerRecursive(Container c,
-	    int level) {
-	Vector<JComponent> v = new Vector<JComponent>();
-	int count = 0;
-	while (c.getComponentCount() > count) {
-	    Component aux = c.getComponent(count++);
-
-	    if (aux instanceof JTable) {
-		v.add((JComponent) aux);
-		return v;
-	    }
-	    if (aux instanceof Container) {
-		Vector<JComponent> aux2 = getTBsFromContainerRecursive(
-			(Container) aux, (level + 1));
-		if ((aux2 != null) && (aux2.size() > 0)) {
-		    for (int i = 0; i < aux2.size(); i++) {
-			Object e = aux2.get(i);
-			if ((e != null) && (e instanceof JComponent)) {
-			    v.add((JComponent) e);
-			}
-		    }
-		}
-	    }
+    private static String getNameBeforeDots(String widgetName) {
+	if (widgetName.contains(".")) {
+	    return widgetName.substring(0, widgetName.indexOf("."));
+	} else {
+	    return widgetName;
 	}
-	return v;
     }
 
-    public static Vector<JComponent> getFTFsFromContainer(Container c) {
-	return getFTFsFromContainerRecursive(c, 0);
-    }
-
-    private static Vector<JComponent> getFTFsFromContainerRecursive(
-	    Container c, int level) {
-
-	Vector<JComponent> v = new Vector<JComponent>();
-	int count = 0;
-	while (c.getComponentCount() > count) {
-	    Component aux = c.getComponent(count++);
-
-	    if (aux instanceof JFormattedTextField) {
-		v.add((JComponent) aux);
-		return v;
-	    }
-	    if (aux instanceof Container) {
-		Vector<JComponent> aux2 = getFTFsFromContainerRecursive(
-			(Container) aux, (level + 1));
-		if ((aux2 != null) && (aux2.size() > 0)) {
-		    for (int i = 0; i < aux2.size(); i++) {
-			Object e = aux2.get(i);
-			if ((e != null) && (e instanceof JComponent)) {
-			    v.add((JComponent) e);
-			}
-		    }
-		}
-	    }
-	}
-	return v;
-
-    }
-
-    public static Vector<JComponent> getWidgetsWithContentFromContainer(
+    public static HashMap<String, JComponent> getWidgetsFromContainer(
 	    Container c) {
-	return getWidgetsWithContentFromContainerRecursive(c, 0);
-    }
 
-    private static Vector<JComponent> getWidgetsWithContentFromContainerRecursive(
-	    Container c, int level) {
-
-	Vector<JComponent> v = new Vector<JComponent>();
+	HashMap<String, JComponent> map = new HashMap<String, JComponent>();
 	int count = 0;
 	while (c.getComponentCount() > count) {
-	    Component aux = c.getComponent(count++);
-	    if (aux instanceof JTextField) {
-		v.add((JComponent) aux);
-		return v;
-	    } else if (aux instanceof JFormattedTextField) {
-		v.add((JComponent) aux);
-		return v;
-	    } else if (aux instanceof JCheckBox) {
-		v.add((JComponent) aux);
-		return v;
-	    } else if (aux instanceof JTextArea) {
-		v.add((JComponent) aux);
-		return v;
-	    } else if (aux instanceof JComboBox) {
-		v.add((JComponent) aux);
-		return v;
+	    Component comp = c.getComponent(count++);
+	    if ((comp instanceof JTextField)
+		    || (comp instanceof JFormattedTextField)
+		    || (comp instanceof JCheckBox)
+		    || (comp instanceof JTextArea)
+		    || (comp instanceof JComboBox)) {
+		String newName = getNameBeforeDots(comp.getName());
+		comp.setName(newName);
+		map.put(comp.getName().toUpperCase(), (JComponent) comp);
+		return map;
 	    }
 
-	    if (aux instanceof Container) {
-		Vector<JComponent> aux2 = getWidgetsWithContentFromContainerRecursive(
-			(Container) aux, (level + 1));
-		if ((aux2 != null) && (aux2.size() > 0)) {
-		    for (int i = 0; i < aux2.size(); i++) {
-			Object e = aux2.get(i);
-			if ((e != null) && (e instanceof JComponent)) {
-			    v.add((JComponent) e);
-			}
-		    }
-
-		}
-	    }
-	}
-	return v;
-    }
-
-    public static Vector<JButton> getBTFromContainer(Container c) {
-	return getBTFromContainerRecursive(c, 0);
-    }
-
-    private static Vector<JButton> getBTFromContainerRecursive(Container c,
-	    int level) {
-
-	Vector<JButton> v = new Vector<JButton>();
-	int count = 0;
-	while (c.getComponentCount() > count) {
-	    Component aux = c.getComponent(count++);
-
-	    if (aux instanceof JButton) {
-		v.add((JButton) aux);
-		return v;
-	    }
-	    if (aux instanceof Container) {
-		// avoid getting scrollbar & combobox buttons
-		if (!(aux instanceof JScrollBar) && !(aux instanceof JComboBox)) {
-		    Vector<JButton> aux2 = getBTFromContainerRecursive(
-			    (Container) aux, (level + 1));
-		    if ((aux2 != null) && (aux2.size() > 0)) {
-			for (int i = 0; i < aux2.size(); i++) {
-			    Object e = aux2.get(i);
-			    if ((e != null) && (e instanceof JButton)) {
-				v.add((JButton) e);
-			    }
-			}
+	    if (comp instanceof Container) {
+		HashMap<String, JComponent> recursiveMap = getWidgetsFromContainer((Container) comp);
+		if (recursiveMap.size() > 0) {
+		    for (JComponent w : recursiveMap.values()) {
+			String newName = getNameBeforeDots(w.getName());
+			comp.setName(newName);
+			map.put(w.getName().toUpperCase(), w);
 		    }
 		}
 	    }
 	}
-	return v;
-
+	return map;
     }
-
-    /*
-     * @deprecated using instead {@link #getWidgetsWithContent(Container c)}
-     */
-    @Deprecated
-    public static Vector<JComponent> getWidgetsFromContainer(Container c) {
-	return getWidgetsFromContainerRecursive(c, 0);
-    }
-
-    /*
-     * @deprecated using instead {@link
-     * #getWidgetsWithContentRecursive(Container c, int level)}
-     */
-    @Deprecated
-    private static Vector<JComponent> getWidgetsFromContainerRecursive(
-	    Container c, int level) {
-
-	Vector<JComponent> v = new Vector<JComponent>();
-	int count = 0;
-	while (c.getComponentCount() > count) {
-	    Component aux = c.getComponent(count++);
-	    // if ( aux.getClass().toString().contains("javax.swing")) {
-	    // System.out.println(count + "(" +level+"): "+ aux.getName() + ": "
-	    // + aux.getClass());
-	    // }
-	    if (aux instanceof JComboBox) {
-		v.add((JComponent) aux);
-		return v;
-	    } else if (aux instanceof JTextField) {
-		v.add((JComponent) aux);
-		return v;
-	    } else if (aux instanceof JFormattedTextField) {
-		v.add((JComponent) aux);
-		return v;
-	    } else if (aux instanceof JTextArea) {
-		v.add((JComponent) aux);
-		return v;
-	    } else if (aux instanceof JCheckBox) {
-		v.add((JComponent) aux);
-		return v;
-	    } else if (aux instanceof JTable) {
-		v.add((JComponent) aux);
-		return v;
-	    } else if (aux instanceof JRadioButton) {
-		v.add((JComponent) aux);
-		return v;
-	    } else if (aux instanceof JButton) {
-		v.add((JComponent) aux);
-		return v;
-	    }
-
-	    // if ((aux instanceof JComponent) && (level > 1)
-	    // && !(aux instanceof JETABean)
-	    // && !(aux instanceof JETALabel)) {
-	    // System.out.println(count + "(" +level+"): "+ aux.getName() + ": "
-	    // + aux.getClass());
-	    // }
-	    if (aux instanceof Container) {
-		if (!(aux instanceof JScrollBar)) {
-		    Vector<JComponent> aux2 = getWidgetsFromContainerRecursive(
-			    (Container) aux, (level + 1));
-		    if ((aux2 != null) && (aux2.size() > 0)) {
-			for (int i = 0; i < aux2.size(); i++) {
-			    Object e = aux2.get(i);
-			    if ((e != null) && (e instanceof JComponent)) {
-				v.add((JComponent) e);
-			    }
-			}
-		    }
-		}
-	    }
-	}
-	return v;
-    }
-
 }
