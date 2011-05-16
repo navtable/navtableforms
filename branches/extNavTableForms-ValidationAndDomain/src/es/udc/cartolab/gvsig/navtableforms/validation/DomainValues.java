@@ -14,6 +14,16 @@ public class DomainValues {
 	return data;
     }
 
+    public ArrayList<KeyValue> getValuesFilteredBy(String id) {
+	ArrayList<KeyValue> subset = new ArrayList<KeyValue>();
+	for (KeyValue kv : data) {
+	    if (kv.getForeignKey().equalsIgnoreCase(id)) {
+		subset.add(kv);
+	    }
+	}
+	return subset;
+    }
+
     public void addValue(KeyValue value) {
 	data.add(value);
     }

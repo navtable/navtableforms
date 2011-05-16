@@ -4,6 +4,7 @@ public class KeyValue {
 
     private String key;
     private String value;
+    private String foreignKey;
 
     public KeyValue() {
     }
@@ -19,6 +20,14 @@ public class KeyValue {
 
     public void setKey(String key) {
 	this.key = key;
+    }
+
+    public void setForeignKey(String d) {
+	this.foreignKey = d;
+    }
+
+    public String getForeignKey() {
+	return this.foreignKey;
     }
 
     public String getValue() {

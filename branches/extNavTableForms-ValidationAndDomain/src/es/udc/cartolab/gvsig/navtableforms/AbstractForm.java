@@ -18,8 +18,8 @@ package es.udc.cartolab.gvsig.navtableforms;
 
 import java.awt.BorderLayout;
 import java.awt.HeadlessException;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
@@ -56,8 +56,9 @@ import es.udc.cartolab.gvsig.navtableforms.validation.DomainValues;
 import es.udc.cartolab.gvsig.navtableforms.validation.FormValidator;
 import es.udc.cartolab.gvsig.navtableforms.validation.KeyValue;
 
+@SuppressWarnings("serial")
 public abstract class AbstractForm extends AbstractNavTable implements
-	KeyListener {
+	ActionListener {
 
     private FormValidator formValidator = null;
     protected final FormPanel formBody;
@@ -132,7 +133,9 @@ public abstract class AbstractForm extends AbstractNavTable implements
     protected void removeListeners() {
 	for (JComponent c : widgetsVector) {
 	    if (c instanceof JTextField) {
-		((JTextField) c).removeKeyListener(this);
+		((JTextField) c).removeActionListener(this);
+	    } else if (c instanceof JComboBox) {
+		((JComboBox) c).removeActionListener(this);
 	    }
 	}
     }
@@ -143,9 +146,11 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	for (int i = 0; i < widgetsVector.size(); i++) {
 	    JComponent comp = widgetsVector.get(i);
 	    if (comp instanceof JTextField) {
-		comp.addKeyListener(this);
+		((JTextField) comp).addActionListener(this);
 		ComponentValidator cv = new ComponentValidator(comp);
 		formValidator.addComponentValidator(cv);
+	    } else if (comp instanceof JComboBox) {
+		((JComboBox) comp).addActionListener(this);
 	    }
 	}
     }
@@ -277,33 +282,42 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	DomainValues dv = ORMLite.getAplicationDomainObject(getXMLPath())
 		.getDomainValuesForComponent(colName);
 	if (dv != null) { // the component has domain values defined
-	    if (combobox.getItemCount() > 0) {
-		combobox.removeAllItems();
+	    fillJComboBoxWithDomainValues(combobox, fieldValue, dv);
+	} else {
+	    fillJComboBoxWithAbeilleValues(combobox, fieldValue);
+	}
+    }
+
+    private void fillJComboBoxWithDomainValues(JComboBox combobox,
+	    String fieldValue, DomainValues dv) {
+	if (combobox.getItemCount() > 0) {
+	    combobox.removeAllItems();
+	}
+	for (KeyValue value : dv.getValues()) {
+	    combobox.addItem(value);
+	}
+	combobox.setSelectedIndex(0);
+	for (int j = 0; j < combobox.getItemCount(); j++) {
+	    // the value in this case here is the key in the key-value pair
+	    // value = alias to be shown
+	    // key = value to save in the database
+	    String value = ((KeyValue) combobox.getItemAt(j)).getKey();
+	    if (value.compareTo(fieldValue.trim()) == 0) {
+		combobox.setSelectedIndex(j);
+		break;
 	    }
-	    for (KeyValue value : dv.getValues()) {
-		combobox.addItem(value);
-	    }
+	}
+    }
+
+    private void fillJComboBoxWithAbeilleValues(JComboBox combobox,
+	    String fieldValue) {
+	if (combobox.getItemCount() > 0) {
 	    combobox.setSelectedIndex(0);
-	    for (int j = 0; j < combobox.getItemCount(); j++) {
-		// the value in this case here is the key in the key-value pair
-		// value = alias to be shown
-		// key = value to save in the database
-		String value = ((KeyValue) combobox.getItemAt(j)).getKey();
-		if (value.compareTo(fieldValue.trim()) == 0) {
-		    combobox.setSelectedIndex(j);
-		    break;
-		}
-	    }
-	} else { // got the values from the abeille
-	    if (combobox.getItemCount() > 0) {
-		combobox.setSelectedIndex(0);
-	    }
-	    for (int j = 0; j < combobox.getItemCount(); j++) {
-		if (combobox.getItemAt(j).toString()
-			.compareTo(fieldValue.trim()) == 0) {
-		    combobox.setSelectedIndex(j);
-		    break;
-		}
+	}
+	for (int j = 0; j < combobox.getItemCount(); j++) {
+	    if (combobox.getItemAt(j).toString().compareTo(fieldValue.trim()) == 0) {
+		combobox.setSelectedIndex(j);
+		break;
 	    }
 	}
     }
@@ -347,7 +361,7 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	return isFillingValues;
     }
 
-    private void setFillingValues(boolean b) {
+    protected void setFillingValues(boolean b) {
 	isFillingValues = b;
     }
 
@@ -490,27 +504,20 @@ public abstract class AbstractForm extends AbstractNavTable implements
     }
 
     @Override
-    public void keyPressed(KeyEvent e) {
-    }
-
-    @Override
-    public void keyTyped(KeyEvent e) {
-	if (!isFillingValues()) {
-	    setChangedValues();
-	}
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-	formValidator.validate();
-    }
-
-    @Override
     public Object getWindowProfile() {
 	return null;
     }
 
     @Override
     public void selectRow(int row) {
+
+    }
+
+    public void actionPerformed(ActionEvent e) {
+	super.actionPerformed(e);
+	if (!isFillingValues()) {
+	    setChangedValues();
+	    formValidator.validate();
+	}
     }
 }

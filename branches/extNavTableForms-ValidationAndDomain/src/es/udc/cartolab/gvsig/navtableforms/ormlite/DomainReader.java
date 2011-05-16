@@ -12,6 +12,7 @@ public class DomainReader {
     String table = null;
     String columnAlias = null;
     String columnValue = null;
+    String columnForeignKey = null;
 
     public DomainReader() {
     }
@@ -28,17 +29,22 @@ public class DomainReader {
 	this.columnValue = name;
     }
 
+    public void setColumnForeignKey(String name) {
+	this.columnForeignKey = name;
+    }
+
     private String[] getFieldColumns() {
-	if (columnAlias != null) {
-	    String[] cols = new String[2];
-	    cols[0] = columnValue;
-	    cols[1] = columnAlias;
-	    return cols;
-	} else {
-	    String[] cols = new String[1];
-	    cols[0] = columnValue;
-	    return cols;
+	if (columnAlias == null) {
+	    columnAlias = columnValue;
 	}
+	if (columnForeignKey == null) {
+	    columnForeignKey = columnValue;
+	}
+	String[] cols = new String[3];
+	cols[0] = columnValue;
+	cols[1] = columnAlias;
+	cols[2] = columnForeignKey;
+	return cols;
     }
 
     public DomainValues getDomainValues() {
@@ -53,6 +59,7 @@ public class DomainReader {
 		    KeyValue kv = new KeyValue();
 		    kv.setKey(values[i][0]);
 		    kv.setValue(values[i][1]);
+		    kv.setForeignKey(values[i][2]);
 		    list.add(kv);
 		}
 	    } catch (SQLException e) {
