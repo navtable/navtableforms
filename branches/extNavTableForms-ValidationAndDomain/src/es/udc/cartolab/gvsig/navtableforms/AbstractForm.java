@@ -146,11 +146,11 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	for (int i = 0; i < widgetsVector.size(); i++) {
 	    JComponent comp = widgetsVector.get(i);
 	    if (comp instanceof JTextField) {
-		((JTextField) comp).addActionListener(this);
+		((JTextField) comp).addActionListener(new ValidationHandler());
 		ComponentValidator cv = new ComponentValidator(comp);
 		formValidator.addComponentValidator(cv);
 	    } else if (comp instanceof JComboBox) {
-		((JComboBox) comp).addActionListener(this);
+		((JComboBox) comp).addActionListener(new ValidationHandler());
 	    }
 	}
     }
@@ -167,6 +167,8 @@ public abstract class AbstractForm extends AbstractNavTable implements
 		if (object instanceof KeyValue) {
 		    // combobox fill with domain values from keyvalue
 		    key = ((KeyValue) cb.getSelectedItem()).getKey();
+		} else if (object == null) {
+		    key = "";
 		} else {
 		    // combobox filled with abeille values
 		    key = cb.getSelectedItem().toString();
@@ -219,6 +221,7 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	JPanel southPanel = getSouthPanel();
 	getThisSouthPanel().add(southPanel);
 
+	setFillingValues(true);
 	initWidgets();
 	setListeners();
 
@@ -232,6 +235,7 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	super.setChangedValues(false);
 	super.enableSaveButton(true);
 	setOpenNavTableForm(true);
+	setFillingValues(false);
 	return true;
     }
 
@@ -357,7 +361,7 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	}
     }
 
-    private boolean isFillingValues() {
+    protected boolean isFillingValues() {
 	return isFillingValues;
     }
 
@@ -513,11 +517,12 @@ public abstract class AbstractForm extends AbstractNavTable implements
 
     }
 
-    public void actionPerformed(ActionEvent e) {
-	super.actionPerformed(e);
-	if (!isFillingValues()) {
-	    setChangedValues();
-	    formValidator.validate();
+    class ValidationHandler implements ActionListener {
+	public void actionPerformed(ActionEvent e) {
+	    if (!isFillingValues()) {
+		setChangedValues();
+		formValidator.validate();
+	    }
 	}
     }
 }
