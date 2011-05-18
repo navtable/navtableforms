@@ -300,7 +300,7 @@ public class XMLSAXParser extends DefaultHandler {
 	} else if (qName.equalsIgnoreCase("DRCOLUMNVALUE")) {
 	    tmpDomainReader.setColumnValue(tmpVal);
 	} else if (qName.equalsIgnoreCase("DRFOREIGNKEY")) {
-	    tmpDomainReader.setColumnForeignKey(tmpVal);
+	    tmpDomainReader.addColumnForeignKey(tmpVal);
 	}
 
 	// save tmp values in DBO and FLS objects

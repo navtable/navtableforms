@@ -1,10 +1,12 @@
 package es.udc.cartolab.gvsig.navtableforms.validation;
 
+import java.util.ArrayList;
+
 public class KeyValue {
 
     private String key;
     private String value;
-    private String foreignKey;
+    private ArrayList<String> foreignKeys = new ArrayList<String>();
 
     public KeyValue() {
     }
@@ -22,12 +24,12 @@ public class KeyValue {
 	this.key = key;
     }
 
-    public void setForeignKey(String d) {
-	this.foreignKey = d;
+    public void addForeignKey(String d) {
+	this.foreignKeys.add(d);
     }
 
-    public String getForeignKey() {
-	return this.foreignKey;
+    public ArrayList<String> getForeignKeys() {
+	return this.foreignKeys;
     }
 
     public String getValue() {

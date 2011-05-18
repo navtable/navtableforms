@@ -12,7 +12,7 @@ public class DomainReader {
     String table = null;
     String columnAlias = null;
     String columnValue = null;
-    String columnForeignKey = null;
+    ArrayList<String> columnForeignKey = new ArrayList<String>();
 
     public DomainReader() {
     }
@@ -29,8 +29,16 @@ public class DomainReader {
 	this.columnValue = name;
     }
 
-    public void setColumnForeignKey(String name) {
-	this.columnForeignKey = name;
+    public void addColumnForeignKey(String name) {
+	this.columnForeignKey.add(name);
+    }
+
+    private String[] convertArrayToString(ArrayList<String> array) {
+	String[] strings = new String[array.size()];
+	for (int i = 0; i < array.size(); i++) {
+	    strings[i] = array.get(i);
+	}
+	return strings;
     }
 
     private String[] getFieldColumns() {
@@ -38,13 +46,15 @@ public class DomainReader {
 	    columnAlias = columnValue;
 	}
 	if (columnForeignKey == null) {
-	    columnForeignKey = columnValue;
+	    columnForeignKey.add(columnValue);
 	}
-	String[] cols = new String[3];
-	cols[0] = columnValue;
-	cols[1] = columnAlias;
-	cols[2] = columnForeignKey;
-	return cols;
+	ArrayList<String> cols = new ArrayList<String>();
+	cols.add(columnValue);
+	cols.add(columnAlias);
+	for (String fk : columnForeignKey) {
+	    cols.add(fk);
+	}
+	return convertArrayToString(cols);
     }
 
     public DomainValues getDomainValues() {
@@ -59,7 +69,9 @@ public class DomainReader {
 		    KeyValue kv = new KeyValue();
 		    kv.setKey(values[i][0]);
 		    kv.setValue(values[i][1]);
-		    kv.setForeignKey(values[i][2]);
+		    for (int fkIndex = 0; fkIndex < columnForeignKey.size(); fkIndex++) {
+			kv.addForeignKey(values[i][2 + fkIndex]);
+		    }
 		    list.add(kv);
 		}
 	    } catch (SQLException e) {
