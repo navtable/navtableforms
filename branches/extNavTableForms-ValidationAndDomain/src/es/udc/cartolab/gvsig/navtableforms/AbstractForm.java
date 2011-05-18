@@ -20,6 +20,8 @@ import java.awt.BorderLayout;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
@@ -56,8 +58,7 @@ import es.udc.cartolab.gvsig.navtableforms.validation.FormValidator;
 import es.udc.cartolab.gvsig.navtableforms.validation.KeyValue;
 
 @SuppressWarnings("serial")
-public abstract class AbstractForm extends AbstractNavTable implements
-	ActionListener {
+public abstract class AbstractForm extends AbstractNavTable {
 
     private FormValidator formValidator = null;
     private final FormPanel formBody;
@@ -73,6 +74,8 @@ public abstract class AbstractForm extends AbstractNavTable implements
     private FLyrVect layer = null;
 
     private static Logger logger = null;
+    private ValidationHandlerForTextFields validationChangeHandlerForTextFields;
+    private ValidationHandlerForComboBoxes validationChangeHandlerForComboBoxes;
 
     public AbstractForm(FLyrVect layer) {
 	super(layer);
@@ -81,6 +84,8 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	logger = getLoggerName();
 	this.layer = layer;
 	widgetValues = new HashMap<String, String>();
+	validationChangeHandlerForTextFields = new ValidationHandlerForTextFields();
+	validationChangeHandlerForComboBoxes = new ValidationHandlerForComboBoxes();
     }
 
     public abstract FormPanel getFormBody();
@@ -157,12 +162,12 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	for (JComponent comp : widgetsVector.values()) {
 	    if (comp instanceof JTextField) {
 		((JTextField) comp)
-			.addActionListener(new ValidationHandlerForTextFields());
+			.addKeyListener(validationChangeHandlerForTextFields);
 		ComponentValidator cv = new ComponentValidator(comp);
 		formValidator.addComponentValidator(cv);
 	    } else if (comp instanceof JComboBox) {
 		((JComboBox) comp)
-			.addActionListener(new ValidationHandlerForComboBoxes());
+			.addActionListener(validationChangeHandlerForComboBoxes);
 	    }
 	}
     }
@@ -229,6 +234,7 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	String fieldValue = Utils.getValueFromLayer(layer, currentPosition,
 		colName);
 	field.setText(fieldValue);
+	widgetValues.put(colName.toUpperCase(), fieldValue);
     }
 
     protected void fillJFormattedTextField(JFormattedTextField field) {
@@ -271,6 +277,8 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	    combobox.addItem(value);
 	}
 	combobox.setSelectedIndex(0);
+	widgetValues.put(combobox.getName().toUpperCase(),
+		((KeyValue) combobox.getItemAt(0)).getKey());
 	for (int j = 0; j < combobox.getItemCount(); j++) {
 	    // the value in this case here is the key in the key-value pair
 	    // value = alias to be shown
@@ -278,6 +286,7 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	    String value = ((KeyValue) combobox.getItemAt(j)).getKey();
 	    if (value.compareTo(fieldValue.trim()) == 0) {
 		combobox.setSelectedIndex(j);
+		widgetValues.put(combobox.getName().toUpperCase(), value);
 		break;
 	    }
 	}
@@ -287,10 +296,13 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	    String fieldValue) {
 	if (combobox.getItemCount() > 0) {
 	    combobox.setSelectedIndex(0);
+	    widgetValues.put(combobox.getName().toUpperCase(), combobox
+		    .getItemAt(0).toString());
 	}
 	for (int j = 0; j < combobox.getItemCount(); j++) {
 	    if (combobox.getItemAt(j).toString().compareTo(fieldValue.trim()) == 0) {
 		combobox.setSelectedIndex(j);
+		widgetValues.put(combobox.getName().toUpperCase(), fieldValue);
 		break;
 	    }
 	}
@@ -489,18 +501,27 @@ public abstract class AbstractForm extends AbstractNavTable implements
 
     }
 
-    class ValidationHandlerForTextFields implements ActionListener {
-	public void actionPerformed(ActionEvent e) {
+    class ValidationHandlerForTextFields implements KeyListener {
+
+	public void keyTyped(KeyEvent e) {
+	}
+
+	public void keyPressed(KeyEvent e) {
+	}
+
+	public void keyReleased(KeyEvent e) {
 	    if (!isFillingValues()) {
 		JTextField c = ((JTextField) e.getSource());
 		widgetValues.put(c.getName().toUpperCase(), c.getText());
+		setChangedValues(); // placed after updating widgetvalues
 		formValidator.validate();
-		setChangedValues();
 	    }
 	}
+
     }
 
     class ValidationHandlerForComboBoxes implements ActionListener {
+
 	public void actionPerformed(ActionEvent e) {
 	    if (!isFillingValues()) {
 		JComboBox c = ((JComboBox) e.getSource());
@@ -520,5 +541,6 @@ public abstract class AbstractForm extends AbstractNavTable implements
 		setChangedValues();
 	    }
 	}
+
     }
 }
