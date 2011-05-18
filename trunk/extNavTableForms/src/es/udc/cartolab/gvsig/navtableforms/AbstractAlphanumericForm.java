@@ -672,12 +672,7 @@ public abstract class AbstractAlphanumericForm extends AbstractNavTable
 	    String valueInRecordSet;
 	    String valueInModel;
 	    for (String field : widgetValues.keySet()) {
-		int index = -1;
-		String[] modelFields = rs.getFieldNames();
-		for (int i = 0; i < modelFields.length; i++) {
-		    if (modelFields[i].toLowerCase().equals(field))
-			index = i;
-		}
+		int index = rs.getFieldIndexByName(field);
 		if (index > -1) {
 		    value = rs.getFieldValue(currentPosition, index);
 		    valueInRecordSet = value
