@@ -381,34 +381,27 @@ public abstract class AbstractForm extends AbstractNavTable {
      * form makes no sense.
      */
     protected Vector<Integer> getIndexesOfChangedValues() {
-	// TODO improve this by reducing the number of loops
 	Vector<Integer> changedValues = new Vector<Integer>();
 	try {
 	    SelectableDataSource rs = layer.getRecordset();
+	    String[] modelFields = rs.getFieldNames();
 	    HashMap<String, String> widgetValues = getWidgetValues();
 	    Value value;
 	    String valueInRecordSet;
-	    String valueInModel;
-	    for (String field : widgetValues.keySet()) {
-		int index = -1;
-		String[] modelFields = rs.getFieldNames();
-		for (int i = 0; i < modelFields.length; i++) {
-		    if (modelFields[i].toLowerCase()
-			    .equals(field.toLowerCase())) {
-			index = i;
-			break;
-		    }
-		}
-		if (index > -1) {
+	    String valueInForm;
+	    for (int index = 0; index < modelFields.length; index++) {
+		String field = modelFields[index].toUpperCase();
+		if (widgetValues.containsKey(field)) {
+
+		    valueInForm = widgetValues.get(field);
+		    valueInForm = valueInForm.trim();
+
 		    value = rs.getFieldValue(currentPosition, index);
 		    valueInRecordSet = value
 			    .getStringValue(ValueWriter.internalValueWriter);
-		    valueInModel = widgetValues.get(field);
-		    valueInRecordSet = valueInRecordSet.replaceAll("''", "")
-			    .trim();
-		    valueInModel = valueInModel.trim();
+		    valueInRecordSet = valueInRecordSet.replace("'", "").trim();
 
-		    if (!valueInRecordSet.equals(valueInModel)) {
+		    if (!valueInRecordSet.equals(valueInForm)) {
 			changedValues.add(new Integer(index));
 		    }
 
