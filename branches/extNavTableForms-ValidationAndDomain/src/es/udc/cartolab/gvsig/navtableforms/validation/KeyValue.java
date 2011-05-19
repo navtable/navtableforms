@@ -11,6 +11,18 @@ public class KeyValue {
     public KeyValue() {
     }
 
+    public KeyValue(String key, String value, String fk) {
+	this.key = key;
+	this.value = value;
+	this.foreignKeys.add(fk);
+    }
+
+    public KeyValue(String key, String value, ArrayList<String> fk) {
+	this.key = key;
+	this.value = value;
+	this.foreignKeys = fk;
+    }
+
     KeyValue(String key, String value) {
 	this.key = key;
 	this.value = value;

@@ -22,6 +22,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
@@ -123,6 +124,10 @@ public abstract class AbstractForm extends AbstractNavTable {
 	    CenterPanel.setLayout(CenterPanelLayout);
 	}
 	return CenterPanel;
+    }
+
+    public String getValueFromLayer(String colName) {
+	return Utils.getValueFromLayer(layer, currentPosition, colName);
     }
 
     protected void removeListeners() {
@@ -262,33 +267,44 @@ public abstract class AbstractForm extends AbstractNavTable {
 	DomainValues dv = ORMLite.getAplicationDomainObject(getXMLPath())
 		.getDomainValuesForComponent(colName);
 	if (dv != null) { // the component has domain values defined
-	    fillJComboBoxWithDomainValues(combobox, fieldValue, dv);
+	    addDomainValuesToComboBox(combobox, dv.getValues());
+	    setDomainValueSelected(combobox, fieldValue);
 	} else {
 	    fillJComboBoxWithAbeilleValues(combobox, fieldValue);
 	}
     }
 
-    private void fillJComboBoxWithDomainValues(JComboBox combobox,
-	    String fieldValue, DomainValues dv) {
-	if (combobox.getItemCount() > 0) {
-	    combobox.removeAllItems();
+    protected void addDomainValuesToComboBox(JComboBox cb,
+	    ArrayList<KeyValue> keyValueList) {
+
+	if (cb.getItemCount() > 0) {
+	    cb.removeAllItems();
 	}
-	for (KeyValue value : dv.getValues()) {
-	    combobox.addItem(value);
+	for (KeyValue kv : keyValueList) {
+	    cb.addItem(kv);
 	}
-	combobox.setSelectedIndex(0);
-	widgetValues.put(combobox.getName().toUpperCase(),
-		((KeyValue) combobox.getItemAt(0)).getKey());
+    }
+
+    protected void setDomainValueSelected(JComboBox combobox, String fieldValue) {
+	// the value in this case here is the key in the key-value pair
+	// value = alias to be shown
+	// key = value to save in the database
+
 	for (int j = 0; j < combobox.getItemCount(); j++) {
-	    // the value in this case here is the key in the key-value pair
-	    // value = alias to be shown
-	    // key = value to save in the database
 	    String value = ((KeyValue) combobox.getItemAt(j)).getKey();
 	    if (value.compareTo(fieldValue.trim()) == 0) {
 		combobox.setSelectedIndex(j);
 		widgetValues.put(combobox.getName().toUpperCase(), value);
 		break;
 	    }
+	}
+	combobox.setEnabled(true);
+	if (combobox.getSelectedIndex() == -1) {
+	    combobox.addItem(new KeyValue("", "", ""));
+	    combobox.setSelectedIndex(0);
+	    combobox.setEnabled(false);
+	    widgetValues.put(combobox.getName().toUpperCase(),
+		    ((KeyValue) combobox.getItemAt(0)).getKey());
 	}
     }
 
