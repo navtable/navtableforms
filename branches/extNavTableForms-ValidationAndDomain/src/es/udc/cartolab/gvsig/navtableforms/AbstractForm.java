@@ -149,6 +149,10 @@ public abstract class AbstractForm extends AbstractNavTable {
 	return widgetValues;
     }
 
+    public void setWidgetValues(String key, String value) {
+	widgetValues.put(key, value);
+    }
+
     public HashMap<String, JComponent> getWidgetComponents() {
 	return widgetsVector;
     }
