@@ -24,6 +24,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
@@ -48,7 +49,7 @@ public class FormParserUtils {
 		    || (comp instanceof JFormattedTextField)
 		    || (comp instanceof JCheckBox)
 		    || (comp instanceof JTextArea)
-		    || (comp instanceof JComboBox)) {
+		    || (comp instanceof JComboBox) || (comp instanceof JTable)) {
 		String newName = getNameBeforeDots(comp.getName());
 		comp.setName(newName);
 		map.put(comp.getName().toUpperCase(), (JComponent) comp);
