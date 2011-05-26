@@ -1,10 +1,10 @@
-package es.udc.cartolab.gvsig.navtableforms.ormlite;
+package es.icarto.gvsig.navtableforms.ormlite;
 
 import java.util.HashMap;
 
-import es.udc.cartolab.gvsig.navtableforms.validation.DomainValues;
-import es.udc.cartolab.gvsig.navtableforms.validation.IntegerPositiveRule;
-import es.udc.cartolab.gvsig.navtableforms.validation.ValidationRule;
+import es.icarto.gvsig.navtableforms.validation.DomainValues;
+import es.icarto.gvsig.navtableforms.validation.IntegerPositiveRule;
+import es.icarto.gvsig.navtableforms.validation.ValidationRule;
 
 public class ORMLiteAplicationDomain {
 

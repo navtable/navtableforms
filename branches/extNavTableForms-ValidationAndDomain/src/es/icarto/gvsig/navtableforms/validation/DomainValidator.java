@@ -1,6 +1,6 @@
-package es.udc.cartolab.gvsig.navtableforms.validation;
+package es.icarto.gvsig.navtableforms.validation;
 
-import es.udc.cartolab.gvsig.navtableforms.ormlite.ORMLite;
+import es.icarto.gvsig.navtableforms.ormlite.ORMLite;
 
 public class DomainValidator {
 

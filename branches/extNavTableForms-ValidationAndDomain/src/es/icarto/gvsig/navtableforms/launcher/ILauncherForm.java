@@ -1,4 +1,4 @@
-package es.udc.cartolab.gvsig.navtableforms.launcher;
+package es.icarto.gvsig.navtableforms.launcher;
 
 import javax.swing.event.InternalFrameListener;
 

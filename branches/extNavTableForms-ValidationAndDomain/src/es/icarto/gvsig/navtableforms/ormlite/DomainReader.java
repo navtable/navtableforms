@@ -1,10 +1,10 @@
-package es.udc.cartolab.gvsig.navtableforms.ormlite;
+package es.icarto.gvsig.navtableforms.ormlite;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import es.udc.cartolab.gvsig.navtableforms.validation.DomainValues;
-import es.udc.cartolab.gvsig.navtableforms.validation.KeyValue;
+import es.icarto.gvsig.navtableforms.validation.DomainValues;
+import es.icarto.gvsig.navtableforms.validation.KeyValue;
 import es.udc.cartolab.gvsig.users.utils.DBSession;
 
 public class DomainReader {

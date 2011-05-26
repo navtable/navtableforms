@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with extNavTableForms.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package es.udc.cartolab.gvsig.navtableforms.ormlite;
+package es.icarto.gvsig.navtableforms.ormlite;
 
 import java.io.IOException;
 import java.sql.Types;
@@ -34,8 +34,8 @@ import org.xml.sax.helpers.DefaultHandler;
 import com.hardcode.gdbms.engine.values.ValueFactory;
 import com.iver.cit.gvsig.fmap.drivers.FieldDescription;
 
-import es.udc.cartolab.gvsig.navtableforms.ormlite.ORMLiteDataBase.ORMLiteTable;
-import es.udc.cartolab.gvsig.navtableforms.validation.ValidationRule;
+import es.icarto.gvsig.navtableforms.ormlite.ORMLiteDataBase.ORMLiteTable;
+import es.icarto.gvsig.navtableforms.validation.ValidationRule;
 
 /**
  * SAX parser to build from a XML estructure several objects needed for

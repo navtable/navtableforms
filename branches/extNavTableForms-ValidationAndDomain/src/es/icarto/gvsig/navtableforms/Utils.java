@@ -15,7 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-package es.udc.cartolab.gvsig.navtableforms;
+package es.icarto.gvsig.navtableforms;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;

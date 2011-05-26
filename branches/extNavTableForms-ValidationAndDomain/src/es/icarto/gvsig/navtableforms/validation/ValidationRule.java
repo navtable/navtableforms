@@ -1,4 +1,4 @@
-package es.udc.cartolab.gvsig.navtableforms.validation;
+package es.icarto.gvsig.navtableforms.validation;
 
 public abstract class ValidationRule {
 

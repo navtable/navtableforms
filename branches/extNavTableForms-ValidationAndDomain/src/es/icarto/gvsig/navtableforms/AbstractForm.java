@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with extNavTableForms.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package es.udc.cartolab.gvsig.navtableforms;
+package es.icarto.gvsig.navtableforms;
 
 import java.awt.BorderLayout;
 import java.awt.HeadlessException;
@@ -50,13 +50,13 @@ import com.iver.cit.gvsig.fmap.layers.FLyrVect;
 import com.iver.cit.gvsig.fmap.layers.SelectableDataSource;
 import com.jeta.forms.components.panel.FormPanel;
 
+import es.icarto.gvsig.navtableforms.ormlite.ORMLite;
+import es.icarto.gvsig.navtableforms.validation.ComponentValidator;
+import es.icarto.gvsig.navtableforms.validation.DomainValues;
+import es.icarto.gvsig.navtableforms.validation.FormValidator;
+import es.icarto.gvsig.navtableforms.validation.KeyValue;
 import es.udc.cartolab.gvsig.navtable.AbstractNavTable;
 import es.udc.cartolab.gvsig.navtable.ToggleEditing;
-import es.udc.cartolab.gvsig.navtableforms.ormlite.ORMLite;
-import es.udc.cartolab.gvsig.navtableforms.validation.ComponentValidator;
-import es.udc.cartolab.gvsig.navtableforms.validation.DomainValues;
-import es.udc.cartolab.gvsig.navtableforms.validation.FormValidator;
-import es.udc.cartolab.gvsig.navtableforms.validation.KeyValue;
 
 @SuppressWarnings("serial")
 public abstract class AbstractForm extends AbstractNavTable {
