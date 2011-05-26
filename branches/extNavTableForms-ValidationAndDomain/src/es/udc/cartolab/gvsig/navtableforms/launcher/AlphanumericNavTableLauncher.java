@@ -39,13 +39,14 @@ public class AlphanumericNavTableLauncher implements MouseListener {
 	try {
 	    ant = new AlphanumericNavTable(source,
 		    params.getAlphanumericNavTableTitle());
-	    ant.init();
-	    PluginServices.getMDIManager().addCentredWindow(ant);
-	    JInternalFrame parent = (JInternalFrame) ant.getRootPane()
-		    .getParent();
-	    // this listener will call the form passed once
-	    // alphanumericnavtable is closed
-	    parent.addInternalFrameListener(form);
+	    if (ant.init()) {
+		PluginServices.getMDIManager().addCentredWindow(ant);
+		JInternalFrame parent = (JInternalFrame) ant.getRootPane()
+			.getParent();
+		// this listener will call the form passed once
+		// alphanumericnavtable is closed
+		parent.addInternalFrameListener(form);
+	    }
 	} catch (ReadDriverException e1) {
 	    e1.printStackTrace();
 	}
