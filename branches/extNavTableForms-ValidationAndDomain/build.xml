@@ -7,8 +7,8 @@
 	<property name="build" location="bin" />
 	<property name="dist" location="dist" />
 	<property name="mainplugin" value="com.iver.cit.gvsig" />
-	<property name="plugin" value="es.udc.cartolab.gvsig.navtableforms" />
-	<property name="gvsiglibjar" value="es.udc.cartolab.gvsig.navtableforms" />
+	<property name="plugin" value="es.icarto.gvsig.navtableforms" />
+	<property name="gvsiglibjar" value="es.icarto.gvsig.navtableforms" />
 	<property name="andami" location="../_fwAndami" />
 	<property name="extensionsDir" location="../_fwAndami/gvSIG/extensiones" />
 	<property name="lib-dir" location="${extensionsDir}/${mainplugin}/lib" />
@@ -38,7 +38,7 @@
 
 	<target name="create-jar" description="Creates the plugin jar">
 		<mkdir dir="${dist}" />
-		<jar jarfile="${dist}/lib/${plugin}.jar" basedir="${build}" includes="es/udc/cartolab/**" />
+		<jar jarfile="${dist}/lib/${plugin}.jar" basedir="${build}" includes="es/icarto/**" />
 	</target>
 
 	<target name="copy-data-files">
