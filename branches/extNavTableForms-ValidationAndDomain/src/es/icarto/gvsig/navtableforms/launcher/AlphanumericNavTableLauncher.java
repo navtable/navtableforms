@@ -37,6 +37,8 @@ public class AlphanumericNavTableLauncher implements MouseListener {
 	IEditableSource source = getTableSource(params.getTableName());
 	AlphanumericNavTable ant;
 	try {
+	    // TODO: this source will allow us only to read values,
+	    // not to write them
 	    ant = new AlphanumericNavTable(source,
 		    params.getAlphanumericNavTableTitle());
 	    if (ant.init()) {

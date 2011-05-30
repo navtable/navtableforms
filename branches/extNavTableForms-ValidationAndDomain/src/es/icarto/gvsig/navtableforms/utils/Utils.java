@@ -15,7 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-package es.icarto.gvsig.navtableforms;
+package es.icarto.gvsig.navtableforms.utils;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with extNavTableForms.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package es.icarto.gvsig.navtableforms;
+package es.icarto.gvsig.navtableforms.utils;
 
 import java.awt.Component;
 import java.awt.Container;

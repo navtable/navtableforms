@@ -1,4 +1,4 @@
-package es.icarto.gvsig.navtableforms;
+package es.icarto.gvsig.navtableforms.utils;
 
 import java.util.ArrayList;
 
