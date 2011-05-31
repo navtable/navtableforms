@@ -2,29 +2,26 @@ package es.icarto.gvsig.navtableforms.launcher;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 
 import javax.swing.JInternalFrame;
+import javax.swing.JTable;
+import javax.swing.table.TableModel;
 
-import com.hardcode.driverManager.DriverLoadException;
 import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
-import com.hardcode.gdbms.engine.data.DataSource;
-import com.hardcode.gdbms.engine.data.DataSourceFactory;
-import com.hardcode.gdbms.engine.instruction.EvaluationException;
-import com.hardcode.gdbms.engine.instruction.SemanticException;
-import com.hardcode.gdbms.parser.ParseException;
 import com.iver.andami.PluginServices;
 import com.iver.andami.ui.mdiManager.IWindow;
-import com.iver.cit.gvsig.fmap.edition.EditableAdapter;
 import com.iver.cit.gvsig.fmap.edition.IEditableSource;
-import com.iver.cit.gvsig.fmap.layers.SelectableDataSource;
 import com.iver.cit.gvsig.project.documents.table.gui.Table;
 
+import es.icarto.gvsig.navtableforms.utils.TableUtils;
 import es.udc.cartolab.gvsig.navtable.AlphanumericNavTable;
 
 public class AlphanumericNavTableLauncher implements MouseListener {
 
     private ILauncherForm form;
     private LauncherParams params;
+    private AlphanumericNavTable ant;
 
     public AlphanumericNavTableLauncher(ILauncherForm form,
 	    LauncherParams params) {
@@ -34,14 +31,17 @@ public class AlphanumericNavTableLauncher implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
+	JTable table = (JTable) e.getComponent();
+	TableModel model = table.getModel();
+	int rowSelectedIndex = table.getSelectedRow();
 	IEditableSource source = getTableSource(params.getTableName());
-	AlphanumericNavTable ant;
 	try {
-	    // TODO: this source will allow us only to read values,
-	    // not to write them
 	    ant = new AlphanumericNavTable(source,
 		    params.getAlphanumericNavTableTitle());
 	    if (ant.init()) {
+		ant.setPosition(TableUtils.getPositionOfRowSelected(source,
+			model, rowSelectedIndex));
+		selectFeaturesInANT(source, model);
 		PluginServices.getMDIManager().addCentredWindow(ant);
 		JInternalFrame parent = (JInternalFrame) ant.getRootPane()
 			.getParent();
@@ -54,40 +54,23 @@ public class AlphanumericNavTableLauncher implements MouseListener {
 	}
     }
 
+    private void selectFeaturesInANT(IEditableSource source, TableModel model) {
+	ArrayList<Integer> rowList = TableUtils.getIndexesOfRowsInTable(source,
+		model);
+	ant.clearSelectedFeatures();
+	for (int row : rowList) {
+	    ant.selectFeature(row);
+	}
+	ant.setOnlySelected(true);
+    }
+
     private IEditableSource getTableSource(String tableName) {
 	IWindow[] windows = PluginServices.getMDIManager().getAllWindows();
 	for (IWindow w : windows) {
 	    if ((w instanceof Table)
 		    && (((Table) w).getModel().getName()
 			    .equalsIgnoreCase(tableName))) {
-		try {
-		    IEditableSource source = ((Table) w).getModel().getModelo();
-
-		    DataSourceFactory dsf = source.getRecordset()
-			    .getDataSourceFactory();
-		    DataSource ds = dsf.executeSQL(params.getSQLQuery(),
-			    DataSourceFactory.AUTOMATIC_OPENING);
-		    ds.setDataSourceFactory(dsf);
-		    SelectableDataSource sds = new SelectableDataSource(ds);
-		    EditableAdapter ea = new EditableAdapter();
-		    ea.setOriginalDataSource(sds);
-		    return ea;
-		} catch (DriverLoadException e) {
-		    e.printStackTrace();
-		    return null;
-		} catch (ReadDriverException e) {
-		    e.printStackTrace();
-		    return null;
-		} catch (ParseException e) {
-		    e.printStackTrace();
-		    return null;
-		} catch (SemanticException e) {
-		    e.printStackTrace();
-		    return null;
-		} catch (EvaluationException e) {
-		    e.printStackTrace();
-		    return null;
-		}
+		return ((Table) w).getModel().getModelo();
 	    }
 	}
 	return null;
