@@ -227,17 +227,21 @@ public abstract class AbstractForm extends AbstractNavTable {
 
     @Override
     public void fillEmptyValues() {
+	setFillingValues(true);
 	super.fillEmptyValues();
 	for (JComponent comp : widgetsVector.values()) {
 	    if (comp instanceof JFormattedTextField) {
 		((JFormattedTextField) comp).setText("");
 	    }
 	    if (comp instanceof JComboBox) {
-		if ((((JComboBox) comp).getItemCount() > 0)) {
-		    ((JComboBox) comp).setSelectedIndex(0);
+		if (((JComboBox) comp).getItemCount() > 0) {
+		    ((JComboBox) comp).removeAllItems();
 		}
+		((JComboBox) comp).addItem("");
+		((JComboBox) comp).setSelectedIndex(0);
 	    }
 	}
+	setFillingValues(false);
     }
 
     protected void fillJTextField(JTextField field) {
