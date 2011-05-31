@@ -12,6 +12,7 @@ import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
 import com.iver.andami.PluginServices;
 import com.iver.andami.ui.mdiManager.IWindow;
 import com.iver.cit.gvsig.fmap.edition.IEditableSource;
+import com.iver.cit.gvsig.fmap.layers.SelectableDataSource;
 import com.iver.cit.gvsig.project.documents.table.gui.Table;
 
 import es.icarto.gvsig.navtableforms.utils.TableUtils;
@@ -38,10 +39,10 @@ public class AlphanumericNavTableLauncher implements MouseListener {
 	try {
 	    ant = new AlphanumericNavTable(source,
 		    params.getAlphanumericNavTableTitle());
-	    if (ant.init()) {
-		ant.setPosition(TableUtils.getPositionOfRowSelected(source,
-			model, rowSelectedIndex));
-		selectFeaturesInANT(source, model);
+	    if (ant.init() && tableHasRows(model)) {
+		ant.setPosition(TableUtils.getPositionOfRowSelected(
+			source.getRecordset(), model, rowSelectedIndex));
+		selectFeaturesInANT(source.getRecordset(), model);
 		PluginServices.getMDIManager().addCentredWindow(ant);
 		JInternalFrame parent = (JInternalFrame) ant.getRootPane()
 			.getParent();
@@ -54,9 +55,30 @@ public class AlphanumericNavTableLauncher implements MouseListener {
 	}
     }
 
-    private void selectFeaturesInANT(IEditableSource source, TableModel model) {
-	ArrayList<Integer> rowList = TableUtils.getIndexesOfRowsInTable(source,
-		model);
+    public boolean tableHasRows(TableModel model) {
+	if ((model.getRowCount() > 0) && (!firstRowIsVoid(model))) {
+	    return true;
+	}
+	return false;
+    }
+
+    public boolean firstRowIsVoid(TableModel model) {
+	boolean isVoid = true;
+	for (int colIndex = 0; colIndex < model.getColumnCount(); colIndex++) {
+	    if (model.getValueAt(0, colIndex) == null) {
+		isVoid = true;
+	    } else {
+		isVoid = false;
+		break;
+	    }
+	}
+	return isVoid;
+    }
+
+    private void selectFeaturesInANT(SelectableDataSource source,
+	    TableModel model) {
+	ArrayList<Integer> rowList;
+	rowList = TableUtils.getIndexesOfRowsInTable(source, model);
 	ant.clearSelectedFeatures();
 	for (int row : rowList) {
 	    ant.selectFeature(row);
