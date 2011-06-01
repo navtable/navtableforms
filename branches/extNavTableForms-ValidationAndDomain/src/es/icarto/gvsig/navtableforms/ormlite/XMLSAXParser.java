@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010. Cartolab (Universidade da Coruña)
+ * Copyright (c) 2011. iCarto
  * 
  * This file is part of extNavTableForms
  * 
