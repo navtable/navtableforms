@@ -38,7 +38,7 @@ public class ComponentValidator {
 		c.setBackground(defaultbg);
 		return true;
 	    }
-	    c.setBackground(Color.RED);
+	    c.setBackground(new Color(249, 112, 140));
 	    return false;
 	}
 	return true;
