@@ -20,6 +20,7 @@ package es.icarto.gvsig.navtableforms.ormlite;
 import java.util.HashMap;
 
 import es.icarto.gvsig.navtableforms.validation.DomainValues;
+import es.icarto.gvsig.navtableforms.validation.DoublePositiveRule;
 import es.icarto.gvsig.navtableforms.validation.IntegerPositiveRule;
 import es.icarto.gvsig.navtableforms.validation.ValidationRule;
 
@@ -66,6 +67,9 @@ public class ORMLiteAplicationDomain {
     public ValidationRule createRule(String id) {
 	if (id.equalsIgnoreCase("INTEGER_POSITIVE")) {
 	    return new IntegerPositiveRule();
+	}
+	if (id.equalsIgnoreCase("DOUBLE_POSITIVE")) {
+	    return new DoublePositiveRule();
 	}
 	return null;
     }
