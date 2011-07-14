@@ -17,26 +17,32 @@
 
 package es.icarto.gvsig.navtableforms.validation;
 
+import java.util.Set;
+
 import es.icarto.gvsig.navtableforms.ormlite.ORMLite;
 
 public class DomainValidator {
 
-    ValidationRule rule = null;
+    Set<ValidationRule> rules = null;
 
     public DomainValidator(String name) {
-	rule = getValidationRuleForComponent(name);
+	rules = getValidationRulesForComponent(name);
     }
 
     public boolean validate(String value) {
-	if (rule != null) {
-	    return rule.validate(value);
+	if (rules != null) {
+	    for (ValidationRule rule : rules) {
+		if (!rule.validate(value)) {
+		    return false;
+		}
+	    }
 	}
 	return true;
     }
 
-    private ValidationRule getValidationRuleForComponent(String name) {
+    private Set<ValidationRule> getValidationRulesForComponent(String name) {
 	return ORMLite.getAplicationDomainObject("file.xml")
-		.getValidationRuleForComponent(name);
+	.getValidationRulesForComponent(name);
     }
 
 }

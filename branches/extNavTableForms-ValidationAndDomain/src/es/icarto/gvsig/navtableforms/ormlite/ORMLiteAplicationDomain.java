@@ -18,6 +18,8 @@
 package es.icarto.gvsig.navtableforms.ormlite;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import es.icarto.gvsig.navtableforms.validation.DomainValues;
 import es.icarto.gvsig.navtableforms.validation.DoublePositiveRule;
@@ -27,11 +29,11 @@ import es.icarto.gvsig.navtableforms.validation.ValidationRule;
 
 public class ORMLiteAplicationDomain {
 
-    private HashMap<String, ValidationRule> domainRules;
+    private HashMap<String, Set<ValidationRule>> domainRules;
     private HashMap<String, DomainValues> domainValues;
 
     public ORMLiteAplicationDomain() {
-	domainRules = new HashMap<String, ValidationRule>();
+	domainRules = new HashMap<String, Set<ValidationRule>>();
 	domainValues = new HashMap<String, DomainValues>();
     }
 
@@ -49,7 +51,13 @@ public class ORMLiteAplicationDomain {
      */
     public void addRule(String componentName, ValidationRule rule) {
 	if (rule != null) {
-	    domainRules.put(componentName.toUpperCase(), rule);
+	    Set<ValidationRule> rules = domainRules.get(componentName
+		    .toUpperCase());
+	    if (rules == null) {
+		rules = new HashSet<ValidationRule>();
+	    }
+	    rules.add(rule);
+	    domainRules.put(componentName.toUpperCase(), rules);
 	}
     }
 
@@ -61,7 +69,8 @@ public class ORMLiteAplicationDomain {
 	return domainValues.get(componentName.toUpperCase());
     }
 
-    public ValidationRule getValidationRuleForComponent(String componentName) {
+    public Set<ValidationRule> getValidationRulesForComponent(
+	    String componentName) {
 	return domainRules.get(componentName.toUpperCase());
     }
 

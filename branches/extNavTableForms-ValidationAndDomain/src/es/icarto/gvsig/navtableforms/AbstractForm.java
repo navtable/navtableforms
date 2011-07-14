@@ -79,6 +79,7 @@ public abstract class AbstractForm extends AbstractNavTable {
     private static Logger logger = null;
     private ValidationHandlerForTextFields validationChangeHandlerForTextFields;
     private ValidationHandlerForComboBoxes validationChangeHandlerForComboBoxes;
+    private ValidationHandlerForCheckBoxes validationChangeHandlerForCheckBoxes;
 
     public AbstractForm(FLyrVect layer) {
 	super(layer);
@@ -89,6 +90,7 @@ public abstract class AbstractForm extends AbstractNavTable {
 	widgetValues = new HashMap<String, String>();
 	validationChangeHandlerForTextFields = new ValidationHandlerForTextFields();
 	validationChangeHandlerForComboBoxes = new ValidationHandlerForComboBoxes();
+	validationChangeHandlerForCheckBoxes = new ValidationHandlerForCheckBoxes();
     }
 
     public abstract FormPanel getFormBody();
@@ -161,7 +163,7 @@ public abstract class AbstractForm extends AbstractNavTable {
 
     private void initGUI() {
 	MigLayout thisLayout = new MigLayout("inset 0, align center", "[grow]",
-		"[][grow][]");
+	"[][grow][]");
 	this.setLayout(thisLayout);
 
 	this.add(getThisNorthPanel(), "shrink, wrap, align center");
@@ -173,12 +175,15 @@ public abstract class AbstractForm extends AbstractNavTable {
 	for (JComponent comp : widgetsVector.values()) {
 	    if (comp instanceof JTextField) {
 		((JTextField) comp)
-			.addKeyListener(validationChangeHandlerForTextFields);
+		.addKeyListener(validationChangeHandlerForTextFields);
 		ComponentValidator cv = new ComponentValidator(comp);
 		formValidator.addComponentValidator(cv);
 	    } else if (comp instanceof JComboBox) {
 		((JComboBox) comp)
-			.addActionListener(validationChangeHandlerForComboBoxes);
+		.addActionListener(validationChangeHandlerForComboBoxes);
+	    } else if (comp instanceof JCheckBox) {
+		((JCheckBox) comp)
+			.addActionListener(validationChangeHandlerForCheckBoxes);
 	    }
 	}
     }
@@ -275,7 +280,7 @@ public abstract class AbstractForm extends AbstractNavTable {
 	String fieldValue = Utils.getValueFromLayer(layer, currentPosition,
 		colName);
 	DomainValues dv = ORMLite.getAplicationDomainObject(getXMLPath())
-		.getDomainValuesForComponent(colName);
+	.getDomainValuesForComponent(colName);
 	if (dv != null) { // the component has domain values defined
 	    addDomainValuesToComboBox(combobox, dv.getValues());
 	    setDomainValueSelected(combobox, fieldValue);
@@ -424,7 +429,7 @@ public abstract class AbstractForm extends AbstractNavTable {
 
 		    value = rs.getFieldValue(currentPosition, index);
 		    valueInRecordSet = value
-			    .getStringValue(ValueWriter.internalValueWriter);
+		    .getStringValue(ValueWriter.internalValueWriter);
 		    valueInRecordSet = valueInRecordSet.replace("'", "").trim();
 
 		    if (!valueInRecordSet.equals(valueInForm)) {
@@ -558,8 +563,25 @@ public abstract class AbstractForm extends AbstractNavTable {
 		    widgetValues.put(c.getName().toUpperCase(), "");
 		}
 		setChangedValues();
+		formValidator.validate();
 	    }
 	}
 
+    }
+
+    class ValidationHandlerForCheckBoxes implements ActionListener {
+
+	public void actionPerformed(ActionEvent e) {
+	    if (!isFillingValues()) {
+		JCheckBox c = ((JCheckBox) e.getSource());
+		if (c.isSelected()) {
+		    widgetValues.put(c.getName().toUpperCase(), "true");
+		} else {
+		    widgetValues.put(c.getName().toUpperCase(), "false");
+		}
+	    }
+	    setChangedValues();
+	    formValidator.validate();
+	}
     }
 }
