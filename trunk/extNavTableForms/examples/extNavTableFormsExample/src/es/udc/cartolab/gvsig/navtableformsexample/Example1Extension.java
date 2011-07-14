@@ -8,8 +8,8 @@ import com.iver.andami.ui.mdiManager.IWindow;
 import com.iver.cit.gvsig.fmap.layers.FLyrVect;
 import com.iver.cit.gvsig.project.documents.view.gui.BaseView;
 
-import es.udc.cartolab.gvsig.navtableforms.Utils;
-import es.udc.cartolab.gvsig.navtableforms.ormlite.ORMLite;
+import es.icarto.gvsig.navtableforms.ormlite.ORMLite;
+import es.icarto.gvsig.navtableforms.utils.Utils;
 
 public class Example1Extension extends Extension {
 
@@ -27,7 +27,7 @@ public class Example1Extension extends Extension {
     private FLyrVect getLayerNameFromXML() {
 	IWindow window = PluginServices.getMDIManager().getActiveWindow();
 	String layerName = ORMLite
-		.getDataBaseObject(Preferences.getXMLFileName())
+		.getDataBaseObject(Preferences.XMLDATAFILE_PATH)
 		.getTable("Example 1").getTableName();
 	return Utils.getFlyrVect((BaseView) window, layerName);
     }
