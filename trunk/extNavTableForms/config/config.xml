@@ -6,6 +6,6 @@
 	<libraries library-dir="lib"/>
 	<resourceBundle name="text"/>
 	<extensions>
-		<extension class-name="es.udc.cartolab.gvsig.navtableforms.MockExtension" active="false" />
+		<extension class-name="es.icarto.gvsig.navtableforms.MockExtension" active="false" />
 	</extensions>
 </plugin-config>

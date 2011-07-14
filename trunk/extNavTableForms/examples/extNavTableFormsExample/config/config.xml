@@ -2,7 +2,7 @@
 <plugin-config>
 	<depends plugin-name="com.iver.cit.gvsig"/>
 	<depends plugin-name="es.udc.cartolab.gvsig.navtable"/>
-	<depends plugin-name="es.udc.cartolab.gvsig.navtableforms"/>
+	<depends plugin-name="es.icarto.gvsig.navtableforms"/>
 	<libraries library-dir="lib"/>
 	<resourceBundle name="text"/>
 	<extensions>
