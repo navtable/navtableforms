@@ -11,6 +11,6 @@
 	<classpathentry kind="lib" path="lib/log4j-1.2.8.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/extNavTable"/>
 	<classpathentry kind="lib" path="lib/formsrt.jar"/>
-	<classpathentry kind="lib" path="lib/es.udc.cartolab.gvsig.navtableforms.jar" sourcepath="/extNavTableForms/src"/>
+	<classpathentry kind="lib" path="lib/es.icarto.gvsig.navtableforms.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
