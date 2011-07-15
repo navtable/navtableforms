@@ -31,6 +31,7 @@
   	<mkdir dir="${dist}/lib"/>
 
   	<copy file="data/example1.xml" todir="${dist}" overwrite="yes"/>
+  	<copy file="data/example1" todir="${dist}" overwrite="yes"/>
 
     <!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
 	<copy todir="${dist}/lib">
