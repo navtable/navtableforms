@@ -27,6 +27,16 @@ import es.udc.cartolab.gvsig.users.utils.DBSession;
 /**
  * DomainReader which reads the values from a database.
  * 
+ * XML syntax example:
+ * 
+ * <DOMAINREADER>
+ *	<DRTYPE>db</DRTYPE>
+ *	<DRDBTABLE>table</DRDBTABLE>
+ *	<DRDBCOLUMNALIAS>alias</DRDBCOLUMNALIAS>
+ *	<DRDBCOLUMNVALUE>value</DRDBCOLUMNVALUE>
+ *	<DRDBFOREIGNKEY>key</DRDBFOREIGNKEY>
+ * </DOMAINREADER>
+ * 
  * @author Andr�s Maneiro <andres.maneiro@cartolab.es>
  * @author Jorge López <jlopez@cartolab.es>
  * 

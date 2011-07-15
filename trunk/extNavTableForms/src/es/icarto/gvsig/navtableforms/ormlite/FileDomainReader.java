@@ -29,6 +29,15 @@ import es.icarto.gvsig.navtableforms.validation.KeyValue;
 
 /**
  * DomainReader which reads the values from a file.
+ * The file must be in the same dir as the xml.
+ * 
+ * XML syntax example:
+ * 
+ * <DOMAINREADER>
+ *	<DRTYPE>file</DRTYPE>
+ *	<DRFILENAME>example1</DRFILENAME>
+ *	<DRFILEFIELDALIAS>gestion</DRFILEFIELDALIAS>
+ * </DOMAINREADER>
  * 
  * @author Jorge López <jlopez@cartolab.es>
  * 
