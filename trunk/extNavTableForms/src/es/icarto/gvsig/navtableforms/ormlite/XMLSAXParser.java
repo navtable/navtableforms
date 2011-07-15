@@ -16,6 +16,7 @@
  */
 package es.icarto.gvsig.navtableforms.ormlite;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.Types;
 import java.util.ArrayList;
@@ -41,7 +42,8 @@ import es.icarto.gvsig.navtableforms.validation.ValidationRule;
  * SAX parser to build from a XML estructure several objects needed for
  * validation.
  * 
- * @author Andrés Maneiro <andres.maneiro@cartolab.es>
+ * @author Andrï¿½s Maneiro <andres.maneiro@cartolab.es>
+ * @author Jorge LÃ³pez <jlopez@cartolab.es>
  * 
  */
 public class XMLSAXParser extends DefaultHandler {
@@ -87,6 +89,10 @@ public class XMLSAXParser extends DefaultHandler {
 
     private String getXMLFile() {
 	return xmlFile;
+    }
+
+    private String getXMLFileDir() {
+	return xmlFile.substring(0, xmlFile.lastIndexOf(File.separator) + 1);
     }
 
     private void setXMLFile(String xmlFile) {
@@ -182,8 +188,6 @@ public class XMLSAXParser extends DefaultHandler {
 	} else if (qName.equalsIgnoreCase("FIELD")) {
 	    // set field
 	    tmpFieldDescription = new FieldDescription();
-	} else if (qName.equalsIgnoreCase("DOMAINREADER")) {
-	    tmpDomainReader = new DomainReader();
 	}
     }
 
@@ -198,7 +202,7 @@ public class XMLSAXParser extends DefaultHandler {
      */
     @Override
     public void characters(char[] ch, int start, int length)
-	    throws SAXException {
+    throws SAXException {
 	tmpVal = tmpVal + new String(ch, start, length);
     }
 
@@ -207,7 +211,7 @@ public class XMLSAXParser extends DefaultHandler {
      */
     @Override
     public void endElement(String uri, String localName, String qName)
-	    throws SAXException {
+    throws SAXException {
 
 	// set tmp field structure
 	if (qName.equalsIgnoreCase("FIELDNAME")) {
@@ -292,15 +296,44 @@ public class XMLSAXParser extends DefaultHandler {
 	    tmpLayer.addField(tmpDBFIndex++, tmpFieldDescription);
 	}
 
-	// set tmp domain reader configuration
-	else if (qName.equalsIgnoreCase("DRTABLE")) {
-	    tmpDomainReader.setTable(tmpVal);
-	} else if (qName.equalsIgnoreCase("DRCOLUMNALIAS")) {
-	    tmpDomainReader.setColumnAlias(tmpVal);
-	} else if (qName.equalsIgnoreCase("DRCOLUMNVALUE")) {
-	    tmpDomainReader.setColumnValue(tmpVal);
-	} else if (qName.equalsIgnoreCase("DRFOREIGNKEY")) {
-	    tmpDomainReader.addColumnForeignKey(tmpVal);
+	else if (qName.equalsIgnoreCase("DRTYPE")) {
+	    if (tmpVal.equalsIgnoreCase("DB")) {
+		tmpDomainReader = new DBDomainReader();
+	    } else if (tmpVal.equalsIgnoreCase("FILE")) {
+		tmpDomainReader = new FileDomainReader();
+	    }
+	}
+
+	// set tmp domain db reader configuration
+	else if (qName.equalsIgnoreCase("DRDBTABLE")) {
+	    if (tmpDomainReader instanceof DBDomainReader) {
+		((DBDomainReader) tmpDomainReader).setTable(tmpVal);
+	    }
+	} else if (qName.equalsIgnoreCase("DRDBCOLUMNALIAS")) {
+	    if (tmpDomainReader instanceof DBDomainReader) {
+		((DBDomainReader) tmpDomainReader).setColumnAlias(tmpVal);
+	    }
+	} else if (qName.equalsIgnoreCase("DRDBCOLUMNVALUE")) {
+	    if (tmpDomainReader instanceof DBDomainReader) {
+		((DBDomainReader) tmpDomainReader).setColumnValue(tmpVal);
+	    }
+	} else if (qName.equalsIgnoreCase("DRDBFOREIGNKEY")) {
+	    if (tmpDomainReader instanceof DBDomainReader) {
+		((DBDomainReader) tmpDomainReader).addColumnForeignKey(tmpVal);
+	    }
+	}
+
+	// set tmp domain file reader configuration
+	else if (qName.equalsIgnoreCase("DRFILENAME")) {
+	    if (tmpDomainReader instanceof FileDomainReader) {
+		((FileDomainReader) tmpDomainReader).setFileName(this
+			.getXMLFileDir()
+			+ tmpVal);
+	    }
+	} else if (qName.equalsIgnoreCase("DRFILEFIELDALIAS")) {
+	    if (tmpDomainReader instanceof FileDomainReader) {
+		((FileDomainReader) tmpDomainReader).setFieldAlias(tmpVal);
+	    }
 	}
 
 	// save tmp values in DBO and FLS objects
