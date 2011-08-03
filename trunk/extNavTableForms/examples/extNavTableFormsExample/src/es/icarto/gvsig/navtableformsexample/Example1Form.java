@@ -1,4 +1,4 @@
-package es.udc.cartolab.gvsig.navtableformsexample;
+package es.icarto.gvsig.navtableformsexample;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

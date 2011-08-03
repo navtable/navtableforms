@@ -1,4 +1,4 @@
-package es.udc.cartolab.gvsig.navtableformsexample;
+package es.icarto.gvsig.navtableformsexample;
 
 import org.apache.log4j.Logger;
 

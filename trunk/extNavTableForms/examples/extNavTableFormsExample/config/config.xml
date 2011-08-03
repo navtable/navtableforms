@@ -6,7 +6,7 @@
 	<libraries library-dir="lib"/>
 	<resourceBundle name="text"/>
 	<extensions>
-		<extension class-name="es.udc.cartolab.gvsig.navtableformsexample.Example1Extension" description="FORMS_PANEL" active="true">
+		<extension class-name="es.icarto.gvsig.navtableformsexample.Example1Extension" description="FORMS_PANEL" active="true">
 			<tool-bar name="NTForms Example1">
 				<action-tool icon="example1-ntforms" tooltip="Example1 NavTableForms"
 					action-command="NTFormsExample1" position="50"/>

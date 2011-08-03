@@ -8,8 +8,8 @@
   <property name="lib" location="lib" />
   <property name="dist"  location="dist"/>
   <property name="mainplugin" value="com.iver.cit.gvsig"/>
-  <property name="plugin" value="es.udc.cartolab.gvsig.navtableformsexample"/>
-  <property name="gvsiglibjar" value="es.udc.cartolab.gvsig.navtableformsexample"/>
+  <property name="plugin" value="es.icarto.gvsig.navtableformsexample"/>
+  <property name="gvsiglibjar" value="es.icarto.gvsig.navtableformsexample"/>
   <property name="andami" location="../_fwAndami" />
   <property name="extensionsDir" location="${andami}/gvSIG/extensiones"/>
   <property name="lib-dir" location="${extensionsDir}/${mainplugin}/lib"/>
@@ -30,15 +30,16 @@
     <mkdir dir="${dist}"/>
   	<mkdir dir="${dist}/lib"/>
 
-  	<copy file="data/example1.xml" todir="${dist}" overwrite="yes"/>
-  	<copy file="data/example1" todir="${dist}" overwrite="yes"/>
+	<copy file="data/example1.xml" todir="${dist}" overwrite="yes"/>
+	<copy file="data/example1.domain" todir="${dist}" overwrite="yes"/>
+	<copy file="data/example1.alias" todir="${dist}" overwrite="yes"/>
 
     <!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
 	<copy todir="${dist}/lib">
   	    	<fileset dir="lib" includes="*"/>
   	</copy>
 
-  	<jar jarfile="${dist}/lib/${plugin}.jar" basedir="${build}" includes="es/udc/cartolab/**"
+	<jar jarfile="${dist}/lib/${plugin}.jar" basedir="${build}" includes="es/icarto/**"
     />
 
   	<jar update="true" jarfile="${dist}/lib/${plugin}.jar" basedir="images" includes="*"/>
