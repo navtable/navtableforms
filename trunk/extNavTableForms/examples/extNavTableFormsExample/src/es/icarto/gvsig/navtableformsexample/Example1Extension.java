@@ -17,19 +17,22 @@ public class Example1Extension extends Extension {
     private static Logger logger = Logger.getLogger("NTForms Example 1");
 
     public void execute(String actionCommand) {
-	layer = getLayerNameFromXML();
+	layer = getLayerFromTOC();
 	Example1Form dialog = new Example1Form(layer);
 	if (dialog.init()) {
 	    PluginServices.getMDIManager().addWindow(dialog);
 	}
     }
 
-    private FLyrVect getLayerNameFromXML() {
+    private FLyrVect getLayerFromTOC() {
 	IWindow window = PluginServices.getMDIManager().getActiveWindow();
-	String layerName = ORMLite
-		.getDataBaseObject(Preferences.XMLDATAFILE_PATH)
-		.getTable("Example 1").getTableName();
-	return Utils.getFlyrVect((BaseView) window, layerName);
+	if (window instanceof BaseView) {
+	    String layerName = ORMLite
+		    .getDataBaseObject(Preferences.XMLDATAFILE_PATH)
+		    .getTable("Example 1").getTableName();
+	    return Utils.getFlyrVect((BaseView) window, layerName);
+	}
+	return null;
     }
 
     protected void registerIcons() {
@@ -44,6 +47,16 @@ public class Example1Extension extends Extension {
     }
 
     public boolean isEnabled() {
+	if (isExampleDataSetLoaded()) {
+	    return true;
+	}
+	return false;
+    }
+
+    private boolean isExampleDataSetLoaded() {
+	if (getLayerFromTOC() == null) {
+	    return false;
+	}
 	return true;
     }
 
