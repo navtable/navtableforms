@@ -20,6 +20,7 @@ package es.icarto.gvsig.navtableforms.validation;
 import java.util.Set;
 
 import es.icarto.gvsig.navtableforms.ormlite.ORMLite;
+import es.icarto.gvsig.navtableforms.validation.rules.ValidationRule;
 
 public class DomainValidator {
 

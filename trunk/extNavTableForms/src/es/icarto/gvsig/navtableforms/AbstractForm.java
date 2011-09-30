@@ -18,10 +18,6 @@ package es.icarto.gvsig.navtableforms;
 
 import java.awt.BorderLayout;
 import java.awt.HeadlessException;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -50,13 +46,16 @@ import com.iver.cit.gvsig.fmap.layers.FLyrVect;
 import com.iver.cit.gvsig.fmap.layers.SelectableDataSource;
 import com.jeta.forms.components.panel.FormPanel;
 
+import es.icarto.gvsig.navtableforms.ormlite.DomainValues;
+import es.icarto.gvsig.navtableforms.ormlite.KeyValue;
 import es.icarto.gvsig.navtableforms.ormlite.ORMLite;
 import es.icarto.gvsig.navtableforms.utils.FormParserUtils;
 import es.icarto.gvsig.navtableforms.utils.Utils;
 import es.icarto.gvsig.navtableforms.validation.ComponentValidator;
-import es.icarto.gvsig.navtableforms.validation.DomainValues;
 import es.icarto.gvsig.navtableforms.validation.FormValidator;
-import es.icarto.gvsig.navtableforms.validation.KeyValue;
+import es.icarto.gvsig.navtableforms.validation.listeners.ValidationHandlerForCheckBoxes;
+import es.icarto.gvsig.navtableforms.validation.listeners.ValidationHandlerForComboBoxes;
+import es.icarto.gvsig.navtableforms.validation.listeners.ValidationHandlerForTextFields;
 import es.udc.cartolab.gvsig.navtable.AbstractNavTable;
 import es.udc.cartolab.gvsig.navtable.ToggleEditing;
 
@@ -75,11 +74,11 @@ public abstract class AbstractForm extends AbstractNavTable {
     private HashMap<String, String> widgetValues;
 
     private FLyrVect layer = null;
+    private ValidationHandlerForTextFields validationHandlerForTextFields;
+    private ValidationHandlerForComboBoxes validationHandlerForComboBoxes;
+    private ValidationHandlerForCheckBoxes validationHandlerForCheckBoxes;
 
     private static Logger logger = null;
-    private ValidationHandlerForTextFields validationChangeHandlerForTextFields;
-    private ValidationHandlerForComboBoxes validationChangeHandlerForComboBoxes;
-    private ValidationHandlerForCheckBoxes validationChangeHandlerForCheckBoxes;
 
     public AbstractForm(FLyrVect layer) {
 	super(layer);
@@ -88,9 +87,12 @@ public abstract class AbstractForm extends AbstractNavTable {
 	logger = getLoggerName();
 	this.layer = layer;
 	widgetValues = new HashMap<String, String>();
-	validationChangeHandlerForTextFields = new ValidationHandlerForTextFields();
-	validationChangeHandlerForComboBoxes = new ValidationHandlerForComboBoxes();
-	validationChangeHandlerForCheckBoxes = new ValidationHandlerForCheckBoxes();
+	validationHandlerForTextFields = new ValidationHandlerForTextFields(
+		this);
+	validationHandlerForComboBoxes = new ValidationHandlerForComboBoxes(
+		this);
+	validationHandlerForCheckBoxes = new ValidationHandlerForCheckBoxes(
+		this);
     }
 
     public abstract FormPanel getFormBody();
@@ -175,15 +177,15 @@ public abstract class AbstractForm extends AbstractNavTable {
 	for (JComponent comp : widgetsVector.values()) {
 	    if (comp instanceof JTextField) {
 		((JTextField) comp)
-			.addKeyListener(validationChangeHandlerForTextFields);
+			.addKeyListener(validationHandlerForTextFields);
 		ComponentValidator cv = new ComponentValidator(comp);
 		formValidator.addComponentValidator(cv);
 	    } else if (comp instanceof JComboBox) {
 		((JComboBox) comp)
-			.addActionListener(validationChangeHandlerForComboBoxes);
+			.addActionListener(validationHandlerForComboBoxes);
 	    } else if (comp instanceof JCheckBox) {
 		((JCheckBox) comp)
-			.addActionListener(validationChangeHandlerForCheckBoxes);
+			.addActionListener(validationHandlerForCheckBoxes);
 	    }
 	}
     }
@@ -373,7 +375,7 @@ public abstract class AbstractForm extends AbstractNavTable {
 	}
     }
 
-    protected boolean isFillingValues() {
+    public boolean isFillingValues() {
 	return isFillingValues;
     }
 
@@ -444,7 +446,7 @@ public abstract class AbstractForm extends AbstractNavTable {
 	return changedValues;
     }
 
-    protected void setChangedValues() {
+    public void setChangedValues() {
 	Vector<Integer> indexes = getIndexesOfChangedValues();
 	if (indexes.size() > 0) {
 	    setChangedValues(true);
@@ -524,63 +526,8 @@ public abstract class AbstractForm extends AbstractNavTable {
 
     }
 
-    class ValidationHandlerForTextFields implements KeyListener {
-
-	public void keyTyped(KeyEvent e) {
-	}
-
-	public void keyPressed(KeyEvent e) {
-	}
-
-	public void keyReleased(KeyEvent e) {
-	    if (!isFillingValues()) {
-		JTextField c = ((JTextField) e.getSource());
-		widgetValues.put(c.getName().toUpperCase(), c.getText());
-		setChangedValues(); // placed after updating widgetvalues
-		formValidator.validate();
-	    }
-	}
-
+    public FormValidator getFormValidator() {
+	return this.formValidator;
     }
 
-    class ValidationHandlerForComboBoxes implements ActionListener {
-
-	public void actionPerformed(ActionEvent e) {
-	    if (!isFillingValues()) {
-		JComboBox c = ((JComboBox) e.getSource());
-		if (c.getSelectedItem() instanceof KeyValue) {
-		    widgetValues.put(c.getName().toUpperCase(),
-			    ((KeyValue) c.getSelectedItem()).getKey());
-		} else if (c.getSelectedItem() != null) {
-		    widgetValues.put(c.getName().toUpperCase(), c
-			    .getSelectedItem().toString());
-		} else {
-		    // when remove items from a combobox, if isFillingValues is
-		    // not set to true, we will get a NullPointerException as
-		    // the change provokes this listener to activate
-		    logger.warn("combobox " + c.getName() + " has no value.");
-		    widgetValues.put(c.getName().toUpperCase(), "");
-		}
-		setChangedValues();
-		formValidator.validate();
-	    }
-	}
-
-    }
-
-    class ValidationHandlerForCheckBoxes implements ActionListener {
-
-	public void actionPerformed(ActionEvent e) {
-	    if (!isFillingValues()) {
-		JCheckBox c = ((JCheckBox) e.getSource());
-		if (c.isSelected()) {
-		    widgetValues.put(c.getName().toUpperCase(), "true");
-		} else {
-		    widgetValues.put(c.getName().toUpperCase(), "false");
-		}
-	    }
-	    setChangedValues();
-	    formValidator.validate();
-	}
-    }
 }

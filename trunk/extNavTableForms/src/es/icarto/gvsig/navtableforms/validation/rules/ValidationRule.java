@@ -14,20 +14,10 @@
  * You should have received a copy of the GNU General Public License along with extNavTableForms.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package es.icarto.gvsig.navtableforms.validation;
 
-public class DoublePositiveRule extends ValidationRule {
+package es.icarto.gvsig.navtableforms.validation.rules;
 
-    @Override
-    public boolean validate(String value) {
-	try {
-	    if (Double.parseDouble(value) >= 0) {
-		return true;
-	    }
-	    return false;
-	} catch (NumberFormatException nfe) {
-	    return false; // it's not an admissible value
-	}
-    }
+public abstract class ValidationRule {
 
+    public abstract boolean validate(String value);
 }

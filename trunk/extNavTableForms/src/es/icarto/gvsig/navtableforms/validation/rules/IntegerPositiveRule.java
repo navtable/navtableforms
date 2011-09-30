@@ -15,37 +15,20 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-package es.icarto.gvsig.navtableforms.validation;
-import java.util.ArrayList;
+package es.icarto.gvsig.navtableforms.validation.rules;
 
 
-public class DomainValues {
+public class IntegerPositiveRule extends ValidationRule {
 
-    ArrayList<KeyValue> data;
-
-    public DomainValues(ArrayList<KeyValue> values) {
-	this.data = values;
-    }
-
-    public ArrayList<KeyValue> getValues() {
-	return data;
-    }
-
-    public ArrayList<KeyValue> getValuesFilteredBy(ArrayList<String> ids) {
-	ArrayList<KeyValue> subset = new ArrayList<KeyValue>();
-	for (KeyValue kv : data) {
-	    if (kv.getForeignKeys().containsAll(ids)) {
-		subset.add(kv);
+    @Override
+    public boolean validate(String value) {
+	try {
+	    if (Integer.parseInt(value) >= 0) {
+		return true;
 	    }
+	    return false;
+	} catch (NumberFormatException nfe) {
+	    return false; // it's not an admissible value
 	}
-	return subset;
-    }
-
-    public void addValue(KeyValue value) {
-	data.add(value);
-    }
-
-    public void addValues(ArrayList<KeyValue> values) {
-	values.addAll(values);
     }
 }

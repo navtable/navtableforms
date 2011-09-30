@@ -15,7 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-package es.icarto.gvsig.navtableforms.validation;
+package es.icarto.gvsig.navtableforms.ormlite;
 
 import java.util.ArrayList;
 

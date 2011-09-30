@@ -1,3 +1,5 @@
+package es.icarto.gvsig.navtableforms.validation.rules;
+
 /*
  * Copyright (c) 2011. iCarto
  *
@@ -15,19 +17,13 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-package es.icarto.gvsig.navtableforms.validation;
-
-public class IntegerPositiveRule extends ValidationRule {
+public class MandatoryRule extends ValidationRule {
 
     @Override
     public boolean validate(String value) {
-	try {
-	    if (Integer.parseInt(value) >= 0) {
-		return true;
-	    }
+	if (value.trim().isEmpty()) {
 	    return false;
-	} catch (NumberFormatException nfe) {
-	    return false; // it's not an admissible value
 	}
+	return true;
     }
 }

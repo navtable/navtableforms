@@ -21,11 +21,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import es.icarto.gvsig.navtableforms.validation.DomainValues;
-import es.icarto.gvsig.navtableforms.validation.DoublePositiveRule;
-import es.icarto.gvsig.navtableforms.validation.IntegerPositiveRule;
-import es.icarto.gvsig.navtableforms.validation.MandatoryRule;
-import es.icarto.gvsig.navtableforms.validation.ValidationRule;
+import es.icarto.gvsig.navtableforms.validation.rules.DoublePositiveRule;
+import es.icarto.gvsig.navtableforms.validation.rules.IntegerPositiveRule;
+import es.icarto.gvsig.navtableforms.validation.rules.MandatoryRule;
+import es.icarto.gvsig.navtableforms.validation.rules.ValidationRule;
 
 public class ORMLiteAplicationDomain {
 

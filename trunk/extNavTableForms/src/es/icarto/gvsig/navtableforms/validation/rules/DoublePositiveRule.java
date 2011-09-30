@@ -1,5 +1,3 @@
-package es.icarto.gvsig.navtableforms.validation;
-
 /*
  * Copyright (c) 2011. iCarto
  *
@@ -16,14 +14,20 @@ package es.icarto.gvsig.navtableforms.validation;
  * You should have received a copy of the GNU General Public License along with extNavTableForms.
  * If not, see <http://www.gnu.org/licenses/>.
  */
+package es.icarto.gvsig.navtableforms.validation.rules;
 
-public class MandatoryRule extends ValidationRule {
+public class DoublePositiveRule extends ValidationRule {
 
     @Override
     public boolean validate(String value) {
-	if (value.trim().isEmpty()) {
+	try {
+	    if (Double.parseDouble(value) >= 0) {
+		return true;
+	    }
 	    return false;
+	} catch (NumberFormatException nfe) {
+	    return false; // it's not an admissible value
 	}
-	return true;
     }
+
 }

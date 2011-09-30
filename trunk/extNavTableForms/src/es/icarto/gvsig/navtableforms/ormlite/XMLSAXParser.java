@@ -36,7 +36,7 @@ import com.hardcode.gdbms.engine.values.ValueFactory;
 import com.iver.cit.gvsig.fmap.drivers.FieldDescription;
 
 import es.icarto.gvsig.navtableforms.ormlite.ORMLiteDataBase.ORMLiteTable;
-import es.icarto.gvsig.navtableforms.validation.ValidationRule;
+import es.icarto.gvsig.navtableforms.validation.rules.ValidationRule;
 
 /**
  * SAX parser to build from a XML estructure several objects needed for

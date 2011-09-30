@@ -17,7 +17,6 @@
 
 package es.icarto.gvsig.navtableforms.ormlite;
 
-import es.icarto.gvsig.navtableforms.validation.DomainValues;
 
 /**
  * Interface for all DomainReaders.

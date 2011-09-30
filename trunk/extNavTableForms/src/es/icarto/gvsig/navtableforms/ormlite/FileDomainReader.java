@@ -24,8 +24,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import es.icarto.gvsig.navtableforms.validation.DomainValues;
-import es.icarto.gvsig.navtableforms.validation.KeyValue;
 
 /**
  * DomainReader which reads the values from a file.
