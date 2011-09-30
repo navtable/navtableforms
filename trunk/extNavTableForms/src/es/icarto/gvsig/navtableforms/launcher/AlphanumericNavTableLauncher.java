@@ -50,24 +50,26 @@ public class AlphanumericNavTableLauncher implements MouseListener {
     public void mouseClicked(MouseEvent e) {
 	JTable table = (JTable) e.getComponent();
 	TableModel model = table.getModel();
-	int rowSelectedIndex = table.getSelectedRow();
-	IEditableSource source = getTableSource(params.getTableName());
-	try {
-	    ant = new AlphanumericNavTable(source,
-		    params.getAlphanumericNavTableTitle());
-	    if (ant.init() && tableHasRows(model)) {
-		ant.setPosition(TableUtils.getPositionOfRowSelected(
-			source.getRecordset(), model, rowSelectedIndex));
-		selectFeaturesInANT(source.getRecordset(), model);
-		PluginServices.getMDIManager().addCentredWindow(ant);
-		JInternalFrame parent = (JInternalFrame) ant.getRootPane()
-			.getParent();
-		// this listener will call the form passed once
-		// alphanumericnavtable is closed
-		parent.addInternalFrameListener(form);
+	if (tableHasRows(model)) {
+	    int rowSelectedIndex = table.getSelectedRow();
+	    IEditableSource source = getTableSource(params.getTableName());
+	    try {
+		ant = new AlphanumericNavTable(source,
+			params.getAlphanumericNavTableTitle());
+		if (ant.init()) {
+		    ant.setPosition(TableUtils.getPositionOfRowSelected(
+			    source.getRecordset(), model, rowSelectedIndex));
+		    selectFeaturesInANT(source.getRecordset(), model);
+		    PluginServices.getMDIManager().addCentredWindow(ant);
+		    JInternalFrame parent = (JInternalFrame) ant.getRootPane()
+			    .getParent();
+		    // this listener will call the form passed once
+		    // alphanumericnavtable is closed
+		    parent.addInternalFrameListener(form);
+		}
+	    } catch (ReadDriverException e1) {
+		e1.printStackTrace();
 	    }
-	} catch (ReadDriverException e1) {
-	    e1.printStackTrace();
 	}
     }
 
