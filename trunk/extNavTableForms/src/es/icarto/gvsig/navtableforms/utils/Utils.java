@@ -33,6 +33,8 @@ import com.hardcode.gdbms.driver.exceptions.InitializeDriverException;
 import com.hardcode.gdbms.driver.exceptions.InitializeWriterException;
 import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
 import com.hardcode.gdbms.engine.data.driver.DriverException;
+import com.hardcode.gdbms.engine.values.DateValue;
+import com.hardcode.gdbms.engine.values.NullValue;
 import com.hardcode.gdbms.engine.values.Value;
 import com.hardcode.gdbms.engine.values.ValueFactory;
 import com.hardcode.gdbms.engine.values.ValueWriter;
@@ -69,6 +71,7 @@ import com.iver.cit.gvsig.project.documents.view.gui.BaseView;
 import com.vividsolutions.jts.geom.Geometry;
 
 import es.udc.cartolab.gvsig.navtable.ToggleEditing;
+import es.udc.cartolab.gvsig.navtable.utils.DateFormatter;
 
 public class Utils {
 
@@ -632,40 +635,14 @@ public class Utils {
 
     public static String[] getValuesFromLayer(FLyrVect layer, long pos,
 	    String[] fields) {
-
-	String[] values = null;
-
-	SelectableDataSource recordset;
 	try {
+	    SelectableDataSource recordset;
 	    recordset = layer.getRecordset();
-
-	    values = new String[fields.length];
-	    for (int i = 0; i < fields.length; i++) {
-		int fieldIdx = recordset.getFieldIndexByName(fields[i]);
-		if (fieldIdx > -1) {
-		    Value val = recordset.getFieldValue(pos, fieldIdx);
-		    String aux = val
-			    .getStringValue(ValueWriter.internalValueWriter);
-		    if (aux.equalsIgnoreCase("null")) {
-			aux = "";
-		    } else if (aux.equalsIgnoreCase("'null'")) {
-			aux = "''";
-		    }
-		    if ((val.getSQLType() == Types.CHAR)
-			    || (val.getSQLType() == Types.VARCHAR)
-			    || (val.getSQLType() == Types.LONGVARCHAR)
-			    || (val.getSQLType() == Types.LONGNVARCHAR)) {
-			// remove quotation marks
-			values[i] = aux.substring(1, aux.length() - 1);
-		    } else {
-			values[i] = aux;
-		    }
-		}
-	    }
+	    return getValues(recordset, pos, fields);
 	} catch (ReadDriverException e) {
 	    logger.error(e.getMessage(), e);
+	    return null;
 	}
-	return values;
     }
 
     public static String getValueFromLayer(FLyrVect layer, long pos,
@@ -686,16 +663,20 @@ public class Utils {
 		int index = recordset.getFieldIndexByName(field);
 		if (index > -1) {
 		    Value val = recordset.getFieldValue(pos, index);
-		    String aux = val
-			    .getStringValue(ValueWriter.internalValueWriter);
-		    if ((val.getSQLType() == Types.CHAR)
-			    || (val.getSQLType() == Types.VARCHAR)
-			    || (val.getSQLType() == Types.LONGVARCHAR)
-			    || (val.getSQLType() == Types.LONGNVARCHAR)) {
-			// remove quotation marks
-			values.add(aux.substring(1, aux.length() - 1));
+		    String aux;
+		    if(val instanceof NullValue) {
+			values.add("");
+		    } else if(val instanceof DateValue) {
+			values.add(DateFormatter.convertDateValueToString(val));
+		    } else if ((val.getSQLType() == Types.CHAR)
+				|| (val.getSQLType() == Types.VARCHAR)
+				|| (val.getSQLType() == Types.LONGVARCHAR)
+				|| (val.getSQLType() == Types.LONGNVARCHAR)) {
+			    // remove quotation marks
+			    aux = val.getStringValue(ValueWriter.internalValueWriter);
+			    values.add(aux.substring(1, aux.length() - 1));
 		    } else {
-			values.add(aux);
+			values.add(val.getStringValue(ValueWriter.internalValueWriter));
 		    }
 		}
 	    }
