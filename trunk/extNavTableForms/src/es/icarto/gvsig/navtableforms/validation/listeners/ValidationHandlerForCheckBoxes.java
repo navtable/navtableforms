@@ -24,8 +24,8 @@ public class ValidationHandlerForCheckBoxes implements ActionListener {
 		dialog.getWidgetValues()
 			.put(c.getName().toUpperCase(), "false");
 	    }
+	    dialog.setChangedValues();
+	    dialog.getFormValidator().validate();
 	}
-	dialog.setChangedValues();
-	dialog.getFormValidator().validate();
     }
 }
