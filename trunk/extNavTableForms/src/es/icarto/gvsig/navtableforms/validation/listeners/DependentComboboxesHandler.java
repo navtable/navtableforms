@@ -29,7 +29,7 @@ public class DependentComboboxesHandler implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent e) {
-	if(parentComponentsHaveItemSelected()) {	    
+	if(!form.isFillingValues() && parentComponentsHaveItemSelected()) {	    
 	    ArrayList<String> foreignKeys = new ArrayList<String>();
 	    for (JComboBox cb : parentComponents) {
 		String key = ((KeyValue) cb.getSelectedItem()).getKey();
