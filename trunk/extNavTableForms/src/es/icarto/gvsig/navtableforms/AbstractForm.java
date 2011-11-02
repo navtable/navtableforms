@@ -303,6 +303,20 @@ public abstract class AbstractForm extends AbstractNavTable {
 	}
     }
 
+    public void fillJComboBox(JComboBox combobox, ArrayList<String> foreignKeys) {
+	String colName = combobox.getName();
+	String fieldValue = Utils.getValueFromLayer(layer, currentPosition,
+		colName);
+	DomainValues dv = ORMLite.getAplicationDomainObject(getXMLPath())
+		.getDomainValuesForComponent(colName);
+	if (dv != null) { // the component has domain values defined
+	    addDomainValuesToComboBox(combobox, dv.getValuesFilteredBy(foreignKeys));
+	    setDomainValueSelected(combobox, fieldValue);
+	} else {
+	    fillJComboBoxWithAbeilleValues(combobox, fieldValue);
+	}
+    }
+
     protected void addDomainValuesToComboBox(JComboBox cb,
 	    ArrayList<KeyValue> keyValueList) {
 
