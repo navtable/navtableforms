@@ -647,7 +647,11 @@ public class Utils {
 
     public static String getValueFromLayer(FLyrVect layer, long pos,
 	    String field) {
-	return getValuesFromLayer(layer, pos, new String[] { field })[0];
+	try {
+	    return getValuesFromLayer(layer, pos, new String[] { field })[0];
+	} catch (ArrayIndexOutOfBoundsException e) {
+	    return null;
+	}
     }
 
     public static String getValue(SelectableDataSource recordset, long pos,

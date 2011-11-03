@@ -332,13 +332,14 @@ public abstract class AbstractForm extends AbstractNavTable {
 	// the value in this case here is the key in the key-value pair
 	// value = alias to be shown
 	// key = value to save in the database
-
-	for (int j = 0; j < combobox.getItemCount(); j++) {
-	    String value = ((KeyValue) combobox.getItemAt(j)).getKey();
-	    if (value.compareTo(fieldValue.trim()) == 0) {
-		combobox.setSelectedIndex(j);
-		widgetValues.put(combobox.getName().toUpperCase(), value);
-		break;
+	if(fieldValue != null) {	    
+	    for (int j = 0; j < combobox.getItemCount(); j++) {
+		String value = ((KeyValue) combobox.getItemAt(j)).getKey();
+		if (value.compareTo(fieldValue.trim()) == 0) {
+		    combobox.setSelectedIndex(j);
+		    widgetValues.put(combobox.getName().toUpperCase(), value);
+		    break;
+		}
 	    }
 	}
 	combobox.setEnabled(true);
@@ -358,11 +359,13 @@ public abstract class AbstractForm extends AbstractNavTable {
 	    widgetValues.put(combobox.getName().toUpperCase(), combobox
 		    .getItemAt(0).toString());
 	}
-	for (int j = 0; j < combobox.getItemCount(); j++) {
-	    if (combobox.getItemAt(j).toString().compareTo(fieldValue.trim()) == 0) {
-		combobox.setSelectedIndex(j);
-		widgetValues.put(combobox.getName().toUpperCase(), fieldValue);
-		break;
+	if(fieldValue != null) {	    
+	    for (int j = 0; j < combobox.getItemCount(); j++) {
+		if (combobox.getItemAt(j).toString().compareTo(fieldValue.trim()) == 0) {
+		    combobox.setSelectedIndex(j);
+		    widgetValues.put(combobox.getName().toUpperCase(), fieldValue);
+		    break;
+		}
 	    }
 	}
     }
