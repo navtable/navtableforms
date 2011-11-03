@@ -20,6 +20,7 @@ import java.awt.Component;
 import java.awt.Container;
 import java.util.HashMap;
 
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -49,7 +50,9 @@ public class FormParserUtils {
 		    || (comp instanceof JFormattedTextField)
 		    || (comp instanceof JCheckBox)
 		    || (comp instanceof JTextArea)
-		    || (comp instanceof JComboBox) || (comp instanceof JTable)) {
+		    || (comp instanceof JComboBox) 
+		    || (comp instanceof JTable)
+		    || (comp instanceof JButton)) {
 		String newName = getNameBeforeDots(comp.getName());
 		comp.setName(newName);
 		map.put(comp.getName().toUpperCase(), (JComponent) comp);
