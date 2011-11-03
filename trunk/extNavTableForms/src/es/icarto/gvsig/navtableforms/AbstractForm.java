@@ -74,8 +74,6 @@ public abstract class AbstractForm extends AbstractNavTable {
     private HashMap<String, JComponent> widgetsVector;
     private HashMap<String, String> widgetValues;
 
-    private JComboBox rootComboBox = null;
-
     private FLyrVect layer = null;
     private ValidationHandlerForTextFields validationHandlerForTextFields;
     private ValidationHandlerForComboBoxes validationHandlerForComboBoxes;
@@ -244,22 +242,6 @@ public abstract class AbstractForm extends AbstractNavTable {
 	return true;
     }
 
-    private boolean isThereDependentComboBoxes() {
-	if (rootComboBox != null) {
-	    return true;
-	}
-	return false;
-    }
-
-    public void setRootComboBox(JComboBox cb) {
-	this.rootComboBox = cb;	
-    }
-
-    private void updateDependentComboBoxes() {
-	// this will make the chain to update
-	rootComboBox.setSelectedItem(rootComboBox.getSelectedItem());
-    }
-
     @Override
     public void fillEmptyValues() {
 	setFillingValues(true);
@@ -415,10 +397,6 @@ public abstract class AbstractForm extends AbstractNavTable {
 	    logger.error(e.getMessage(), e);
 	} finally {
 	    setFillingValues(false);
-	    if(isThereDependentComboBoxes()) {
-		updateDependentComboBoxes();
-		setChangedValues(false);
-	    }
 	    formValidator.validate();
 	}
     }
