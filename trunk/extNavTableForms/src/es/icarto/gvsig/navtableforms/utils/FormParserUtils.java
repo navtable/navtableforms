@@ -51,8 +51,7 @@ public class FormParserUtils {
 		    || (comp instanceof JCheckBox)
 		    || (comp instanceof JTextArea)
 		    || (comp instanceof JComboBox) 
-		    || (comp instanceof JTable)
-		    || (comp instanceof JButton)) {
+		    || (comp instanceof JTable)) {
 		String newName = getNameBeforeDots(comp.getName());
 		comp.setName(newName);
 		map.put(comp.getName().toUpperCase(), (JComponent) comp);
