@@ -95,7 +95,7 @@ public class DBDomainReader implements DomainReader {
 	    DBSession ds = DBSession.getCurrentSession();
 	    try {
 		String[][] values = ds.getTable(table, ds.getSchema(),
-			getFieldColumns(), "", null, false);
+			getFieldColumns(), "", new String[] {columnAlias}, false);
 		// ds.getDistinctValues(table, columns[0]);
 		for (int i = 0; i < values.length; i++) {
 		    KeyValue kv = new KeyValue();
