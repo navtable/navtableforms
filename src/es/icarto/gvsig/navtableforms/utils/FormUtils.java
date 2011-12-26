@@ -82,14 +82,8 @@ public class FormUtils {
     public static void fillJTableFromGeomTable(JTable component, String source,
 	    String filterName, String filterValue,
 	    ArrayList<String> columnsToRetrieve) {
-	IWindow[] windows = PluginServices.getMDIManager().getAllWindows();
-	FLyrVect layer = null;
-	for (IWindow w : windows) {
-	    if (w instanceof View) {
-		layer = Utils.getFlyrVect((BaseView) w, source);
-		break;
-	    }
-	}
+	TOCLayerManager toc = new TOCLayerManager();
+	FLyrVect layer = toc.getLayerByName(source);
 	Object[] columnNames; // fielddescription[]
 	Object[][] rows; // value[][]
 	try {

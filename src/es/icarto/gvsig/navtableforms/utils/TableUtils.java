@@ -33,8 +33,8 @@ public class TableUtils {
     public static long getPositionOfRowSelected(SelectableDataSource source,
 	    TableModel model, int rowIndex) {
 	HashMap<String, String> rowSelected = getRow(model, rowIndex);
-	// see setPosition() at abstractnavtable
-	return doGetFeatureIndexOfRow(source, rowSelected) + 1;
+	//see AbstractNavTable.setPosition(newPosition)
+	return doGetFeatureIndexOfRow(source, rowSelected);
     }
 
     private static HashMap<String, String> getRow(TableModel model, int rowIndex) {

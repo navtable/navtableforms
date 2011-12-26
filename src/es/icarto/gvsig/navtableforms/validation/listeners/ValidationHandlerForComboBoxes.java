@@ -20,10 +20,10 @@ public class ValidationHandlerForComboBoxes implements ActionListener {
 	if (!dialog.isFillingValues()) {
 	    JComboBox c = ((JComboBox) e.getSource());
 	    if (c.getSelectedItem() instanceof KeyValue) {
-		dialog.getWidgetValues().put(c.getName().toUpperCase(),
+		dialog.getFormController().setValue(c.getName(),
 			((KeyValue) c.getSelectedItem()).getKey());
 	    } else if (c.getSelectedItem() != null) {
-		dialog.getWidgetValues().put(c.getName().toUpperCase(),
+		dialog.getFormController().setValue(c.getName(),
 			c.getSelectedItem().toString());
 	    } else {
 		// when remove items from a combobox, if isFillingValues is
@@ -31,7 +31,7 @@ public class ValidationHandlerForComboBoxes implements ActionListener {
 		// the change provokes this listener to activate
 		// logger.warn("combobox " + c.getName() +
 		// " has no value.");
-		dialog.getWidgetValues().put(c.getName().toUpperCase(), "");
+		dialog.getFormController().setValue(c.getName(), "");
 	    }
 	    dialog.setChangedValues();
 	    dialog.getFormValidator().validate();
