@@ -20,8 +20,6 @@ import java.awt.BorderLayout;
 import java.awt.HeadlessException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.JCheckBox;
@@ -33,24 +31,22 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.text.JTextComponent;
 
 import net.miginfocom.swing.MigLayout;
 
 import org.apache.log4j.Logger;
 
 import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
-import com.hardcode.gdbms.engine.values.Value;
-import com.hardcode.gdbms.engine.values.ValueWriter;
 import com.iver.andami.PluginServices;
 import com.iver.cit.gvsig.fmap.layers.FLyrVect;
-import com.iver.cit.gvsig.fmap.layers.SelectableDataSource;
 import com.jeta.forms.components.panel.FormPanel;
 
 import es.icarto.gvsig.navtableforms.ormlite.DomainValues;
 import es.icarto.gvsig.navtableforms.ormlite.KeyValue;
 import es.icarto.gvsig.navtableforms.ormlite.ORMLite;
+import es.icarto.gvsig.navtableforms.utils.FormController;
 import es.icarto.gvsig.navtableforms.utils.FormParserUtils;
-import es.icarto.gvsig.navtableforms.utils.Utils;
 import es.icarto.gvsig.navtableforms.validation.ComponentValidator;
 import es.icarto.gvsig.navtableforms.validation.FormValidator;
 import es.icarto.gvsig.navtableforms.validation.listeners.ValidationHandlerForCheckBoxes;
@@ -63,7 +59,8 @@ import es.udc.cartolab.gvsig.navtable.ToggleEditing;
 @SuppressWarnings("serial")
 public abstract class AbstractForm extends AbstractNavTable {
 
-    private FormValidator formValidator = null;
+    private FormValidator formValidator;
+    private FormController formController;
     private final FormPanel formBody;
     private boolean isFillingValues;
 
@@ -72,7 +69,6 @@ public abstract class AbstractForm extends AbstractNavTable {
     private JPanel CenterPanel;
 
     private HashMap<String, JComponent> widgetsVector;
-    private HashMap<String, String> widgetValues;
 
     private FLyrVect layer = null;
     private ValidationHandlerForTextFields validationHandlerForTextFields;
@@ -84,11 +80,14 @@ public abstract class AbstractForm extends AbstractNavTable {
 
     public AbstractForm(FLyrVect layer) {
 	super(layer);
-	formBody = getFormBody();
-	formValidator = new FormValidator();
-	logger = getLoggerName();
 	this.layer = layer;
-	widgetValues = new HashMap<String, String>();
+	logger = getLoggerName();
+	formBody = getFormBody();
+	initValidation();
+    }
+
+    private void initValidation() {
+	formValidator = new FormValidator();
 	validationHandlerForTextFields = new ValidationHandlerForTextFields(
 		this);
 	validationHandlerForComboBoxes = new ValidationHandlerForComboBoxes(
@@ -137,12 +136,13 @@ public abstract class AbstractForm extends AbstractNavTable {
     }
 
     public String getValueFromLayer(String colName) {
-	return Utils.getValueFromLayer(layer, currentPosition, colName);
+	return formController.getValue(colName);
     }
 
     protected void removeListeners() {
 	for (JComponent c : widgetsVector.values()) {
-	    if (c instanceof JTextField) {
+	    if ((c instanceof JTextField) ||
+		    (c instanceof JFormattedTextField)) {
 		((JTextField) c).removeKeyListener(validationHandlerForTextFields);
 	    } else if (c instanceof JComboBox) {
 		((JComboBox) c).removeActionListener(validationHandlerForComboBoxes);
@@ -159,12 +159,28 @@ public abstract class AbstractForm extends AbstractNavTable {
 	widgetsVector.size();
     }
 
+    /**
+     * This method has been deprecated in favor of formController,
+     * use instead getFormController().getValuesOriginal() 
+     * or getFormController.getValuesChanged()
+     */
+    @Deprecated
     public HashMap<String, String> getWidgetValues() {
-	return widgetValues;
+	return formController.getValuesChanged();
     }
 
+    /**
+     * This method has been deprecated in favor of formController,
+     * use instead getFormController().setValue(key, value)
+     */
+    @Deprecated
     public void setWidgetValues(String key, String value) {
-	widgetValues.put(key, value);
+	formController.setValue(key, value);
+    }
+
+
+    public FormController getFormController() {
+	return formController;
     }
 
     public HashMap<String, JComponent> getWidgetComponents() {
@@ -183,17 +199,18 @@ public abstract class AbstractForm extends AbstractNavTable {
 
     protected void setListeners() {
 	for (JComponent comp : widgetsVector.values()) {
-	    if (comp instanceof JTextField) {
+	    if ((comp instanceof JTextField) ||
+		    comp instanceof JFormattedTextField) {
 		((JTextField) comp)
-			.addKeyListener(validationHandlerForTextFields);
+		.addKeyListener(validationHandlerForTextFields);
 		ComponentValidator cv = new ComponentValidator(comp);
 		formValidator.addComponentValidator(cv);
 	    } else if (comp instanceof JComboBox) {
 		((JComboBox) comp)
-			.addActionListener(validationHandlerForComboBoxes);
+		.addActionListener(validationHandlerForComboBoxes);
 	    } else if (comp instanceof JCheckBox) {
 		((JCheckBox) comp)
-			.addActionListener(validationHandlerForCheckBoxes);
+		.addActionListener(validationHandlerForCheckBoxes);
 	    } else if (comp instanceof JTextArea) {
 		((JTextArea) comp).addKeyListener(validationHandlerForTextAreas);
 	    }
@@ -229,7 +246,13 @@ public abstract class AbstractForm extends AbstractNavTable {
 	initWidgets();
 	setListeners();
 
-	currentPosition = 0;
+	formController = new FormController();
+	try {
+	    formController.fill(layer.getSource().getRecordset(), getPosition());
+	    addPositionListener(formController);
+	} catch (ReadDriverException e) {
+	    e.printStackTrace();
+	}
 	// super.last();
 	refreshGUI();
 	super.repaint();
@@ -245,28 +268,26 @@ public abstract class AbstractForm extends AbstractNavTable {
     @Override
     public void fillEmptyValues() {
 	setFillingValues(true);
-	super.fillEmptyValues();
 	for (JComponent comp : widgetsVector.values()) {
-	    if (comp instanceof JFormattedTextField) {
-		((JFormattedTextField) comp).setText("");
-	    }
-	    if (comp instanceof JComboBox) {
+	    if ((comp instanceof JFormattedTextField) ||
+		    (comp instanceof JTextField) ||
+		    (comp instanceof JTextArea)) {
+		((JTextComponent) comp).setText("");
+	    } else if (comp instanceof JComboBox) {
 		if (((JComboBox) comp).getItemCount() > 0) {
 		    ((JComboBox) comp).removeAllItems();
 		}
 		((JComboBox) comp).addItem("");
 		((JComboBox) comp).setSelectedIndex(0);
-	    }
+	    } 
 	}
 	setFillingValues(false);
     }
 
     protected void fillJTextField(JTextField field) {
 	String colName = field.getName();
-	String fieldValue = Utils.getValueFromLayer(layer, currentPosition,
-		colName);
+	String fieldValue = formController.getValue(colName);
 	field.setText(fieldValue);
-	widgetValues.put(colName.toUpperCase(), fieldValue);
     }
 
     protected void fillJFormattedTextField(JFormattedTextField field) {
@@ -275,24 +296,19 @@ public abstract class AbstractForm extends AbstractNavTable {
 
     protected void fillJCheckBox(JCheckBox checkBox) {
 	String colName = checkBox.getName();
-	String fieldValue = Utils.getValueFromLayer(layer, currentPosition,
-		colName);
+	String fieldValue = formController.getValue(colName);
 	checkBox.setSelected(Boolean.parseBoolean(fieldValue));
-	widgetValues.put(colName.toUpperCase(), fieldValue);
     }
 
     protected void fillJTextArea(JTextArea textArea) {
 	String colName = textArea.getName();
-	String fieldValue = Utils.getValueFromLayer(layer, currentPosition,
-		colName);
+	String fieldValue = formController.getValue(colName);
 	textArea.setText(fieldValue);
-	widgetValues.put(colName.toUpperCase(), fieldValue);
     }
 
     protected void fillJComboBox(JComboBox combobox) {
 	String colName = combobox.getName();
-	String fieldValue = Utils.getValueFromLayer(layer, currentPosition,
-		colName);
+	String fieldValue = formController.getValue(colName);
 	DomainValues dv = ORMLite.getAplicationDomainObject(getXMLPath())
 		.getDomainValuesForComponent(colName);
 	if (dv != null) { // the component has domain values defined
@@ -305,8 +321,7 @@ public abstract class AbstractForm extends AbstractNavTable {
 
     public void fillJComboBox(JComboBox combobox, ArrayList<String> foreignKeys) {
 	String colName = combobox.getName();
-	String fieldValue = Utils.getValueFromLayer(layer, currentPosition,
-		colName);
+	String fieldValue = formController.getValue(colName);
 	DomainValues dv = ORMLite.getAplicationDomainObject(getXMLPath())
 		.getDomainValuesForComponent(colName);
 	if (dv != null) { // the component has domain values defined
@@ -337,7 +352,6 @@ public abstract class AbstractForm extends AbstractNavTable {
 		String value = ((KeyValue) combobox.getItemAt(j)).getKey();
 		if (value.compareTo(fieldValue.trim()) == 0) {
 		    combobox.setSelectedIndex(j);
-		    widgetValues.put(combobox.getName().toUpperCase(), value);
 		    break;
 		}
 	    }
@@ -347,8 +361,6 @@ public abstract class AbstractForm extends AbstractNavTable {
 	    combobox.addItem(new KeyValue("", "", ""));
 	    combobox.setSelectedIndex(0);
 	    combobox.setEnabled(false);
-	    widgetValues.put(combobox.getName().toUpperCase(),
-		    ((KeyValue) combobox.getItemAt(0)).getKey());
 	}
     }
 
@@ -356,14 +368,11 @@ public abstract class AbstractForm extends AbstractNavTable {
 	    String fieldValue) {
 	if (combobox.getItemCount() > 0) {
 	    combobox.setSelectedIndex(0);
-	    widgetValues.put(combobox.getName().toUpperCase(), combobox
-		    .getItemAt(0).toString());
 	}
 	if(fieldValue != null) {	    
 	    for (int j = 0; j < combobox.getItemCount(); j++) {
 		if (combobox.getItemAt(j).toString().compareTo(fieldValue.trim()) == 0) {
 		    combobox.setSelectedIndex(j);
-		    widgetValues.put(combobox.getName().toUpperCase(), fieldValue);
 		    break;
 		}
 	    }
@@ -374,34 +383,23 @@ public abstract class AbstractForm extends AbstractNavTable {
 
     @Override
     public void fillValues() {
-	try {
-	    setFillingValues(true);
-	    if (currentPosition >= recordset.getRowCount()) {
-		currentPosition = recordset.getRowCount() - 1;
+	setFillingValues(true);
+	for (JComponent comp : widgetsVector.values()) {
+	    if (comp instanceof JFormattedTextField) {
+		fillJFormattedTextField((JFormattedTextField) comp);
+	    } else if (comp instanceof JTextField) {
+		fillJTextField((JTextField) comp);
+	    } else if (comp instanceof JCheckBox) {
+		fillJCheckBox((JCheckBox) comp);
+	    } else if (comp instanceof JTextArea) {
+		fillJTextArea((JTextArea) comp);
+	    } else if (comp instanceof JComboBox) {
+		fillJComboBox((JComboBox) comp);
 	    }
-	    if (currentPosition < 0) {
-		currentPosition = 0;
-	    }
-	    for (JComponent comp : widgetsVector.values()) {
-		if (comp instanceof JFormattedTextField) {
-		    fillJFormattedTextField((JFormattedTextField) comp);
-		} else if (comp instanceof JTextField) {
-		    fillJTextField((JTextField) comp);
-		} else if (comp instanceof JCheckBox) {
-		    fillJCheckBox((JCheckBox) comp);
-		} else if (comp instanceof JTextArea) {
-		    fillJTextArea((JTextArea) comp);
-		} else if (comp instanceof JComboBox) {
-		    fillJComboBox((JComboBox) comp);
-		}
-	    }
-	    fillSpecificValues();
-	} catch (ReadDriverException e) {
-	    logger.error(e.getMessage(), e);
-	} finally {
-	    setFillingValues(false);
-	    formValidator.validate();
 	}
+	fillSpecificValues();
+	setFillingValues(false);
+	formValidator.validate();
     }
 
     public boolean isFillingValues() {
@@ -410,12 +408,6 @@ public abstract class AbstractForm extends AbstractNavTable {
 
     protected void setFillingValues(boolean b) {
 	isFillingValues = b;
-    }
-
-    @Override
-    public void fillValues(long currentPos) {
-	currentPosition = currentPos;
-	fillValues();
     }
 
     protected boolean validationHasErrors() {
@@ -443,36 +435,12 @@ public abstract class AbstractForm extends AbstractNavTable {
      * form makes no sense.
      */
     protected Vector<Integer> getIndexesOfChangedValues() {
-	Vector<Integer> changedValues = new Vector<Integer>();
-	try {
-	    SelectableDataSource rs = layer.getRecordset();
-	    String[] modelFields = rs.getFieldNames();
-	    HashMap<String, String> widgetValues = getWidgetValues();
-	    Value value;
-	    String valueInRecordSet;
-	    String valueInForm;
-	    for (int index = 0; index < modelFields.length; index++) {
-		String field = modelFields[index].toUpperCase();
-		if (widgetValues.containsKey(field)) {
-
-		    valueInForm = widgetValues.get(field);
-		    valueInForm = valueInForm.trim();
-
-		    value = rs.getFieldValue(currentPosition, index);
-		    valueInRecordSet = value
-			    .getStringValue(ValueWriter.internalValueWriter);
-		    valueInRecordSet = valueInRecordSet.replace("'", "").trim();
-
-		    if (!valueInRecordSet.equals(valueInForm)) {
-			changedValues.add(new Integer(index));
-		    }
-
-		}
-	    }
-	} catch (ReadDriverException e) {
-	    logger.error(e.getMessage(), e);
+	int[] idxs = getIndexes();
+	Vector<Integer> indexes = new Vector<Integer>();
+	for(int i=0; i<idxs.length; i++) {
+	    indexes.add(idxs[i]);
 	}
-	return changedValues;
+	return indexes;
     }
 
     public void setChangedValues() {
@@ -486,37 +454,17 @@ public abstract class AbstractForm extends AbstractNavTable {
     }
 
     protected String[] getValues() {
-	HashMap<String, String> layerValues;
-	String[] attValues;
-	layerValues = getWidgetValues();
-	attValues = layerValues.values().toArray(new String[0]);
-	return attValues;
+	return formController.getValuesChanged().values().toArray(new String[0]);
     }
 
     public int[] getIndexes() {
-	String[] names = null;
-	int[] indexes = null;
-	try {
-	    Set<String> widgetsValuesKeys = getWidgetValues().keySet();
-	    names = new String[widgetsValuesKeys.size()];
-	    Iterator<String> it = widgetsValuesKeys.iterator();
-	    int i = 0;
-	    while (it.hasNext()) {
-		names[i] = it.next();
-		i++;
-	    }
-	    indexes = Utils.getIndexes(layer, names);
-	    return indexes;
-	} catch (Exception e) {
-	    logger.error(e.getMessage(), e);
-	    return indexes;
-	}
+	return formController.getIndexesOfValuesChanged();
     }
 
     @Override
     protected boolean saveRecord() {
 	if (isSaveable()) {
-	    int currentPos = Long.valueOf(currentPosition).intValue();
+	    int currentPos = Long.valueOf(getPosition()).intValue();
 	    int[] attIndexes = getIndexes();
 	    String[] attValues = getValues();
 

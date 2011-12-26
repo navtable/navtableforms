@@ -24,8 +24,8 @@ public class ValidationHandlerForTextFields implements KeyListener {
     public void keyReleased(KeyEvent e) {
 	if (!dialog.isFillingValues()) {
 	    JTextField c = ((JTextField) e.getSource());
-	    dialog.getWidgetValues()
-		    .put(c.getName().toUpperCase(), c.getText());
+	    dialog.getFormController().setValue(c.getName(),
+		    c.getText());
 	    dialog.setChangedValues(); // placed after updating widgetvalues
 	    dialog.getFormValidator().validate();
 	}

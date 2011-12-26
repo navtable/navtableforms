@@ -19,13 +19,13 @@ public class ValidationHandlerForCheckBoxes implements ActionListener {
 	if (!dialog.isFillingValues()) {
 	    JCheckBox c = ((JCheckBox) e.getSource());
 	    if (c.isSelected()) {
-		dialog.getWidgetValues().put(c.getName().toUpperCase(), "true");
+		dialog.getFormController().setValue(c.getName(), "true");
 	    } else {
-		dialog.getWidgetValues()
-			.put(c.getName().toUpperCase(), "false");
+		dialog.getFormController().setValue(c.getName(), "false");
 	    }
 	    dialog.setChangedValues();
 	    dialog.getFormValidator().validate();
 	}
     }
+
 }
