@@ -18,6 +18,9 @@ package es.icarto.gvsig.navtableforms;
 
 import java.awt.BorderLayout;
 import java.awt.HeadlessException;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Vector;
@@ -31,6 +34,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.JTextComponent;
 
 import net.miginfocom.swing.MigLayout;
@@ -45,6 +49,7 @@ import com.jeta.forms.components.panel.FormPanel;
 import es.icarto.gvsig.navtableforms.ormlite.DomainValues;
 import es.icarto.gvsig.navtableforms.ormlite.KeyValue;
 import es.icarto.gvsig.navtableforms.ormlite.ORMLite;
+import es.icarto.gvsig.navtableforms.utils.DoubleFormatter;
 import es.icarto.gvsig.navtableforms.utils.FormController;
 import es.icarto.gvsig.navtableforms.utils.FormParserUtils;
 import es.icarto.gvsig.navtableforms.validation.ComponentValidator;
@@ -57,7 +62,7 @@ import es.udc.cartolab.gvsig.navtable.AbstractNavTable;
 import es.udc.cartolab.gvsig.navtable.ToggleEditing;
 
 @SuppressWarnings("serial")
-public abstract class AbstractForm extends AbstractNavTable {
+public abstract class AbstractForm extends AbstractNavTable implements PropertyChangeListener {
 
     private FormValidator formValidator;
     private FormController formController;
@@ -199,12 +204,14 @@ public abstract class AbstractForm extends AbstractNavTable {
 
     protected void setListeners() {
 	for (JComponent comp : widgetsVector.values()) {
-	    if ((comp instanceof JTextField) ||
-		    comp instanceof JFormattedTextField) {
+	    if (comp instanceof JTextField) {
 		((JTextField) comp)
 		.addKeyListener(validationHandlerForTextFields);
 		ComponentValidator cv = new ComponentValidator(comp);
 		formValidator.addComponentValidator(cv);
+	    } else if (comp instanceof JFormattedTextField) {
+		((JFormattedTextField) comp).addPropertyChangeListener(
+			(PropertyChangeListener) this);
 	    } else if (comp instanceof JComboBox) {
 		((JComboBox) comp)
 		.addActionListener(validationHandlerForComboBoxes);
@@ -291,7 +298,16 @@ public abstract class AbstractForm extends AbstractNavTable {
     }
 
     protected void fillJFormattedTextField(JFormattedTextField field) {
-	fillJTextField(field);
+	DoubleFormatter doubleFormatter = new DoubleFormatter();
+	DefaultFormatterFactory formatterFactory = new DefaultFormatterFactory();
+	formatterFactory.setDefaultFormatter(doubleFormatter);
+	formatterFactory.setDisplayFormatter(doubleFormatter);
+	formatterFactory.setEditFormatter(doubleFormatter);
+	formatterFactory.setNullFormatter(doubleFormatter);
+	field.setFormatterFactory(formatterFactory);
+	String fieldValue = formController.getValue(field.getName());
+	//field.setText(fieldValue);
+	field.setValue(fieldValue);
     }
 
     protected void fillJCheckBox(JCheckBox checkBox) {
@@ -505,6 +521,15 @@ public abstract class AbstractForm extends AbstractNavTable {
 
     public FormValidator getFormValidator() {
 	return this.formValidator;
+    }
+
+    public void propertyChange(PropertyChangeEvent evt) {
+	JFormattedTextField ftf = (JFormattedTextField) evt.getSource();
+	try {
+	    ftf.commitEdit();
+	} catch (ParseException e) {
+	    e.printStackTrace();
+	}
     }
 
 }
