@@ -11,7 +11,7 @@ public class DoubleFormatterOnDisplaying extends AbstractFormatter {
     private ValueFormatter valueFormatter;
 
     public DoubleFormatterOnDisplaying() {
-	decimalFormat = new DecimalFormat("###,###,###,###,###,###.00");
+	decimalFormat = new DecimalFormat("###,###,###,###,###,##0.00");
 	valueFormatter = new ValueFormatter();
     }
 

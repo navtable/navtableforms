@@ -17,6 +17,9 @@ public class DoubleFormatterOnEditing extends AbstractFormatter {
 
     @Override
     public Object stringToValue(String arg) throws ParseException {
+	if(arg.equals("")) {
+	    arg = "0";
+	}
 	return decimalFormat.parseObject(arg);
     }
 

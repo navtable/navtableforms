@@ -18,9 +18,6 @@ package es.icarto.gvsig.navtableforms;
 
 import java.awt.BorderLayout;
 import java.awt.HeadlessException;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Vector;
@@ -50,9 +47,9 @@ import es.icarto.gvsig.navtableforms.ormlite.DomainValues;
 import es.icarto.gvsig.navtableforms.ormlite.KeyValue;
 import es.icarto.gvsig.navtableforms.ormlite.ORMLite;
 import es.icarto.gvsig.navtableforms.utils.DoubleFormatterOnDisplaying;
+import es.icarto.gvsig.navtableforms.utils.DoubleFormatterOnEditing;
 import es.icarto.gvsig.navtableforms.utils.FormController;
 import es.icarto.gvsig.navtableforms.utils.FormParserUtils;
-import es.icarto.gvsig.navtableforms.utils.DoubleFormatterOnEditing;
 import es.icarto.gvsig.navtableforms.validation.ComponentValidator;
 import es.icarto.gvsig.navtableforms.validation.FormValidator;
 import es.icarto.gvsig.navtableforms.validation.listeners.ValidationHandlerForCheckBoxes;
@@ -63,7 +60,7 @@ import es.udc.cartolab.gvsig.navtable.AbstractNavTable;
 import es.udc.cartolab.gvsig.navtable.ToggleEditing;
 
 @SuppressWarnings("serial")
-public abstract class AbstractForm extends AbstractNavTable implements PropertyChangeListener {
+public abstract class AbstractForm extends AbstractNavTable {
 
     private FormValidator formValidator;
     private FormController formController;
@@ -77,6 +74,7 @@ public abstract class AbstractForm extends AbstractNavTable implements PropertyC
     private HashMap<String, JComponent> widgetsVector;
 
     private FLyrVect layer = null;
+    private ValidationHandlerForFormattedTextFields validationHandlerForFormattedTextFields;
     private ValidationHandlerForTextFields validationHandlerForTextFields;
     private ValidationHandlerForComboBoxes validationHandlerForComboBoxes;
     private ValidationHandlerForCheckBoxes validationHandlerForCheckBoxes;
@@ -94,6 +92,8 @@ public abstract class AbstractForm extends AbstractNavTable implements PropertyC
 
     private void initValidation() {
 	formValidator = new FormValidator();
+	validationHandlerForFormattedTextFields = new ValidationHandlerForFormattedTextFields(
+		this);
 	validationHandlerForTextFields = new ValidationHandlerForTextFields(
 		this);
 	validationHandlerForComboBoxes = new ValidationHandlerForComboBoxes(
@@ -147,8 +147,9 @@ public abstract class AbstractForm extends AbstractNavTable implements PropertyC
 
     protected void removeListeners() {
 	for (JComponent c : widgetsVector.values()) {
-	    if ((c instanceof JTextField) ||
-		    (c instanceof JFormattedTextField)) {
+	    if (c instanceof JFormattedTextField) {
+		((JTextField) c).removeKeyListener(validationHandlerForFormattedTextFields);
+	    } else if (c instanceof JTextField) {
 		((JTextField) c).removeKeyListener(validationHandlerForTextFields);
 	    } else if (c instanceof JComboBox) {
 		((JComboBox) c).removeActionListener(validationHandlerForComboBoxes);
@@ -205,14 +206,16 @@ public abstract class AbstractForm extends AbstractNavTable implements PropertyC
 
     protected void setListeners() {
 	for (JComponent comp : widgetsVector.values()) {
-	    if (comp instanceof JTextField) {
+	    if (comp instanceof JFormattedTextField) {
+		((JTextField) comp)
+		.addKeyListener(validationHandlerForFormattedTextFields);
+		ComponentValidator cv = new ComponentValidator(comp);
+		formValidator.addComponentValidator(cv);
+	    } else if (comp instanceof JTextField) {
 		((JTextField) comp)
 		.addKeyListener(validationHandlerForTextFields);
 		ComponentValidator cv = new ComponentValidator(comp);
 		formValidator.addComponentValidator(cv);
-	    } else if (comp instanceof JFormattedTextField) {
-		((JFormattedTextField) comp).addPropertyChangeListener(
-			(PropertyChangeListener) this);
 	    } else if (comp instanceof JComboBox) {
 		((JComboBox) comp)
 		.addActionListener(validationHandlerForComboBoxes);
@@ -523,15 +526,6 @@ public abstract class AbstractForm extends AbstractNavTable implements PropertyC
 
     public FormValidator getFormValidator() {
 	return this.formValidator;
-    }
-
-    public void propertyChange(PropertyChangeEvent evt) {
-	JFormattedTextField ftf = (JFormattedTextField) evt.getSource();
-	try {
-	    ftf.commitEdit();
-	} catch (ParseException e) {
-	    e.printStackTrace();
-	}
     }
 
 }
