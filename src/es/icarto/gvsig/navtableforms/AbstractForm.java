@@ -49,9 +49,10 @@ import com.jeta.forms.components.panel.FormPanel;
 import es.icarto.gvsig.navtableforms.ormlite.DomainValues;
 import es.icarto.gvsig.navtableforms.ormlite.KeyValue;
 import es.icarto.gvsig.navtableforms.ormlite.ORMLite;
-import es.icarto.gvsig.navtableforms.utils.DoubleFormatter;
+import es.icarto.gvsig.navtableforms.utils.DoubleFormatterOnDisplaying;
 import es.icarto.gvsig.navtableforms.utils.FormController;
 import es.icarto.gvsig.navtableforms.utils.FormParserUtils;
+import es.icarto.gvsig.navtableforms.utils.DoubleFormatterOnEditing;
 import es.icarto.gvsig.navtableforms.validation.ComponentValidator;
 import es.icarto.gvsig.navtableforms.validation.FormValidator;
 import es.icarto.gvsig.navtableforms.validation.listeners.ValidationHandlerForCheckBoxes;
@@ -298,12 +299,13 @@ public abstract class AbstractForm extends AbstractNavTable implements PropertyC
     }
 
     protected void fillJFormattedTextField(JFormattedTextField field) {
-	DoubleFormatter doubleFormatter = new DoubleFormatter();
+	DoubleFormatterOnDisplaying displayFormatter = new DoubleFormatterOnDisplaying();
+	DoubleFormatterOnEditing editFormatter = new DoubleFormatterOnEditing();
 	DefaultFormatterFactory formatterFactory = new DefaultFormatterFactory();
-	formatterFactory.setDefaultFormatter(doubleFormatter);
-	formatterFactory.setDisplayFormatter(doubleFormatter);
-	formatterFactory.setEditFormatter(doubleFormatter);
-	formatterFactory.setNullFormatter(doubleFormatter);
+	formatterFactory.setDefaultFormatter(displayFormatter);
+	formatterFactory.setDisplayFormatter(displayFormatter);
+	formatterFactory.setEditFormatter(editFormatter);
+	formatterFactory.setNullFormatter(displayFormatter);
 	field.setFormatterFactory(formatterFactory);
 	String fieldValue = formController.getValue(field.getName());
 	//field.setText(fieldValue);

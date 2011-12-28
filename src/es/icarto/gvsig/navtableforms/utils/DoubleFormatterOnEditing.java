@@ -5,10 +5,15 @@ import java.text.ParseException;
 
 import javax.swing.JFormattedTextField.AbstractFormatter;
 
-public class DoubleFormatter extends AbstractFormatter {
+public class DoubleFormatterOnEditing extends AbstractFormatter {
 
-    private DecimalFormat decimalFormat = new DecimalFormat("###,###.00");
-    private ValueFormatter valueFormatter = new ValueFormatter();
+    private DecimalFormat decimalFormat;
+    private ValueFormatter valueFormatter;
+
+    public DoubleFormatterOnEditing() {
+	decimalFormat = new DecimalFormat("##################.##");
+	valueFormatter = new ValueFormatter();
+    }
 
     @Override
     public Object stringToValue(String arg) throws ParseException {
