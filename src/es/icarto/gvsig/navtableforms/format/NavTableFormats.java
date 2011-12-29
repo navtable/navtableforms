@@ -1,4 +1,4 @@
-package es.icarto.gvsig.navtableforms.utils;
+package es.icarto.gvsig.navtableforms.format;
 
 import java.text.DecimalFormat;
 

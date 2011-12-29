@@ -19,7 +19,7 @@ package es.icarto.gvsig.navtableforms.validation.rules;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 
-import es.icarto.gvsig.navtableforms.utils.NavTableFormats;
+import es.icarto.gvsig.navtableforms.format.NavTableFormats;
 
 public class DoublePositiveRule extends ValidationRule {
 

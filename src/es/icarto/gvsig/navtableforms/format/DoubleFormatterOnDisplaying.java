@@ -1,28 +1,25 @@
-package es.icarto.gvsig.navtableforms.utils;
+package es.icarto.gvsig.navtableforms.format;
 
 import java.text.DecimalFormat;
 import java.text.ParseException;
 
 import javax.swing.JFormattedTextField.AbstractFormatter;
 
-public class DoubleFormatterOnEditing extends AbstractFormatter {
+public class DoubleFormatterOnDisplaying extends AbstractFormatter {
 
-    private ValueFormatter valueFormatter;
     private NavTableFormats formats;
-    private DecimalFormat format;
+    private DecimalFormat decimalFormat;
+    private ValueFormatter valueFormatter;
 
-    public DoubleFormatterOnEditing() {
+    public DoubleFormatterOnDisplaying() {
 	valueFormatter = new ValueFormatter();
 	formats = new NavTableFormats();
-	format = formats.getDoubleFormatForEditingInstance();	
+	decimalFormat = formats.getDoubleFormatForDisplayingInstance();	
     }
 
     @Override
     public Object stringToValue(String arg) throws ParseException {
-	if(arg.equals("")) {
-	    arg = "0";
-	}
-	return format.parseObject(arg);
+	return decimalFormat.parseObject(arg);
     }
 
     @Override
@@ -32,7 +29,7 @@ public class DoubleFormatterOnEditing extends AbstractFormatter {
 	} else if (arg instanceof String) {
 	    return (String) arg;
 	}
-	return format.format(arg);
+	return decimalFormat.format(arg);
     }
 
 }
