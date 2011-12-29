@@ -37,6 +37,7 @@ import com.iver.cit.gvsig.fmap.drivers.FieldDescription;
 
 import es.icarto.gvsig.navtableforms.ormlite.ORMLiteDataBase.ORMLiteTable;
 import es.icarto.gvsig.navtableforms.validation.rules.ValidationRule;
+import es.udc.cartolab.gvsig.navtable.format.ValueFactoryNavTable;
 
 /**
  * SAX parser to build from a XML estructure several objects needed for
@@ -202,7 +203,7 @@ public class XMLSAXParser extends DefaultHandler {
      */
     @Override
     public void characters(char[] ch, int start, int length)
-    throws SAXException {
+	    throws SAXException {
 	tmpVal = tmpVal + new String(ch, start, length);
     }
 
@@ -211,7 +212,7 @@ public class XMLSAXParser extends DefaultHandler {
      */
     @Override
     public void endElement(String uri, String localName, String qName)
-    throws SAXException {
+	    throws SAXException {
 
 	// set tmp field structure
 	if (qName.equalsIgnoreCase("FIELDNAME")) {
@@ -226,48 +227,56 @@ public class XMLSAXParser extends DefaultHandler {
 	} else if (qName.equalsIgnoreCase("DEFAULTVALUE")) {
 	    switch (tmpType) {
 	    case Types.VARCHAR:
-		tmpFieldDescription.setDefaultValue(ValueFactory
-			.createValue(tmpVal));
+		tmpFieldDescription.setDefaultValue(
+			ValueFactoryNavTable.createValue(tmpVal));
 		break;
 	    case Types.INTEGER:
 		if (tmpVal == "") {
-		    tmpFieldDescription.setDefaultValue(ValueFactory
-			    .createValue(GVSIG_DEFAULT_INT));
+		    tmpFieldDescription.setDefaultValue(
+			    ValueFactoryNavTable.createValue(
+				    GVSIG_DEFAULT_INT));
 		} else {
-		    tmpFieldDescription.setDefaultValue(ValueFactory
-			    .createValue(Integer.parseInt(tmpVal)));
+		    tmpFieldDescription.setDefaultValue(
+			    ValueFactoryNavTable.createValue(
+				    Integer.parseInt(tmpVal)));
 		}
 		break;
 	    case Types.DOUBLE:
 		if (tmpVal == "") {
-		    tmpFieldDescription.setDefaultValue(ValueFactory
-			    .createValue(GVSIG_DEFAULT_DOUBLE));
+		    tmpFieldDescription.setDefaultValue(
+			    ValueFactoryNavTable.createValue(
+				    GVSIG_DEFAULT_DOUBLE));
 		} else {
-		    tmpFieldDescription.setDefaultValue(ValueFactory
-			    .createValue(Double.parseDouble(tmpVal)));
+		    tmpFieldDescription.setDefaultValue(
+			    ValueFactoryNavTable.createValue(
+				    Double.parseDouble(tmpVal)));
 		}
 		break;
 	    case Types.BOOLEAN:
 		if (tmpVal == "") {
-		    tmpFieldDescription.setDefaultValue(ValueFactory
-			    .createValue(GVSIG_DEFAULT_BOOLEAN));
+		    tmpFieldDescription.setDefaultValue(
+			    ValueFactoryNavTable.createValue(
+				    GVSIG_DEFAULT_BOOLEAN));
 		} else {
-		    tmpFieldDescription.setDefaultValue(ValueFactory
-			    .createValue(Boolean.parseBoolean(tmpVal)));
+		    tmpFieldDescription.setDefaultValue(
+			    ValueFactoryNavTable.createValue(
+				    Boolean.parseBoolean(tmpVal)));
 		}
 		break;
 	    case Types.DATE:
 		if (tmpVal == "") {
-		    tmpFieldDescription.setDefaultValue(ValueFactory
-			    .createValue(GVSIG_DEFAULT_STRING));
+		    tmpFieldDescription.setDefaultValue(
+			    ValueFactoryNavTable.createValue(
+				    GVSIG_DEFAULT_STRING));
 		} else {
-		    tmpFieldDescription.setDefaultValue(ValueFactory
-			    .createValue(Date.parse(tmpVal)));
+		    tmpFieldDescription.setDefaultValue(
+			    ValueFactoryNavTable.createValue(
+				    Date.parse(tmpVal)));
 		}
 		break;
 	    default:
-		tmpFieldDescription.setDefaultValue(ValueFactory
-			.createNullValue());
+		tmpFieldDescription.setDefaultValue(
+			ValueFactoryNavTable.createNullValue());
 	    }
 	} else if (qName.equalsIgnoreCase("FIELDDECIMALCOUNT")) {
 	    tmpFieldDescription.setFieldDecimalCount(getAsInteger(tmpVal));

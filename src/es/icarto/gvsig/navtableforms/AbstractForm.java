@@ -43,8 +43,8 @@ import com.iver.andami.PluginServices;
 import com.iver.cit.gvsig.fmap.layers.FLyrVect;
 import com.jeta.forms.components.panel.FormPanel;
 
-import es.icarto.gvsig.navtableforms.format.DoubleFormatterOnDisplaying;
-import es.icarto.gvsig.navtableforms.format.DoubleFormatterOnEditing;
+import es.icarto.gvsig.navtableforms.gui.formattedtextfields.DoubleFormatterOnDisplaying;
+import es.icarto.gvsig.navtableforms.gui.formattedtextfields.DoubleFormatterOnEditing;
 import es.icarto.gvsig.navtableforms.ormlite.DomainValues;
 import es.icarto.gvsig.navtableforms.ormlite.KeyValue;
 import es.icarto.gvsig.navtableforms.ormlite.ORMLite;

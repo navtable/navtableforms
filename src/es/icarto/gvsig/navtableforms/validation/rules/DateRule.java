@@ -3,7 +3,7 @@ package es.icarto.gvsig.navtableforms.validation.rules;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-import es.udc.cartolab.gvsig.navtable.utils.DateFormatter;
+import es.udc.cartolab.gvsig.navtable.format.DateFormatter;
 
 public class DateRule extends ValidationRule {
 

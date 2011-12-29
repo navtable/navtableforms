@@ -19,7 +19,7 @@ package es.icarto.gvsig.navtableforms.validation.rules;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 
-import es.icarto.gvsig.navtableforms.format.NavTableFormats;
+import es.udc.cartolab.gvsig.navtable.format.NavTableFormats;
 
 public class DoublePositiveRule extends ValidationRule {
 

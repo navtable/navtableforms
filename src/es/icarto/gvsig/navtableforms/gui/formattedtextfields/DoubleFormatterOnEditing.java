@@ -1,9 +1,12 @@
-package es.icarto.gvsig.navtableforms.format;
+package es.icarto.gvsig.navtableforms.gui.formattedtextfields;
 
 import java.text.DecimalFormat;
 import java.text.ParseException;
 
 import javax.swing.JFormattedTextField.AbstractFormatter;
+
+import es.udc.cartolab.gvsig.navtable.format.NavTableFormats;
+import es.udc.cartolab.gvsig.navtable.format.ValueFormatter;
 
 public class DoubleFormatterOnEditing extends AbstractFormatter {
 
