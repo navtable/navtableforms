@@ -7,12 +7,14 @@ import javax.swing.JFormattedTextField.AbstractFormatter;
 
 public class DoubleFormatterOnDisplaying extends AbstractFormatter {
 
+    private NavTableFormats formats;
     private DecimalFormat decimalFormat;
     private ValueFormatter valueFormatter;
 
     public DoubleFormatterOnDisplaying() {
-	decimalFormat = new DecimalFormat("###,###,###,###,###,##0.00");
 	valueFormatter = new ValueFormatter();
+	formats = new NavTableFormats();
+	decimalFormat = formats.getDoubleFormatForDisplayingInstance();	
     }
 
     @Override

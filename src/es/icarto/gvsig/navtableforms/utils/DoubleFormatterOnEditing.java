@@ -7,12 +7,14 @@ import javax.swing.JFormattedTextField.AbstractFormatter;
 
 public class DoubleFormatterOnEditing extends AbstractFormatter {
 
-    private DecimalFormat decimalFormat;
     private ValueFormatter valueFormatter;
+    private NavTableFormats formats;
+    private DecimalFormat format;
 
     public DoubleFormatterOnEditing() {
-	decimalFormat = new DecimalFormat("##################.##");
 	valueFormatter = new ValueFormatter();
+	formats = new NavTableFormats();
+	format = formats.getDoubleFormatForEditingInstance();	
     }
 
     @Override
@@ -20,7 +22,7 @@ public class DoubleFormatterOnEditing extends AbstractFormatter {
 	if(arg.equals("")) {
 	    arg = "0";
 	}
-	return decimalFormat.parseObject(arg);
+	return format.parseObject(arg);
     }
 
     @Override
@@ -30,7 +32,7 @@ public class DoubleFormatterOnEditing extends AbstractFormatter {
 	} else if (arg instanceof String) {
 	    return (String) arg;
 	}
-	return decimalFormat.format(arg);
+	return format.format(arg);
     }
 
 }

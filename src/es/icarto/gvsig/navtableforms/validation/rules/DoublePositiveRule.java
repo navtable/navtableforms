@@ -16,17 +16,33 @@
  */
 package es.icarto.gvsig.navtableforms.validation.rules;
 
+import java.text.DecimalFormat;
+import java.text.ParseException;
+
+import es.icarto.gvsig.navtableforms.utils.NavTableFormats;
+
 public class DoublePositiveRule extends ValidationRule {
+
+    private DecimalFormat format;
+    private NavTableFormats formats;
+
+    public DoublePositiveRule() {
+	formats = new NavTableFormats();
+	format = formats.getDoubleFormatForEditingInstance();
+    }
 
     @Override
     public boolean validate(String value) {
 	try {
-	    if (Double.parseDouble(value) >= 0) {
+	    double doubleValue = format.parse(value).doubleValue();
+	    if (doubleValue >= 0.0) {
 		return true;
 	    }
 	    return false;
 	} catch (NumberFormatException nfe) {
-	    return false; // it's not an admissible value
+	    return false;
+	} catch (ParseException e) {
+	    return false;
 	}
     }
 

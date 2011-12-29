@@ -3,6 +3,7 @@ package es.icarto.gvsig.navtableforms.utils;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 
 import com.hardcode.gdbms.engine.values.ValueWriter;
@@ -10,6 +11,13 @@ import com.hardcode.gdbms.engine.values.ValueWriter;
 public class ValueFormatter implements ValueWriter {
 
     private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+    private NavTableFormats formats;
+    private DecimalFormat doubleFormat;
+
+    public ValueFormatter() {
+	formats = new NavTableFormats();
+	doubleFormat = formats.getDoubleFormatForDisplayingInstance();
+    }
 
     /**
      * @see com.hardcode.gdbms.engine.values.ValueWriter#getStatementString(long)
@@ -29,7 +37,7 @@ public class ValueFormatter implements ValueWriter {
      * @see com.hardcode.gdbms.engine.values.ValueWriter#getStatementString(double, int)
      */
     public String getStatementString(double d, int sqlType) {
-	return Double.toString(d);
+	return doubleFormat.format(d);
     }
 
     /**
