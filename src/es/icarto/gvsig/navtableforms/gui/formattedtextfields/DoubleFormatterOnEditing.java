@@ -5,19 +5,17 @@ import java.text.ParseException;
 
 import javax.swing.JFormattedTextField.AbstractFormatter;
 
-import es.udc.cartolab.gvsig.navtable.format.NavTableFormats;
+import es.udc.cartolab.gvsig.navtable.format.DoubleFormatter;
 import es.udc.cartolab.gvsig.navtable.format.ValueFormatter;
 
 public class DoubleFormatterOnEditing extends AbstractFormatter {
 
     private ValueFormatter valueFormatter;
-    private NavTableFormats formats;
     private DecimalFormat format;
 
     public DoubleFormatterOnEditing() {
 	valueFormatter = new ValueFormatter();
-	formats = new NavTableFormats();
-	format = formats.getDoubleFormatForEditingInstance();	
+	format = DoubleFormatter.getFormatForEditing();	
     }
 
     @Override
