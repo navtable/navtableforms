@@ -208,23 +208,24 @@ public abstract class AbstractForm extends AbstractNavTable {
     protected void setListeners() {
 	for (JComponent comp : widgetsVector.values()) {
 	    if (comp instanceof JFormattedTextField) {
-		((JTextField) comp)
-		.addKeyListener(validationHandlerForFormattedTextFields);
+		((JFormattedTextField) comp).addKeyListener(
+			validationHandlerForFormattedTextFields);
 		ComponentValidator cv = new ComponentValidator(comp);
 		formValidator.addComponentValidator(cv);
 	    } else if (comp instanceof JTextField) {
-		((JTextField) comp)
-		.addKeyListener(validationHandlerForTextFields);
+		((JTextField) comp).addKeyListener(
+			validationHandlerForTextFields);
 		ComponentValidator cv = new ComponentValidator(comp);
 		formValidator.addComponentValidator(cv);
 	    } else if (comp instanceof JComboBox) {
-		((JComboBox) comp)
-		.addActionListener(validationHandlerForComboBoxes);
+		((JComboBox) comp).addActionListener(
+			validationHandlerForComboBoxes);
 	    } else if (comp instanceof JCheckBox) {
-		((JCheckBox) comp)
-		.addActionListener(validationHandlerForCheckBoxes);
+		((JCheckBox) comp).addActionListener(
+			validationHandlerForCheckBoxes);
 	    } else if (comp instanceof JTextArea) {
-		((JTextArea) comp).addKeyListener(validationHandlerForTextAreas);
+		((JTextArea) comp).addKeyListener(
+			validationHandlerForTextAreas);
 	    }
 	}
     }
