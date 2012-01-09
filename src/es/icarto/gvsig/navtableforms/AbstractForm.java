@@ -54,6 +54,7 @@ import es.icarto.gvsig.navtableforms.validation.ComponentValidator;
 import es.icarto.gvsig.navtableforms.validation.FormValidator;
 import es.icarto.gvsig.navtableforms.validation.listeners.ValidationHandlerForCheckBoxes;
 import es.icarto.gvsig.navtableforms.validation.listeners.ValidationHandlerForComboBoxes;
+import es.icarto.gvsig.navtableforms.validation.listeners.ValidationHandlerForFormattedTextFields;
 import es.icarto.gvsig.navtableforms.validation.listeners.ValidationHandlerForTextAreas;
 import es.icarto.gvsig.navtableforms.validation.listeners.ValidationHandlerForTextFields;
 import es.udc.cartolab.gvsig.navtable.AbstractNavTable;

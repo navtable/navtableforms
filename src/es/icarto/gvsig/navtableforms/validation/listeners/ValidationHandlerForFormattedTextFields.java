@@ -1,10 +1,12 @@
-package es.icarto.gvsig.navtableforms;
+package es.icarto.gvsig.navtableforms.validation.listeners;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.text.ParseException;
 
 import javax.swing.JFormattedTextField;
+
+import es.icarto.gvsig.navtableforms.AbstractForm;
 
 public class ValidationHandlerForFormattedTextFields implements KeyListener {
 
