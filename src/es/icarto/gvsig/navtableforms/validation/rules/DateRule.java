@@ -9,7 +9,7 @@ public class DateRule extends ValidationRule {
 
     @Override
     public boolean validate(String value) {
-	SimpleDateFormat formatter = DateFormatter.getDateFormatter();
+	SimpleDateFormat formatter = DateFormatter.getDateFormat();
 	try {
 	    formatter.parse(value);
 	    return true;
