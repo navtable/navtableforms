@@ -26,7 +26,7 @@ public class DoublePositiveRule extends ValidationRule {
     private DecimalFormat format;
 
     public DoublePositiveRule() {
-	format = DoubleFormatter.getFormatForEditing();
+	format = DoubleFormatter.getEditingFormat();
     }
 
     @Override

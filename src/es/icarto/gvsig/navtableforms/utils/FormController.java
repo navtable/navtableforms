@@ -13,13 +13,13 @@ import es.udc.cartolab.gvsig.navtable.listeners.PositionListener;
 
 public class FormController implements PositionListener{
 
-    private HashMap<String, String> values;
     private HashMap<String, Integer> indexes;
+    private HashMap<String, String> values;
     private HashMap<String, String> valuesChanged;
 
     public FormController() {
-	values = new HashMap<String, String>();
 	indexes = new HashMap<String, Integer>();
+	values = new HashMap<String, String>();
 	valuesChanged = new HashMap<String, String>();
     }
 
@@ -28,10 +28,11 @@ public class FormController implements PositionListener{
 	    clearAll();
 	    try {
 		for(int i=0; i<sds.getFieldCount(); i++) {
-		    values.put(sds.getFieldName(i), 
+		    String name = sds.getFieldName(i); 
+		    values.put(name, 
 			    sds.getFieldValue(position, i).getStringValue(
 				    new ValueFormatter()));
-		    indexes.put(sds.getFieldName(i), 
+		    indexes.put(name, 
 			    i);
 		}
 	    } catch (ReadDriverException e) {
@@ -42,9 +43,24 @@ public class FormController implements PositionListener{
     }
 
     private void clearAll() {
-	values.clear();
 	indexes.clear();
+	values.clear();
 	valuesChanged.clear();
+    }
+
+    public int getIndex(String componentName) {
+	return indexes.get(componentName);
+    }
+    
+    public int[] getIndexesOfValuesChanged() {
+	int[] idxs = new int[valuesChanged.size()];
+	Set<String> names = valuesChanged.keySet();
+	int i=0;
+	for(String name : names) {
+	    idxs[i] = indexes.get(name);
+	    i++;
+	}
+	return idxs;
     }
 
     public String getValue(String componentName) {
@@ -58,10 +74,6 @@ public class FormController implements PositionListener{
 	return values.get(componentName);
     }
 
-    public int getIndex(String componentName) {
-	return indexes.get(componentName);
-    }
-
     public HashMap<String, String> getValuesOriginal() {
 	return values;
     }
@@ -70,17 +82,12 @@ public class FormController implements PositionListener{
 	return valuesChanged;
     }
 
-    public int[] getIndexesOfValuesChanged() {
-	int[] idxs = new int[valuesChanged.size()];
-	Set<String> names = valuesChanged.keySet();
-	int i=0;
-	for(String name : names) {
-	    idxs[i] = indexes.get(name);
-	    i++;
-	}
-	return idxs;
-    }
-
+    /**
+     * Make sure the value setted is a formatted value, 
+     * as the ones from layer. See {@link #fill(SelectableDataSource, long)}
+     * For example: if value is a double in layer, 
+     * the string should be something like 1.000,00 instead of 1000.
+     */
     public void setValue(String componentName, String value) {
 	valuesChanged.put(componentName, value);
     }

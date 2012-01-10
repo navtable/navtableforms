@@ -15,7 +15,7 @@ public class DoubleFormatterOnDisplaying extends AbstractFormatter {
 
     public DoubleFormatterOnDisplaying() {
 	valueFormatter = new ValueFormatter();
-	decimalFormat = DoubleFormatter.getFormatForDisplaying();
+	decimalFormat = DoubleFormatter.getDisplayingFormat();
     }
 
     @Override

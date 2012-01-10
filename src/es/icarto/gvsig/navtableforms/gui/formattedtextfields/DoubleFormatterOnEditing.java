@@ -15,7 +15,7 @@ public class DoubleFormatterOnEditing extends AbstractFormatter {
 
     public DoubleFormatterOnEditing() {
 	valueFormatter = new ValueFormatter();
-	format = DoubleFormatter.getFormatForEditing();	
+	format = DoubleFormatter.getEditingFormat();	
     }
 
     @Override
@@ -31,7 +31,8 @@ public class DoubleFormatterOnEditing extends AbstractFormatter {
 	if(arg == null) {
 	    return valueFormatter.getNullStatementString();
 	} else if (arg instanceof String) {
-	    return (String) arg;
+	    DecimalFormat displayFormat = DoubleFormatter.getDisplayingFormat();
+	    return format.format(displayFormat.parse((String) arg));
 	}
 	return format.format(arg);
     }

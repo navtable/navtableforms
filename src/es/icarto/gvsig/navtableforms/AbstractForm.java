@@ -502,6 +502,8 @@ public abstract class AbstractForm extends AbstractNavTable {
 		    te.stopEditing(layer, false);
 		}
 		setChangedValues(false);
+		formController.fill(layer.getSource().getRecordset(), 
+			getPosition());
 		return true;
 	    } catch (Exception e) {
 		logger.error(e.getMessage(), e);
