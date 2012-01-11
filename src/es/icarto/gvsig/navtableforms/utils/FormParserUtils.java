@@ -31,6 +31,10 @@ import javax.swing.JTextField;
 
 public class FormParserUtils {
 
+    /**
+     * A legacy method to guarantee backwards compatibility.
+     * Should be sage remove it in modern versions of navtableforms. 
+     */
     private static String getNameBeforeDots(String widgetName) {
 	if (widgetName.contains(".")) {
 	    return widgetName.substring(0, widgetName.indexOf("."));
@@ -39,6 +43,10 @@ public class FormParserUtils {
 	}
     }
 
+    /**
+     * This method used to return a map with the names of components uppercased, 
+     * that was changed in named of performance and now is retrieved as it is.
+     */
     public static HashMap<String, JComponent> getWidgetsFromContainer(
 	    Container c) {
 
@@ -54,7 +62,7 @@ public class FormParserUtils {
 		    || (comp instanceof JTable)) {
 		String newName = getNameBeforeDots(comp.getName());
 		comp.setName(newName);
-		map.put(comp.getName().toUpperCase(), (JComponent) comp);
+		map.put(comp.getName(), (JComponent) comp);
 		return map;
 	    }
 
@@ -64,7 +72,7 @@ public class FormParserUtils {
 		    for (JComponent w : recursiveMap.values()) {
 			String newName = getNameBeforeDots(w.getName());
 			comp.setName(newName);
-			map.put(w.getName().toUpperCase(), w);
+			map.put(w.getName(), w);
 		    }
 		}
 	    }

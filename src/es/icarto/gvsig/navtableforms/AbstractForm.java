@@ -42,6 +42,7 @@ import com.iver.andami.PluginServices;
 import com.iver.cit.gvsig.fmap.layers.FLyrVect;
 import com.jeta.forms.components.panel.FormPanel;
 
+import es.icarto.gvsig.navtableforms.gui.formattedtextfields.FormatterFactory;
 import es.icarto.gvsig.navtableforms.ormlite.DomainValues;
 import es.icarto.gvsig.navtableforms.ormlite.KeyValue;
 import es.icarto.gvsig.navtableforms.ormlite.ORMLite;
@@ -51,6 +52,7 @@ import es.icarto.gvsig.navtableforms.validation.ComponentValidator;
 import es.icarto.gvsig.navtableforms.validation.FormValidator;
 import es.icarto.gvsig.navtableforms.validation.listeners.ValidationHandlerForCheckBoxes;
 import es.icarto.gvsig.navtableforms.validation.listeners.ValidationHandlerForComboBoxes;
+import es.icarto.gvsig.navtableforms.validation.listeners.ValidationHandlerForFormattedTextFields;
 import es.icarto.gvsig.navtableforms.validation.listeners.ValidationHandlerForTextAreas;
 import es.icarto.gvsig.navtableforms.validation.listeners.ValidationHandlerForTextFields;
 import es.udc.cartolab.gvsig.navtable.AbstractNavTable;
@@ -71,6 +73,7 @@ public abstract class AbstractForm extends AbstractNavTable {
     private HashMap<String, JComponent> widgetsVector;
 
     private FLyrVect layer = null;
+    private ValidationHandlerForFormattedTextFields validationHandlerForFormattedTextFields;
     private ValidationHandlerForTextFields validationHandlerForTextFields;
     private ValidationHandlerForComboBoxes validationHandlerForComboBoxes;
     private ValidationHandlerForCheckBoxes validationHandlerForCheckBoxes;
@@ -88,6 +91,8 @@ public abstract class AbstractForm extends AbstractNavTable {
 
     private void initValidation() {
 	formValidator = new FormValidator();
+	validationHandlerForFormattedTextFields = new ValidationHandlerForFormattedTextFields(
+		this);
 	validationHandlerForTextFields = new ValidationHandlerForTextFields(
 		this);
 	validationHandlerForComboBoxes = new ValidationHandlerForComboBoxes(
@@ -141,8 +146,9 @@ public abstract class AbstractForm extends AbstractNavTable {
 
     protected void removeListeners() {
 	for (JComponent c : widgetsVector.values()) {
-	    if ((c instanceof JTextField) ||
-		    (c instanceof JFormattedTextField)) {
+	    if (c instanceof JFormattedTextField) {
+		((JTextField) c).removeKeyListener(validationHandlerForFormattedTextFields);
+	    } else if (c instanceof JTextField) {
 		((JTextField) c).removeKeyListener(validationHandlerForTextFields);
 	    } else if (c instanceof JComboBox) {
 		((JComboBox) c).removeActionListener(validationHandlerForComboBoxes);
@@ -199,20 +205,25 @@ public abstract class AbstractForm extends AbstractNavTable {
 
     protected void setListeners() {
 	for (JComponent comp : widgetsVector.values()) {
-	    if ((comp instanceof JTextField) ||
-		    comp instanceof JFormattedTextField) {
-		((JTextField) comp)
-		.addKeyListener(validationHandlerForTextFields);
+	    if (comp instanceof JFormattedTextField) {
+		((JFormattedTextField) comp).addKeyListener(
+			validationHandlerForFormattedTextFields);
+		ComponentValidator cv = new ComponentValidator(comp);
+		formValidator.addComponentValidator(cv);
+	    } else if (comp instanceof JTextField) {
+		((JTextField) comp).addKeyListener(
+			validationHandlerForTextFields);
 		ComponentValidator cv = new ComponentValidator(comp);
 		formValidator.addComponentValidator(cv);
 	    } else if (comp instanceof JComboBox) {
-		((JComboBox) comp)
-		.addActionListener(validationHandlerForComboBoxes);
+		((JComboBox) comp).addActionListener(
+			validationHandlerForComboBoxes);
 	    } else if (comp instanceof JCheckBox) {
-		((JCheckBox) comp)
-		.addActionListener(validationHandlerForCheckBoxes);
+		((JCheckBox) comp).addActionListener(
+			validationHandlerForCheckBoxes);
 	    } else if (comp instanceof JTextArea) {
-		((JTextArea) comp).addKeyListener(validationHandlerForTextAreas);
+		((JTextArea) comp).addKeyListener(
+			validationHandlerForTextAreas);
 	    }
 	}
     }
@@ -291,7 +302,11 @@ public abstract class AbstractForm extends AbstractNavTable {
     }
 
     protected void fillJFormattedTextField(JFormattedTextField field) {
-	fillJTextField(field);
+	field.setFormatterFactory(FormatterFactory.createFormatterFactory(
+		formController.getType(field.getName())));
+	String fieldValue = formController.getValue(field.getName());
+	//field.setText(fieldValue);
+	field.setValue(fieldValue);
     }
 
     protected void fillJCheckBox(JCheckBox checkBox) {
@@ -479,6 +494,8 @@ public abstract class AbstractForm extends AbstractNavTable {
 		    te.stopEditing(layer, false);
 		}
 		setChangedValues(false);
+		formController.fill(layer.getSource().getRecordset(), 
+			getPosition());
 		return true;
 	    } catch (Exception e) {
 		logger.error(e.getMessage(), e);
