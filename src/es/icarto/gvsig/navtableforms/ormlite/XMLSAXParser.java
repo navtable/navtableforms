@@ -37,7 +37,7 @@ import com.iver.cit.gvsig.fmap.drivers.FieldDescription;
 
 import es.icarto.gvsig.navtableforms.ormlite.ORMLiteDataBase.ORMLiteTable;
 import es.icarto.gvsig.navtableforms.validation.rules.ValidationRule;
-import es.udc.cartolab.gvsig.navtable.format.ValueFactoryNavTable;
+import es.udc.cartolab.gvsig.navtable.format.ValueFactoryNT;
 
 /**
  * SAX parser to build from a XML estructure several objects needed for
@@ -228,55 +228,55 @@ public class XMLSAXParser extends DefaultHandler {
 	    switch (tmpType) {
 	    case Types.VARCHAR:
 		tmpFieldDescription.setDefaultValue(
-			ValueFactoryNavTable.createValue(tmpVal));
+			ValueFactoryNT.createValue(tmpVal));
 		break;
 	    case Types.INTEGER:
 		if (tmpVal == "") {
 		    tmpFieldDescription.setDefaultValue(
-			    ValueFactoryNavTable.createValue(
+			    ValueFactoryNT.createValue(
 				    GVSIG_DEFAULT_INT));
 		} else {
 		    tmpFieldDescription.setDefaultValue(
-			    ValueFactoryNavTable.createValue(
+			    ValueFactoryNT.createValue(
 				    Integer.parseInt(tmpVal)));
 		}
 		break;
 	    case Types.DOUBLE:
 		if (tmpVal == "") {
 		    tmpFieldDescription.setDefaultValue(
-			    ValueFactoryNavTable.createValue(
+			    ValueFactoryNT.createValue(
 				    GVSIG_DEFAULT_DOUBLE));
 		} else {
 		    tmpFieldDescription.setDefaultValue(
-			    ValueFactoryNavTable.createValue(
+			    ValueFactoryNT.createValue(
 				    Double.parseDouble(tmpVal)));
 		}
 		break;
 	    case Types.BOOLEAN:
 		if (tmpVal == "") {
 		    tmpFieldDescription.setDefaultValue(
-			    ValueFactoryNavTable.createValue(
+			    ValueFactoryNT.createValue(
 				    GVSIG_DEFAULT_BOOLEAN));
 		} else {
 		    tmpFieldDescription.setDefaultValue(
-			    ValueFactoryNavTable.createValue(
+			    ValueFactoryNT.createValue(
 				    Boolean.parseBoolean(tmpVal)));
 		}
 		break;
 	    case Types.DATE:
 		if (tmpVal == "") {
 		    tmpFieldDescription.setDefaultValue(
-			    ValueFactoryNavTable.createValue(
+			    ValueFactoryNT.createValue(
 				    GVSIG_DEFAULT_STRING));
 		} else {
 		    tmpFieldDescription.setDefaultValue(
-			    ValueFactoryNavTable.createValue(
+			    ValueFactoryNT.createValue(
 				    Date.parse(tmpVal)));
 		}
 		break;
 	    default:
 		tmpFieldDescription.setDefaultValue(
-			ValueFactoryNavTable.createNullValue());
+			ValueFactoryNT.createNullValue());
 	    }
 	} else if (qName.equalsIgnoreCase("FIELDDECIMALCOUNT")) {
 	    tmpFieldDescription.setFieldDecimalCount(getAsInteger(tmpVal));

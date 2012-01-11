@@ -3,22 +3,27 @@ package es.icarto.gvsig.navtableforms.utils;
 import java.util.HashMap;
 import java.util.Set;
 
+import javax.swing.JFormattedTextField.AbstractFormatter;
+
 import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
 import com.iver.cit.gvsig.fmap.layers.SelectableDataSource;
 
+import es.icarto.gvsig.navtableforms.gui.formattedtextfields.FormatterFactory;
 import es.udc.cartolab.gvsig.navtable.AbstractNavTable;
-import es.udc.cartolab.gvsig.navtable.format.ValueFormatter;
+import es.udc.cartolab.gvsig.navtable.format.ValueFormatNT;
 import es.udc.cartolab.gvsig.navtable.listeners.PositionEvent;
 import es.udc.cartolab.gvsig.navtable.listeners.PositionListener;
 
 public class FormController implements PositionListener{
 
     private HashMap<String, Integer> indexes;
+    private HashMap<String, Integer> types;
     private HashMap<String, String> values;
     private HashMap<String, String> valuesChanged;
 
     public FormController() {
 	indexes = new HashMap<String, Integer>();
+	types = new HashMap<String, Integer>();
 	values = new HashMap<String, String>();
 	valuesChanged = new HashMap<String, String>();
     }
@@ -31,9 +36,11 @@ public class FormController implements PositionListener{
 		    String name = sds.getFieldName(i); 
 		    values.put(name, 
 			    sds.getFieldValue(position, i).getStringValue(
-				    new ValueFormatter()));
+				    new ValueFormatNT()));
 		    indexes.put(name, 
 			    i);
+		    types.put(name, 
+			    sds.getFieldType(i));
 		}
 	    } catch (ReadDriverException e) {
 		e.printStackTrace();
@@ -44,6 +51,7 @@ public class FormController implements PositionListener{
 
     private void clearAll() {
 	indexes.clear();
+	types.clear();
 	values.clear();
 	valuesChanged.clear();
     }
@@ -51,7 +59,7 @@ public class FormController implements PositionListener{
     public int getIndex(String componentName) {
 	return indexes.get(componentName);
     }
-    
+
     public int[] getIndexesOfValuesChanged() {
 	int[] idxs = new int[valuesChanged.size()];
 	Set<String> names = valuesChanged.keySet();
@@ -90,6 +98,14 @@ public class FormController implements PositionListener{
      */
     public void setValue(String componentName, String value) {
 	valuesChanged.put(componentName, value);
+    }
+
+    public AbstractFormatter getFormatter(String componentName) {
+	return FormatterFactory.createFormatter(types.get(componentName));
+    }
+
+    public int getType(String name) {
+	return types.get(name);
     }
 
     public void onPositionChange(PositionEvent e) {

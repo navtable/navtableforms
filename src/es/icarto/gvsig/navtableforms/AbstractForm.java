@@ -31,7 +31,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.JTextComponent;
 
 import net.miginfocom.swing.MigLayout;
@@ -43,8 +42,7 @@ import com.iver.andami.PluginServices;
 import com.iver.cit.gvsig.fmap.layers.FLyrVect;
 import com.jeta.forms.components.panel.FormPanel;
 
-import es.icarto.gvsig.navtableforms.gui.formattedtextfields.DoubleFormatterOnDisplaying;
-import es.icarto.gvsig.navtableforms.gui.formattedtextfields.DoubleFormatterOnEditing;
+import es.icarto.gvsig.navtableforms.gui.formattedtextfields.FormatterFactory;
 import es.icarto.gvsig.navtableforms.ormlite.DomainValues;
 import es.icarto.gvsig.navtableforms.ormlite.KeyValue;
 import es.icarto.gvsig.navtableforms.ormlite.ORMLite;
@@ -304,14 +302,8 @@ public abstract class AbstractForm extends AbstractNavTable {
     }
 
     protected void fillJFormattedTextField(JFormattedTextField field) {
-	DoubleFormatterOnDisplaying displayFormatter = new DoubleFormatterOnDisplaying();
-	DoubleFormatterOnEditing editFormatter = new DoubleFormatterOnEditing();
-	DefaultFormatterFactory formatterFactory = new DefaultFormatterFactory();
-	formatterFactory.setDefaultFormatter(displayFormatter);
-	formatterFactory.setDisplayFormatter(displayFormatter);
-	formatterFactory.setEditFormatter(editFormatter);
-	formatterFactory.setNullFormatter(displayFormatter);
-	field.setFormatterFactory(formatterFactory);
+	field.setFormatterFactory(FormatterFactory.createFormatterFactory(
+		formController.getType(field.getName())));
 	String fieldValue = formController.getValue(field.getName());
 	//field.setText(fieldValue);
 	field.setValue(fieldValue);

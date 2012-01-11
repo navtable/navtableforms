@@ -5,23 +5,23 @@ import java.text.ParseException;
 
 import javax.swing.JFormattedTextField.AbstractFormatter;
 
-import es.udc.cartolab.gvsig.navtable.format.DoubleFormatter;
-import es.udc.cartolab.gvsig.navtable.format.ValueFormatter;
+import es.udc.cartolab.gvsig.navtable.format.DoubleFormatNT;
+import es.udc.cartolab.gvsig.navtable.format.ValueFormatNT;
 
 public class DoubleFormatterOnEditing extends AbstractFormatter {
 
-    private ValueFormatter valueFormatter;
+    private ValueFormatNT valueFormatter;
     private DecimalFormat format;
 
     public DoubleFormatterOnEditing() {
-	valueFormatter = new ValueFormatter();
-	format = DoubleFormatter.getEditingFormat();	
+	valueFormatter = new ValueFormatNT();
+	format = DoubleFormatNT.getEditingFormat();	
     }
 
     @Override
     public Object stringToValue(String arg) throws ParseException {
-	if(arg.equals("")) {
-	    arg = "0";
+	if(arg.equals("") || (arg == null)) {
+	    return null;
 	}
 	return format.parseObject(arg);
     }
@@ -31,7 +31,7 @@ public class DoubleFormatterOnEditing extends AbstractFormatter {
 	if(arg == null) {
 	    return valueFormatter.getNullStatementString();
 	} else if (arg instanceof String) {
-	    DecimalFormat displayFormat = DoubleFormatter.getDisplayingFormat();
+	    DecimalFormat displayFormat = DoubleFormatNT.getDisplayingFormat();
 	    return format.format(displayFormat.parse((String) arg));
 	}
 	return format.format(arg);

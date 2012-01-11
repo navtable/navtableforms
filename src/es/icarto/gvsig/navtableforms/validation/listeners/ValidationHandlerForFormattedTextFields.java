@@ -7,7 +7,6 @@ import java.text.ParseException;
 import javax.swing.JFormattedTextField;
 
 import es.icarto.gvsig.navtableforms.AbstractForm;
-import es.icarto.gvsig.navtableforms.gui.formattedtextfields.DoubleFormatterOnDisplaying;
 
 public class ValidationHandlerForFormattedTextFields implements KeyListener {
 
@@ -28,9 +27,9 @@ public class ValidationHandlerForFormattedTextFields implements KeyListener {
 	    JFormattedTextField c = ((JFormattedTextField) e.getSource());
 	    try {
 		c.commitEdit();  // make sure value and displayed text are the same
-		DoubleFormatterOnDisplaying formatter = new DoubleFormatterOnDisplaying();
-		dialog.getFormController().setValue(c.getName(),
-			formatter.valueToString(c.getValue()));
+		String value = dialog.getFormController().getFormatter(
+			c.getName()).valueToString(c.getValue());
+		dialog.getFormController().setValue(c.getName(), value);
 		dialog.setChangedValues(); // placed after updating widgetvalues
 		dialog.getFormValidator().validate();
 	    } catch (ParseException e1) {
