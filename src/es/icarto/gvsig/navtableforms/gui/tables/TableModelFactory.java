@@ -21,17 +21,76 @@ import es.icarto.gvsig.navtableforms.utils.TOCLayerManager;
 public class TableModelFactory {
 
     public static TableModel createFromTable(String sourceTable,
-	    String rowFilterName, String rowFilterValue) {
+	    String rowFilterName, 
+	    String rowFilterValue) {
 
 	IEditableSource sds = getSource(sourceTable);
-	FieldDescription[] columnNames;
-	columnNames = sds.getFieldsDescription();
+	FieldDescription[] columnNames = sds.getFieldsDescription();
 	Object[][] rows = getRowsFromSource(sds, rowFilterName, rowFilterValue);
 	return new NonEditableTableModel(rows, columnNames);
     }
 
+    public static TableModel createFromTable(String sourceTable,
+	    String rowFilterName,
+	    String rowFilterValue,
+	    ArrayList<String> columnNames) {
+
+	IEditableSource source = getSource(sourceTable);
+	Object[][] rows = getRowsFromSource(source, 
+		rowFilterName, rowFilterValue, columnNames);
+	return new NonEditableTableModel(rows, columnNames.toArray(new String[1]));
+    }
+
+    private static Object[][] getRowsFromSource(IEditableSource source,
+	    String fieldFilterName, 
+	    String fieldFilterValue, 
+	    ArrayList<String> columnNames) {
+
+	ArrayList<Object[]> rows = new ArrayList<Object[]>();
+	int fieldFilterIndex;
+	try {
+	    fieldFilterIndex = source.getRecordset().getFieldIndexByName(fieldFilterName);
+	    ArrayList<Integer> columnIndexes = getIndexesOfColumns(
+		    source.getRecordset(), columnNames);
+	    ArrayList<Value> attributes = new ArrayList<Value>();
+	    for (int index = 0; index < source.getRowCount(); index++) {
+		IRowEdited row = source.getRow(index);
+		String value = row.getAttribute(fieldFilterIndex).toString();
+		if (value.equalsIgnoreCase(fieldFilterValue)) {
+		    attributes.clear();
+		    for(Integer idx : columnIndexes) {
+			attributes.add(row.getAttribute(idx));
+		    }
+		    rows.add(attributes.toArray());
+		}
+	    }
+	    return rows.toArray(new Object[1][1]);
+	} catch (ReadDriverException e) {
+	    e.printStackTrace();
+	    return null;
+	}
+    }
+
+    private static ArrayList<Integer> getIndexesOfColumns(
+	    SelectableDataSource sds, 
+	    ArrayList<String> columnNames) {
+
+	ArrayList<Integer> indexes = new ArrayList<Integer>();
+	for (int i=0; i<columnNames.size(); i++) {
+	    int idx;
+	    try {
+		idx = sds.getFieldIndexByName(columnNames.get(i));
+		indexes.add(new Integer(idx));
+	    } catch (ReadDriverException e) {
+		e.printStackTrace();
+	    }
+	}
+	return indexes;
+    }
+
     public static TableModel createFromLayer(String sourceLayer,
-	    String filterName, String filterValue,
+	    String rowFilterName, 
+	    String rowFilterValue,
 	    ArrayList<String> columnsToRetrieve) {
 
 	TOCLayerManager toc = new TOCLayerManager();
@@ -41,20 +100,20 @@ public class TableModelFactory {
 	try {
 	    columnNames = getColumnsFromSource(layer.getRecordset(),
 		    columnsToRetrieve);
-	    rows = getSomeRowsFromSource(layer.getRecordset(), filterName,
-		    filterValue);
+	    rows = getRowsFromSource(layer.getRecordset(), rowFilterName,
+		    rowFilterValue);
 	    return new NonEditableTableModel(rows, columnNames);
 	} catch (ReadDriverException e) {
 	    return null;
 	}
     }
 
-    private static Object[] getColumnsFromSource(
-	    SelectableDataSource recordset, ArrayList<String> columnNames) {
+    private static Object[] getColumnsFromSource(SelectableDataSource source, 
+	    ArrayList<String> columnNames) {
 
 	ArrayList<FieldDescription> fds = new ArrayList<FieldDescription>();
 	try {
-	    for (FieldDescription fd : recordset.getFieldsDescription()) {
+	    for (FieldDescription fd : source.getFieldsDescription()) {
 		if (columnNames.contains(fd.getFieldName())) {
 		    fds.add(fd);
 		}
@@ -65,16 +124,18 @@ public class TableModelFactory {
 	}
     }
 
-    private static Object[][] getSomeRowsFromSource(
-	    SelectableDataSource source, String indexName, String filterValue) {
+    private static Object[][] getRowsFromSource(SelectableDataSource source, 
+	    String rowFilterName, 
+	    String rowFilterValue) {
+
 	ArrayList<Object[]> rows = new ArrayList<Object[]>();
 	int fieldIndex;
 	try {
-	    fieldIndex = source.getFieldIndexByName(indexName);
+	    fieldIndex = source.getFieldIndexByName(rowFilterName);
 	    for (int index = 0; index < source.getRowCount(); index++) {
 		Value[] row = source.getRow(index);
 		String indexValue = row[fieldIndex].toString();
-		if (indexValue.equalsIgnoreCase(filterValue)) {
+		if (indexValue.equalsIgnoreCase(rowFilterValue)) {
 		    rows.add(row);
 		}
 	    }
@@ -86,15 +147,17 @@ public class TableModelFactory {
     }
 
     private static Object[][] getRowsFromSource(IEditableSource source,
-	    String indexName, String filterValue) {
+	    String fieldFilterName, 
+	    String fieldFilterValue) {
+
 	ArrayList<Object[]> rows = new ArrayList<Object[]>();
-	int fieldIndex;
+	int fieldFilterIndex;
 	try {
-	    fieldIndex = source.getRecordset().getFieldIndexByName(indexName);
+	    fieldFilterIndex = source.getRecordset().getFieldIndexByName(fieldFilterName);
 	    for (int index = 0; index < source.getRowCount(); index++) {
 		IRowEdited row = source.getRow(index);
-		String indexValue = row.getAttribute(fieldIndex).toString();
-		if (indexValue.equalsIgnoreCase(filterValue)) {
+		String value = row.getAttribute(fieldFilterIndex).toString();
+		if (value.equalsIgnoreCase(fieldFilterValue)) {
 		    rows.add(row.getAttributes());
 		}
 	    }
