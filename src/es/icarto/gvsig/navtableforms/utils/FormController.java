@@ -3,22 +3,28 @@ package es.icarto.gvsig.navtableforms.utils;
 import java.util.HashMap;
 import java.util.Set;
 
+import javax.swing.JFormattedTextField.AbstractFormatter;
+
 import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
 import com.iver.cit.gvsig.fmap.layers.SelectableDataSource;
 
+import es.icarto.gvsig.navtableforms.gui.formattedtextfields.FormatterFactory;
 import es.udc.cartolab.gvsig.navtable.AbstractNavTable;
+import es.udc.cartolab.gvsig.navtable.format.ValueFormatNT;
 import es.udc.cartolab.gvsig.navtable.listeners.PositionEvent;
 import es.udc.cartolab.gvsig.navtable.listeners.PositionListener;
 
 public class FormController implements PositionListener{
 
-    private HashMap<String, String> values;
     private HashMap<String, Integer> indexes;
+    private HashMap<String, Integer> types;
+    private HashMap<String, String> values;
     private HashMap<String, String> valuesChanged;
 
     public FormController() {
-	values = new HashMap<String, String>();
 	indexes = new HashMap<String, Integer>();
+	types = new HashMap<String, Integer>();
+	values = new HashMap<String, String>();
 	valuesChanged = new HashMap<String, String>();
     }
 
@@ -27,11 +33,14 @@ public class FormController implements PositionListener{
 	    clearAll();
 	    try {
 		for(int i=0; i<sds.getFieldCount(); i++) {
-		    values.put(sds.getFieldName(i), 
+		    String name = sds.getFieldName(i); 
+		    values.put(name, 
 			    sds.getFieldValue(position, i).getStringValue(
-				    new ValueFormatter()));
-		    indexes.put(sds.getFieldName(i), 
+				    new ValueFormatNT()));
+		    indexes.put(name, 
 			    i);
+		    types.put(name, 
+			    sds.getFieldType(i));
 		}
 	    } catch (ReadDriverException e) {
 		e.printStackTrace();
@@ -41,32 +50,14 @@ public class FormController implements PositionListener{
     }
 
     private void clearAll() {
-	values.clear();
 	indexes.clear();
+	types.clear();
+	values.clear();
 	valuesChanged.clear();
-    }
-
-    public String getValue(String componentName) {
-	if(valuesChanged.containsKey(componentName)) {
-	    return valuesChanged.get(componentName);
-	}
-	return values.get(componentName);
-    }
-
-    public String getValueInLayer(String componentName) {
-	return values.get(componentName);
     }
 
     public int getIndex(String componentName) {
 	return indexes.get(componentName);
-    }
-
-    public HashMap<String, String> getValuesOriginal() {
-	return values;
-    }
-
-    public HashMap<String, String> getValuesChanged() {
-	return valuesChanged;
     }
 
     public int[] getIndexesOfValuesChanged() {
@@ -80,8 +71,41 @@ public class FormController implements PositionListener{
 	return idxs;
     }
 
+    public String getValue(String componentName) {
+	if(valuesChanged.containsKey(componentName)) {
+	    return valuesChanged.get(componentName);
+	}
+	return values.get(componentName);
+    }
+
+    public String getValueInLayer(String componentName) {
+	return values.get(componentName);
+    }
+
+    public HashMap<String, String> getValuesOriginal() {
+	return values;
+    }
+
+    public HashMap<String, String> getValuesChanged() {
+	return valuesChanged;
+    }
+
+    /**
+     * Make sure the value setted is a formatted value, 
+     * as the ones from layer. See {@link #fill(SelectableDataSource, long)}
+     * For example: if value is a double in layer, 
+     * the string should be something like 1.000,00 instead of 1000.
+     */
     public void setValue(String componentName, String value) {
 	valuesChanged.put(componentName, value);
+    }
+
+    public AbstractFormatter getFormatter(String componentName) {
+	return FormatterFactory.createFormatter(types.get(componentName));
+    }
+
+    public int getType(String name) {
+	return types.get(name);
     }
 
     public void onPositionChange(PositionEvent e) {
