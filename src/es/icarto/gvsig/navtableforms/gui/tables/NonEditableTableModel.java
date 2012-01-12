@@ -15,7 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-package es.icarto.gvsig.navtableforms.launcher;
+package es.icarto.gvsig.navtableforms.gui.tables;
 
 import javax.swing.table.DefaultTableModel;
 

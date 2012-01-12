@@ -29,7 +29,7 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-public class FormParserUtils {
+public class AbeilleParser {
 
     private static String getNameBeforeDots(String widgetName) {
 	if (widgetName.contains(".")) {

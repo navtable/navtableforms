@@ -32,7 +32,7 @@ import com.iver.cit.gvsig.fmap.edition.IEditableSource;
 import com.iver.cit.gvsig.fmap.layers.SelectableDataSource;
 import com.iver.cit.gvsig.project.documents.table.gui.Table;
 
-import es.icarto.gvsig.navtableforms.utils.TableUtils;
+import es.icarto.gvsig.navtableforms.gui.tables.TableUtils;
 import es.udc.cartolab.gvsig.navtable.AlphanumericNavTable;
 
 public class AlphanumericNavTableLauncher implements MouseListener {

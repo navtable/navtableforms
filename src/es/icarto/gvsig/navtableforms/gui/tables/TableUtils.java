@@ -15,7 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-package es.icarto.gvsig.navtableforms.utils;
+package es.icarto.gvsig.navtableforms.gui.tables;
 
 import java.util.ArrayList;
 import java.util.HashMap;

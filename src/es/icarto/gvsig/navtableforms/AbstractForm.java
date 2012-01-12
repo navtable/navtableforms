@@ -46,7 +46,7 @@ import es.icarto.gvsig.navtableforms.ormlite.DomainValues;
 import es.icarto.gvsig.navtableforms.ormlite.KeyValue;
 import es.icarto.gvsig.navtableforms.ormlite.ORMLite;
 import es.icarto.gvsig.navtableforms.utils.FormController;
-import es.icarto.gvsig.navtableforms.utils.FormParserUtils;
+import es.icarto.gvsig.navtableforms.utils.AbeilleParser;
 import es.icarto.gvsig.navtableforms.validation.ComponentValidator;
 import es.icarto.gvsig.navtableforms.validation.FormValidator;
 import es.icarto.gvsig.navtableforms.validation.listeners.ValidationHandlerForCheckBoxes;
@@ -155,7 +155,7 @@ public abstract class AbstractForm extends AbstractNavTable {
     }
 
     public void initWidgets() {
-	widgetsVector = FormParserUtils.getWidgetsFromContainer(formBody);
+	widgetsVector = AbeilleParser.getWidgetsFromContainer(formBody);
 	widgetsVector.size();
     }
 
