@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import javax.swing.JComboBox;
 
 import es.icarto.gvsig.navtableforms.AbstractForm;
-import es.icarto.gvsig.navtableforms.ormlite.KeyValue;
+import es.icarto.gvsig.navtableforms.ormlite.domain.KeyValue;
 
 public class DependentComboboxesHandler implements ActionListener {
 

@@ -15,7 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-package es.icarto.gvsig.navtableforms.ormlite;
+package es.icarto.gvsig.navtableforms.ormlite.domain;
 
 import java.sql.SQLException;
 import java.util.ArrayList;

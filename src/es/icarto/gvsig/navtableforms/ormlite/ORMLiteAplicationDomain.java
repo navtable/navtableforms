@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import es.icarto.gvsig.navtableforms.ormlite.domain.DomainValues;
 import es.icarto.gvsig.navtableforms.validation.rules.DateRule;
 import es.icarto.gvsig.navtableforms.validation.rules.DoublePositiveRule;
 import es.icarto.gvsig.navtableforms.validation.rules.IntegerPositiveRule;

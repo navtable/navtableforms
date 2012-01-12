@@ -36,6 +36,9 @@ import com.hardcode.gdbms.engine.values.ValueFactory;
 import com.iver.cit.gvsig.fmap.drivers.FieldDescription;
 
 import es.icarto.gvsig.navtableforms.ormlite.ORMLiteDataBase.ORMLiteTable;
+import es.icarto.gvsig.navtableforms.ormlite.domain.DBDomainReader;
+import es.icarto.gvsig.navtableforms.ormlite.domain.DomainReader;
+import es.icarto.gvsig.navtableforms.ormlite.domain.FileDomainReader;
 import es.icarto.gvsig.navtableforms.validation.rules.ValidationRule;
 
 /**

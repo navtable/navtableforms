@@ -15,7 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-package es.icarto.gvsig.navtableforms.ormlite;
+package es.icarto.gvsig.navtableforms.ormlite.domain;
 
 import java.io.BufferedReader;
 import java.io.File;
