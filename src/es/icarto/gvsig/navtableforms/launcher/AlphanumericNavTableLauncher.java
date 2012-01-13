@@ -57,7 +57,7 @@ public class AlphanumericNavTableLauncher implements MouseListener {
 		ant = new AlphanumericNavTable(source,
 			params.getAlphanumericNavTableTitle());
 		if (ant.init()) {
-		    ant.setPosition(TableUtils.getPositionOfRowSelected(
+		    ant.setPosition(TableUtils.getIndexOfRowSelected(
 			    source.getRecordset(), model, rowSelectedIndex));
 		    selectFeaturesInANT(source.getRecordset(), model);
 		    PluginServices.getMDIManager().addCentredWindow(ant);
@@ -96,7 +96,7 @@ public class AlphanumericNavTableLauncher implements MouseListener {
     private void selectFeaturesInANT(SelectableDataSource source,
 	    TableModel model) {
 	ArrayList<Integer> rowList;
-	rowList = TableUtils.getIndexesOfRowsInTable(source, model);
+	rowList = TableUtils.getIndexesOfAllRowsInTable(source, model);
 	ant.clearSelectedFeatures();
 	for (int row : rowList) {
 	    ant.selectFeature(row);

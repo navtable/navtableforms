@@ -26,35 +26,56 @@ import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
 import com.hardcode.gdbms.engine.values.Value;
 import com.iver.cit.gvsig.fmap.layers.SelectableDataSource;
 
+import es.udc.cartolab.gvsig.navtable.format.ValueFormatNT;
+
 public class TableUtils {
 
-    static final int NO_FEATURE = -1;
+    private static final int NO_FEATURE = -1;
+    private static final int NO_FIELD = -1;
 
-    public static long getPositionOfRowSelected(SelectableDataSource source,
+    public static long getIndexOfRowSelected(SelectableDataSource source,
 	    TableModel model, int rowIndex) {
 	HashMap<String, String> rowSelected = getRow(model, rowIndex);
-	//see AbstractNavTable.setPosition(newPosition)
-	return doGetFeatureIndexOfRow(source, rowSelected);
+	return doGetIndexOfRow(source, rowSelected);
+    }
+
+    public static ArrayList<Integer> getIndexesOfAllRowsInTable(SelectableDataSource source, 
+	    TableModel model) {
+	ArrayList<Integer> rowList = new ArrayList<Integer>();
+	for (int rowIndex = 0; rowIndex < model.getRowCount(); rowIndex++) {
+	    int featIndex = getIndexOfRow(source, model, rowIndex);
+	    if (featIndex != NO_FEATURE) {
+		rowList.add(featIndex);
+	    }
+	}
+	return rowList;
     }
 
     private static HashMap<String, String> getRow(TableModel model, int rowIndex) {
 	String key, value;
 	HashMap<String, String> rowSelected = new HashMap<String, String>();
 	for (int colIndex = 0; colIndex < model.getColumnCount(); colIndex++) {
-	    value = model.getValueAt(rowIndex, colIndex).toString();
+	    value = ((Value) model.getValueAt(rowIndex, colIndex)).getStringValue(
+		    new ValueFormatNT());
 	    key = model.getColumnName(colIndex);
 	    rowSelected.put(key, value);
 	}
 	return rowSelected;
     }
 
-    private static int doGetFeatureIndexOfRow(SelectableDataSource source,
+    private static int getIndexOfRow(SelectableDataSource source,
+	    TableModel model, int rowIndex) {
+	HashMap<String, String> row = getRow(model, rowIndex);
+	return doGetIndexOfRow(source, row);
+    }
+
+    private static int doGetIndexOfRow(SelectableDataSource source,
 	    HashMap<String, String> row) {
 	try {
-	    int featIndex;
-	    for (featIndex = 0; featIndex < source.getRowCount(); featIndex++) {
-		if (isTheRow(source, row, featIndex)) {
-		    return featIndex;
+	    int rowIndex;
+	    for (rowIndex = 0; rowIndex < source.getRowCount(); rowIndex++) {
+		if (allColumnsMatch(source, row, rowIndex)) {
+		    return rowIndex;
 		}
 	    }
 	    return NO_FEATURE;
@@ -64,12 +85,12 @@ public class TableUtils {
 	}
     }
 
-    private static boolean isTheRow(SelectableDataSource source,
-	    HashMap<String, String> row, int featIndex) {
+    private static boolean allColumnsMatch(SelectableDataSource source,
+	    HashMap<String, String> row, int rowIndex) {
 	try {
 	    boolean checkRow = false;
 	    for (String key : row.keySet()) {
-		int fieldIndex = source.getFieldIndexByName(key);
+		int colIndex = source.getFieldIndexByName(key);
 		/*
 		 * Fields from table which are not in the source will be
 		 * discarded. This is useful, for example, in the case the table
@@ -77,10 +98,10 @@ public class TableUtils {
 		 * tables. In that case, only the fields in the table which are
 		 * in source will be used to compare.
 		 */
-		if (fieldIndex != -1) {
-		    Value fieldValue = source.getFieldValue(featIndex,
-			    fieldIndex);
-		    if (fieldValue.toString().equals(row.get(key))) {
+		if (colIndex != NO_FIELD) {
+		    String fieldValue = source.getFieldValue(rowIndex, 
+			    colIndex).getStringValue(new ValueFormatNT());
+		    if (fieldValue.equals(row.get(key))) {
 			checkRow = true;
 		    } else {
 			checkRow = false;
@@ -96,24 +117,6 @@ public class TableUtils {
 	    e.printStackTrace();
 	    return false;
 	}
-    }
-
-    public static ArrayList<Integer> getIndexesOfRowsInTable(
-	    SelectableDataSource source, TableModel model) {
-	ArrayList<Integer> rowList = new ArrayList<Integer>();
-	for (int rowIndex = 0; rowIndex < model.getRowCount(); rowIndex++) {
-	    int featIndex = getFeatureIndexOfRow(source, model, rowIndex);
-	    if (featIndex != NO_FEATURE) {
-		rowList.add(featIndex);
-	    }
-	}
-	return rowList;
-    }
-
-    private static int getFeatureIndexOfRow(SelectableDataSource source,
-	    TableModel model, int rowIndex) {
-	HashMap<String, String> row = getRow(model, rowIndex);
-	return doGetFeatureIndexOfRow(source, row);
     }
 
 }
