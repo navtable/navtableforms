@@ -477,7 +477,7 @@ public abstract class AbstractForm extends AbstractNavTable {
     }
 
     @Override
-    protected boolean saveRecord() {
+    public boolean saveRecord() {
 	if (isSaveable()) {
 	    int currentPos = Long.valueOf(getPosition()).intValue();
 	    int[] attIndexes = getIndexes();
