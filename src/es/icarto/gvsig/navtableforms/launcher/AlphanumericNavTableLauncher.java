@@ -95,10 +95,10 @@ public class AlphanumericNavTableLauncher implements MouseListener {
 
     private void selectFeaturesInANT(SelectableDataSource source,
 	    TableModel model) {
-	ArrayList<Integer> rowList;
+	ArrayList<Long> rowList;
 	rowList = TableUtils.getIndexesOfAllRowsInTable(source, model);
 	ant.clearSelectedFeatures();
-	for (int row : rowList) {
+	for (long row : rowList) {
 	    ant.selectFeature(row);
 	}
 	ant.setOnlySelected(true);

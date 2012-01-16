@@ -39,11 +39,19 @@ public class TableUtils {
 	return doGetIndexOfRow(source, rowSelected);
     }
 
-    public static ArrayList<Integer> getIndexesOfAllRowsInTable(SelectableDataSource source, 
+    public static long getIndexOfRowSelected(SelectableDataSource source,
+	    TableModel model, 
+	    int rowIndex, 
+	    int foreignKey) {
+	HashMap<String, String> rowSelected = getRow(model, rowIndex, foreignKey);
+	return doGetIndexOfRow(source, rowSelected);
+    }
+
+    public static ArrayList<Long> getIndexesOfAllRowsInTable(SelectableDataSource source, 
 	    TableModel model) {
-	ArrayList<Integer> rowList = new ArrayList<Integer>();
+	ArrayList<Long> rowList = new ArrayList<Long>();
 	for (int rowIndex = 0; rowIndex < model.getRowCount(); rowIndex++) {
-	    int featIndex = getIndexOfRow(source, model, rowIndex);
+	    long featIndex = getIndexOfRowSelected(source, model, rowIndex);
 	    if (featIndex != NO_FEATURE) {
 		rowList.add(featIndex);
 	    }
@@ -51,7 +59,42 @@ public class TableUtils {
 	return rowList;
     }
 
-    private static HashMap<String, String> getRow(TableModel model, int rowIndex) {
+    public static ArrayList<Long> getIndexesOfAllRowsInTable(SelectableDataSource source, 
+	    TableModel model,
+	    int foreignKey) {
+	ArrayList<Long> rowList = new ArrayList<Long>();
+	for (int rowIndex = 0; rowIndex < model.getRowCount(); rowIndex++) {
+	    long featIndex = getIndexOfRowSelected(source, model, rowIndex, foreignKey);
+	    if (featIndex != NO_FEATURE) {
+		rowList.add(featIndex);
+	    }
+	}
+	return rowList;
+    }
+
+    public static int getColumnIndex(TableModel model, String colName) {
+	for(int i=0; i<model.getColumnCount(); i++) {
+	    if(colName.equals(model.getColumnName(i))) {
+		return i;
+	    }
+	}
+	return NO_FIELD;
+    }
+
+    private static HashMap<String, String> getRow(TableModel model,
+	    int rowIndex,
+	    int colIndex) {
+	String key, value;
+	HashMap<String, String> rowSelected = new HashMap<String, String>();
+	value = ((Value) model.getValueAt(rowIndex, colIndex)).getStringValue(
+		new ValueFormatNT());
+	key = model.getColumnName(colIndex);
+	rowSelected.put(key, value);
+	return rowSelected;
+    }
+
+    private static HashMap<String, String> getRow(TableModel model, 
+	    int rowIndex) {
 	String key, value;
 	HashMap<String, String> rowSelected = new HashMap<String, String>();
 	for (int colIndex = 0; colIndex < model.getColumnCount(); colIndex++) {
@@ -61,12 +104,6 @@ public class TableUtils {
 	    rowSelected.put(key, value);
 	}
 	return rowSelected;
-    }
-
-    private static int getIndexOfRow(SelectableDataSource source,
-	    TableModel model, int rowIndex) {
-	HashMap<String, String> row = getRow(model, rowIndex);
-	return doGetIndexOfRow(source, row);
     }
 
     private static int doGetIndexOfRow(SelectableDataSource source,
