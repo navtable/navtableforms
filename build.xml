@@ -43,7 +43,9 @@
 
 	<target name="copy-data-files">
 		<copy file="config/config.xml" todir="${dist}" />
-		
+		<copy file="config/text_es.properties" todir="${dist}" />
+		<copy file="config/text_en.properties" todir="${dist}" />
+
 		<copy todir="${dist}/lib">
 	  	    	<fileset dir="lib" includes="*"/>
 	  	</copy>

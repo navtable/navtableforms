@@ -81,6 +81,26 @@ public class TableUtils {
 	return NO_FIELD;
     }
 
+    public static boolean tableHasRows(TableModel model) {
+	if ((model.getRowCount() > 0) && (!firstRowIsVoid(model))) {
+	    return true;
+	}
+	return false;
+    }
+
+    private static boolean firstRowIsVoid(TableModel model) {
+	boolean isVoid = true;
+	for (int colIndex = 0; colIndex < model.getColumnCount(); colIndex++) {
+	    if (model.getValueAt(0, colIndex) == null) {
+		isVoid = true;
+	    } else {
+		isVoid = false;
+		break;
+	    }
+	}
+	return isVoid;
+    }
+
     private static HashMap<String, String> getRow(TableModel model,
 	    int rowIndex,
 	    int colIndex) {

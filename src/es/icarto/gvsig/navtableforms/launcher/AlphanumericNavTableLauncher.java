@@ -17,11 +17,15 @@
 
 package es.icarto.gvsig.navtableforms.launcher;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 import javax.swing.JInternalFrame;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.table.TableModel;
 
@@ -37,9 +41,12 @@ import es.udc.cartolab.gvsig.navtable.AlphanumericNavTable;
 
 public class AlphanumericNavTableLauncher implements MouseListener {
 
+    private static final int BUTTON_RIGHT = 3;
+
     private ILauncherForm form;
     private LauncherParams params;
     private AlphanumericNavTable ant;
+    private JTable table;
 
     public AlphanumericNavTableLauncher(ILauncherForm form,
 	    LauncherParams params) {
@@ -48,49 +55,62 @@ public class AlphanumericNavTableLauncher implements MouseListener {
     }
 
     public void mouseClicked(MouseEvent e) {
-	JTable table = (JTable) e.getComponent();
-	TableModel model = table.getModel();
-	if (tableHasRows(model)) {
-	    int rowSelectedIndex = table.getSelectedRow();
-	    IEditableSource source = getTableSource(params.getTableName());
-	    try {
-		ant = new AlphanumericNavTable(source,
-			params.getAlphanumericNavTableTitle());
-		if (ant.init()) {
-		    ant.setPosition(TableUtils.getIndexOfRowSelected(
-			    source.getRecordset(), model, rowSelectedIndex));
-		    selectFeaturesInANT(source.getRecordset(), model);
-		    PluginServices.getMDIManager().addCentredWindow(ant);
-		    JInternalFrame parent = (JInternalFrame) ant.getRootPane()
-			    .getParent();
-		    // this listener will call the form passed once
-		    // alphanumericnavtable is closed
-		    parent.addInternalFrameListener(form);
+	table = (JTable) e.getComponent();
+	if((e.getClickCount() == 2)
+		&& TableUtils.tableHasRows(table.getModel())) {
+	    openANT(table.getModel(), 
+		    table.getSelectedRow());
+	} else if ((e.getButton() == BUTTON_RIGHT)
+		&& TableUtils.tableHasRows(table.getModel())) {
+	    JPopupMenu popup = new JPopupMenu();
+
+	    JMenuItem menuOpenANT = new JMenuItem(
+		    PluginServices.getText(this, "open_table")
+		    + " " + params.getAlphanumericNavTableTitle());
+	    menuOpenANT.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent arg0) {
+		    openANT(table.getModel(),
+			    table.getSelectedRow());
 		}
-	    } catch (ReadDriverException e1) {
-		e1.printStackTrace();
-	    }
+	    });
+	    popup.add(menuOpenANT);
+
+	    popup.show(e.getComponent(), e.getX(), e.getY());
 	}
     }
 
-    public boolean tableHasRows(TableModel model) {
-	if ((model.getRowCount() > 0) && (!firstRowIsVoid(model))) {
-	    return true;
-	}
-	return false;
+    public void mousePressed(MouseEvent e) {
     }
 
-    public boolean firstRowIsVoid(TableModel model) {
-	boolean isVoid = true;
-	for (int colIndex = 0; colIndex < model.getColumnCount(); colIndex++) {
-	    if (model.getValueAt(0, colIndex) == null) {
-		isVoid = true;
-	    } else {
-		isVoid = false;
-		break;
+    public void mouseReleased(MouseEvent e) {
+    }
+
+    public void mouseEntered(MouseEvent e) {
+    }
+
+    public void mouseExited(MouseEvent e) {
+    }
+
+    private void openANT(TableModel model, int rowIndex) {
+	IEditableSource source = getTableSource(params.getTableName());
+	try {
+	    ant = new AlphanumericNavTable(source,
+		    params.getAlphanumericNavTableTitle());
+	    if (ant.init()) {
+		ant.setPosition(TableUtils.getIndexOfRowSelected(
+			source.getRecordset(), 
+			model, 
+			rowIndex));
+		selectFeaturesInANT(source.getRecordset(), model);
+		PluginServices.getMDIManager().addCentredWindow(ant);
+		//Listening closing actions of parent form
+		JInternalFrame parent = (JInternalFrame) ant.getRootPane()
+			.getParent();
+		parent.addInternalFrameListener(form);
 	    }
+	} catch (ReadDriverException e1) {
+	    e1.printStackTrace();
 	}
-	return isVoid;
     }
 
     private void selectFeaturesInANT(SelectableDataSource source,
@@ -114,18 +134,6 @@ public class AlphanumericNavTableLauncher implements MouseListener {
 	    }
 	}
 	return null;
-    }
-
-    public void mousePressed(MouseEvent e) {
-    }
-
-    public void mouseReleased(MouseEvent e) {
-    }
-
-    public void mouseEntered(MouseEvent e) {
-    }
-
-    public void mouseExited(MouseEvent e) {
     }
 
 }
