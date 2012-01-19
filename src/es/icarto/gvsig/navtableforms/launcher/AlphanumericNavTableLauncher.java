@@ -57,11 +57,11 @@ public class AlphanumericNavTableLauncher implements MouseListener {
     public void mouseClicked(MouseEvent e) {
 	table = (JTable) e.getComponent();
 	if((e.getClickCount() == 2)
-		&& TableUtils.tableHasRows(table.getModel())) {
-	    openANT(table.getModel(), 
-		    table.getSelectedRow());
+		&& TableUtils.hasRows(table)) {
+	    openANT();
 	} else if ((e.getButton() == BUTTON_RIGHT)
-		&& TableUtils.tableHasRows(table.getModel())) {
+		&& TableUtils.hasRows(table) 
+		&& (table.getSelectedRow() != -1)) {
 	    JPopupMenu popup = new JPopupMenu();
 
 	    JMenuItem menuOpenANT = new JMenuItem(
@@ -69,8 +69,7 @@ public class AlphanumericNavTableLauncher implements MouseListener {
 		    + " " + params.getAlphanumericNavTableTitle());
 	    menuOpenANT.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent arg0) {
-		    openANT(table.getModel(),
-			    table.getSelectedRow());
+		    openANT();
 		}
 	    });
 	    popup.add(menuOpenANT);
@@ -91,17 +90,16 @@ public class AlphanumericNavTableLauncher implements MouseListener {
     public void mouseExited(MouseEvent e) {
     }
 
-    private void openANT(TableModel model, int rowIndex) {
+    private void openANT() {
 	IEditableSource source = getTableSource(params.getTableName());
 	try {
 	    ant = new AlphanumericNavTable(source,
 		    params.getAlphanumericNavTableTitle());
 	    if (ant.init()) {
-		ant.setPosition(TableUtils.getIndexOfRowSelected(
-			source.getRecordset(), 
-			model, 
-			rowIndex));
-		selectFeaturesInANT(source.getRecordset(), model);
+		ant.setPosition(TableUtils.getFeatureIndexFromJTable(
+			table,
+			source.getRecordset()));
+		selectFeaturesInANT(table, source.getRecordset());
 		PluginServices.getMDIManager().addCentredWindow(ant);
 		//Listening closing actions of parent form
 		JInternalFrame parent = (JInternalFrame) ant.getRootPane()
@@ -113,10 +111,9 @@ public class AlphanumericNavTableLauncher implements MouseListener {
 	}
     }
 
-    private void selectFeaturesInANT(SelectableDataSource source,
-	    TableModel model) {
-	ArrayList<Long> rowList;
-	rowList = TableUtils.getIndexesOfAllRowsInTable(source, model);
+    private void selectFeaturesInANT(JTable table, SelectableDataSource source) {
+	ArrayList<Long> rowList = TableUtils.getFeatureIndexesFromJTable(
+		table, source);
 	ant.clearSelectedFeatures();
 	for (long row : rowList) {
 	    ant.selectFeature(row);

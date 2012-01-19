@@ -20,6 +20,7 @@ package es.icarto.gvsig.navtableforms.gui.tables;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.swing.JTable;
 import javax.swing.table.TableModel;
 
 import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
@@ -30,58 +31,127 @@ import es.udc.cartolab.gvsig.navtable.format.ValueFormatNT;
 
 public class TableUtils {
 
-    private static final int NO_FEATURE = -1;
-    private static final int NO_FIELD = -1;
+    private static final int NO_ROW = -1;
+    private static final int NO_COLUMN = -1;
 
-    public static long getIndexOfRowSelected(SelectableDataSource source,
-	    TableModel model, int rowIndex) {
-	HashMap<String, String> rowSelected = getRow(model, rowIndex);
-	return doGetIndexOfRow(source, rowSelected);
+    /**
+     * Compare the values in the row selected in JTable with the values
+     * in SelectableDataSource and returns the index of feature.
+     * 
+     * @return feature index in SelectableDataSource or 
+     * AbstractNavTable.EMPTY_REGISTER if there is none.
+     */
+    public static long getFeatureIndexFromJTable(JTable table, 
+	    SelectableDataSource sds) {	
+	int rowIndex = table.getSelectedRow();
+	return getFeatureIndexFromJTable(table, sds, rowIndex);
     }
 
-    public static long getIndexOfRowSelected(SelectableDataSource source,
-	    TableModel model, 
-	    int rowIndex, 
-	    int foreignKey) {
-	HashMap<String, String> rowSelected = getRow(model, rowIndex, foreignKey);
-	return doGetIndexOfRow(source, rowSelected);
+    /**
+     * Compare the values in row at rowIndex in JTable with the values
+     * in SelectableDataSource and returns the index of feature.
+     * 
+     * @return feature index in SelectableDataSource or 
+     * AbstractNavTable.EMPTY_REGISTER if there is none.
+     */
+    public static long getFeatureIndexFromJTable(JTable table, 
+	    SelectableDataSource sds,
+	    int rowIndex) {	
+	if((sds != null)
+		&& (rowIndex != NO_ROW)) {
+	    HashMap<String, String> rowSelected = getRow(table.getModel(), rowIndex);
+	    return doGetIndexOfRow(sds, rowSelected);
+	}
+	return NO_ROW;
     }
 
-    public static ArrayList<Long> getIndexesOfAllRowsInTable(SelectableDataSource source, 
-	    TableModel model) {
+    /**
+     * Compare the values in the row selected in JTable with the values
+     * in SelectableDataSource and returns the index of feature. In this case,
+     * only 1 cell will be compared: the one specified in columnName.
+     *  
+     * @return feature index in SelectableDataSource or 
+     * AbstractNavTable.EMPTY_REGISTER if there is none.
+     */
+    public static long getFeatureIndexFromJTable(JTable table, 
+	    SelectableDataSource sds, 
+	    String columnName) {
+	int rowIndex = table.getSelectedRow();
+	return getFeatureIndexFromJTable(table, sds, columnName, rowIndex);
+    }
+
+    /**
+     * Compare the values in the row at rowIndex in JTable with the values
+     * in SelectableDataSource and returns the index of feature. In this case,
+     * only 1 cell will be compared: the one specified in columnName.
+     *  
+     * @return feature index in SelectableDataSource or 
+     * AbstractNavTable.EMPTY_REGISTER if there is none.
+     */
+    public static long getFeatureIndexFromJTable(JTable table, 
+	    SelectableDataSource sds, 
+	    String columnName,
+	    int rowIndex) {
+	int colIndex = getColumnIndex(table, columnName);
+	if ((sds != null)
+		&& (rowIndex != NO_ROW)
+		&& (colIndex != NO_COLUMN)) {
+	    HashMap<String, String> rowSelected = getCell(table.getModel(), rowIndex, colIndex);
+	    return doGetIndexOfRow(sds, rowSelected);
+	}
+	return NO_ROW;
+    }
+
+    /**
+     * Return the indexes of the feature present in JTable.
+     *  
+     * @return feature indexes in SelectableDataSource.
+     */
+    public static ArrayList<Long> getFeatureIndexesFromJTable(JTable table,
+	    SelectableDataSource sds) {
 	ArrayList<Long> rowList = new ArrayList<Long>();
+	TableModel model = table.getModel();
 	for (int rowIndex = 0; rowIndex < model.getRowCount(); rowIndex++) {
-	    long featIndex = getIndexOfRowSelected(source, model, rowIndex);
-	    if (featIndex != NO_FEATURE) {
+	    long featIndex = getFeatureIndexFromJTable(table, sds);
+	    if (featIndex != NO_ROW) {
 		rowList.add(featIndex);
 	    }
 	}
 	return rowList;
     }
 
-    public static ArrayList<Long> getIndexesOfAllRowsInTable(SelectableDataSource source, 
-	    TableModel model,
-	    int foreignKey) {
+    /**
+     * Return the indexes of the feature present in JTable. Will compare only
+     * the cell specified in columnName
+     *  
+     * @return feature indexes in SelectableDataSource.
+     */
+    public static ArrayList<Long> getFeatureIndexesFromJTable(JTable table,
+	    SelectableDataSource sds, 
+	    String columnName) {
 	ArrayList<Long> rowList = new ArrayList<Long>();
+	TableModel model = table.getModel();
 	for (int rowIndex = 0; rowIndex < model.getRowCount(); rowIndex++) {
-	    long featIndex = getIndexOfRowSelected(source, model, rowIndex, foreignKey);
-	    if (featIndex != NO_FEATURE) {
+	    long featIndex = getFeatureIndexFromJTable(table, sds, columnName);
+	    if (featIndex != NO_ROW) {
 		rowList.add(featIndex);
 	    }
 	}
 	return rowList;
     }
 
-    public static int getColumnIndex(TableModel model, String colName) {
+    public static int getColumnIndex(JTable table, String columnName) {
+	TableModel model = table.getModel();
 	for(int i=0; i<model.getColumnCount(); i++) {
-	    if(colName.equals(model.getColumnName(i))) {
+	    if(columnName.equals(model.getColumnName(i))) {
 		return i;
 	    }
 	}
-	return NO_FIELD;
+	return NO_COLUMN;
     }
 
-    public static boolean tableHasRows(TableModel model) {
+    public static boolean hasRows(JTable table) {
+	TableModel model = table.getModel();
 	if ((model.getRowCount() > 0) && (!firstRowIsVoid(model))) {
 	    return true;
 	}
@@ -101,7 +171,7 @@ public class TableUtils {
 	return isVoid;
     }
 
-    private static HashMap<String, String> getRow(TableModel model,
+    private static HashMap<String, String> getCell(TableModel model,
 	    int rowIndex,
 	    int colIndex) {
 	String key, value;
@@ -113,8 +183,7 @@ public class TableUtils {
 	return rowSelected;
     }
 
-    private static HashMap<String, String> getRow(TableModel model, 
-	    int rowIndex) {
+    private static HashMap<String, String> getRow(TableModel model, int rowIndex) {
 	String key, value;
 	HashMap<String, String> rowSelected = new HashMap<String, String>();
 	for (int colIndex = 0; colIndex < model.getColumnCount(); colIndex++) {
@@ -135,10 +204,10 @@ public class TableUtils {
 		    return rowIndex;
 		}
 	    }
-	    return NO_FEATURE;
+	    return NO_ROW;
 	} catch (ReadDriverException e) {
 	    e.printStackTrace();
-	    return NO_FEATURE;
+	    return NO_ROW;
 	}
     }
 
@@ -155,7 +224,7 @@ public class TableUtils {
 		 * tables. In that case, only the fields in the table which are
 		 * in source will be used to compare.
 		 */
-		if (colIndex != NO_FIELD) {
+		if (colIndex != NO_COLUMN) {
 		    String fieldValue = source.getFieldValue(rowIndex, 
 			    colIndex).getStringValue(new ValueFormatNT());
 		    if (fieldValue.equals(row.get(key))) {
