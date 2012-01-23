@@ -21,7 +21,7 @@ package es.icarto.gvsig.navtableforms.ormlite.domain;
 /**
  * Interface for all DomainReaders.
  * 
- * @author Jorge LÃ³pez <jlopez@cartolab.es>
+ * @author Jorge López <jlopez@cartolab.es>
  * 
  */
 public interface DomainReader {

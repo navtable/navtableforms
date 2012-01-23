@@ -22,7 +22,7 @@ import java.util.HashMap;
 /**
  * Class storing the metadata of the DataBase to work on.
  * 
- * @author Andrés Maneiro <amaneiro@cartolab.es>
+ * @author Andrés Maneiro <amaneiro@icarto.es>
  */
 public class ORMLiteDataBase {
 

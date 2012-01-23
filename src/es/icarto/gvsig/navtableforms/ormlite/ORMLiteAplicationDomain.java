@@ -38,41 +38,28 @@ public class ORMLiteAplicationDomain {
 	domainValues = new HashMap<String, DomainValues>();
     }
 
-    /**
-     * This method is case insensitive: whatever the name of the component it
-     * will uppercase it
-     */
     public void addDomainValues(String component, DomainValues values) {
-	domainValues.put(component.toUpperCase(), values);
+	domainValues.put(component, values);
     }
 
-    /**
-     * This method is case insensitive: whatever the name of the component it
-     * will uppercase it
-     */
+    public DomainValues getDomainValuesForComponent(String componentName) {
+	return domainValues.get(componentName);
+    }
+
     public void addRule(String componentName, ValidationRule rule) {
 	if (rule != null) {
-	    Set<ValidationRule> rules = domainRules.get(componentName
-		    .toUpperCase());
+	    Set<ValidationRule> rules = domainRules.get(componentName);
 	    if (rules == null) {
 		rules = new HashSet<ValidationRule>();
 	    }
 	    rules.add(rule);
-	    domainRules.put(componentName.toUpperCase(), rules);
+	    domainRules.put(componentName, rules);
 	}
-    }
-
-    /**
-     * This method is case insensitive: whatever the name of the component it
-     * will uppercase it and return the proper component
-     */
-    public DomainValues getDomainValuesForComponent(String componentName) {
-	return domainValues.get(componentName.toUpperCase());
     }
 
     public Set<ValidationRule> getValidationRulesForComponent(
 	    String componentName) {
-	return domainRules.get(componentName.toUpperCase());
+	return domainRules.get(componentName);
     }
 
     public ValidationRule createRule(String id) {

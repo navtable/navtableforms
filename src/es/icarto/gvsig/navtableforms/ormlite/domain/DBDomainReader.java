@@ -35,16 +35,16 @@ import es.udc.cartolab.gvsig.users.utils.DBSession;
  *	<DRDBFOREIGNKEY>key</DRDBFOREIGNKEY>
  * </DOMAINREADER>
  * 
- * @author Andrï¿½s Maneiro <andres.maneiro@cartolab.es>
- * @author Jorge LÃ³pez <jlopez@cartolab.es>
+ * @author Andrés Maneiro <amaneiro@icarto.es>
+ * @author Jorge López <jlopez@cartolab.es>
  * 
  */
 public class DBDomainReader implements DomainReader {
 
-    String table = null;
-    String columnAlias = null;
-    String columnValue = null;
-    ArrayList<String> columnForeignKey = new ArrayList<String>();
+    private String table = null;
+    private String columnAlias = null;
+    private String columnValue = null;
+    private ArrayList<String> columnForeignKey = new ArrayList<String>();
 
     public DBDomainReader() {
     }

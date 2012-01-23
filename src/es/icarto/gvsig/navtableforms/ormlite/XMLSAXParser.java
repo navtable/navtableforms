@@ -18,9 +18,7 @@ package es.icarto.gvsig.navtableforms.ormlite;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Types;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -32,22 +30,19 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.hardcode.gdbms.engine.values.ValueFactory;
 import com.iver.cit.gvsig.fmap.drivers.FieldDescription;
 
-import es.icarto.gvsig.navtableforms.ormlite.ORMLiteDataBase.ORMLiteTable;
 import es.icarto.gvsig.navtableforms.ormlite.domain.DBDomainReader;
 import es.icarto.gvsig.navtableforms.ormlite.domain.DomainReader;
 import es.icarto.gvsig.navtableforms.ormlite.domain.FileDomainReader;
 import es.icarto.gvsig.navtableforms.validation.rules.ValidationRule;
-import es.udc.cartolab.gvsig.navtable.format.ValueFactoryNT;
 
 /**
- * SAX parser to build from a XML estructure several objects needed for
+ * SAX parser to build from a XML structure several objects needed for
  * validation.
  * 
- * @author Andrï¿½s Maneiro <andres.maneiro@cartolab.es>
- * @author Jorge LÃ³pez <jlopez@cartolab.es>
+ * @author Andrés Maneiro <amaneiro@icarto.es>
+ * @author Jorge López <jlopez@cartolab.es>
  * 
  */
 public class XMLSAXParser extends DefaultHandler {
@@ -58,37 +53,27 @@ public class XMLSAXParser extends DefaultHandler {
     static final double GVSIG_DEFAULT_DOUBLE = 0.0;
     static final boolean GVSIG_DEFAULT_BOOLEAN = false;
 
-    String xmlFile = null;
+    private String xmlFile = null;
     private ORMLiteDataBase dbo = null;
-    private ORMLiteLayerSet fls = null;
     private ORMLiteAplicationDomain ad = null;
 
-    // to maintain context -while parsing- about the DB
     private ORMLiteDataBase.ORMLiteTable tmpTable = null;
     private String tmpLayerAlias = null;
     private List<String> tmpPK = null;
     private String tmpVal = null;
     private DomainReader tmpDomainReader = null;
-
-    // to maintain context -while parsing- about the layers
-    private ORMLiteLayerSet.CartoLayer tmpLayer = null;
     private FieldDescription tmpFieldDescription = null;
-    private int tmpDBFIndex = 0;
-    private int tmpType = -1;
 
     private static Logger logger = Logger.getLogger("SAX Parser");
 
     public XMLSAXParser(String xmlFile) {
 	tmpPK = new ArrayList<String>();
-	tmpDBFIndex = 0;
 
 	setXMLFile(xmlFile);
 	setDBO(new ORMLiteDataBase());
-	setFLS(new ORMLiteLayerSet());
 	setAD(new ORMLiteAplicationDomain());
 
 	parseDocument();
-	// printData();
     }
 
     private String getXMLFile() {
@@ -109,14 +94,6 @@ public class XMLSAXParser extends DefaultHandler {
 
     private void setDBO(ORMLiteDataBase newDBO) {
 	this.dbo = newDBO;
-    }
-
-    public ORMLiteLayerSet getFLS() {
-	return fls;
-    }
-
-    public void setFLS(ORMLiteLayerSet fls) {
-	this.fls = fls;
     }
 
     public ORMLiteAplicationDomain getAD() {
@@ -148,27 +125,6 @@ public class XMLSAXParser extends DefaultHandler {
 	}
     }
 
-    /**
-     * Iterate through the list and print the contents
-     */
-    private void printData() {
-
-	System.out.println("No of Tables '" + getDBO().getTableList().size()
-		+ "'.");
-
-	for (ORMLiteTable ft : getDBO().getTableList().values()) {
-	    System.out.println("Table " + ft.getTableName() + " with CODE "
-		    + ft.getTableAlias() + " has PK ");
-
-	    String[] aux = ft.getPrimaryKey();
-	    System.out.print("Table " + ft.getTableName() + " con PK ");
-	    for (String pkElement : aux) {
-		System.out.print(pkElement + " ");
-	    }
-	    System.out.print("\n");
-	}
-    }
-
     // Event Handlers
     /**
      * Callback called every time SAX parser gets a new tag. ie: " < field > "
@@ -180,11 +136,6 @@ public class XMLSAXParser extends DefaultHandler {
 	tmpVal = "";
 	if (qName.equalsIgnoreCase("LAYER")) {
 	    tmpLayerAlias = attributes.getValue("alias");
-	    tmpDBFIndex = 0;
-
-	    // set layer
-	    tmpLayer = getFLS().new CartoLayer();
-	    tmpLayer.setLayerAlias(tmpLayerAlias);
 
 	    // set table
 	    tmpTable = getDBO().new ORMLiteTable();
@@ -220,69 +171,6 @@ public class XMLSAXParser extends DefaultHandler {
 	// set tmp field structure
 	if (qName.equalsIgnoreCase("FIELDNAME")) {
 	    tmpFieldDescription.setFieldName(tmpVal);
-	} else if (qName.equalsIgnoreCase("FIELDTYPE")) {
-	    tmpType = FieldDescription.stringToType(tmpVal);
-	    tmpFieldDescription.setFieldType(tmpType);
-	} else if (qName.equalsIgnoreCase("FIELDALIAS")) {
-	    tmpFieldDescription.setFieldAlias(tmpVal);
-	} else if (qName.equalsIgnoreCase("FIELDLENGTH")) {
-	    tmpFieldDescription.setFieldLength(getAsInteger(tmpVal));
-	} else if (qName.equalsIgnoreCase("DEFAULTVALUE")) {
-	    switch (tmpType) {
-	    case Types.VARCHAR:
-		tmpFieldDescription.setDefaultValue(
-			ValueFactoryNT.createValue(tmpVal));
-		break;
-	    case Types.INTEGER:
-		if (tmpVal == "") {
-		    tmpFieldDescription.setDefaultValue(
-			    ValueFactoryNT.createValue(
-				    GVSIG_DEFAULT_INT));
-		} else {
-		    tmpFieldDescription.setDefaultValue(
-			    ValueFactoryNT.createValue(
-				    Integer.parseInt(tmpVal)));
-		}
-		break;
-	    case Types.DOUBLE:
-		if (tmpVal == "") {
-		    tmpFieldDescription.setDefaultValue(
-			    ValueFactoryNT.createValue(
-				    GVSIG_DEFAULT_DOUBLE));
-		} else {
-		    tmpFieldDescription.setDefaultValue(
-			    ValueFactoryNT.createValue(
-				    Double.parseDouble(tmpVal)));
-		}
-		break;
-	    case Types.BOOLEAN:
-		if (tmpVal == "") {
-		    tmpFieldDescription.setDefaultValue(
-			    ValueFactoryNT.createValue(
-				    GVSIG_DEFAULT_BOOLEAN));
-		} else {
-		    tmpFieldDescription.setDefaultValue(
-			    ValueFactoryNT.createValue(
-				    Boolean.parseBoolean(tmpVal)));
-		}
-		break;
-	    case Types.DATE:
-		if (tmpVal == "") {
-		    tmpFieldDescription.setDefaultValue(
-			    ValueFactoryNT.createValue(
-				    GVSIG_DEFAULT_STRING));
-		} else {
-		    tmpFieldDescription.setDefaultValue(
-			    ValueFactoryNT.createValue(
-				    Date.parse(tmpVal)));
-		}
-		break;
-	    default:
-		tmpFieldDescription.setDefaultValue(
-			ValueFactoryNT.createNullValue());
-	    }
-	} else if (qName.equalsIgnoreCase("FIELDDECIMALCOUNT")) {
-	    tmpFieldDescription.setFieldDecimalCount(getAsInteger(tmpVal));
 	}
 
 	// set tmp table structure
@@ -297,15 +185,6 @@ public class XMLSAXParser extends DefaultHandler {
 	    }
 	    tmpTable.setPrimaryKey(aux);
 	    tmpPK.removeAll(tmpPK);
-	}
-
-	// set tmp layer structure
-	else if (qName.equalsIgnoreCase("NAMEOFLAYER")) {
-	    tmpLayer.setLayerName(tmpVal);
-	} else if (qName.equalsIgnoreCase("GEOMETRY")) {
-	    tmpLayer.setLayerGeometryFromString(tmpVal);
-	} else if (qName.equalsIgnoreCase("FIELD")) {
-	    tmpLayer.addField(tmpDBFIndex++, tmpFieldDescription);
 	}
 
 	else if (qName.equalsIgnoreCase("DRTYPE")) {
@@ -351,7 +230,6 @@ public class XMLSAXParser extends DefaultHandler {
 	// save tmp values in DBO and FLS objects
 	else if (qName.equalsIgnoreCase("LAYER")) {
 	    getDBO().addTable(tmpLayerAlias, tmpTable);
-	    getFLS().addLayer(tmpLayerAlias, tmpLayer);
 	}
 
 	// save validation rule for the field
@@ -366,14 +244,6 @@ public class XMLSAXParser extends DefaultHandler {
 		    tmpDomainReader.getDomainValues());
 	}
 
-    }
-
-    private int getAsInteger(String tmpVal) {
-	if (tmpVal != "") {
-	    return Integer.parseInt(tmpVal);
-	} else {
-	    return 0;
-	}
     }
 
 }

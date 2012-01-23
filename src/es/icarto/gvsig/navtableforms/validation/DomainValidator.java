@@ -24,7 +24,7 @@ import es.icarto.gvsig.navtableforms.validation.rules.ValidationRule;
 
 public class DomainValidator {
 
-    Set<ValidationRule> rules = null;
+    private Set<ValidationRule> rules = null;
 
     public DomainValidator(String name) {
 	rules = getValidationRulesForComponent(name);

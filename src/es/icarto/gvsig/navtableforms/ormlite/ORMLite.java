@@ -20,14 +20,12 @@ public class ORMLite {
 
     private static XMLSAXParser fp = null;
     private static ORMLiteDataBase dbo = null;
-    private static ORMLiteLayerSet fls = null;
     private static ORMLiteAplicationDomain ad = null;
 
     public static synchronized ORMLiteDataBase getDataBaseObject(String xmlFile) {
 	if (fp == null) {
 	    fp = new XMLSAXParser(xmlFile);
 	    dbo = fp.getDBO();
-	    fls = fp.getFLS();
 	    ad = fp.getAD();
 	}
 	return dbo;
@@ -38,7 +36,6 @@ public class ORMLite {
 	if (fp == null) {
 	    fp = new XMLSAXParser(xmlFile);
 	    dbo = fp.getDBO();
-	    fls = fp.getFLS();
 	    ad = fp.getAD();
 	}
 	return ad;

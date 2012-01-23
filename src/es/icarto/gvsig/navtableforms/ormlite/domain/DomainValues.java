@@ -18,9 +18,6 @@
 package es.icarto.gvsig.navtableforms.ormlite.domain;
 import java.util.ArrayList;
 
-
-
-
 public class DomainValues {
 
     ArrayList<KeyValue> data;

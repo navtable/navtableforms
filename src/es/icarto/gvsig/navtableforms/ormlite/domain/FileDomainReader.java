@@ -37,7 +37,7 @@ import java.util.ArrayList;
  *	<DRFILEFIELDALIAS>gestion</DRFILEFIELDALIAS>
  * </DOMAINREADER>
  * 
- * @author Jorge LÃ³pez <jlopez@cartolab.es>
+ * @author Jorge López <jlopez@cartolab.es>
  * 
  */
 public class FileDomainReader implements DomainReader {
@@ -54,14 +54,6 @@ public class FileDomainReader implements DomainReader {
 
     public void setFieldAlias(String fieldAlias) {
 	this.fieldAlias = fieldAlias;
-    }
-
-    private String[] convertArrayToString(ArrayList<String> array) {
-	String[] strings = new String[array.size()];
-	for (int i = 0; i < array.size(); i++) {
-	    strings[i] = array.get(i);
-	}
-	return strings;
     }
 
     public DomainValues getDomainValues() {

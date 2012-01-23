@@ -24,8 +24,8 @@ import javax.swing.JTextField;
 
 public class ComponentValidator {
 
-    JComponent c = null;
-    Color defaultbg = null;
+    private JComponent c = null;
+    private Color defaultbg = null;
 
     public ComponentValidator(JComponent c) {
 	this.c = c;
