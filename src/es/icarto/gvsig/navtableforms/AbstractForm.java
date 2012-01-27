@@ -66,6 +66,7 @@ public abstract class AbstractForm extends AbstractNavTable {
     private FormController formController;
     private final FormPanel formBody;
     private boolean isFillingValues;
+    private boolean isSavingValues = false;
 
     private JPanel NorthPanel;
     private JPanel SouthPanel;
@@ -477,9 +478,18 @@ public abstract class AbstractForm extends AbstractNavTable {
 	return formController.getIndexesOfValuesChanged();
     }
 
+    public boolean isSavingValues() {
+	return isSavingValues;
+    }
+
+    public void setSavinValues(boolean bool) {
+	isSavingValues = bool;
+    }
+
     @Override
     public boolean saveRecord() {
 	if (isSaveable()) {
+	    setSavinValues(true);
 	    int currentPos = Long.valueOf(getPosition()).intValue();
 	    int[] attIndexes = getIndexes();
 	    String[] attValues = getValues();
@@ -501,6 +511,8 @@ public abstract class AbstractForm extends AbstractNavTable {
 	    } catch (Exception e) {
 		logger.error(e.getMessage(), e);
 		return false;
+	    } finally {
+		setSavinValues(false);
 	    }
 	}
 	return false;
