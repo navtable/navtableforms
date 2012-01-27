@@ -40,6 +40,7 @@ import org.apache.log4j.Logger;
 import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
 import com.iver.andami.PluginServices;
 import com.iver.cit.gvsig.fmap.layers.FLyrVect;
+import com.iver.cit.gvsig.fmap.layers.SelectableDataSource;
 import com.jeta.forms.components.panel.FormPanel;
 
 import es.icarto.gvsig.navtableforms.gui.formattedtextfields.FormatterFactory;
@@ -230,9 +231,9 @@ public abstract class AbstractForm extends AbstractNavTable {
 
     @Override
     public boolean init() {
-
+	getRecordset().addSelectionListener(this);
 	try {
-	    if (recordset.getRowCount() <= 0) {
+	    if (getRecordset().getRowCount() <= 0) {
 		JOptionPane.showMessageDialog(this,
 			PluginServices.getText(this, "emptyLayer"));
 		return false;
@@ -518,6 +519,15 @@ public abstract class AbstractForm extends AbstractNavTable {
     @Override
     public void selectRow(int row) {
 
+    }
+
+    public SelectableDataSource getRecordset(){
+	try {
+	    return layer.getSource().getRecordset();
+	} catch (ReadDriverException e) {
+	    e.printStackTrace();
+	    return null;
+	}
     }
 
     public FormValidator getFormValidator() {
