@@ -131,6 +131,7 @@ public class FormController implements PositionListener{
 	    ((AbstractNavTable) e.getSource()).reloadRecordset();
 	    SelectableDataSource sds = ((AbstractNavTable) e.getSource()).getRecordset();
 	    fill(sds, position);
+	    ((AbstractNavTable) e.getSource()).refreshGUI();
 	} catch (ReadDriverException rde) {
 	    rde.printStackTrace();
 	    clearAll();
