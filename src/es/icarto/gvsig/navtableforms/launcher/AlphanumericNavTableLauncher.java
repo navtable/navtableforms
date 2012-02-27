@@ -65,8 +65,7 @@ public class AlphanumericNavTableLauncher implements MouseListener {
 	    JPopupMenu popup = new JPopupMenu();
 
 	    JMenuItem menuOpenANT = new JMenuItem(
-		    PluginServices.getText(this, "open_table")
-		    + " " + params.getAlphanumericNavTableTitle());
+		    params.getMenuOpenText());
 	    menuOpenANT.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent arg0) {
 		    openANT();

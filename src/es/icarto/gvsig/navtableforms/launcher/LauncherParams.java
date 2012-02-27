@@ -22,12 +22,19 @@ public class LauncherParams {
     private ILauncherForm form;
     private String tableName;
     private String antTitle;
+    private String menuOpenText;
 
-    public LauncherParams(ILauncherForm form, String tableName, String antTitle) {
+    public LauncherParams(ILauncherForm form, 
+	    String tableName, 
+	    String antTitle,
+	    String menuOpenText) {
+
+	this.form = form;
 	this.tableName = tableName;
 	this.antTitle = antTitle;
-	this.form = form;
+	this.menuOpenText = menuOpenText;
     }
+
 
     public String getTableName() {
 	return this.tableName;
@@ -35,6 +42,10 @@ public class LauncherParams {
 
     public String getAlphanumericNavTableTitle() {
 	return this.antTitle;
+    }
+
+    public String getMenuOpenText() {
+	return this.menuOpenText;
     }
 
     /**
