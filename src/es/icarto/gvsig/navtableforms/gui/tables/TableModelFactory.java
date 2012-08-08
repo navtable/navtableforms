@@ -17,11 +17,10 @@ import com.iver.cit.gvsig.project.documents.table.gui.Table;
 
 import es.icarto.gvsig.navtableforms.utils.TOCLayerManager;
 
-
 public class TableModelFactory {
 
     public static TableModel createFromTable(String sourceTable,
-	    String rowFilterName, 
+	    String rowFilterName,
 	    String rowFilterValue) {
 
 	IEditableSource sds = getSource(sourceTable);
@@ -33,17 +32,38 @@ public class TableModelFactory {
     public static TableModel createFromTable(String sourceTable,
 	    String rowFilterName,
 	    String rowFilterValue,
-	    ArrayList<String> columnNames) {
+	    ArrayList<String> columnNames,
+	    ArrayList<String> columnAliases) {
 
 	IEditableSource source = getSource(sourceTable);
-	Object[][] rows = getRowsFromSource(source, 
+	Object[][] rows = getRowsFromSource(source,
 		rowFilterName, rowFilterValue, columnNames);
-	return new NonEditableTableModel(rows, columnNames.toArray(new String[1]));
+	return new NonEditableTableModel(rows,
+		columnAliases.toArray(new String[1]));
+    }
+
+    public static TableModel createFromLayer(String sourceLayer,
+	    String rowFilterName,
+	    String rowFilterValue,
+	    ArrayList<String> columnNames,
+	    ArrayList<String> columnAliases) {
+
+	TOCLayerManager toc = new TOCLayerManager();
+	FLyrVect layer = toc.getLayerByName(sourceLayer);
+	try {
+	    Object[][] rows = getRowsFromSource(layer.getRecordset(),
+		    rowFilterName,
+		    rowFilterValue);
+	    return new NonEditableTableModel(rows,
+		    columnAliases.toArray(new String[1]));
+	} catch (ReadDriverException e) {
+	    return null;
+	}
     }
 
     private static Object[][] getRowsFromSource(IEditableSource source,
-	    String fieldFilterName, 
-	    String fieldFilterValue, 
+	    String fieldFilterName,
+	    String fieldFilterValue,
 	    ArrayList<String> columnNames) {
 
 	ArrayList<Object[]> rows = new ArrayList<Object[]>();
@@ -72,7 +92,7 @@ public class TableModelFactory {
     }
 
     private static ArrayList<Integer> getIndexesOfColumns(
-	    SelectableDataSource sds, 
+	    SelectableDataSource sds,
 	    ArrayList<String> columnNames) {
 
 	ArrayList<Integer> indexes = new ArrayList<Integer>();
@@ -88,44 +108,8 @@ public class TableModelFactory {
 	return indexes;
     }
 
-    public static TableModel createFromLayer(String sourceLayer,
-	    String rowFilterName, 
-	    String rowFilterValue,
-	    ArrayList<String> columnsToRetrieve) {
-
-	TOCLayerManager toc = new TOCLayerManager();
-	FLyrVect layer = toc.getLayerByName(sourceLayer);
-	Object[] columnNames; // fielddescription[]
-	Object[][] rows; // value[][]
-	try {
-	    columnNames = getColumnsFromSource(layer.getRecordset(),
-		    columnsToRetrieve);
-	    rows = getRowsFromSource(layer.getRecordset(), rowFilterName,
-		    rowFilterValue);
-	    return new NonEditableTableModel(rows, columnNames);
-	} catch (ReadDriverException e) {
-	    return null;
-	}
-    }
-
-    private static Object[] getColumnsFromSource(SelectableDataSource source, 
-	    ArrayList<String> columnNames) {
-
-	ArrayList<FieldDescription> fds = new ArrayList<FieldDescription>();
-	try {
-	    for (FieldDescription fd : source.getFieldsDescription()) {
-		if (columnNames.contains(fd.getFieldName())) {
-		    fds.add(fd);
-		}
-	    }
-	    return fds.toArray();
-	} catch (ReadDriverException e) {
-	    return null;
-	}
-    }
-
-    private static Object[][] getRowsFromSource(SelectableDataSource source, 
-	    String rowFilterName, 
+    private static Object[][] getRowsFromSource(SelectableDataSource source,
+	    String rowFilterName,
 	    String rowFilterValue) {
 
 	ArrayList<Object[]> rows = new ArrayList<Object[]>();
@@ -147,7 +131,7 @@ public class TableModelFactory {
     }
 
     private static Object[][] getRowsFromSource(IEditableSource source,
-	    String fieldFilterName, 
+	    String fieldFilterName,
 	    String fieldFilterValue) {
 
 	ArrayList<Object[]> rows = new ArrayList<Object[]>();
