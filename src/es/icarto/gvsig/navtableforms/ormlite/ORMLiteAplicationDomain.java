@@ -39,7 +39,11 @@ public class ORMLiteAplicationDomain {
     }
 
     public void addDomainValues(String component, DomainValues values) {
-	domainValues.put(component, values);
+	this.domainValues.put(component, values);
+    }
+
+    public HashMap<String, DomainValues> getDomainValues() {
+	return this.domainValues;
     }
 
     public DomainValues getDomainValuesForComponent(String componentName) {
@@ -55,6 +59,10 @@ public class ORMLiteAplicationDomain {
 	    rules.add(rule);
 	    domainRules.put(componentName, rules);
 	}
+    }
+
+    public HashMap<String, Set<ValidationRule>> getValidationRules() {
+	return this.domainRules;
     }
 
     public Set<ValidationRule> getValidationRulesForComponent(
