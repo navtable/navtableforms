@@ -16,14 +16,14 @@
  */
 package es.icarto.gvsig.navtableforms.validation.rules;
 
-import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 
 import es.udc.cartolab.gvsig.navtable.format.DoubleFormatNT;
 
 public class DoublePositiveRule extends ValidationRule {
 
-    private DecimalFormat format;
+    private NumberFormat format;
 
     public DoublePositiveRule() {
 	format = DoubleFormatNT.getEditingFormat();

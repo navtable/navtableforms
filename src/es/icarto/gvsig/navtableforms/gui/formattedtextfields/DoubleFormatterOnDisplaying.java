@@ -17,7 +17,7 @@
 
 package es.icarto.gvsig.navtableforms.gui.formattedtextfields;
 
-import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 
 import javax.swing.JFormattedTextField.AbstractFormatter;
@@ -27,7 +27,7 @@ import es.udc.cartolab.gvsig.navtable.format.ValueFormatNT;
 
 public class DoubleFormatterOnDisplaying extends AbstractFormatter {
 
-    private DecimalFormat decimalFormat;
+    private NumberFormat decimalFormat;
     private ValueFormatNT valueFormatter;
 
     public DoubleFormatterOnDisplaying() {
