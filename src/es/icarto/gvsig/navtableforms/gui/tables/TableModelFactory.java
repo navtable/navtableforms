@@ -36,7 +36,7 @@ public class TableModelFactory {
 	    ArrayList<String> columnAliases) {
 
 	IEditableSource source = getSource(sourceTable);
-	Object[][] rows = getRowsFromSource(source,
+	Object[][] rows = TableFilter.getRowsFromSource(source,
 		rowFilterName, rowFilterValue, columnNames);
 	return new NonEditableTableModel(rows,
 		columnAliases.toArray(new String[1]));
@@ -59,53 +59,6 @@ public class TableModelFactory {
 	} catch (ReadDriverException e) {
 	    return null;
 	}
-    }
-
-    private static Object[][] getRowsFromSource(IEditableSource source,
-	    String fieldFilterName,
-	    String fieldFilterValue,
-	    ArrayList<String> columnNames) {
-
-	ArrayList<Object[]> rows = new ArrayList<Object[]>();
-	int fieldFilterIndex;
-	try {
-	    fieldFilterIndex = source.getRecordset().getFieldIndexByName(fieldFilterName);
-	    ArrayList<Integer> columnIndexes = getIndexesOfColumns(
-		    source.getRecordset(), columnNames);
-	    ArrayList<Value> attributes = new ArrayList<Value>();
-	    for (int index = 0; index < source.getRowCount(); index++) {
-		IRowEdited row = source.getRow(index);
-		String value = row.getAttribute(fieldFilterIndex).toString();
-		if (value.equalsIgnoreCase(fieldFilterValue)) {
-		    attributes.clear();
-		    for(Integer idx : columnIndexes) {
-			attributes.add(row.getAttribute(idx));
-		    }
-		    rows.add(attributes.toArray());
-		}
-	    }
-	    return rows.toArray(new Object[1][1]);
-	} catch (ReadDriverException e) {
-	    e.printStackTrace();
-	    return null;
-	}
-    }
-
-    private static ArrayList<Integer> getIndexesOfColumns(
-	    SelectableDataSource sds,
-	    ArrayList<String> columnNames) {
-
-	ArrayList<Integer> indexes = new ArrayList<Integer>();
-	for (int i=0; i<columnNames.size(); i++) {
-	    int idx;
-	    try {
-		idx = sds.getFieldIndexByName(columnNames.get(i));
-		indexes.add(new Integer(idx));
-	    } catch (ReadDriverException e) {
-		e.printStackTrace();
-	    }
-	}
-	return indexes;
     }
 
     private static Object[][] getRowsFromSource(SelectableDataSource source,
