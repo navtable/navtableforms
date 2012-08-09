@@ -42,11 +42,16 @@ import es.udc.cartolab.gvsig.users.utils.DBSession;
 public class DBDomainReader implements DomainReader {
 
     private String table = null;
+    private String schema = null;
     private String columnAlias = null;
     private String columnValue = null;
     private ArrayList<String> columnForeignKey = new ArrayList<String>();
 
     public DBDomainReader() {
+    }
+
+    public void setSchema(String schema) {
+	this.schema = schema;
     }
 
     public void setTable(String name) {
@@ -93,8 +98,10 @@ public class DBDomainReader implements DomainReader {
 	if (table != null && columnValue != null) {
 	    ArrayList<KeyValue> list = new ArrayList<KeyValue>();
 	    DBSession ds = DBSession.getCurrentSession();
-	    try {
-		String[][] values = ds.getTable(table, ds.getSchema(),
+
+ 	    try {
+		String schema = this.schema == null ? ds.getSchema() : this.schema;
+		String[][] values = ds.getTable(table, schema,
 			getFieldColumns(), "", new String[] {columnAlias}, false);
 		// ds.getDistinctValues(table, columns[0]);
 		for (int i = 0; i < values.length; i++) {

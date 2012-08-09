@@ -200,6 +200,10 @@ public class XMLSAXParser extends DefaultHandler {
 	    if (tmpDomainReader instanceof DBDomainReader) {
 		((DBDomainReader) tmpDomainReader).setTable(tmpVal);
 	    }
+	} else if (qName.equalsIgnoreCase("DRDBSCHEMA")) {
+	    if (tmpDomainReader instanceof DBDomainReader) {
+		((DBDomainReader) tmpDomainReader).setSchema(tmpVal);
+	    }
 	} else if (qName.equalsIgnoreCase("DRDBCOLUMNALIAS")) {
 	    if (tmpDomainReader instanceof DBDomainReader) {
 		((DBDomainReader) tmpDomainReader).setColumnAlias(tmpVal);
