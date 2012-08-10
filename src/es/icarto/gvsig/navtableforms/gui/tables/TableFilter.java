@@ -12,32 +12,27 @@ public class TableFilter {
 
     public static Object[][] getRowsFromSource(IEditableSource source,
 	    String fieldFilterName, String fieldFilterValue,
-	    ArrayList<String> columnNames) {
+	    ArrayList<String> columnNames) throws ReadDriverException {
 
 	ArrayList<Object[]> rows = new ArrayList<Object[]>();
 	int fieldFilterIndex;
-	try {
-	    fieldFilterIndex = source.getRecordset().getFieldIndexByName(
-		    fieldFilterName);
-	    ArrayList<Integer> columnIndexes = getIndexesOfColumns(
-		    source.getRecordset(), columnNames);
-	    ArrayList<Value> attributes = new ArrayList<Value>();
-	    for (int index = 0; index < source.getRowCount(); index++) {
-		IRowEdited row = source.getRow(index);
-		String value = row.getAttribute(fieldFilterIndex).toString();
-		if (value.equalsIgnoreCase(fieldFilterValue)) {
-		    attributes.clear();
-		    for (Integer idx : columnIndexes) {
-			attributes.add(row.getAttribute(idx));
-		    }
-		    rows.add(attributes.toArray());
+	fieldFilterIndex = source.getRecordset().getFieldIndexByName(
+		fieldFilterName);
+	ArrayList<Integer> columnIndexes = getIndexesOfColumns(
+		source.getRecordset(), columnNames);
+	ArrayList<Value> attributes = new ArrayList<Value>();
+	for (int index = 0; index < source.getRowCount(); index++) {
+	    IRowEdited row = source.getRow(index);
+	    String value = row.getAttribute(fieldFilterIndex).toString();
+	    if (value.equalsIgnoreCase(fieldFilterValue)) {
+		attributes.clear();
+		for (Integer idx : columnIndexes) {
+		    attributes.add(row.getAttribute(idx));
 		}
+		rows.add(attributes.toArray());
 	    }
-	    return rows.toArray(new Object[1][1]);
-	} catch (ReadDriverException e) {
-	    e.printStackTrace();
-	    return null;
 	}
+	return rows.toArray(new Object[0][0]);
     }
 
     private static ArrayList<Integer> getIndexesOfColumns(

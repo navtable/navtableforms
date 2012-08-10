@@ -33,7 +33,8 @@ public class TableModelFactory {
 	    String rowFilterName,
 	    String rowFilterValue,
 	    ArrayList<String> columnNames,
-	    ArrayList<String> columnAliases) {
+	    ArrayList<String> columnAliases)
+		    throws ReadDriverException {
 
 	IEditableSource source = getSource(sourceTable);
 	Object[][] rows = TableFilter.getRowsFromSource(source,
