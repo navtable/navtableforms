@@ -5,8 +5,10 @@ import java.awt.event.KeyListener;
 import java.text.ParseException;
 
 import javax.swing.JFormattedTextField;
+import javax.swing.JFormattedTextField.AbstractFormatter;
 
 import es.icarto.gvsig.navtableforms.AbstractForm;
+import es.icarto.gvsig.navtableforms.gui.formattedtextfields.FormatterFactory;
 
 public class ValidationHandlerForFormattedTextFields implements KeyListener {
 
@@ -27,8 +29,10 @@ public class ValidationHandlerForFormattedTextFields implements KeyListener {
 	    JFormattedTextField c = ((JFormattedTextField) e.getSource());
 	    try {
 		c.commitEdit();  // make sure value and displayed text are the same
-		String value = dialog.getFormController().getFormatter(
-			c.getName()).valueToString(c.getValue());
+		AbstractFormatter formatter = FormatterFactory
+			.createFormatter(dialog.getFormController().getType(
+				c.getName()));
+		String value = formatter.valueToString(c.getValue());
 		dialog.getFormController().setValue(c.getName(), value);
 		dialog.setChangedValues(); // placed after updating widgetvalues
 		dialog.getFormValidator().validate();
