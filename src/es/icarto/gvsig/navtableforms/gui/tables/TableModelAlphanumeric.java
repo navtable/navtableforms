@@ -1,5 +1,6 @@
 package es.icarto.gvsig.navtableforms.gui.tables;
 
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -7,6 +8,7 @@ import javax.swing.table.AbstractTableModel;
 
 import com.hardcode.gdbms.driver.exceptions.InitializeWriterException;
 import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
+import com.iver.cit.gvsig.exceptions.expansionfile.ExpansionFileWriteException;
 import com.iver.cit.gvsig.exceptions.visitors.StartWriterVisitorException;
 import com.iver.cit.gvsig.exceptions.visitors.StopWriterVisitorException;
 import com.iver.cit.gvsig.fmap.edition.IEditableSource;
@@ -104,9 +106,14 @@ public class TableModelAlphanumeric extends AbstractTableModel {
 	return source;
     }
 
-    public void create(int position) {
-	// TODO: implement
-	System.out.println("Create");
+    public void create(HashMap<String, String> values)
+	    throws ExpansionFileWriteException, ReadDriverException,
+	    ParseException {
+	long pos = tableController.create(values);
+	if (pos != TableController.NO_ROW) {
+	    initMetadata();
+	    this.fireTableRowsInserted(rowCount, rowCount);
+	}
     }
 
     public HashMap<String, String> read(int row) throws ReadDriverException {

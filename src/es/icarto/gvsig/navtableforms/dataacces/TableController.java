@@ -17,6 +17,7 @@
 
 package es.icarto.gvsig.navtableforms.dataacces;
 
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -48,6 +49,8 @@ import es.udc.cartolab.gvsig.navtable.format.ValueFormatNT;
  */
 public class TableController {
 
+    public static int NO_ROW = -1;
+
     private IEditableSource model;
     private HashMap<String, Integer> indexes;
     private HashMap<String, Integer> types;
@@ -62,29 +65,31 @@ public class TableController {
 	this.valuesChanged = new HashMap<String, String>();
     }
 
-    public void create(boolean saveAfterCreating)
+    public long create(HashMap<String, String> newValues)
 	    throws ExpansionFileWriteException,
-	    ReadDriverException {
+	    ReadDriverException, ParseException {
+
 	Value[] defaultValues = new Value[values.size()];
 	for (int i = 0; i < values.size(); i++) {
 	    defaultValues[i] = ValueFactoryNT.createNullValue();
 	}
-	create(saveAfterCreating, defaultValues);
-    }
 
-    public void create(boolean saveAfterCreating, Value[] defaultValues)
-	    throws ExpansionFileWriteException, ReadDriverException {
 	ToggleEditing te = new ToggleEditing();
 	if (!model.isEditing()) {
 	    te.startEditing(model);
 	}
+	long newPosition = NO_ROW;
 	if (model instanceof IWriteable) {
 	    IRow row = new DefaultRow(defaultValues);
-	    model.doAddRow(row, EditionEvent.ALPHANUMERIC);
+	    newPosition = model.doAddRow(row, EditionEvent.ALPHANUMERIC);
+	    for (String key : newValues.keySet()) {
+		setValue(key, newValues.get(key));
+	    }
+	    update(newPosition);
 	}
-	if (saveAfterCreating) {
-	    te.stopEditing(model);
-	}
+	te.stopEditing(model);
+	read(newPosition);
+	return newPosition;
     }
 
     public void read(long position) throws ReadDriverException {
@@ -110,8 +115,8 @@ public class TableController {
 	    te.startEditing(model);
 	}
 	te.modifyValues(model, (int) position,
-		this.getIndexesOfValuesChanged(),
-		this.getValuesChanged().values().toArray(new String[0]));
+		getIndexesOfValuesChanged(),
+		getValuesChanged().values().toArray(new String[0]));
 	if (!wasEditing) {
 	    te.stopEditing(model);
 	}
@@ -167,6 +172,10 @@ public class TableController {
 
     public String getValueInLayer(String fieldName) {
 	return values.get(fieldName);
+    }
+
+    public HashMap<String, String> getValues() {
+	return null;
     }
 
     public HashMap<String, String> getValuesOriginal() {
