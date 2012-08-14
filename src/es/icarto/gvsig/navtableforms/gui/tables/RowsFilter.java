@@ -8,7 +8,25 @@ import com.iver.cit.gvsig.fmap.edition.IEditableSource;
 import com.iver.cit.gvsig.fmap.edition.IRowEdited;
 import com.iver.cit.gvsig.fmap.layers.SelectableDataSource;
 
-public class TableFilter {
+public class RowsFilter {
+
+    public static Object[][] getRowsFromSource(IEditableSource source,
+	    String fieldFilterName, String fieldFilterValue)
+		    throws ReadDriverException {
+
+	ArrayList<Object[]> rows = new ArrayList<Object[]>();
+	int fieldFilterIndex;
+	fieldFilterIndex = source.getRecordset().getFieldIndexByName(
+		fieldFilterName);
+	for (int index = 0; index < source.getRowCount(); index++) {
+	    IRowEdited row = source.getRow(index);
+	    String value = row.getAttribute(fieldFilterIndex).toString();
+	    if (value.equalsIgnoreCase(fieldFilterValue)) {
+		rows.add(row.getAttributes());
+	    }
+	}
+	return rows.toArray(new Object[1][1]);
+    }
 
     public static Object[][] getRowsFromSource(IEditableSource source,
 	    String fieldFilterName, String fieldFilterValue,
@@ -33,6 +51,27 @@ public class TableFilter {
 	    }
 	}
 	return rows.toArray(new Object[0][0]);
+    }
+
+    public static Object[][] getRowsFromSource(SelectableDataSource source,
+	    String rowFilterName, String rowFilterValue) {
+
+	ArrayList<Object[]> rows = new ArrayList<Object[]>();
+	int fieldIndex;
+	try {
+	    fieldIndex = source.getFieldIndexByName(rowFilterName);
+	    for (int index = 0; index < source.getRowCount(); index++) {
+		Value[] row = source.getRow(index);
+		String indexValue = row[fieldIndex].toString();
+		if (indexValue.equalsIgnoreCase(rowFilterValue)) {
+		    rows.add(row);
+		}
+	    }
+	    return rows.toArray(new Object[1][1]);
+	} catch (ReadDriverException e) {
+	    e.printStackTrace();
+	    return null;
+	}
     }
 
     private static ArrayList<Integer> getIndexesOfColumns(

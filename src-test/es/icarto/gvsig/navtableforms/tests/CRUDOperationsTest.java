@@ -16,7 +16,7 @@ import com.iver.cit.gvsig.fmap.drivers.VectorialFileDriver;
 import com.iver.cit.gvsig.fmap.layers.FLyrVect;
 import com.iver.cit.gvsig.fmap.layers.LayerFactory;
 
-import es.icarto.gvsig.navtableforms.utils.LayerController;
+import es.icarto.gvsig.navtableforms.dataacces.LayerController;
 
 public class CRUDOperationsTest {
 

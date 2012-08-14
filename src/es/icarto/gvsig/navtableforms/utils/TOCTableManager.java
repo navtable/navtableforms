@@ -1,4 +1,4 @@
-package es.icarto.gvsig.navtableforms.gui.tables;
+package es.icarto.gvsig.navtableforms.utils;
 
 import java.util.HashMap;
 
@@ -6,11 +6,11 @@ import com.iver.andami.PluginServices;
 import com.iver.andami.ui.mdiManager.IWindow;
 import com.iver.cit.gvsig.project.documents.table.gui.Table;
 
-public class TableManager {
+public class TOCTableManager {
 
     private HashMap<String, Table> tables;
 
-    public TableManager() {
+    public TOCTableManager() {
 	tables = new HashMap<String, Table>();
 	IWindow[] windows = PluginServices.getMDIManager().getAllWindows();
 	for (IWindow w : windows) {

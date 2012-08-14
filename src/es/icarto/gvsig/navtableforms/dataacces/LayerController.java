@@ -15,82 +15,45 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-package es.icarto.gvsig.navtableforms.utils;
+package es.icarto.gvsig.navtableforms.dataacces;
 
 import java.util.HashMap;
 import java.util.Set;
 
-import com.hardcode.gdbms.driver.exceptions.InitializeWriterException;
 import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
-import com.hardcode.gdbms.engine.values.Value;
-import com.iver.cit.gvsig.exceptions.expansionfile.ExpansionFileWriteException;
-import com.iver.cit.gvsig.exceptions.visitors.StartWriterVisitorException;
-import com.iver.cit.gvsig.exceptions.visitors.StopWriterVisitorException;
-import com.iver.cit.gvsig.fmap.core.DefaultRow;
-import com.iver.cit.gvsig.fmap.core.IRow;
-import com.iver.cit.gvsig.fmap.drivers.ITableDefinition;
-import com.iver.cit.gvsig.fmap.edition.EditionEvent;
-import com.iver.cit.gvsig.fmap.edition.IEditableSource;
-import com.iver.cit.gvsig.fmap.edition.IWriteable;
-import com.iver.cit.gvsig.fmap.edition.IWriter;
+import com.iver.cit.gvsig.fmap.layers.FLyrVect;
 import com.iver.cit.gvsig.fmap.layers.SelectableDataSource;
 
 import es.udc.cartolab.gvsig.navtable.AbstractNavTable;
 import es.udc.cartolab.gvsig.navtable.ToggleEditing;
-import es.udc.cartolab.gvsig.navtable.format.ValueFactoryNT;
 import es.udc.cartolab.gvsig.navtable.format.ValueFormatNT;
 
 /**
- * Class to manage CRUD (Create, Read, Update, Delete) operations on a Table.
+ * Class to manage CRUD (Create, Read, Update, Delete) operations on a Layer.
  * 
  * @author Andrés Maneiro <amaneiro@icarto.es>
  * 
  */
-public class TableController {
+public class LayerController {
 
-    private IEditableSource model;
+    private FLyrVect layer;
     private HashMap<String, Integer> indexes;
     private HashMap<String, Integer> types;
     private HashMap<String, String> values;
     private HashMap<String, String> valuesChanged;
 
-    public TableController(IEditableSource model) {
-	this.model = model;
+    public LayerController(FLyrVect layer) {
+	this.layer = layer;
 	this.indexes = new HashMap<String, Integer>();
 	this.types = new HashMap<String, Integer>();
 	this.values = new HashMap<String, String>();
 	this.valuesChanged = new HashMap<String, String>();
     }
 
-    public void create(boolean saveAfterCreating)
-	    throws ExpansionFileWriteException,
-	    ReadDriverException {
-	Value[] defaultValues = new Value[values.size()];
-	for (int i = 0; i < values.size(); i++) {
-	    defaultValues[i] = ValueFactoryNT.createNullValue();
-	}
-	create(saveAfterCreating, defaultValues);
-    }
-
-    public void create(boolean saveAfterCreating, Value[] defaultValues)
-	    throws ExpansionFileWriteException, ReadDriverException {
-	ToggleEditing te = new ToggleEditing();
-	if (!model.isEditing()) {
-	    te.startEditing(model);
-	}
-	if (model instanceof IWriteable) {
-	    IRow row = new DefaultRow(defaultValues);
-	    model.doAddRow(row, EditionEvent.ALPHANUMERIC);
-	}
-	if (saveAfterCreating) {
-	    te.stopEditing(model);
-	}
-    }
-
     public void read(long position) throws ReadDriverException {
-	SelectableDataSource sds = model.getRecordset();
-	clearAll();
-	if (position != AbstractNavTable.EMPTY_REGISTER) {
+	SelectableDataSource sds = layer.getSource().getRecordset();
+	if(position != AbstractNavTable.EMPTY_REGISTER) {
+	    clearAll();
 	    for (int i = 0; i < sds.getFieldCount(); i++) {
 		String name = sds.getFieldName(i);
 		values.put(
@@ -103,36 +66,19 @@ public class TableController {
 	}
     }
 
-    public void update(long position) throws ReadDriverException {
+    public void save(long position) throws ReadDriverException {
 	ToggleEditing te = new ToggleEditing();
-	boolean wasEditing = model.isEditing();
+	boolean wasEditing = layer.isEditing();
 	if (!wasEditing) {
-	    te.startEditing(model);
+	    te.startEditing(layer);
 	}
-	te.modifyValues(model, (int) position,
+	te.modifyValues(layer, (int) position,
 		this.getIndexesOfValuesChanged(),
 		this.getValuesChanged().values().toArray(new String[0]));
 	if (!wasEditing) {
-	    te.stopEditing(model);
+	    te.stopEditing(layer, false);
 	}
-	read((int) position);
-    }
-
-    public void delete(long position) throws StopWriterVisitorException,
-    InitializeWriterException, StartWriterVisitorException,
-    ReadDriverException {
-
-	model.startEdition(EditionEvent.ALPHANUMERIC);
-
-	IWriteable w = (IWriteable) model;
-	IWriter writer = w.getWriter();
-
-	ITableDefinition tableDef = model.getTableDefinition();
-	writer.initialize(tableDef);
-
-	model.doRemoveRow((int) position, EditionEvent.ALPHANUMERIC);
-	model.stopEdition(writer, EditionEvent.ALPHANUMERIC);
-	clearAll();
+	this.read((int) position);
     }
 
     public void clearAll() {

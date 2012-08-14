@@ -1,121 +1,29 @@
 package es.icarto.gvsig.navtableforms.gui.tables;
 
-import java.util.ArrayList;
-
-import javax.swing.table.TableModel;
+import java.util.List;
 
 import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
-import com.hardcode.gdbms.engine.values.Value;
-import com.iver.andami.PluginServices;
-import com.iver.andami.ui.mdiManager.IWindow;
-import com.iver.cit.gvsig.fmap.drivers.FieldDescription;
 import com.iver.cit.gvsig.fmap.edition.IEditableSource;
-import com.iver.cit.gvsig.fmap.edition.IRowEdited;
-import com.iver.cit.gvsig.fmap.layers.FLyrVect;
-import com.iver.cit.gvsig.fmap.layers.SelectableDataSource;
-import com.iver.cit.gvsig.project.documents.table.gui.Table;
 
-import es.icarto.gvsig.navtableforms.utils.TOCLayerManager;
+import es.icarto.gvsig.navtableforms.utils.TOCTableManager;
 
 public class TableModelFactory {
 
-    public static TableModel createFromTable(String sourceTable,
-	    String rowFilterName,
-	    String rowFilterValue) {
-
-	IEditableSource sds = getSource(sourceTable);
-	FieldDescription[] columnNames = sds.getFieldsDescription();
-	Object[][] rows = getRowsFromSource(sds, rowFilterName, rowFilterValue);
-	return new NonEditableTableModel(rows, columnNames);
-    }
-
-    public static TableModel createFromTable(String sourceTable,
+    public static TableModelAlphanumeric createFromTable(String sourceTable,
 	    String rowFilterName,
 	    String rowFilterValue,
-	    ArrayList<String> columnNames,
-	    ArrayList<String> columnAliases)
+	    List<String> columnNames,
+	    List<String> columnAliases)
 		    throws ReadDriverException {
 
-	IEditableSource source = getSource(sourceTable);
-	Object[][] rows = TableFilter.getRowsFromSource(source,
-		rowFilterName, rowFilterValue, columnNames);
-	return new NonEditableTableModel(rows,
-		columnAliases.toArray(new String[1]));
-    }
-
-    public static TableModel createFromLayer(String sourceLayer,
-	    String rowFilterName,
-	    String rowFilterValue,
-	    ArrayList<String> columnNames,
-	    ArrayList<String> columnAliases) {
-
-	TOCLayerManager toc = new TOCLayerManager();
-	FLyrVect layer = toc.getLayerByName(sourceLayer);
-	try {
-	    Object[][] rows = getRowsFromSource(layer.getRecordset(),
-		    rowFilterName,
-		    rowFilterValue);
-	    return new NonEditableTableModel(rows,
-		    columnAliases.toArray(new String[1]));
-	} catch (ReadDriverException e) {
-	    return null;
-	}
-    }
-
-    private static Object[][] getRowsFromSource(SelectableDataSource source,
-	    String rowFilterName,
-	    String rowFilterValue) {
-
-	ArrayList<Object[]> rows = new ArrayList<Object[]>();
-	int fieldIndex;
-	try {
-	    fieldIndex = source.getFieldIndexByName(rowFilterName);
-	    for (int index = 0; index < source.getRowCount(); index++) {
-		Value[] row = source.getRow(index);
-		String indexValue = row[fieldIndex].toString();
-		if (indexValue.equalsIgnoreCase(rowFilterValue)) {
-		    rows.add(row);
-		}
-	    }
-	    return rows.toArray(new Object[1][1]);
-	} catch (ReadDriverException e) {
-	    e.printStackTrace();
-	    return null;
-	}
-    }
-
-    private static Object[][] getRowsFromSource(IEditableSource source,
-	    String fieldFilterName,
-	    String fieldFilterValue) {
-
-	ArrayList<Object[]> rows = new ArrayList<Object[]>();
-	int fieldFilterIndex;
-	try {
-	    fieldFilterIndex = source.getRecordset().getFieldIndexByName(fieldFilterName);
-	    for (int index = 0; index < source.getRowCount(); index++) {
-		IRowEdited row = source.getRow(index);
-		String value = row.getAttribute(fieldFilterIndex).toString();
-		if (value.equalsIgnoreCase(fieldFilterValue)) {
-		    rows.add(row.getAttributes());
-		}
-	    }
-	    return rows.toArray(new Object[1][1]);
-	} catch (ReadDriverException e) {
-	    e.printStackTrace();
-	    return null;
-	}
-    }
-
-    private static IEditableSource getSource(String sourceTable) {
-	IWindow[] windows = PluginServices.getMDIManager().getAllWindows();
-	for (IWindow w : windows) {
-	    if ((w instanceof Table)
-		    && (((Table) w).getModel().getName()
-			    .equalsIgnoreCase(sourceTable))) {
-		return ((Table) w).getModel().getModelo();
-	    }
-	}
-	return null;
+	TOCTableManager toc = new TOCTableManager();
+	IEditableSource model = toc.getTableByName(sourceTable).getModel()
+		.getModelo();
+	int fieldIndex = model.getRecordset()
+		.getFieldIndexByName(rowFilterName);
+	IRowFilter filter = new IRowFilterImplementer(
+		fieldIndex, rowFilterValue);
+	return new TableModelAlphanumeric(model, filter, columnNames, columnAliases);
     }
 
 }
