@@ -117,9 +117,13 @@ public class TableModelAlphanumeric extends AbstractTableModel {
 	return tableController.getValuesOriginal();
     }
 
-    public void update(int position) {
-	// TODO: implement
-	System.out.println("Update");
+    public void updateValue(String fieldName, String fieldValue) {
+	tableController.setValue(fieldName, fieldValue);
+    }
+
+    public void update(int row) throws ReadDriverException {
+	tableController.update(rowIndexes.get(row));
+	this.fireTableDataChanged();
     }
 
     public void delete(int row) throws StopWriterVisitorException,
