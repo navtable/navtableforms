@@ -221,6 +221,8 @@ PositionListener {
 	    } else if (comp instanceof JComboBox) {
 		((JComboBox) comp).addActionListener(
 			validationHandlerForComboBoxes);
+		ComponentValidator cv = new ComponentValidator(comp);
+		formValidator.addComponentValidator(cv);
 	    } else if (comp instanceof JCheckBox) {
 		((JCheckBox) comp).addActionListener(
 			validationHandlerForCheckBoxes);
