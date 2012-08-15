@@ -47,6 +47,15 @@ public class FormValidator {
     public ArrayList<ComponentValidator> getComponentValidators() {
 	return cvs;
     }
+    
+    public ComponentValidator getComponentValidator(String name) {
+	for (ComponentValidator cv : cvs) {
+	    if (cv.getComponentName().equalsIgnoreCase(name)) {
+		return cv;
+	    }
+	}
+	return null;
+    }
 
     public void validate() {
 	setValidationErrors(false);
