@@ -21,9 +21,6 @@ public class MandatoryRule extends ValidationRule {
 
     @Override
     public boolean validate(String value) {
-	if (value.trim().isEmpty()) {
-	    return false;
-	}
-	return true;
+	return isEmpty(value);
     }
 }

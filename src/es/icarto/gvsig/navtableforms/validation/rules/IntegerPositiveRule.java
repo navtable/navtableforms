@@ -17,18 +17,23 @@
 
 package es.icarto.gvsig.navtableforms.validation.rules;
 
-
 public class IntegerPositiveRule extends ValidationRule {
 
     @Override
     public boolean validate(String value) {
+	return isEmpty(value) || isIntegerPositive(value);
+    }
+
+    private boolean isIntegerPositive(String value) {
+	boolean integerPositive = false;
 	try {
 	    if (Integer.parseInt(value) >= 0) {
-		return true;
+		integerPositive = true;
 	    }
-	    return false;
 	} catch (NumberFormatException nfe) {
-	    return false; // it's not an admissible value
 	}
+
+	return integerPositive;
     }
+
 }
