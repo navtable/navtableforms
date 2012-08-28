@@ -38,15 +38,20 @@ public class ComponentValidator {
     public boolean validate() {
 	String name = null;
 	String value = null;
-	
+
 	if (c instanceof JTextField) {
 	    name = c.getName();
 	    value = ((JTextField) c).getText();
 	} else if (c instanceof JComboBox) {
 	    name = c.getName();
-	    value = ((KeyValue) ((JComboBox) c).getSelectedItem()).getValue();
+	    if (((JComboBox) c).getSelectedItem() instanceof KeyValue) {
+		value = ((KeyValue) ((JComboBox) c).getSelectedItem())
+			.getValue();
+	    } else {
+		value = ((JComboBox) c).getSelectedItem().toString();
+	    }
 	}
-	
+
 	if (name != null) {
 	    if (isValid(name, value)) {
 		c.setBackground(defaultbg);
@@ -56,9 +61,9 @@ public class ComponentValidator {
 	    return false;
 	}
 	return true;
-	
+
     }
-	
+
     public boolean isValid(String name, String value) {
 	DomainValidator domain = new DomainValidator(name);
 	boolean val = domain.validate(value);
