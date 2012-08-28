@@ -28,7 +28,7 @@ public class JTableContextualMenu implements MouseListener {
 	    return;
 	}
 	if (e.getClickCount() == 2) {
-	    form.createRecord(table.getSelectedRow());
+	    form.updateRecord(table.getSelectedRow());
 	} else if (e.getButton() == BUTTON_RIGHT) {
 	    openContextualMenu(e);
 	}
