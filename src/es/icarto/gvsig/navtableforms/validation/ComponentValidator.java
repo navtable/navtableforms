@@ -43,12 +43,14 @@ public class ComponentValidator {
 	    name = c.getName();
 	    value = ((JTextField) c).getText();
 	} else if (c instanceof JComboBox) {
-	    name = c.getName();
-	    if (((JComboBox) c).getSelectedItem() instanceof KeyValue) {
-		value = ((KeyValue) ((JComboBox) c).getSelectedItem())
-			.getValue();
-	    } else {
-		value = ((JComboBox) c).getSelectedItem().toString();
+	    if (((JComboBox) c).getSelectedItem() != null) {
+		name = c.getName();
+		if (((JComboBox) c).getSelectedItem() instanceof KeyValue) {
+		    value = ((KeyValue) ((JComboBox) c).getSelectedItem())
+		    .getValue();
+		} else {
+		    value = ((JComboBox) c).getSelectedItem().toString();
+		}
 	    }
 	}
 
