@@ -31,6 +31,10 @@ public class DoublePositiveRule extends ValidationRule {
 
     @Override
     public boolean validate(String value) {
+	return isEmpty (value) || isDoublePositive(value);
+    }
+
+    private boolean isDoublePositive(String value) {
 	try {
 	    double doubleValue = format.parse(value).doubleValue();
 	    if (doubleValue >= 0.0) {
