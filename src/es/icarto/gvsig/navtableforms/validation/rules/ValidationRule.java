@@ -20,4 +20,11 @@ package es.icarto.gvsig.navtableforms.validation.rules;
 public abstract class ValidationRule {
 
     public abstract boolean validate(String value);
+
+    protected boolean isEmpty(String value) {
+        if (value.trim().isEmpty()) {
+            return true;
+        }
+        return false;
+    }
 }
