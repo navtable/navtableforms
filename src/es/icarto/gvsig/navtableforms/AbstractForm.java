@@ -546,4 +546,16 @@ PositionListener {
 	    ((AbstractNavTable) e.getSource()).refreshGUI();
 	}
     }
+
+    @Override
+    protected void undoAction() {
+	setChangedValues(false);
+	try {
+	    layerController.read(getPosition());
+	} catch (ReadDriverException e) {
+	    logger.error(e.getMessage(), e.getCause());
+	    layerController.clearAll();
+	}
+	refreshGUI();
+    }
 }
