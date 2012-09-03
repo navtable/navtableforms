@@ -64,9 +64,8 @@ public class XMLSAXParser extends DefaultHandler {
     private DomainReader tmpDomainReader = null;
     private FieldDescription tmpFieldDescription = null;
 
-    private static Logger logger = Logger.getLogger("SAX Parser");
-
-    public XMLSAXParser(String xmlFile) {
+    
+    public XMLSAXParser(String xmlFile) throws ParserConfigurationException, SAXException, IOException  {
 	tmpPK = new ArrayList<String>();
 
 	setXMLFile(xmlFile);
@@ -104,25 +103,17 @@ public class XMLSAXParser extends DefaultHandler {
 	this.ad = ad;
     }
 
-    private void parseDocument() {
+    private void parseDocument() throws ParserConfigurationException, SAXException, IOException {
 
 	// get a factory
 	SAXParserFactory spf = SAXParserFactory.newInstance();
-	try {
+	
+	// get a new instance of parser
+	SAXParser sp = spf.newSAXParser();
+	
+	// parse the file and also register this class for call backs
+	sp.parse(getXMLFile(), this);
 
-	    // get a new instance of parser
-	    SAXParser sp = spf.newSAXParser();
-
-	    // parse the file and also register this class for call backs
-	    sp.parse(getXMLFile(), this);
-
-	} catch (SAXException se) {
-	    logger.error(se.getMessage(), se);
-	} catch (ParserConfigurationException pce) {
-	    logger.error(pce.getMessage(), pce);
-	} catch (IOException ie) {
-	    logger.error(ie.getMessage(), ie);
-	}
     }
 
     // Event Handlers

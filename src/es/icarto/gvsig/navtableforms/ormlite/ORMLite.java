@@ -16,17 +16,25 @@
  */
 package es.icarto.gvsig.navtableforms.ormlite;
 
+import org.apache.log4j.Logger;
+
 public class ORMLite {
 
     private static XMLSAXParser fp = null;
     private static ORMLiteDataBase dbo = null;
     private static ORMLiteAplicationDomain ad = null;
 
+    private static Logger logger = Logger.getLogger("ORMLite logger");
+    
     public static synchronized ORMLiteDataBase getDataBaseObject(String xmlFile) {
 	if (fp == null) {
-	    fp = new XMLSAXParser(xmlFile);
-	    dbo = fp.getDBO();
-	    ad = fp.getAD();
+	    try {
+		fp = new XMLSAXParser(xmlFile);
+		dbo = fp.getDBO();
+		ad = fp.getAD();
+	    } catch (Exception e) {
+		logger.error(e.getMessage(), e.getCause());
+	    }
 	}
 	return dbo;
     }
@@ -34,9 +42,13 @@ public class ORMLite {
     public static synchronized ORMLiteAplicationDomain getAplicationDomainObject(
 	    String xmlFile) {
 	if (fp == null) {
-	    fp = new XMLSAXParser(xmlFile);
-	    dbo = fp.getDBO();
-	    ad = fp.getAD();
+	    try {
+		fp = new XMLSAXParser(xmlFile);
+		dbo = fp.getDBO();
+		ad = fp.getAD();
+	    } catch (Exception e) {
+		logger.error(e.getMessage(), e.getCause());
+	    }
 	}
 	return ad;
     }
