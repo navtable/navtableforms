@@ -17,7 +17,6 @@
 package es.icarto.gvsig.navtableforms;
 
 import java.awt.BorderLayout;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -30,7 +29,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.text.JTextComponent;
 
 import org.apache.log4j.Logger;
 
@@ -39,7 +37,6 @@ import com.iver.andami.PluginServices;
 import com.iver.cit.gvsig.fmap.layers.FLyrVect;
 import com.jeta.forms.components.panel.FormPanel;
 
-import es.icarto.gvsig.navtableforms.gui.formattedtextfields.FormatterFactory;
 import es.icarto.gvsig.navtableforms.ormlite.ORMLite;
 import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.ValidatorComponent;
 import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.ValidatorDomain;
@@ -49,8 +46,6 @@ import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.listeners.Validatio
 import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.listeners.ValidationHandlerForFormattedTextFields;
 import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.listeners.ValidationHandlerForTextAreas;
 import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.listeners.ValidationHandlerForTextFields;
-import es.icarto.gvsig.navtableforms.ormlite.domainvalues.DomainValues;
-import es.icarto.gvsig.navtableforms.ormlite.domainvalues.KeyValue;
 import es.icarto.gvsig.navtableforms.ormlite.widgetsdependency.DependencyReader;
 import es.icarto.gvsig.navtableforms.ormlite.widgetsdependency.EnabledComponentBasedOnWidget;
 import es.icarto.gvsig.navtableforms.utils.AbeilleParser;
@@ -76,6 +71,7 @@ public abstract class AbstractForm extends AbstractNavTable {
 
     protected static Logger logger = null;
     private ORMLite ormlite;
+    public FillFactory fillFactory;
 
     public AbstractForm(FLyrVect layer) {
 	super(layer);
@@ -155,6 +151,8 @@ public abstract class AbstractForm extends AbstractNavTable {
     protected void initWidgets() {
 	widgetsVector = AbeilleParser.getWidgetsFromContainer(formBody);
 	setListeners();
+	fillFactory = new FillFactory(getWidgetComponents(), layerController,
+		ormlite.getAppDomain());
     }
 
     /**
@@ -245,121 +243,8 @@ public abstract class AbstractForm extends AbstractNavTable {
     @Override
     public void fillEmptyValues() {
 	setFillingValues(true);
-	for (JComponent comp : widgetsVector.values()) {
-	    if ((comp instanceof JFormattedTextField)
-		    || (comp instanceof JTextField)
-		    || (comp instanceof JTextArea)) {
-		((JTextComponent) comp).setText("");
-	    } else if (comp instanceof JComboBox) {
-		if (((JComboBox) comp).getItemCount() > 0) {
-		    ((JComboBox) comp).removeAllItems();
-		}
-		((JComboBox) comp).addItem("");
-		((JComboBox) comp).setSelectedIndex(0);
-	    }
-	}
+	fillFactory.fillEmptyValues();
 	setFillingValues(false);
-    }
-
-    protected void fillJTextField(JTextField field) {
-	String colName = field.getName();
-	String fieldValue = layerController.getValue(colName);
-	field.setText(fieldValue);
-    }
-
-    protected void fillJFormattedTextField(JFormattedTextField field) {
-	field.setFormatterFactory(FormatterFactory.createFormatterFactory(layerController
-		.getType(field.getName())));
-	String fieldValue = layerController.getValue(field.getName());
-	// field.setText(fieldValue);
-	field.setValue(fieldValue);
-    }
-
-    protected void fillJCheckBox(JCheckBox checkBox) {
-	String colName = checkBox.getName();
-	String fieldValue = layerController.getValue(colName);
-	checkBox.setSelected(Boolean.parseBoolean(fieldValue));
-    }
-
-    protected void fillJTextArea(JTextArea textArea) {
-	String colName = textArea.getName();
-	String fieldValue = layerController.getValue(colName);
-	textArea.setText(fieldValue);
-    }
-
-    protected void fillJComboBox(JComboBox combobox) {
-	String colName = combobox.getName();
-	String fieldValue = layerController.getValue(colName);
-	DomainValues dv = ormlite.getAppDomain().getDomainValuesForComponent(
-		colName);
-	if (dv != null) { // the component has domain values defined
-	    addDomainValuesToComboBox(combobox, dv.getValues());
-	    setDomainValueSelected(combobox, fieldValue);
-	} else {
-	    fillJComboBoxWithAbeilleValues(combobox, fieldValue);
-	}
-    }
-
-    public void fillJComboBox(JComboBox combobox, ArrayList<String> foreignKeys) {
-	String colName = combobox.getName();
-	String fieldValue = layerController.getValue(colName);
-	DomainValues dv = ormlite.getAppDomain().getDomainValuesForComponent(
-		colName);
-	if (dv != null) { // the component has domain values defined
-	    addDomainValuesToComboBox(combobox,
-		    dv.getValuesFilteredBy(foreignKeys));
-	    setDomainValueSelected(combobox, fieldValue);
-	} else {
-	    fillJComboBoxWithAbeilleValues(combobox, fieldValue);
-	}
-    }
-
-    protected void addDomainValuesToComboBox(JComboBox cb,
-	    ArrayList<KeyValue> keyValueList) {
-
-	if (cb.getItemCount() > 0) {
-	    cb.removeAllItems();
-	}
-	for (KeyValue kv : keyValueList) {
-	    cb.addItem(kv);
-	}
-    }
-
-    protected void setDomainValueSelected(JComboBox combobox, String fieldValue) {
-	// the value in this case here is the key in the key-value pair
-	// value = alias to be shown
-	// key = value to save in the database
-	if (fieldValue != null) {
-	    for (int j = 0; j < combobox.getItemCount(); j++) {
-		String value = ((KeyValue) combobox.getItemAt(j)).getKey();
-		if (value.compareTo(fieldValue.trim()) == 0) {
-		    combobox.setSelectedIndex(j);
-		    break;
-		}
-	    }
-	}
-	combobox.setEnabled(true);
-	if (combobox.getSelectedIndex() == -1) {
-	    combobox.addItem(new KeyValue("", "", ""));
-	    combobox.setSelectedIndex(0);
-	    combobox.setEnabled(false);
-	}
-    }
-
-    private void fillJComboBoxWithAbeilleValues(JComboBox combobox,
-	    String fieldValue) {
-	if (combobox.getItemCount() > 0) {
-	    combobox.setSelectedIndex(0);
-	}
-	if (fieldValue != null) {
-	    for (int j = 0; j < combobox.getItemCount(); j++) {
-		if (combobox.getItemAt(j).toString()
-			.compareTo(fieldValue.trim()) == 0) {
-		    combobox.setSelectedIndex(j);
-		    break;
-		}
-	    }
-	}
     }
 
     protected abstract void fillSpecificValues();
@@ -367,20 +252,7 @@ public abstract class AbstractForm extends AbstractNavTable {
     @Override
     public void fillValues() {
 	setFillingValues(true);
-	for (JComponent comp : widgetsVector.values()) {
-	    if (comp instanceof JFormattedTextField) {
-		fillJFormattedTextField((JFormattedTextField) comp);
-	    } else if (comp instanceof JTextField) {
-		fillJTextField((JTextField) comp);
-	    } else if (comp instanceof JCheckBox) {
-		fillJCheckBox((JCheckBox) comp);
-	    } else if (comp instanceof JTextArea) {
-		fillJTextArea((JTextArea) comp);
-	    } else if (comp instanceof JComboBox) {
-		fillJComboBox((JComboBox) comp);
-	    }
-	}
-	
+	fillFactory.fillValues();
 	for (JComponent comp : widgetsVector.values()) {
 	    if (ormlite.getAppDomain().getDependencyValuesForComponent(comp.getName()) != null) {
 		DependencyReader values = ormlite.getAppDomain().getDependencyValuesForComponent(
@@ -391,7 +263,6 @@ public abstract class AbstractForm extends AbstractNavTable {
 		componentBasedOnWidget.fillSpecificValues();
 	    }
 	}
-	
 	fillSpecificValues();
 	setFillingValues(false);
 	formValidator.validate();
@@ -510,5 +381,9 @@ public abstract class AbstractForm extends AbstractNavTable {
 	    layerController.clearAll();
 	}
 	refreshGUI();
+    }
+
+    public FillFactory getFillFactory() {
+	return fillFactory;
     }
 }
