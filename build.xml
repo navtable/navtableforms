@@ -39,6 +39,7 @@
 	<target name="create-jar" description="Creates the plugin jar">
 		<mkdir dir="${dist}" />
 		<jar jarfile="${dist}/lib/${plugin}.jar" basedir="${build}" includes="es/icarto/**" />
+		<jar update="true" jarfile="${dist}/lib/${plugin}.jar" basedir="images" includes="*" />
 	</target>
 
 	<target name="copy-data-files">
@@ -47,7 +48,6 @@
 		<copy todir="${dist}/lib">
 	  	    	<fileset dir="lib" includes="*"/>
 	  	</copy>
-
 	</target>
 
 	<target name="move-to-andami">
