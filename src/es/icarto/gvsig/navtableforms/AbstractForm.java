@@ -75,7 +75,6 @@ PositionListener {
 
     private HashMap<String, JComponent> widgetsVector;
 
-    private FLyrVect layer = null;
     private ValidationHandlerForFormattedTextFields validationHandlerForFormattedTextFields;
     private ValidationHandlerForTextFields validationHandlerForTextFields;
     private ValidationHandlerForComboBoxes validationHandlerForComboBoxes;
@@ -86,7 +85,6 @@ PositionListener {
 
     public AbstractForm(FLyrVect layer) {
 	super(layer);
-	this.layer = layer;
 	logger = getLoggerName();
 	formBody = getFormBody();
 	initValidation();
