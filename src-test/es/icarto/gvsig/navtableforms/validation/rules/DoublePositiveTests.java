@@ -11,7 +11,7 @@ import org.junit.Test;
 
 import es.icarto.gvsig.navtableforms.validation.rules.DoublePositiveRule;
 
-public class DoublePositiveTest {
+public class DoublePositiveTests {
 
     DoublePositiveRule rule;
 

@@ -1,4 +1,4 @@
-package es.icarto.gvsig.navtableforms.tests;
+package es.icarto.gvsig.navtableforms.dataaccess;
 
 import static org.junit.Assert.assertEquals;
 
@@ -15,27 +15,23 @@ import com.hardcode.gdbms.driver.exceptions.InitializeWriterException;
 import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
 import com.hardcode.gdbms.engine.data.DataSourceFactory;
 import com.hardcode.gdbms.engine.data.NoSuchTableException;
-import com.iver.cit.gvsig.exceptions.layers.LoadLayerException;
 import com.iver.cit.gvsig.exceptions.visitors.StartWriterVisitorException;
 import com.iver.cit.gvsig.exceptions.visitors.StopWriterVisitorException;
 import com.iver.cit.gvsig.fmap.crs.CRSFactory;
-import com.iver.cit.gvsig.fmap.drivers.VectorialFileDriver;
 import com.iver.cit.gvsig.fmap.edition.EditableAdapter;
 import com.iver.cit.gvsig.fmap.edition.IEditableSource;
-import com.iver.cit.gvsig.fmap.layers.FLyrVect;
 import com.iver.cit.gvsig.fmap.layers.LayerFactory;
 import com.iver.cit.gvsig.fmap.layers.SelectableDataSource;
 
-import es.icarto.gvsig.navtableforms.dataacces.LayerController;
 import es.icarto.gvsig.navtableforms.dataacces.TableController;
 
-public class CRUDOperationsTest {
+public class TableControllerTests {
 
     public static IProjection TEST_PROJECTION = CRSFactory
 	    .getCRS("EPSG:23030");
 
     @BeforeClass
-    public static void loadTestShape() throws Exception {
+    public static void loadDrivers() throws Exception {
 	doSetup();
     }
 
@@ -52,43 +48,6 @@ public class CRUDOperationsTest {
 	    throw new Exception("Can't find drivers in path: "
 		    + fwAndamiDriverPath);
 	}
-    }
-
-    @Test
-    public void testOperationReadShapeFile() throws LoadLayerException, ReadDriverException,
-    DriverLoadException {
-	FLyrVect layer = getFLyrVectFromFile();
-	System.out.println("Shape count: " + layer.getSource().getShapeCount());
-	LayerController lc = new LayerController(layer);
-	lc.read(0); // FeatureCla = "Country" (string), FIRST_Scal = 1 (integer)
-	String value = lc.getValue("FeatureCla");
-	boolean check = value.equals("Country");
-	assertEquals(true, check);
-    }
-
-    @Test
-    public void testOperationSaveShapeFile() throws LoadLayerException, ReadDriverException,
-    DriverLoadException {
-	FLyrVect layer = getFLyrVectFromFile();
-
-	LayerController lc = new LayerController(layer);
-	lc.read(1); // FeatureCla = "Country" (string), FIRST_Scal = 1 (integer)
-	String oldValue = lc.getValue("FeatureCla");
-	lc.setValue("FeatureCla", oldValue + "Test");
-	lc.save(1);
-	String newValue = lc.getValue("FeatureCla");
-	boolean check = newValue.equals(oldValue + "Test");
-	assertEquals(true, check);
-    }
-
-    private FLyrVect getFLyrVectFromFile() throws DriverLoadException {
-	File file = new File("data-test/", "110m_land.shp");
-	FLyrVect layer = (FLyrVect) LayerFactory.createLayer(
-		"Countries",
-		(VectorialFileDriver) LayerFactory.getDM().getDriver(
-			"gvSIG shp driver"), file,
-			CRSFactory.getCRS("EPSG:23030"));
-	return layer;
     }
 
     @Test

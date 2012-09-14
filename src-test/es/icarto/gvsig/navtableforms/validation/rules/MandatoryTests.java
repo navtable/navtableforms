@@ -9,7 +9,7 @@ import org.junit.Test;
 import es.icarto.gvsig.navtableforms.validation.rules.MandatoryRule;
 import es.icarto.gvsig.navtableforms.validation.rules.ValidationRule;
 
-public class MandatoryTest {
+public class MandatoryTests {
 
     ValidationRule rule;
 

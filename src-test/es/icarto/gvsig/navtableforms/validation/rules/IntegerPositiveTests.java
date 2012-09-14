@@ -12,7 +12,7 @@ import org.junit.Test;
 import es.icarto.gvsig.navtableforms.validation.rules.IntegerPositiveRule;
 import es.icarto.gvsig.navtableforms.validation.rules.ValidationRule;
 
-public class IntegerPositiveTest {
+public class IntegerPositiveTests {
 
     ValidationRule rule;
 
