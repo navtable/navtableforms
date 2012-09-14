@@ -224,4 +224,7 @@ public class TableController {
 	return types.get(fieldName);
     }
 
+    public int getRowCount() throws ReadDriverException {
+	return model.getRowCount();
+    }
 }
