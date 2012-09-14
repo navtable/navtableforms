@@ -5,11 +5,11 @@ import com.iver.cit.gvsig.fmap.edition.IEditableSource;
 
 public interface IForm {
 
-    public void createRecord(long position);
+    public void actionCreateRecord();
 
-    public void updateRecord(long position);
+    public void actionUpdateRecord(long position);
 
-    public void deleteRecord(long position);
+    public void actionDeleteRecord(long position);
 
     public IEditableSource getSource();
 

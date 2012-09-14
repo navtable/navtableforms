@@ -28,7 +28,7 @@ public class JTableContextualMenu implements MouseListener {
 	    return;
 	}
 	if (e.getClickCount() == 2) {
-	    form.updateRecord(table.getSelectedRow());
+	    form.actionUpdateRecord(table.getSelectedRow());
 	} else if (e.getButton() == BUTTON_RIGHT) {
 	    openContextualMenu(e);
 	}
@@ -41,7 +41,7 @@ public class JTableContextualMenu implements MouseListener {
 	JMenuItem open = new JMenuItem("Crear nuevo");
 	open.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent arg0) {
-		form.createRecord(table.getSelectedRow());
+		form.actionCreateRecord();
 	    }
 	});
 	popup.add(open);
@@ -50,7 +50,7 @@ public class JTableContextualMenu implements MouseListener {
 	JMenuItem update = new JMenuItem("Actualizar registro");
 	update.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent arg0) {
-		form.updateRecord(table.getSelectedRow());
+		form.actionUpdateRecord(table.getSelectedRow());
 	    }
 	});
 	popup.add(update);
@@ -59,7 +59,7 @@ public class JTableContextualMenu implements MouseListener {
 	JMenuItem delete = new JMenuItem("Borrar registro");
 	delete.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent arg0) {
-		form.deleteRecord(table.getSelectedRow());
+		form.actionDeleteRecord(table.getSelectedRow());
 	    }
 	});
 	popup.add(delete);
