@@ -65,14 +65,26 @@ public class TableController {
 	this.valuesChanged = new HashMap<String, String>();
     }
 
+    private void initMetadata() {
+	try {
+	    SelectableDataSource sds = model.getRecordset();
+	    for (int i = 0; i < sds.getFieldCount(); i++) {
+		String name = sds.getFieldName(i);
+		indexes.put(name, i);
+		types.put(name, sds.getFieldType(i));
+	    }
+	} catch (ReadDriverException e) {
+	    e.printStackTrace();
+	    clearAll();
+	}
+    }
+
     public long create(HashMap<String, String> newValues)
 	    throws ExpansionFileWriteException,
 	    ReadDriverException, ParseException {
 
-	Value[] defaultValues = new Value[values.size()];
-	for (int i = 0; i < values.size(); i++) {
-	    defaultValues[i] = ValueFactoryNT.createNullValue();
-	}
+	initMetadata();
+	Value[] vals = createValuesFromHashMap(newValues);
 
 	ToggleEditing te = new ToggleEditing();
 	if (!model.isEditing()) {
@@ -80,16 +92,24 @@ public class TableController {
 	}
 	long newPosition = NO_ROW;
 	if (model instanceof IWriteable) {
-	    IRow row = new DefaultRow(defaultValues);
+	    IRow row = new DefaultRow(vals);
 	    newPosition = model.doAddRow(row, EditionEvent.ALPHANUMERIC);
-	    for (String key : newValues.keySet()) {
-		setValue(key, newValues.get(key));
-	    }
-	    update(newPosition);
 	}
 	te.stopEditing(model);
 	read(newPosition);
 	return newPosition;
+    }
+
+    private Value[] createValuesFromHashMap(HashMap<String, String> newValues) {
+	Value[] vals = new Value[indexes.size()];
+	for (int i = 0; i < indexes.size(); i++) {
+	    vals[i] = ValueFactoryNT.createNullValue();
+	}
+	for (String key : newValues.keySet()) {
+	    vals[getIndex(key)] = ValueFactoryNT
+		    .createValue(newValues.get(key));
+	}
+	return vals;
     }
 
     public void read(long position) throws ReadDriverException {
@@ -98,12 +118,12 @@ public class TableController {
 	if (position != AbstractNavTable.EMPTY_REGISTER) {
 	    for (int i = 0; i < sds.getFieldCount(); i++) {
 		String name = sds.getFieldName(i);
+		indexes.put(name, i);
+		types.put(name, sds.getFieldType(i));
 		values.put(
 			name,
 			sds.getFieldValue(position, i).getStringValue(
 				new ValueFormatNT()));
-		indexes.put(name, i);
-		types.put(name, sds.getFieldType(i));
 	    }
 	}
     }
@@ -175,7 +195,11 @@ public class TableController {
     }
 
     public HashMap<String, String> getValues() {
-	return null;
+	HashMap<String, String> val = values;
+	for (String k : valuesChanged.keySet()) {
+	    val.put(k, valuesChanged.get(k));
+	}
+	return val;
     }
 
     public HashMap<String, String> getValuesOriginal() {
@@ -187,8 +211,8 @@ public class TableController {
     }
 
     /**
-     * Make sure the value setted is a formatted value, as the ones from layer.
-     * See {@link #fill(SelectableDataSource, long)} For example: if value is a
+     * Make sure the value set is a formatted value, as the ones from layer. See
+     * {@link #fill(SelectableDataSource, long)} For example: if value is a
      * double in layer, the string should be something like 1000,00 instead of
      * 1000.
      */
