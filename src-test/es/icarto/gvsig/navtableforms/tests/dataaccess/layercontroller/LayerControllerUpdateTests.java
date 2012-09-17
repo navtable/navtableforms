@@ -16,7 +16,8 @@ import com.iver.cit.gvsig.fmap.drivers.VectorialFileDriver;
 import com.iver.cit.gvsig.fmap.layers.FLyrVect;
 import com.iver.cit.gvsig.fmap.layers.LayerFactory;
 
-import es.icarto.gvsig.navtableforms.dataacces.LayerController;
+import es.udc.cartolab.gvsig.navtable.dataacces.LayerController;
+
 
 public class LayerControllerUpdateTests {
 
