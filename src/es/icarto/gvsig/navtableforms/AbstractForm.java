@@ -40,8 +40,6 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.text.JTextComponent;
 
-import net.miginfocom.swing.MigLayout;
-
 import org.apache.log4j.Logger;
 
 import sun.print.PSPrinterJob.PluginPrinter;
@@ -51,12 +49,11 @@ import com.iver.andami.Launcher;
 import com.iver.andami.PluginServices;
 import com.iver.andami.ui.mdiManager.IWindowListener;
 import com.iver.cit.gvsig.fmap.layers.FLyrVect;
-import com.iver.cit.gvsig.fmap.layers.SelectableDataSource;
 import com.jeta.forms.components.panel.FormPanel;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 
-import es.icarto.gvsig.navtableforms.dataacces.LayerController;
+
 import es.icarto.gvsig.navtableforms.forms.windowproperties.FormWindowProperties;
 import es.icarto.gvsig.navtableforms.forms.windowproperties.FormWindowPropertiesSerializator;
 import es.icarto.gvsig.navtableforms.gui.formattedtextfields.FormatterFactory;
@@ -75,12 +72,12 @@ import es.icarto.gvsig.navtableforms.ormlite.widgetsdependency.DependencyReader;
 import es.icarto.gvsig.navtableforms.ormlite.widgetsdependency.EnabledComponentBasedOnWidget;
 import es.icarto.gvsig.navtableforms.utils.AbeilleParser;
 import es.udc.cartolab.gvsig.navtable.AbstractNavTable;
-import es.udc.cartolab.gvsig.navtable.listeners.PositionEvent;
-import es.udc.cartolab.gvsig.navtable.listeners.PositionListener;
+import es.udc.cartolab.gvsig.navtable.dataacces.LayerController;
+
 
 @SuppressWarnings("serial")
-public abstract class AbstractForm extends AbstractNavTable implements
-PositionListener {
+public abstract class AbstractForm extends AbstractNavTable {
+
 
     private ValidatorForm formValidator;
     private LayerController layerController;
@@ -207,9 +204,10 @@ PositionListener {
 	}
     }
 
-    public void initWidgets() {
+    @Override
+    protected void initWidgets() {
 	widgetsVector = AbeilleParser.getWidgetsFromContainer(formBody);
-	widgetsVector.size();
+	setListeners();
     }
 
     /**
@@ -240,15 +238,6 @@ PositionListener {
 	return widgetsVector;
     }
 
-    private void initGUI() {
-	MigLayout thisLayout = new MigLayout("inset 0, align center", "[grow]",
-		"[][grow][]");
-	this.setLayout(thisLayout);
-
-	this.add(getNorthPanel(), "shrink, wrap, align center");
-	this.add(getCenterPanel(), "shrink, growx, growy, wrap");
-	this.add(getSouthPanel(), "shrink, align center");
-    }
 
     protected void setListeners() {
 	for (JComponent comp : widgetsVector.values()) {
@@ -283,11 +272,11 @@ PositionListener {
 		    formValidator.addComponentValidator(cv);
 		}
 	    } else if (comp instanceof JCheckBox) {
-		((JCheckBox) comp).addActionListener(
-			validationHandlerForCheckBoxes);
+		((JCheckBox) comp)
+			.addActionListener(validationHandlerForCheckBoxes);
 	    } else if (comp instanceof JTextArea) {
-		((JTextArea) comp).addKeyListener(
-			validationHandlerForTextAreas);
+		((JTextArea) comp)
+			.addKeyListener(validationHandlerForTextAreas);
 	    }
 	}
 	    
@@ -309,43 +298,6 @@ PositionListener {
 		getWidgetComponents().get(comp.getName()).setEnabled(false);
 	    }
 	}
-    }
-
-    @Override
-    public boolean init() {
-	try {
-	    if (getRecordset().getRowCount() <= 0) {
-		JOptionPane.showMessageDialog(this,
-			PluginServices.getText(this, "emptyLayer"));
-		return false;
-	    }
-	    getRecordset().addSelectionListener(this);
-	    layerController = new LayerController(this.layer);
-	    layerController.read(getPosition());
-	} catch (ReadDriverException e) {
-	    logger.error(e.getMessage(), e);
-	    JOptionPane.showMessageDialog(this,
-		    PluginServices.getText(this, "emptyLayer"));
-	    return false;
-	}
-
-	initGUI();
-
-	super.addPositionListener(this);
-
-	initWidgets();
-	setListeners();
-
-	// super.last();
-	refreshGUI();
-	super.repaint();
-	super.setVisible(true);
-	super.setFocusCycleRoot(true);
-
-	super.setChangedValues(false);
-	super.enableSaveButton(true);
-	setOpenNavTableForm(true);
-	return true;
     }
 
     @Override
@@ -526,15 +478,13 @@ PositionListener {
 	return true;
     }
 
-    /*
-     * @return an vector whith the values changed. Take into account that this
-     * method will only check the values defined in the form which can be a
-     * subset of the ones in the layer. For example: gid field, which is
-     * something gvsig needs, is not useful for the user so showing it in the
-     * form makes no sense.
+
+    /**
+     * Use getFormController.getIndexesOfValuesChanged() instead
      */
+    @Deprecated
     protected Vector<Integer> getIndexesOfChangedValues() {
-	int[] idxs = getIndexes();
+	int[] idxs = layerController.getIndexesOfValuesChanged();
 	Vector<Integer> indexes = new Vector<Integer>();
 	for(int i=0; i<idxs.length; i++) {
 	    indexes.add(idxs[i]);
@@ -543,8 +493,9 @@ PositionListener {
     }
 
     public void setChangedValues() {
-	Vector<Integer> indexes = getIndexesOfChangedValues();
-	if (indexes.size() > 0) {
+	int[] indexes = layerController.getIndexesOfValuesChanged();
+
+	if (indexes.length > 0) {
 	    setChangedValues(true);
 	} else {
 	    setChangedValues(false);
@@ -554,10 +505,6 @@ PositionListener {
 
     protected String[] getValues() {
 	return layerController.getValuesChanged().values().toArray(new String[0]);
-    }
-
-    public int[] getIndexes() {
-	return layerController.getIndexesOfValuesChanged();
     }
 
     public boolean isSavingValues() {
@@ -643,29 +590,8 @@ PositionListener {
 
     }
 
-    public SelectableDataSource getRecordset(){
-	try {
-	    return layer.getSource().getRecordset();
-	} catch (ReadDriverException e) {
-	    e.printStackTrace();
-	    return null;
-	}
-    }
-
     public ValidatorForm getFormValidator() {
 	return this.formValidator;
-    }
-
-    public void onPositionChange(PositionEvent e) {
-	long position = ((AbstractNavTable) e.getSource()).getPosition();
-	try {
-	    layerController.read(position);
-	    ((AbstractNavTable) e.getSource()).refreshGUI();
-	} catch (ReadDriverException rde) {
-	    rde.printStackTrace();
-	    layerController.clearAll();
-	    ((AbstractNavTable) e.getSource()).refreshGUI();
-	}
     }
 
     @Override
