@@ -69,10 +69,6 @@ PositionListener {
     private boolean isFillingValues;
     private boolean isSavingValues = false;
 
-    private JPanel NorthPanel;
-    private JPanel SouthPanel;
-    private JPanel CenterPanel;
-
     private HashMap<String, JComponent> widgetsVector;
 
     private ValidationHandlerForFormattedTextFields validationHandlerForFormattedTextFields;
@@ -110,35 +106,12 @@ PositionListener {
 
     public abstract Logger getLoggerName();
 
-    private JPanel getThisNorthPanel() {
-	if (NorthPanel == null) {
-	    NorthPanel = new JPanel();
-	}
-	return NorthPanel;
-    }
-
-    private JPanel getThisSouthPanel() {
-	if (SouthPanel == null) {
-	    SouthPanel = new JPanel();
-	}
-	return SouthPanel;
-    }
-
     @Override
     public JPanel getCenterPanel() {
 	JPanel panel = new JPanel(new BorderLayout());
 	JScrollPane scrollPane = new JScrollPane(formBody);
 	panel.add(scrollPane);
 	return panel;
-    }
-
-    private JPanel getThisCenterPanel() {
-	if (CenterPanel == null) {
-	    CenterPanel = new JPanel();
-	    BorderLayout CenterPanelLayout = new BorderLayout();
-	    CenterPanel.setLayout(CenterPanelLayout);
-	}
-	return CenterPanel;
     }
 
     public String getValueFromLayer(String colName) {
@@ -199,9 +172,9 @@ PositionListener {
 		"[][grow][]");
 	this.setLayout(thisLayout);
 
-	this.add(getThisNorthPanel(), "shrink, wrap, align center");
-	this.add(getThisCenterPanel(), "shrink, growx, growy, wrap");
-	this.add(getThisSouthPanel(), "shrink, align center");
+	this.add(getNorthPanel(), "shrink, wrap, align center");
+	this.add(getCenterPanel(), "shrink, growx, growy, wrap");
+	this.add(getSouthPanel(), "shrink, align center");
     }
 
     protected void setListeners() {
@@ -251,19 +224,10 @@ PositionListener {
 
 	initGUI();
 
-	JPanel northPanel = getNorthPanel();
-	getThisNorthPanel().add(northPanel);
-
-	JPanel centerPanel = getCenterPanel();
-	getThisCenterPanel().add(centerPanel);
-
-	JPanel southPanel = getSouthPanel();
-	getThisSouthPanel().add(southPanel);
+	super.addPositionListener(this);
 
 	initWidgets();
 	setListeners();
-
-	super.addPositionListener(this);
 
 	// super.last();
 	refreshGUI();
