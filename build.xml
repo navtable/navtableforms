@@ -40,6 +40,7 @@
 		<mkdir dir="${dist}" />
 		<jar jarfile="${dist}/lib/${plugin}.jar" basedir="${build}" includes="es/icarto/**" />
 		<jar update="true" jarfile="${dist}/lib/${plugin}.jar" basedir="images" includes="*" />
+		<jar update="true" jarfile="${dist}/lib/${plugin}.jar" basedir="config" includes="*" />
 	</target>
 
 	<target name="copy-data-files">
@@ -48,6 +49,9 @@
 		<copy todir="${dist}/lib">
 	  	    	<fileset dir="lib" includes="*"/>
 	  	</copy>
+		<copy todir="${dist}">
+			<fileset dir="config" includes="text*.properties" />
+		</copy>
 	</target>
 
 	<target name="move-to-andami">

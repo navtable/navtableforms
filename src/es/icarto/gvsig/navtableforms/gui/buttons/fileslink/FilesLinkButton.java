@@ -17,8 +17,7 @@ public class FilesLinkButton extends JButton {
     public FilesLinkButton(AbstractForm form, FilesLinkData data) {
 	this.setIcon(new ImageIcon(AbstractForm.class
 		.getResource("/fileslink.png")));
-	this.setToolTipText(
-		PluginServices.getText(this, "filesLinkTooltip"));
+	this.setToolTipText(PluginServices.getText(this, "fileslink_tooltip"));
 	this.addActionListener(new FilesLinkListener(form, data));
     }
 

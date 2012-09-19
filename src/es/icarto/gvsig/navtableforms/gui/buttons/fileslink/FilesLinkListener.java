@@ -42,16 +42,17 @@ public class FilesLinkListener implements ActionListener {
     private boolean createFolder(File folder) {
 	boolean folderCreated = false;
 	int answer = JOptionPane.showConfirmDialog(null, String.format(
-		PluginServices.getText(this, "folder_not_exists_create_it"),
-		folder.getAbsolutePath()), PluginServices.getText(this,
-			"warning"), JOptionPane.YES_NO_OPTION);
+		PluginServices.getText(this,
+			"fileslink_folder_not_exists_create_it"),
+			folder.getAbsolutePath()), PluginServices.getText(this,
+				"warning"), JOptionPane.YES_NO_OPTION);
 	if (answer == JOptionPane.YES_OPTION) {
 	    // will make *all* directories in the path
 	    if (!folder.mkdirs()) {
 		JOptionPane.showMessageDialog(
 			null,
 			PluginServices.getText(this,
-				"folder_could_not_be_created")
+				"fileslink_folder_could_not_be_created")
 				+ ": "
 				+ folder.getAbsolutePath());
 	    } else {
