@@ -45,7 +45,7 @@ public class JTableContextualMenu implements MouseListener {
 	// yourTable.setFillsViewportHeight(true);
 	//
 	table = (JTable) e.getComponent();
-	if (e.getClickCount() == 2) {
+	if ((e.getClickCount() == 2) && (table.getSelectedRow() > -1)) {
 	    form.actionUpdateRecord(table.getSelectedRow());
 	} else if (e.getButton() == BUTTON_RIGHT) {
 	    if (!JTableUtils.hasRows(table)
