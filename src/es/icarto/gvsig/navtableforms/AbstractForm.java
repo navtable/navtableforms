@@ -206,13 +206,13 @@ PositionListener {
 
     @Override
     public boolean init() {
-	getRecordset().addSelectionListener(this);
 	try {
 	    if (getRecordset().getRowCount() <= 0) {
 		JOptionPane.showMessageDialog(this,
 			PluginServices.getText(this, "emptyLayer"));
 		return false;
 	    }
+	    getRecordset().addSelectionListener(this);
 	    layerController = new LayerController(this.layer);
 	    layerController.read(getPosition());
 	} catch (ReadDriverException e) {
