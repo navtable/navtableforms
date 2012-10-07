@@ -1,4 +1,4 @@
-package es.icarto.gvsig.navtableforms.validation.rules;
+package es.icarto.gvsig.navtableforms.domainvalidatior.rules;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -9,8 +9,8 @@ import java.util.Random;
 import org.junit.Before;
 import org.junit.Test;
 
-import es.icarto.gvsig.navtableforms.validation.rules.IntegerPositiveRule;
-import es.icarto.gvsig.navtableforms.validation.rules.ValidationRule;
+import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.rules.IntegerPositiveRule;
+import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.rules.ValidationRule;
 
 public class IntegerPositiveTests {
 

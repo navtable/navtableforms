@@ -1,4 +1,4 @@
-package es.icarto.gvsig.navtableforms.validation.rules;
+package es.icarto.gvsig.navtableforms.domainvalidatior.rules;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
