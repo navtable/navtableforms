@@ -32,19 +32,25 @@ public class ORMLite {
     public ORMLiteAppDomain getAppDomain() {
 	if (appDomain == null) {
 	    try {
-                XMLSAXParser fp = new XMLSAXParser(xmlFile);
-                appDomain = fp.getAD();
+		XMLSAXParser fp = new XMLSAXParser(xmlFile);
+		appDomain = fp.getAD();
 	    } catch (Exception e) {
 		logger.error(e.getMessage(), e.getCause());
-                appDomain = null;
+		appDomain = null;
 	    }
 	}
 	return appDomain;
     }
 
     public ORMLiteAppDomain reloadAppDomain() {
-	XMLSAXParser fp = new XMLSAXParser(xmlFile);
-	appDomain = fp.getAD();
+	XMLSAXParser fp;
+	try {
+	    fp = new XMLSAXParser(xmlFile);
+	    appDomain = fp.getAD();
+	} catch (Exception e) {
+	    logger.error(e.getMessage(), e.getCause());
+	    appDomain = null;
+	}
 	return appDomain;
     }
 
