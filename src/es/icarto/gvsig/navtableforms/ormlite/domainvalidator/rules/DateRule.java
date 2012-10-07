@@ -15,36 +15,28 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-package es.icarto.gvsig.navtableforms.ormlite.domain;
-import java.util.ArrayList;
+package es.icarto.gvsig.navtableforms.ormlite.domainvalidator.rules;
 
-public class DomainValues {
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
-    ArrayList<KeyValue> data;
+import es.udc.cartolab.gvsig.navtable.format.DateFormatNT;
 
-    public DomainValues(ArrayList<KeyValue> values) {
-	this.data = values;
+public class DateRule extends ValidationRule {
+
+    @Override
+    public boolean validate(String value) {
+	return isEmpty(value) || isDate(value);
     }
 
-    public ArrayList<KeyValue> getValues() {
-	return data;
-    }
-
-    public ArrayList<KeyValue> getValuesFilteredBy(ArrayList<String> ids) {
-	ArrayList<KeyValue> subset = new ArrayList<KeyValue>();
-	for (KeyValue kv : data) {
-	    if (kv.getForeignKeys().containsAll(ids)) {
-		subset.add(kv);
-	    }
+    private boolean isDate(String value) {
+	SimpleDateFormat formatter = DateFormatNT.getDateFormat();
+	try {
+	    formatter.parse(value);
+	    return true;
+	} catch (ParseException e) {
+	    return false;
 	}
-	return subset;
     }
 
-    public void addValue(KeyValue value) {
-	data.add(value);
-    }
-
-    public void addValues(ArrayList<KeyValue> values) {
-	values.addAll(values);
-    }
 }

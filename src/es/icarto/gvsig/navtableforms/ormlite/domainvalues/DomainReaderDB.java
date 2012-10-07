@@ -15,7 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-package es.icarto.gvsig.navtableforms.ormlite.domain;
+package es.icarto.gvsig.navtableforms.ormlite.domainvalues;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ import es.udc.cartolab.gvsig.users.utils.DBSession;
  * @author Jorge López <jlopez@cartolab.es>
  * 
  */
-public class DBDomainReader implements DomainReader {
+public class DomainReaderDB implements DomainReader {
 
     private String table = null;
     private String schema = null;
@@ -47,7 +47,7 @@ public class DBDomainReader implements DomainReader {
     private String columnValue = null;
     private ArrayList<String> columnForeignKey = new ArrayList<String>();
 
-    public DBDomainReader() {
+    public DomainReaderDB() {
     }
 
     public void setSchema(String schema) {

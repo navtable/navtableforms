@@ -1,4 +1,4 @@
-package es.icarto.gvsig.navtableforms.validation.listeners;
+package es.icarto.gvsig.navtableforms.ormlite.domainvalidator.listeners;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

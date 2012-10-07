@@ -15,17 +15,14 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-package es.icarto.gvsig.navtableforms.validation;
+package es.icarto.gvsig.navtableforms.ormlite.domainvalidator;
 
 import java.util.ArrayList;
 
-public class FormValidator {
+public class ValidatorForm {
 
-    boolean hasValidationErrors = false;
-    ArrayList<ComponentValidator> cvs = new ArrayList<ComponentValidator>();
-
-    public FormValidator() {
-    }
+    private boolean hasValidationErrors = false;
+    private ArrayList<ValidatorComponent> cvs = new ArrayList<ValidatorComponent>();
 
     public boolean hasValidationErrors() {
 	return hasValidationErrors;
@@ -40,16 +37,16 @@ public class FormValidator {
 	hasValidationErrors = bol;
     }
 
-    public void addComponentValidator(ComponentValidator cv) {
+    public void addComponentValidator(ValidatorComponent cv) {
 	cvs.add(cv);
     }
 
-    public ArrayList<ComponentValidator> getComponentValidators() {
+    public ArrayList<ValidatorComponent> getComponentValidators() {
 	return cvs;
     }
-    
-    public ComponentValidator getComponentValidator(String name) {
-	for (ComponentValidator cv : cvs) {
+
+    public ValidatorComponent getComponentValidator(String name) {
+	for (ValidatorComponent cv : cvs) {
 	    if (cv.getComponentName().equalsIgnoreCase(name)) {
 		return cv;
 	    }
@@ -59,7 +56,7 @@ public class FormValidator {
 
     public void validate() {
 	setValidationErrors(false);
-	for (ComponentValidator cv : cvs) {
+	for (ValidatorComponent cv : cvs) {
 	    if (!cv.validate()) {
 		setValidationErrors(true);
 	    }

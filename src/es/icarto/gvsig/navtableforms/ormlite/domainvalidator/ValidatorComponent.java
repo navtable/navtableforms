@@ -15,7 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-package es.icarto.gvsig.navtableforms.validation;
+package es.icarto.gvsig.navtableforms.ormlite.domainvalidator;
 
 import java.awt.Color;
 
@@ -23,16 +23,18 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JTextField;
 
-import es.icarto.gvsig.navtableforms.ormlite.domain.KeyValue;
+import es.icarto.gvsig.navtableforms.ormlite.domainvalues.KeyValue;
 
-public class ComponentValidator {
+public class ValidatorComponent {
 
     private JComponent c = null;
     private Color defaultbg = null;
+    private ValidatorDomain domain = null;
 
-    public ComponentValidator(JComponent c) {
+    public ValidatorComponent(JComponent c, ValidatorDomain dv) {
 	this.c = c;
 	defaultbg = c.getBackground();
+	this.domain = dv;
     }
 
     public boolean validate() {
@@ -47,7 +49,7 @@ public class ComponentValidator {
 		name = c.getName();
 		if (((JComboBox) c).getSelectedItem() instanceof KeyValue) {
 		    value = ((KeyValue) ((JComboBox) c).getSelectedItem())
-		    .getValue();
+			    .getValue();
 		} else {
 		    value = ((JComboBox) c).getSelectedItem().toString();
 		}
@@ -67,7 +69,6 @@ public class ComponentValidator {
     }
 
     public boolean isValid(String name, String value) {
-	DomainValidator domain = new DomainValidator(name);
 	boolean val = domain.validate(value);
 	return val;
     }

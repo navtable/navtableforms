@@ -1,4 +1,4 @@
-package es.icarto.gvsig.navtableforms.validation.listeners;
+package es.icarto.gvsig.navtableforms.ormlite.domainvalidator.listeners;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -6,7 +6,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JComboBox;
 
 import es.icarto.gvsig.navtableforms.AbstractForm;
-import es.icarto.gvsig.navtableforms.ormlite.domain.KeyValue;
+import es.icarto.gvsig.navtableforms.ormlite.domainvalues.KeyValue;
 
 public class ValidationHandlerForComboBoxes implements ActionListener {
 

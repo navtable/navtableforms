@@ -15,25 +15,17 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-package es.icarto.gvsig.navtableforms.validation.rules;
+package es.icarto.gvsig.navtableforms.ormlite.domainvalues;
 
-public class IntegerPositiveRule extends ValidationRule {
 
-    @Override
-    public boolean validate(String value) {
-	return isEmpty(value) || isIntegerPositive(value);
-    }
+/**
+ * Interface for all DomainReaders.
+ * 
+ * @author Jorge López <jlopez@cartolab.es>
+ * 
+ */
+public interface DomainReader {
 
-    private boolean isIntegerPositive(String value) {
-	boolean integerPositive = false;
-	try {
-	    if (Integer.parseInt(value) >= 0) {
-		integerPositive = true;
-	    }
-	    return integerPositive;
-	} catch (NumberFormatException nfe) {
-	    return integerPositive;
-	}
-    }
+    public DomainValues getDomainValues();
 
 }

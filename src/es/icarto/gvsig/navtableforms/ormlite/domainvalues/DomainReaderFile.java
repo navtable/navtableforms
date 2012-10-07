@@ -15,7 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-package es.icarto.gvsig.navtableforms.ormlite.domain;
+package es.icarto.gvsig.navtableforms.ormlite.domainvalues;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -40,12 +40,12 @@ import java.util.ArrayList;
  * @author Jorge López <jlopez@cartolab.es>
  * 
  */
-public class FileDomainReader implements DomainReader {
+public class DomainReaderFile implements DomainReader {
 
     String fileName = null;
     String fieldAlias = null;
 
-    public FileDomainReader() {
+    public DomainReaderFile() {
     }
 
     public void setFileName(String fileName) {

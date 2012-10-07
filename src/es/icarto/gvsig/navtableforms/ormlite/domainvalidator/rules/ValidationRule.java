@@ -15,7 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-package es.icarto.gvsig.navtableforms.validation.rules;
+package es.icarto.gvsig.navtableforms.ormlite.domainvalidator.rules;
 
 public abstract class ValidationRule {
 

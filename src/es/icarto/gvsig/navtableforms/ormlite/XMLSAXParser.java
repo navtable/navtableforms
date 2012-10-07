@@ -1,16 +1,16 @@
 /*
  * Copyright (c) 2011. iCarto
- * 
+ *
  * This file is part of extNavTableForms
- * 
+ *
  * extNavTableForms is free software: you can redistribute it and/or modify it under the terms
  * of the GNU General Public License as published by the Free Software Foundation, either
  * version 3 of the License, or any later version.
- * 
+ *
  * extNavTableForms is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with extNavTableForms.
  * If not, see <http://www.gnu.org/licenses/>.
  */
@@ -18,8 +18,6 @@ package es.icarto.gvsig.navtableforms.ormlite;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -32,18 +30,19 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import com.iver.cit.gvsig.fmap.drivers.FieldDescription;
 
-import es.icarto.gvsig.navtableforms.ormlite.domain.DBDomainReader;
-import es.icarto.gvsig.navtableforms.ormlite.domain.DomainReader;
-import es.icarto.gvsig.navtableforms.ormlite.domain.FileDomainReader;
-import es.icarto.gvsig.navtableforms.validation.rules.ValidationRule;
+import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.DomainRulesFactory;
+import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.rules.ValidationRule;
+import es.icarto.gvsig.navtableforms.ormlite.domainvalues.DomainReaderDB;
+import es.icarto.gvsig.navtableforms.ormlite.domainvalues.DomainReader;
+import es.icarto.gvsig.navtableforms.ormlite.domainvalues.DomainReaderFile;
 
 /**
  * SAX parser to build from a XML structure several objects needed for
  * validation.
- * 
+ *
  * @author Andrés Maneiro <amaneiro@icarto.es>
  * @author Jorge López <jlopez@cartolab.es>
- * 
+ *
  */
 public class XMLSAXParser extends DefaultHandler {
 
@@ -54,23 +53,17 @@ public class XMLSAXParser extends DefaultHandler {
     static final boolean GVSIG_DEFAULT_BOOLEAN = false;
 
     private String xmlFile = null;
-    private ORMLiteDataBase dbo = null;
-    private ORMLiteAplicationDomain ad = null;
+    private ORMLiteAppDomain ad = null;
 
-    private ORMLiteDataBase.ORMLiteTable tmpTable = null;
-    private String tmpLayerAlias = null;
-    private List<String> tmpPK = null;
     private String tmpVal = null;
     private DomainReader tmpDomainReader = null;
     private FieldDescription tmpFieldDescription = null;
 
-    
-    public XMLSAXParser(String xmlFile) throws ParserConfigurationException, SAXException, IOException  {
-	tmpPK = new ArrayList<String>();
+    private static Logger logger = Logger.getLogger("SAX Parser");
 
+    public XMLSAXParser(String xmlFile) throws ParserConfigurationException, SAXException, IOException  {
 	setXMLFile(xmlFile);
-	setDBO(new ORMLiteDataBase());
-	setAD(new ORMLiteAplicationDomain());
+	setAD(new ORMLiteAppDomain());
 
 	parseDocument();
     }
@@ -87,19 +80,11 @@ public class XMLSAXParser extends DefaultHandler {
 	this.xmlFile = xmlFile;
     }
 
-    public ORMLiteDataBase getDBO() {
-	return this.dbo;
-    }
-
-    private void setDBO(ORMLiteDataBase newDBO) {
-	this.dbo = newDBO;
-    }
-
-    public ORMLiteAplicationDomain getAD() {
+    public ORMLiteAppDomain getAD() {
 	return ad;
     }
 
-    public void setAD(ORMLiteAplicationDomain ad) {
+    public void setAD(ORMLiteAppDomain ad) {
 	this.ad = ad;
     }
 
@@ -107,10 +92,10 @@ public class XMLSAXParser extends DefaultHandler {
 
 	// get a factory
 	SAXParserFactory spf = SAXParserFactory.newInstance();
-	
+
 	// get a new instance of parser
 	SAXParser sp = spf.newSAXParser();
-	
+
 	// parse the file and also register this class for call backs
 	sp.parse(getXMLFile(), this);
 
@@ -125,13 +110,7 @@ public class XMLSAXParser extends DefaultHandler {
 	    Attributes attributes) throws SAXException {
 	// reset
 	tmpVal = "";
-	if (qName.equalsIgnoreCase("LAYER")) {
-	    tmpLayerAlias = attributes.getValue("alias");
-
-	    // set table
-	    tmpTable = getDBO().new ORMLiteTable();
-	    tmpTable.setTableAlias(tmpLayerAlias);
-	} else if (qName.equalsIgnoreCase("FIELD")) {
+	if (qName.equalsIgnoreCase("FIELD")) {
 	    // set field
 	    tmpFieldDescription = new FieldDescription();
 	}
@@ -140,7 +119,7 @@ public class XMLSAXParser extends DefaultHandler {
     /**
      * Callback called every time SAX parser gets text (spaces, text between
      * tags, ...).
-     * 
+     *
      * SAX parsers may return all contiguous character data in a single chunk,
      * or they may split it into several chunks. See:
      * http://download.oracle.com/javase/1.5.0/docs/api/org/xml/sax/
@@ -164,73 +143,56 @@ public class XMLSAXParser extends DefaultHandler {
 	    tmpFieldDescription.setFieldName(tmpVal);
 	}
 
-	// set tmp table structure
-	else if (qName.equalsIgnoreCase("TABLENAME")) {
-	    tmpTable.setTableName(tmpVal);
-	} else if (qName.equalsIgnoreCase("PKELEMENT")) {
-	    tmpPK.add(tmpVal);
-	} else if (qName.equalsIgnoreCase("PRIMARYKEY")) {
-	    String[] aux = new String[tmpPK.size()];
-	    for (int i = 0; i < tmpPK.size(); i++) {
-		aux[i] = tmpPK.get(i);
-	    }
-	    tmpTable.setPrimaryKey(aux);
-	    tmpPK.removeAll(tmpPK);
-	}
-
 	else if (qName.equalsIgnoreCase("DRTYPE")) {
 	    if (tmpVal.equalsIgnoreCase("DB")) {
-		tmpDomainReader = new DBDomainReader();
+		tmpDomainReader = new DomainReaderDB();
 	    } else if (tmpVal.equalsIgnoreCase("FILE")) {
-		tmpDomainReader = new FileDomainReader();
+		tmpDomainReader = new DomainReaderFile();
 	    }
 	}
 
 	// set tmp domain db reader configuration
 	else if (qName.equalsIgnoreCase("DRDBTABLE")) {
-	    if (tmpDomainReader instanceof DBDomainReader) {
-		((DBDomainReader) tmpDomainReader).setTable(tmpVal);
+	    if (tmpDomainReader instanceof DomainReaderDB) {
+		((DomainReaderDB) tmpDomainReader).setTable(tmpVal);
 	    }
 	} else if (qName.equalsIgnoreCase("DRDBSCHEMA")) {
-	    if (tmpDomainReader instanceof DBDomainReader) {
-		((DBDomainReader) tmpDomainReader).setSchema(tmpVal);
+	    if (tmpDomainReader instanceof DomainReaderDB) {
+		((DomainReaderDB) tmpDomainReader).setSchema(tmpVal);
 	    }
 	} else if (qName.equalsIgnoreCase("DRDBCOLUMNALIAS")) {
-	    if (tmpDomainReader instanceof DBDomainReader) {
-		((DBDomainReader) tmpDomainReader).setColumnAlias(tmpVal);
+	    if (tmpDomainReader instanceof DomainReaderDB) {
+		((DomainReaderDB) tmpDomainReader).setColumnAlias(tmpVal);
 	    }
 	} else if (qName.equalsIgnoreCase("DRDBCOLUMNVALUE")) {
-	    if (tmpDomainReader instanceof DBDomainReader) {
-		((DBDomainReader) tmpDomainReader).setColumnValue(tmpVal);
+	    if (tmpDomainReader instanceof DomainReaderDB) {
+		((DomainReaderDB) tmpDomainReader).setColumnValue(tmpVal);
 	    }
 	} else if (qName.equalsIgnoreCase("DRDBFOREIGNKEY")) {
-	    if (tmpDomainReader instanceof DBDomainReader) {
-		((DBDomainReader) tmpDomainReader).addColumnForeignKey(tmpVal);
+	    if (tmpDomainReader instanceof DomainReaderDB) {
+		((DomainReaderDB) tmpDomainReader).addColumnForeignKey(tmpVal);
 	    }
 	}
 
 	// set tmp domain file reader configuration
 	else if (qName.equalsIgnoreCase("DRFILENAME")) {
-	    if (tmpDomainReader instanceof FileDomainReader) {
-		((FileDomainReader) tmpDomainReader).setFileName(this
+	    if (tmpDomainReader instanceof DomainReaderFile) {
+		((DomainReaderFile) tmpDomainReader).setFileName(this
 			.getXMLFileDir()
 			+ tmpVal);
 	    }
 	} else if (qName.equalsIgnoreCase("DRFILEFIELDALIAS")) {
-	    if (tmpDomainReader instanceof FileDomainReader) {
-		((FileDomainReader) tmpDomainReader).setFieldAlias(tmpVal);
+	    if (tmpDomainReader instanceof DomainReaderFile) {
+		((DomainReaderFile) tmpDomainReader).setFieldAlias(tmpVal);
 	    }
-	}
-
-	// save tmp values in DBO and FLS objects
-	else if (qName.equalsIgnoreCase("LAYER")) {
-	    getDBO().addTable(tmpLayerAlias, tmpTable);
 	}
 
 	// save validation rule for the field
 	else if (qName.equalsIgnoreCase("VALIDATIONRULE")) {
-	    ValidationRule rule = getAD().createRule(tmpVal);
-	    getAD().addRule(tmpFieldDescription.getFieldName(), rule);
+	    ValidationRule rule = DomainRulesFactory.createRule(tmpVal);
+	    if (rule != null) {
+		getAD().addRule(tmpFieldDescription.getFieldName(), rule);
+	    }
 	}
 
 	// save tmp values of DomainReader in AplicationDomain

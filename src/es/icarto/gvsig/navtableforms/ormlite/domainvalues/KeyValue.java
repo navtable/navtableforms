@@ -15,7 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-package es.icarto.gvsig.navtableforms.ormlite.domain;
+package es.icarto.gvsig.navtableforms.ormlite.domainvalues;
 
 import java.util.ArrayList;
 

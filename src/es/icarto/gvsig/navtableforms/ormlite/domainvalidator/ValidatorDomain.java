@@ -15,12 +15,38 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-package es.icarto.gvsig.navtableforms.validation.rules;
+package es.icarto.gvsig.navtableforms.ormlite.domainvalidator;
 
-public class MandatoryRule extends ValidationRule {
+import java.util.HashSet;
+import java.util.Set;
 
-    @Override
-    public boolean validate(String value) {
-	return !isEmpty(value);
+import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.rules.ValidationRule;
+
+public class ValidatorDomain {
+
+    private Set<ValidationRule> rules = null;
+
+    public ValidatorDomain(Set<ValidationRule> rules) {
+	this.rules = rules;
     }
+
+    public void addRule(ValidationRule rule) {
+	if (rules == null) {
+	    rules = new HashSet<ValidationRule>();
+	} else {
+	    this.rules.add(rule);
+	}
+    }
+
+    public boolean validate(String value) {
+	if (rules != null) {
+	    for (ValidationRule rule : rules) {
+		if (!rule.validate(value)) {
+		    return false;
+		}
+	    }
+	}
+	return true;
+    }
+
 }
