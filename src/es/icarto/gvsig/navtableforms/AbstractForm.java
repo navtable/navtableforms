@@ -66,7 +66,7 @@ PositionListener {
 
     private ValidatorForm formValidator;
     private LayerController layerController;
-    private final FormPanel formBody;
+    protected FormPanel formBody;
     private boolean isFillingValues;
     private boolean isSavingValues = false;
 
