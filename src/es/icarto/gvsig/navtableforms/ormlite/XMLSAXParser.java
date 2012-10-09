@@ -31,9 +31,10 @@ import org.xml.sax.helpers.DefaultHandler;
 import com.iver.cit.gvsig.fmap.drivers.FieldDescription;
 
 import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.DomainRulesFactory;
+import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.ValidatorDomain;
 import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.rules.ValidationRule;
-import es.icarto.gvsig.navtableforms.ormlite.domainvalues.DomainReaderDB;
 import es.icarto.gvsig.navtableforms.ormlite.domainvalues.DomainReader;
+import es.icarto.gvsig.navtableforms.ormlite.domainvalues.DomainReaderDB;
 import es.icarto.gvsig.navtableforms.ormlite.domainvalues.DomainReaderFile;
 
 /**
@@ -191,7 +192,14 @@ public class XMLSAXParser extends DefaultHandler {
 	else if (qName.equalsIgnoreCase("VALIDATIONRULE")) {
 	    ValidationRule rule = DomainRulesFactory.createRule(tmpVal);
 	    if (rule != null) {
-		getAD().addRule(tmpFieldDescription.getFieldName(), rule);
+		if (getAD().getDomainValidatorForComponent(
+			tmpFieldDescription.getFieldName()) == null) {
+		    getAD().addDomainValidator(
+			    tmpFieldDescription.getFieldName(),
+			    new ValidatorDomain(null));
+		}
+		getAD().getDomainValidatorForComponent(
+			tmpFieldDescription.getFieldName()).addRule(rule);
 	    }
 	}
 
@@ -200,7 +208,6 @@ public class XMLSAXParser extends DefaultHandler {
 	    getAD().addDomainValues(tmpFieldDescription.getFieldName(),
 		    tmpDomainReader.getDomainValues());
 	}
-
     }
 
 }

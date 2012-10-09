@@ -33,9 +33,12 @@ public class ValidatorDomain {
     public void addRule(ValidationRule rule) {
 	if (rules == null) {
 	    rules = new HashSet<ValidationRule>();
-	} else {
-	    this.rules.add(rule);
 	}
+	this.rules.add(rule);
+    }
+
+    public Set<ValidationRule> getRules() {
+	return rules;
     }
 
     public boolean validate(String value) {

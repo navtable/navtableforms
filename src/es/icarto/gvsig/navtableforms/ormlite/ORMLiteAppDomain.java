@@ -20,7 +20,6 @@ package es.icarto.gvsig.navtableforms.ormlite;
 import java.util.HashMap;
 
 import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.ValidatorDomain;
-import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.rules.ValidationRule;
 import es.icarto.gvsig.navtableforms.ormlite.domainvalues.DomainValues;
 
 public class ORMLiteAppDomain {
@@ -53,15 +52,9 @@ public class ORMLiteAppDomain {
 	return domainValidators.get(componentName);
     }
 
-    public void addRule(String componentName, ValidationRule rule) {
-	if (rule != null) {
-	    ValidatorDomain dv = domainValidators.get(componentName);
-	    if (dv == null) {
-		dv = new ValidatorDomain(null);
-	    }
-	    dv.addRule(rule);
-	    domainValidators.put(componentName, dv);
-	}
+    public void addDomainValidator(String componentName,
+	    ValidatorDomain validatorDomain) {
+	domainValidators.put(componentName, validatorDomain);
     }
 
 }
