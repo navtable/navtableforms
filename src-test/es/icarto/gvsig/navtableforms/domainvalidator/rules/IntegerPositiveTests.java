@@ -1,4 +1,4 @@
-package es.icarto.gvsig.navtableforms.domainvalidatior.rules;
+package es.icarto.gvsig.navtableforms.domainvalidator.rules;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -34,6 +34,11 @@ public class IntegerPositiveTests {
     @Test
     public void fiveIsIntegerPositive() {
 	assertTrue(rule.validate("5"));
+    }
+
+    @Test
+    public void letterIsNotDoublePositive() {
+	assertFalse(rule.validate("f"));
     }
 
     @Test

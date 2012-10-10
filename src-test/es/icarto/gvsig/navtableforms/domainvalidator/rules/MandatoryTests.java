@@ -1,4 +1,4 @@
-package es.icarto.gvsig.navtableforms.domainvalidatior.rules;
+package es.icarto.gvsig.navtableforms.domainvalidator.rules;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
