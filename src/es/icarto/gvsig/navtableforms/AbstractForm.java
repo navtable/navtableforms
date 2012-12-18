@@ -45,16 +45,17 @@ import com.jeta.forms.components.panel.FormPanel;
 import es.icarto.gvsig.navtableforms.dataacces.LayerController;
 import es.icarto.gvsig.navtableforms.gui.formattedtextfields.FormatterFactory;
 import es.icarto.gvsig.navtableforms.ormlite.ORMLite;
-import es.icarto.gvsig.navtableforms.ormlite.domain.DomainValues;
-import es.icarto.gvsig.navtableforms.ormlite.domain.KeyValue;
+import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.ValidatorComponent;
+import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.ValidatorDomain;
+import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.ValidatorForm;
+import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.listeners.ValidationHandlerForCheckBoxes;
+import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.listeners.ValidationHandlerForComboBoxes;
+import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.listeners.ValidationHandlerForFormattedTextFields;
+import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.listeners.ValidationHandlerForTextAreas;
+import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.listeners.ValidationHandlerForTextFields;
+import es.icarto.gvsig.navtableforms.ormlite.domainvalues.DomainValues;
+import es.icarto.gvsig.navtableforms.ormlite.domainvalues.KeyValue;
 import es.icarto.gvsig.navtableforms.utils.AbeilleParser;
-import es.icarto.gvsig.navtableforms.validation.ComponentValidator;
-import es.icarto.gvsig.navtableforms.validation.FormValidator;
-import es.icarto.gvsig.navtableforms.validation.listeners.ValidationHandlerForCheckBoxes;
-import es.icarto.gvsig.navtableforms.validation.listeners.ValidationHandlerForComboBoxes;
-import es.icarto.gvsig.navtableforms.validation.listeners.ValidationHandlerForFormattedTextFields;
-import es.icarto.gvsig.navtableforms.validation.listeners.ValidationHandlerForTextAreas;
-import es.icarto.gvsig.navtableforms.validation.listeners.ValidationHandlerForTextFields;
 import es.udc.cartolab.gvsig.navtable.AbstractNavTable;
 import es.udc.cartolab.gvsig.navtable.listeners.PositionEvent;
 import es.udc.cartolab.gvsig.navtable.listeners.PositionListener;
@@ -63,9 +64,9 @@ import es.udc.cartolab.gvsig.navtable.listeners.PositionListener;
 public abstract class AbstractForm extends AbstractNavTable implements
 PositionListener {
 
-    private FormValidator formValidator;
+    private ValidatorForm formValidator;
     private LayerController layerController;
-    private final FormPanel formBody;
+    protected FormPanel formBody;
     private boolean isFillingValues;
     private boolean isSavingValues = false;
 
@@ -78,6 +79,7 @@ PositionListener {
     private ValidationHandlerForTextAreas validationHandlerForTextAreas;
 
     private static Logger logger = null;
+    private ORMLite ormlite;
 
     public AbstractForm(FLyrVect layer) {
 	super(layer);
@@ -87,7 +89,8 @@ PositionListener {
     }
 
     private void initValidation() {
-	formValidator = new FormValidator();
+	ormlite = new ORMLite(getXMLPath());
+	formValidator = new ValidatorForm();
 	validationHandlerForFormattedTextFields = new ValidationHandlerForFormattedTextFields(
 		this);
 	validationHandlerForTextFields = new ValidationHandlerForTextFields(
@@ -182,18 +185,33 @@ PositionListener {
 	    if (comp instanceof JFormattedTextField) {
 		((JFormattedTextField) comp).addKeyListener(
 			validationHandlerForFormattedTextFields);
-		ComponentValidator cv = new ComponentValidator(comp);
-		formValidator.addComponentValidator(cv);
+		ValidatorDomain dv = ormlite.getAppDomain()
+			.getDomainValidatorForComponent(
+				comp.getName());
+		if (dv != null) {
+		    ValidatorComponent cv = new ValidatorComponent(comp, dv);
+		    formValidator.addComponentValidator(cv);
+		}
 	    } else if (comp instanceof JTextField) {
 		((JTextField) comp).addKeyListener(
 			validationHandlerForTextFields);
-		ComponentValidator cv = new ComponentValidator(comp);
-		formValidator.addComponentValidator(cv);
+		ValidatorDomain dv = ormlite.getAppDomain()
+			.getDomainValidatorForComponent(
+				comp.getName());
+		if (dv != null) {
+		    ValidatorComponent cv = new ValidatorComponent(comp, dv);
+		    formValidator.addComponentValidator(cv);
+		}
 	    } else if (comp instanceof JComboBox) {
 		((JComboBox) comp).addActionListener(
 			validationHandlerForComboBoxes);
-		ComponentValidator cv = new ComponentValidator(comp);
-		formValidator.addComponentValidator(cv);
+		ValidatorDomain dv = ormlite.getAppDomain()
+			.getDomainValidatorForComponent(
+				comp.getName());
+		if (dv != null) {
+		    ValidatorComponent cv = new ValidatorComponent(comp, dv);
+		    formValidator.addComponentValidator(cv);
+		}
 	    } else if (comp instanceof JCheckBox) {
 		((JCheckBox) comp).addActionListener(
 			validationHandlerForCheckBoxes);
@@ -289,8 +307,8 @@ PositionListener {
     protected void fillJComboBox(JComboBox combobox) {
 	String colName = combobox.getName();
 	String fieldValue = layerController.getValue(colName);
-	DomainValues dv = ORMLite.getAplicationDomainObject(getXMLPath())
-		.getDomainValuesForComponent(colName);
+	DomainValues dv = ormlite.getAppDomain().getDomainValuesForComponent(
+		colName);
 	if (dv != null) { // the component has domain values defined
 	    addDomainValuesToComboBox(combobox, dv.getValues());
 	    setDomainValueSelected(combobox, fieldValue);
@@ -302,8 +320,8 @@ PositionListener {
     public void fillJComboBox(JComboBox combobox, ArrayList<String> foreignKeys) {
 	String colName = combobox.getName();
 	String fieldValue = layerController.getValue(colName);
-	DomainValues dv = ORMLite.getAplicationDomainObject(getXMLPath())
-		.getDomainValuesForComponent(colName);
+	DomainValues dv = ormlite.getAppDomain().getDomainValuesForComponent(
+		colName);
 	if (dv != null) { // the component has domain values defined
 	    addDomainValuesToComboBox(combobox, dv.getValuesFilteredBy(foreignKeys));
 	    setDomainValueSelected(combobox, fieldValue);
@@ -493,7 +511,7 @@ PositionListener {
 	}
     }
 
-    public FormValidator getFormValidator() {
+    public ValidatorForm getFormValidator() {
 	return this.formValidator;
     }
 
