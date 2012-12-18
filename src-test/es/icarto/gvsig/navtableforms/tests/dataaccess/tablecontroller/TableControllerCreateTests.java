@@ -1,4 +1,4 @@
-package es.icarto.gvsig.navtableforms.dataaccess;
+package es.icarto.gvsig.navtableforms.tests.dataaccess.tablecontroller;
 
 import static org.junit.Assert.assertEquals;
 
@@ -11,12 +11,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.hardcode.driverManager.DriverLoadException;
-import com.hardcode.gdbms.driver.exceptions.InitializeWriterException;
 import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
 import com.hardcode.gdbms.engine.data.DataSourceFactory;
 import com.hardcode.gdbms.engine.data.NoSuchTableException;
-import com.iver.cit.gvsig.exceptions.visitors.StartWriterVisitorException;
-import com.iver.cit.gvsig.exceptions.visitors.StopWriterVisitorException;
 import com.iver.cit.gvsig.fmap.crs.CRSFactory;
 import com.iver.cit.gvsig.fmap.edition.EditableAdapter;
 import com.iver.cit.gvsig.fmap.edition.IEditableSource;
@@ -25,7 +22,7 @@ import com.iver.cit.gvsig.fmap.layers.SelectableDataSource;
 
 import es.icarto.gvsig.navtableforms.dataacces.TableController;
 
-public class TableControllerTests {
+public class TableControllerCreateTests {
 
     public static IProjection TEST_PROJECTION = CRSFactory
 	    .getCRS("EPSG:23030");
@@ -53,58 +50,32 @@ public class TableControllerTests {
     @Test
     public void testOperationCreateDBF() throws ReadDriverException,
     DriverLoadException, NoSuchTableException, ParseException {
-	IEditableSource model = getIEditableSourceFromFile("data-test/110m_land.dbf");
+	IEditableSource model = getIEditableSourceFromFile("data-test/test.dbf");
 
 	TableController tc = new TableController(model);
 	HashMap<String, String> newValues = new HashMap<String, String>();
-	String fieldName = "FeatureCla";
-	String fieldValue = "test";
-	newValues.put(fieldName, fieldValue);
+	String textName = "f_text";
+	String textValue = "test";
+	newValues.put(textName, textValue);
+	String intShorName = "f_int_shor";
+	String intShorValue = "1";
+	newValues.put(intShorName, intShorValue);
+	String intLongName = "f_int_long";
+	String intLongValue = "99";
+	newValues.put(intLongName, intLongValue);
+	String doubleName = "f_double";
+	String doubleValue = "3.9";
+	newValues.put(doubleName, doubleValue);
+	String floatName = "f_float";
+	String floatValue = "66.12";
+	newValues.put(floatName, floatValue);
+	String dateName = "f_date";
+	String dateValue = "08/25/2005";
+	newValues.put(dateName, dateValue);
 	int rowNumberBeforeAdding = tc.getRowCount();
 	long lastPosition = tc.create(newValues);
 	int rowNumberAfterAdding = tc.getRowCount();
 	assertEquals(rowNumberAfterAdding, rowNumberBeforeAdding + 1);
-    }
-
-    @Test
-    public void testOperationReadDBF() throws ReadDriverException,
-    DriverLoadException, NoSuchTableException {
-	IEditableSource model = getIEditableSourceFromFile("data-test/110m_land.dbf");
-
-	TableController tc = new TableController(model);
-	tc.read(0); // FeatureCla = "Country" (string), FIRST_Scal = 1 (integer)
-	String value = tc.getValue("FeatureCla");
-	boolean check = value.equals("Country");
-	assertEquals(true, check);
-    }
-
-    @Test
-    public void testOperationUpdateDBF() throws ReadDriverException,
-    DriverLoadException, NoSuchTableException {
-	IEditableSource model = getIEditableSourceFromFile("data-test/110m_land.dbf");
-
-	TableController tc = new TableController(model);
-	tc.read(1); // FeatureCla = "Country" (string), FIRST_Scal = 1 (integer)
-	String oldValue = tc.getValue("FeatureCla");
-	tc.setValue("FeatureCla", oldValue + "Test");
-	tc.update(1);
-	String newValue = tc.getValue("FeatureCla");
-	boolean check = newValue.equals(oldValue + "Test");
-	assertEquals(true, check);
-    }
-
-    @Test
-    public void testOperationDeleteDBF() throws ReadDriverException,
-    DriverLoadException, NoSuchTableException,
-    StopWriterVisitorException, StartWriterVisitorException,
-    InitializeWriterException {
-	IEditableSource model = getIEditableSourceFromFile("data-test/110m_land.dbf");
-
-	TableController tc = new TableController(model);
-	long lastPosition = tc.getRowCount();
-	tc.delete(lastPosition);
-	long lastPositionAfterDelete = tc.getRowCount();
-	assertEquals(lastPositionAfterDelete, lastPosition - 1);
     }
 
     private IEditableSource getIEditableSourceFromFile(String filePath)
