@@ -106,8 +106,12 @@ public class TableController {
 	    vals[i] = ValueFactoryNT.createNullValue();
 	}
 	for (String key : newValues.keySet()) {
-	    vals[getIndex(key)] = ValueFactoryNT
-		    .createValue(newValues.get(key));
+	    try {
+		vals[getIndex(key)] = ValueFactoryNT.createValueByType(
+			newValues.get(key), types.get(key));
+	    } catch (ParseException e) {
+		vals[getIndex(key)] = ValueFactoryNT.createNullValue();
+	    }
 	}
 	return vals;
     }
