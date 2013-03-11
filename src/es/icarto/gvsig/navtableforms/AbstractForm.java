@@ -78,12 +78,12 @@ PositionListener {
     private ValidationHandlerForCheckBoxes validationHandlerForCheckBoxes;
     private ValidationHandlerForTextAreas validationHandlerForTextAreas;
 
-    private static Logger logger = null;
+    protected static Logger logger = null;
     private ORMLite ormlite;
 
     public AbstractForm(FLyrVect layer) {
 	super(layer);
-	logger = getLoggerName();
+	logger = Logger.getLogger(getClass());
 	formBody = getFormBody();
 	initValidation();
     }
@@ -107,7 +107,10 @@ PositionListener {
 
     public abstract String getXMLPath();
 
-    public abstract Logger getLoggerName();
+    @Deprecated
+    public Logger getLoggerName() {
+	return Logger.getLogger(getClass());
+    }
 
     @Override
     public JPanel getCenterPanel() {
