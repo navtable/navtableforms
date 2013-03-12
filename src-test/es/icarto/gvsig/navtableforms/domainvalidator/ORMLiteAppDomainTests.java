@@ -68,6 +68,22 @@ public class ORMLiteAppDomainTests {
 	assertTrue(ormlite.getAppDomain().getDomainValidatorForComponent(
 		"my_code") != null);
     }
+    
+    @Test
+    public void fieldMyWidgetHasDependency() {
+	assertTrue(ormlite.getAppDomain().getDependencyValuesForComponent(
+		"my_widget") != null);
+    }
+    
+    @Test
+    public void checkDependencyValuesOfMyWidget() {
+	assertTrue(ormlite.getAppDomain().getDependencyValuesForComponent(
+		"my_widget").getType().equalsIgnoreCase("checkbox"));
+	assertTrue(ormlite.getAppDomain().getDependencyValuesForComponent(
+		"my_widget").getComponent().equalsIgnoreCase("other_widget"));
+	assertTrue(ormlite.getAppDomain().getDependencyValuesForComponent(
+		"my_widget").getValue().equalsIgnoreCase("true"));
+    }
 
     @Test
     public void fieldMyCodeHasRules() {
