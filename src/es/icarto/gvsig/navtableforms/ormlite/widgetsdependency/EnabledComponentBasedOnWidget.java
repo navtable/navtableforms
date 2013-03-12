@@ -10,18 +10,18 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-public class EnableComponentBasedOnCheckBox implements ActionListener {
-
+public class EnabledComponentBasedOnWidget implements ActionListener {
+    
     private JComponent component;
-    private JCheckBox checkbox;
+    private JComponent widget;
+    private String value;
     private boolean removeDependentValues;
 
-    public EnableComponentBasedOnCheckBox(JCheckBox checkbox,
-	    JComponent component) {
-
-	this.checkbox = checkbox;
+    public EnabledComponentBasedOnWidget(JComponent widget,
+	    JComponent component, String value) {
+	this.widget = widget;
 	this.component = component;
-
+	this.value = value;
     }
 
     public void setRemoveDependentValues(boolean removeDependentValues) {
@@ -29,20 +29,42 @@ public class EnableComponentBasedOnCheckBox implements ActionListener {
     }
 
     public void setListeners() {
-	checkbox.addActionListener(this);
+	if (widget instanceof JCheckBox) {
+	    ((JCheckBox) widget).addActionListener(this);
+	} else if (widget instanceof JComboBox) {
+	    ((JComboBox) widget).addActionListener(this);
+	}
     }
 
-    @Override
     public void actionPerformed(ActionEvent e) {
-	enableComponentsIfCheckBoxIsSelected();
+	enableComponent();
     }
 
-    private void enableComponentsIfCheckBoxIsSelected() {
-	boolean enabled = checkbox.isSelected();
+    private void enableComponent() {
+	if (widget instanceof JCheckBox) {
+	    enableComponentIfWidgetIsCheckBox();
+	}else if (widget instanceof JComboBox) {
+	    enableComponentIfWidgetIsCombBox();
+	}
+    }
+
+    private void enableComponentIfWidgetIsCombBox() {
+	if (((JComboBox) widget).getSelectedItem() != null) {
+	    boolean enabled = ((JComboBox) widget).getSelectedItem().toString()
+		    .equalsIgnoreCase(value);
 	    component.setEnabled(enabled);
 	    if (removeDependentValues) {
 		removeValue(component);
 	    }
+	}
+    }
+
+    private void enableComponentIfWidgetIsCheckBox() {
+	boolean enabled = ((JCheckBox) widget).isSelected();
+	component.setEnabled(enabled);
+	if (removeDependentValues) {
+	removeValue(component);
+	}
     }
 
     private void removeValue(JComponent c) {
@@ -61,11 +83,11 @@ public class EnableComponentBasedOnCheckBox implements ActionListener {
     }
 
     public void removeListeners() {
-	checkbox.removeActionListener(this);
+	((JCheckBox) widget).removeActionListener(this);
     }
 
     public void fillSpecificValues() {
-	enableComponentsIfCheckBoxIsSelected();
+	enableComponent();
     }
 
 }

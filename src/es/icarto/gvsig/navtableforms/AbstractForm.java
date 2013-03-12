@@ -56,7 +56,7 @@ import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.listeners.Validatio
 import es.icarto.gvsig.navtableforms.ormlite.domainvalues.DomainValues;
 import es.icarto.gvsig.navtableforms.ormlite.domainvalues.KeyValue;
 import es.icarto.gvsig.navtableforms.ormlite.widgetsdependency.DependencyReader;
-import es.icarto.gvsig.navtableforms.ormlite.widgetsdependency.EnableComponentBasedOnCheckBox;
+import es.icarto.gvsig.navtableforms.ormlite.widgetsdependency.EnabledComponentBasedOnWidget;
 import es.icarto.gvsig.navtableforms.utils.AbeilleParser;
 import es.udc.cartolab.gvsig.navtable.AbstractNavTable;
 import es.udc.cartolab.gvsig.navtable.listeners.PositionEvent;
@@ -228,11 +228,11 @@ PositionListener {
 		    comp.getName()) != null) {
 		DependencyReader values = ormlite.getAppDomain().getDependencyValuesForComponent(
 			comp.getName());
-		EnableComponentBasedOnCheckBox componentBasedOnCheckBox = 
-			new EnableComponentBasedOnCheckBox((JCheckBox) getWidgetComponents().get(
-				values.getComponent()), comp);
-		componentBasedOnCheckBox.setRemoveDependentValues(true);
-		componentBasedOnCheckBox.setListeners();
+		EnabledComponentBasedOnWidget componentBasedOnWidget = 
+			new EnabledComponentBasedOnWidget(getWidgetComponents().get(
+				values.getComponent()), comp, values.getValue());
+		componentBasedOnWidget.setRemoveDependentValues(true);
+		componentBasedOnWidget.setListeners();
 	    }
 	}
     }
@@ -411,14 +411,14 @@ PositionListener {
 	    }
 	}
 	
-	for (JComponent c : widgetsVector.values()) {
-	    if (ormlite.getAppDomain().getDependencyValuesForComponent(c.getName()) != null) {
+	for (JComponent comp : widgetsVector.values()) {
+	    if (ormlite.getAppDomain().getDependencyValuesForComponent(comp.getName()) != null) {
 		DependencyReader values = ormlite.getAppDomain().getDependencyValuesForComponent(
-			c.getName());
-		EnableComponentBasedOnCheckBox componentBasedOnCheckBox = 
-			new EnableComponentBasedOnCheckBox((JCheckBox) getWidgetComponents().get(
-			values.getComponent()), c);
-		componentBasedOnCheckBox.fillSpecificValues();
+			comp.getName());
+		EnabledComponentBasedOnWidget componentBasedOnWidget = 
+			new EnabledComponentBasedOnWidget(getWidgetComponents().get(
+				values.getComponent()), comp, values.getValue());
+		componentBasedOnWidget.fillSpecificValues();
 	    }
 	}
 	

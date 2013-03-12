@@ -78,8 +78,6 @@ public class ORMLiteAppDomainTests {
     @Test
     public void checkDependencyValuesOfMyWidget() {
 	assertTrue(ormlite.getAppDomain().getDependencyValuesForComponent(
-		"my_widget").getType().equalsIgnoreCase("checkbox"));
-	assertTrue(ormlite.getAppDomain().getDependencyValuesForComponent(
 		"my_widget").getComponent().equalsIgnoreCase("other_widget"));
 	assertTrue(ormlite.getAppDomain().getDependencyValuesForComponent(
 		"my_widget").getValue().equalsIgnoreCase("true"));

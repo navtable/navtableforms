@@ -23,7 +23,6 @@ package es.icarto.gvsig.navtableforms.ormlite.widgetsdependency;
  * XML syntax example:
  * 
  * <ENABLEIF>
- *	<TYPE>checkbox | combobox</TYPE>
  *	<COMPONENT>componentName</COMPONENT>
  *	<VALUE>value</VALUE>
  * </ENABLEIF>
@@ -33,20 +32,11 @@ package es.icarto.gvsig.navtableforms.ormlite.widgetsdependency;
  */
 public class DependencyReader {
 
-    private String type = null;
     private String component = null;
     private String value = null;
     
     public DependencyReader() {
 	
-    }
-    
-    public void setType(String type) {
-	this.type = type;
-    }
-    
-    public String getType() {
-	return this.type;
     }
     
     public void setComponent(String component) {

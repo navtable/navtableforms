@@ -216,9 +216,7 @@ public class XMLSAXParser extends DefaultHandler {
 	}
 	
 	// save tmp values of widgets dependency
-	else if (qName.equalsIgnoreCase("TYPE")) {
-	    tmpDependencyReader.setType(tmpVal);
-	} else if (qName.equalsIgnoreCase("COMPONENT")) {
+	else if (qName.equalsIgnoreCase("COMPONENT")) {
 	    tmpDependencyReader.setComponent(tmpVal);
 	} else if (qName.equalsIgnoreCase("VALUE")) {
 	    tmpDependencyReader.setValue(tmpVal);
