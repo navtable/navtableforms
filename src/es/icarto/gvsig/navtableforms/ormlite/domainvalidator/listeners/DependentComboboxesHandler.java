@@ -6,16 +6,16 @@ import java.util.ArrayList;
 
 import javax.swing.JComboBox;
 
-import es.icarto.gvsig.navtableforms.AbstractForm;
+import es.icarto.gvsig.navtableforms.IValidatableForm;
 import es.icarto.gvsig.navtableforms.ormlite.domainvalues.KeyValue;
 
 public class DependentComboboxesHandler implements ActionListener {
 
     private ArrayList<JComboBox> parentComponents;
     private JComboBox comboBoxToFill;
-    private AbstractForm form;
+    private IValidatableForm form;
 
-    public DependentComboboxesHandler(AbstractForm form,
+    public DependentComboboxesHandler(IValidatableForm form,
 	    JComboBox parentComponent, JComboBox comboBoxToFill) {
 	this.form = form;
 	this.comboBoxToFill = comboBoxToFill;
@@ -23,7 +23,7 @@ public class DependentComboboxesHandler implements ActionListener {
 	this.parentComponents.add(parentComponent);
     }
 
-    public DependentComboboxesHandler(AbstractForm form,
+    public DependentComboboxesHandler(IValidatableForm form,
 	    ArrayList<JComboBox> parentComponents, JComboBox comboBoxToFill) {
 	this.form = form;
 	this.parentComponents = parentComponents;

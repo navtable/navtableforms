@@ -5,17 +5,18 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JComboBox;
 
-import es.icarto.gvsig.navtableforms.AbstractForm;
+import es.icarto.gvsig.navtableforms.IValidatableForm;
 import es.icarto.gvsig.navtableforms.ormlite.domainvalues.KeyValue;
 
 public class ValidationHandlerForComboBoxes implements ActionListener {
 
-    private AbstractForm dialog = null;
+    private IValidatableForm dialog = null;
 
-    public ValidationHandlerForComboBoxes(AbstractForm dialog) {
+    public ValidationHandlerForComboBoxes(IValidatableForm dialog) {
 	this.dialog = dialog;
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
 	if (!dialog.isFillingValues()) {
 	    JComboBox c = ((JComboBox) e.getSource());
@@ -34,8 +35,7 @@ public class ValidationHandlerForComboBoxes implements ActionListener {
 		dialog.getFormController().setValue(c.getName(), "");
 	    }
 	    dialog.setChangedValues();
-	    dialog.getFormValidator().validate();
+	    dialog.validateForm();
 	}
     }
-
 }

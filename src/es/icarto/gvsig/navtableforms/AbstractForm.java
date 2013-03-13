@@ -20,15 +20,10 @@ import java.awt.BorderLayout;
 import java.util.HashMap;
 import java.util.Vector;
 
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
 
 import org.apache.log4j.Logger;
 
@@ -38,24 +33,17 @@ import com.iver.cit.gvsig.fmap.layers.FLyrVect;
 import com.jeta.forms.components.panel.FormPanel;
 
 import es.icarto.gvsig.navtableforms.ormlite.ORMLite;
-import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.ValidatorComponent;
-import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.ValidatorDomain;
-import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.ValidatorForm;
-import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.listeners.ValidationHandlerForCheckBoxes;
-import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.listeners.ValidationHandlerForComboBoxes;
-import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.listeners.ValidationHandlerForFormattedTextFields;
-import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.listeners.ValidationHandlerForTextAreas;
-import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.listeners.ValidationHandlerForTextFields;
 import es.icarto.gvsig.navtableforms.ormlite.widgetsdependency.DependencyReader;
 import es.icarto.gvsig.navtableforms.ormlite.widgetsdependency.EnabledComponentBasedOnWidget;
+
 import es.icarto.gvsig.navtableforms.utils.AbeilleParser;
 import es.udc.cartolab.gvsig.navtable.AbstractNavTable;
 import es.udc.cartolab.gvsig.navtable.dataacces.IController;
 
 @SuppressWarnings("serial")
-public abstract class AbstractForm extends AbstractNavTable {
+public abstract class AbstractForm extends AbstractNavTable implements
+	IValidatableForm {
 
-    private ValidatorForm formValidator;
     private IController layerController;
     protected FormPanel formBody;
     private boolean isFillingValues;
@@ -63,35 +51,18 @@ public abstract class AbstractForm extends AbstractNavTable {
 
     private HashMap<String, JComponent> widgetsVector;
 
-    private ValidationHandlerForFormattedTextFields validationHandlerForFormattedTextFields;
-    private ValidationHandlerForTextFields validationHandlerForTextFields;
-    private ValidationHandlerForComboBoxes validationHandlerForComboBoxes;
-    private ValidationHandlerForCheckBoxes validationHandlerForCheckBoxes;
-    private ValidationHandlerForTextAreas validationHandlerForTextAreas;
-
     protected static Logger logger = null;
     private ORMLite ormlite;
     public FillFactory fillFactory;
+
+    private ValidationHandler validationHandler;
 
     public AbstractForm(FLyrVect layer) {
 	super(layer);
 	logger = Logger.getLogger(getClass());
 	formBody = getFormBody();
-	initValidation();
-    }
+	validationHandler = new ValidationHandler(getXMLPath(), this);
 
-    private void initValidation() {
-	ormlite = new ORMLite(getXMLPath());
-	formValidator = new ValidatorForm();
-	validationHandlerForFormattedTextFields = new ValidationHandlerForFormattedTextFields(
-		this);
-	validationHandlerForTextFields = new ValidationHandlerForTextFields(
-		this);
-	validationHandlerForComboBoxes = new ValidationHandlerForComboBoxes(
-		this);
-	validationHandlerForCheckBoxes = new ValidationHandlerForCheckBoxes(
-		this);
-	validationHandlerForTextAreas = new ValidationHandlerForTextAreas(this);
     }
 
     public abstract FormPanel getFormBody();
@@ -101,6 +72,11 @@ public abstract class AbstractForm extends AbstractNavTable {
     @Deprecated
     public Logger getLoggerName() {
 	return Logger.getLogger(getClass());
+    }
+
+    @Override
+    public void validateForm() {
+	validationHandler.validate();
     }
 
     @Override
@@ -116,25 +92,7 @@ public abstract class AbstractForm extends AbstractNavTable {
     }
 
     protected void removeListeners() {
-	for (JComponent c : widgetsVector.values()) {
-	    if (c instanceof JFormattedTextField) {
-		((JTextField) c)
-			.removeKeyListener(validationHandlerForFormattedTextFields);
-	    } else if (c instanceof JTextField) {
-		((JTextField) c)
-			.removeKeyListener(validationHandlerForTextFields);
-	    } else if (c instanceof JComboBox) {
-		((JComboBox) c)
-			.removeActionListener(validationHandlerForComboBoxes);
-	    } else if (c instanceof JCheckBox) {
-		((JCheckBox) c)
-			.removeActionListener(validationHandlerForCheckBoxes);
-	    } else if (c instanceof JTextArea) {
-		((JTextArea) c)
-			.removeKeyListener(validationHandlerForTextAreas);
-	    }
-	}
-	
+	validationHandler.removeListeners(widgetsVector);
 	for (JComponent comp : widgetsVector.values()) {
 	    if (ormlite.getAppDomain().getDependencyValuesForComponent(comp.getName()) != null) {
 		DependencyReader values = ormlite.getAppDomain().getDependencyValuesForComponent(
@@ -145,6 +103,7 @@ public abstract class AbstractForm extends AbstractNavTable {
 		componentBasedOnWidget.removeListeners();
 	    }
 	}
+
     }
 
     @Override
@@ -174,6 +133,7 @@ public abstract class AbstractForm extends AbstractNavTable {
 	layerController.setValue(key, value);
     }
 
+    @Override
     public IController getFormController() {
 	return layerController;
     }
@@ -182,44 +142,8 @@ public abstract class AbstractForm extends AbstractNavTable {
 	return widgetsVector;
     }
 
-    protected void setListeners() {
-	for (JComponent comp : widgetsVector.values()) {
-	    if (comp instanceof JFormattedTextField) {
-		((JFormattedTextField) comp)
-			.addKeyListener(validationHandlerForFormattedTextFields);
-		ValidatorDomain dv = ormlite.getAppDomain()
-			.getDomainValidatorForComponent(comp.getName());
-		if (dv != null) {
-		    ValidatorComponent cv = new ValidatorComponent(comp, dv);
-		    formValidator.addComponentValidator(cv);
-		}
-	    } else if (comp instanceof JTextField) {
-		((JTextField) comp)
-			.addKeyListener(validationHandlerForTextFields);
-		ValidatorDomain dv = ormlite.getAppDomain()
-			.getDomainValidatorForComponent(comp.getName());
-		if (dv != null) {
-		    ValidatorComponent cv = new ValidatorComponent(comp, dv);
-		    formValidator.addComponentValidator(cv);
-		}
-	    } else if (comp instanceof JComboBox) {
-		((JComboBox) comp)
-			.addActionListener(validationHandlerForComboBoxes);
-		ValidatorDomain dv = ormlite.getAppDomain()
-			.getDomainValidatorForComponent(comp.getName());
-		if (dv != null) {
-		    ValidatorComponent cv = new ValidatorComponent(comp, dv);
-		    formValidator.addComponentValidator(cv);
-		}
-	    } else if (comp instanceof JCheckBox) {
-		((JCheckBox) comp)
-			.addActionListener(validationHandlerForCheckBoxes);
-	    } else if (comp instanceof JTextArea) {
-		((JTextArea) comp)
-			.addKeyListener(validationHandlerForTextAreas);
-	    }
-	}
-	    
+    protected void setListeners() {  
+	validationHandler.setListeners(widgetsVector);
 	for (JComponent comp : widgetsVector.values()) {
 	    if (ormlite.getAppDomain().getDependencyValuesForComponent(
 		    comp.getName()) != null) {
@@ -265,9 +189,10 @@ public abstract class AbstractForm extends AbstractNavTable {
 	}
 	fillSpecificValues();
 	setFillingValues(false);
-	formValidator.validate();
+	validationHandler.validate();
     }
 
+    @Override
     public boolean isFillingValues() {
 	return isFillingValues;
     }
@@ -277,9 +202,10 @@ public abstract class AbstractForm extends AbstractNavTable {
     }
 
     protected boolean validationHasErrors() {
-	boolean hasError = formValidator.hasValidationErrors();
+	boolean hasError = validationHandler.hasValidationErrors();
 	if (hasError) {
-	    JOptionPane.showMessageDialog(this, formValidator.getMessages(),
+	    JOptionPane.showMessageDialog(this,
+		    validationHandler.getMessages(),
 		    PluginServices.getText(this, "Error de validacion"),
 		    JOptionPane.ERROR_MESSAGE);
 	}
@@ -306,6 +232,7 @@ public abstract class AbstractForm extends AbstractNavTable {
 	return indexes;
     }
 
+    @Override
     public void setChangedValues() {
 	int[] indexes = layerController.getIndexesOfValuesChanged();
 
@@ -367,10 +294,6 @@ public abstract class AbstractForm extends AbstractNavTable {
 
     }
 
-    public ValidatorForm getFormValidator() {
-	return this.formValidator;
-    }
-
     @Override
     protected void undoAction() {
 	setChangedValues(false);
@@ -383,6 +306,7 @@ public abstract class AbstractForm extends AbstractNavTable {
 	refreshGUI();
     }
 
+    @Override
     public FillFactory getFillFactory() {
 	return fillFactory;
     }
