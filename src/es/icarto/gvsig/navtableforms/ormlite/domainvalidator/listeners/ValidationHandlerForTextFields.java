@@ -22,29 +22,31 @@ import java.awt.event.KeyListener;
 
 import javax.swing.JTextField;
 
-import es.icarto.gvsig.navtableforms.AbstractForm;
+import es.icarto.gvsig.navtableforms.IValidatableForm;
 
 public class ValidationHandlerForTextFields implements KeyListener {
 
-    private AbstractForm dialog = null;
+    private IValidatableForm dialog = null;
 
-    public ValidationHandlerForTextFields(AbstractForm dialog) {
+    public ValidationHandlerForTextFields(IValidatableForm dialog) {
 	this.dialog = dialog;
     }
 
+    @Override
     public void keyTyped(KeyEvent e) {
     }
 
+    @Override
     public void keyPressed(KeyEvent e) {
     }
 
+    @Override
     public void keyReleased(KeyEvent e) {
 	if (!dialog.isFillingValues()) {
 	    JTextField c = ((JTextField) e.getSource());
-	    dialog.getFormController().setValue(c.getName(),
-		    c.getText());
+	    dialog.getFormController().setValue(c.getName(), c.getText());
 	    dialog.setChangedValues(); // placed after updating widgetvalues
-	    dialog.getFormValidator().validate();
+	    dialog.validateForm();
 	}
     }
 

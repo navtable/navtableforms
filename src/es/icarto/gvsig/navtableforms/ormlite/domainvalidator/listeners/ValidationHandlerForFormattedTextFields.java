@@ -7,35 +7,39 @@ import java.text.ParseException;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFormattedTextField.AbstractFormatter;
 
-import es.icarto.gvsig.navtableforms.AbstractForm;
+import es.icarto.gvsig.navtableforms.IValidatableForm;
 import es.icarto.gvsig.navtableforms.gui.formattedtextfields.FormatterFactory;
 
 public class ValidationHandlerForFormattedTextFields implements KeyListener {
 
-    private AbstractForm dialog = null;
+    private IValidatableForm dialog = null;
 
-    public ValidationHandlerForFormattedTextFields(AbstractForm dialog) {
+    public ValidationHandlerForFormattedTextFields(IValidatableForm dialog) {
 	this.dialog = dialog;
     }
 
+    @Override
     public void keyTyped(KeyEvent e) {
     }
 
+    @Override
     public void keyPressed(KeyEvent e) {
     }
 
+    @Override
     public void keyReleased(KeyEvent e) {
 	if (!dialog.isFillingValues()) {
 	    JFormattedTextField c = ((JFormattedTextField) e.getSource());
 	    try {
-		c.commitEdit();  // make sure value and displayed text are the same
+		c.commitEdit(); // make sure value and displayed text are the
+				// same
 		AbstractFormatter formatter = FormatterFactory
 			.createFormatter(dialog.getFormController().getType(
 				c.getName()));
 		String value = formatter.valueToString(c.getValue());
 		dialog.getFormController().setValue(c.getName(), value);
 		dialog.setChangedValues(); // placed after updating widgetvalues
-		dialog.getFormValidator().validate();
+		dialog.validateForm();
 	    } catch (ParseException e1) {
 		e1.printStackTrace();
 	    }

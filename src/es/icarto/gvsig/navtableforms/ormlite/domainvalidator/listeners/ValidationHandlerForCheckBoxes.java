@@ -5,16 +5,17 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JCheckBox;
 
-import es.icarto.gvsig.navtableforms.AbstractForm;
+import es.icarto.gvsig.navtableforms.IValidatableForm;
 
 public class ValidationHandlerForCheckBoxes implements ActionListener {
 
-    private AbstractForm dialog = null;
+    private IValidatableForm dialog = null;
 
-    public ValidationHandlerForCheckBoxes(AbstractForm dialog) {
+    public ValidationHandlerForCheckBoxes(IValidatableForm dialog) {
 	this.dialog = dialog;
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
 	if (!dialog.isFillingValues()) {
 	    JCheckBox c = ((JCheckBox) e.getSource());
@@ -24,7 +25,7 @@ public class ValidationHandlerForCheckBoxes implements ActionListener {
 		dialog.getFormController().setValue(c.getName(), "false");
 	    }
 	    dialog.setChangedValues();
-	    dialog.getFormValidator().validate();
+	    dialog.validateForm();
 	}
     }
 
