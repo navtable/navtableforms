@@ -137,6 +137,17 @@ PositionListener {
 		((JTextArea) c).removeKeyListener(validationHandlerForTextAreas);
 	    }
 	}
+	
+	for (JComponent comp : widgetsVector.values()) {
+	    if (ormlite.getAppDomain().getDependencyValuesForComponent(comp.getName()) != null) {
+		DependencyReader values = ormlite.getAppDomain().getDependencyValuesForComponent(
+			comp.getName());
+		EnabledComponentBasedOnWidget componentBasedOnWidget = 
+			new EnabledComponentBasedOnWidget(getWidgetComponents().get(
+				values.getComponent()), comp, values.getValue());
+		componentBasedOnWidget.removeListeners();
+	    }
+	}
     }
 
     public void initWidgets() {
