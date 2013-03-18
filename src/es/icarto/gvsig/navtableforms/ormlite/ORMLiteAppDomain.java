@@ -21,15 +21,18 @@ import java.util.HashMap;
 
 import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.ValidatorDomain;
 import es.icarto.gvsig.navtableforms.ormlite.domainvalues.DomainValues;
+import es.icarto.gvsig.navtableforms.ormlite.widgetsdependency.DependencyReader;
 
 public class ORMLiteAppDomain {
 
     private HashMap<String, ValidatorDomain> domainValidators;
     private HashMap<String, DomainValues> domainValues;
+    private HashMap<String, DependencyReader> dependencyValues;
 
     public ORMLiteAppDomain() {
 	domainValidators = new HashMap<String, ValidatorDomain>();
 	domainValues = new HashMap<String, DomainValues>();
+	dependencyValues = new HashMap<String, DependencyReader>();
     }
 
     public HashMap<String, DomainValues> getDomainValues() {
@@ -55,6 +58,15 @@ public class ORMLiteAppDomain {
     public void addDomainValidator(String componentName,
 	    ValidatorDomain validatorDomain) {
 	domainValidators.put(componentName, validatorDomain);
+    }
+    
+    public DependencyReader getDependencyValuesForComponent(String componentName) {
+	return dependencyValues.get(componentName);
+    }
+    
+    public void addDependencyValues(String componentName, 
+	    DependencyReader dependencyReader) {
+	dependencyValues.put(componentName, dependencyReader);
     }
 
 }

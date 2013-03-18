@@ -55,6 +55,8 @@ import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.listeners.Validatio
 import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.listeners.ValidationHandlerForTextFields;
 import es.icarto.gvsig.navtableforms.ormlite.domainvalues.DomainValues;
 import es.icarto.gvsig.navtableforms.ormlite.domainvalues.KeyValue;
+import es.icarto.gvsig.navtableforms.ormlite.widgetsdependency.DependencyReader;
+import es.icarto.gvsig.navtableforms.ormlite.widgetsdependency.EnabledComponentBasedOnWidget;
 import es.icarto.gvsig.navtableforms.utils.AbeilleParser;
 import es.udc.cartolab.gvsig.navtable.AbstractNavTable;
 import es.udc.cartolab.gvsig.navtable.listeners.PositionEvent;
@@ -136,6 +138,17 @@ PositionListener {
 		((JCheckBox) c).removeActionListener(validationHandlerForCheckBoxes);
 	    } else if (c instanceof JTextArea) {
 		((JTextArea) c).removeKeyListener(validationHandlerForTextAreas);
+	    }
+	}
+	
+	for (JComponent comp : widgetsVector.values()) {
+	    if (ormlite.getAppDomain().getDependencyValuesForComponent(comp.getName()) != null) {
+		DependencyReader values = ormlite.getAppDomain().getDependencyValuesForComponent(
+			comp.getName());
+		EnabledComponentBasedOnWidget componentBasedOnWidget = 
+			new EnabledComponentBasedOnWidget(getWidgetComponents().get(
+				values.getComponent()), comp, values.getValue());
+		componentBasedOnWidget.removeListeners();
 	    }
 	}
     }
@@ -221,6 +234,19 @@ PositionListener {
 	    } else if (comp instanceof JTextArea) {
 		((JTextArea) comp).addKeyListener(
 			validationHandlerForTextAreas);
+	    }
+	}
+	    
+	for (JComponent comp : widgetsVector.values()) {
+	    if (ormlite.getAppDomain().getDependencyValuesForComponent(
+		    comp.getName()) != null) {
+		DependencyReader values = ormlite.getAppDomain().getDependencyValuesForComponent(
+			comp.getName());
+		EnabledComponentBasedOnWidget componentBasedOnWidget = 
+			new EnabledComponentBasedOnWidget(getWidgetComponents().get(
+				values.getComponent()), comp, values.getValue());
+		componentBasedOnWidget.setRemoveDependentValues(true);
+		componentBasedOnWidget.setListeners();
 	    }
 	}
     }
@@ -398,6 +424,18 @@ PositionListener {
 		fillJComboBox((JComboBox) comp);
 	    }
 	}
+	
+	for (JComponent comp : widgetsVector.values()) {
+	    if (ormlite.getAppDomain().getDependencyValuesForComponent(comp.getName()) != null) {
+		DependencyReader values = ormlite.getAppDomain().getDependencyValuesForComponent(
+			comp.getName());
+		EnabledComponentBasedOnWidget componentBasedOnWidget = 
+			new EnabledComponentBasedOnWidget(getWidgetComponents().get(
+				values.getComponent()), comp, values.getValue());
+		componentBasedOnWidget.fillSpecificValues();
+	    }
+	}
+	
 	fillSpecificValues();
 	setFillingValues(false);
 	formValidator.validate();

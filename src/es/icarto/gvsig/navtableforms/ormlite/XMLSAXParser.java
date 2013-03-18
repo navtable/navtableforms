@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011. iCarto
+ * Copyright (c) 2011, 2013. iCarto
  *
  * This file is part of extNavTableForms
  *
@@ -36,6 +36,7 @@ import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.rules.ValidationRul
 import es.icarto.gvsig.navtableforms.ormlite.domainvalues.DomainReader;
 import es.icarto.gvsig.navtableforms.ormlite.domainvalues.DomainReaderDB;
 import es.icarto.gvsig.navtableforms.ormlite.domainvalues.DomainReaderFile;
+import es.icarto.gvsig.navtableforms.ormlite.widgetsdependency.DependencyReader;
 
 /**
  * SAX parser to build from a XML structure several objects needed for
@@ -43,6 +44,7 @@ import es.icarto.gvsig.navtableforms.ormlite.domainvalues.DomainReaderFile;
  *
  * @author Andrés Maneiro <amaneiro@icarto.es>
  * @author Jorge López <jlopez@cartolab.es>
+ * @author Pablo Sanxiao <psanxiao@icarto.es>
  *
  */
 public class XMLSAXParser extends DefaultHandler {
@@ -59,6 +61,7 @@ public class XMLSAXParser extends DefaultHandler {
     private String tmpVal = null;
     private DomainReader tmpDomainReader = null;
     private FieldDescription tmpFieldDescription = null;
+    private DependencyReader tmpDependencyReader = null;
 
     private static Logger logger = Logger.getLogger("SAX Parser");
 
@@ -114,6 +117,9 @@ public class XMLSAXParser extends DefaultHandler {
 	if (qName.equalsIgnoreCase("FIELD")) {
 	    // set field
 	    tmpFieldDescription = new FieldDescription();
+	}
+	if (qName.equalsIgnoreCase("ENABLEIF")) {
+	    tmpDependencyReader = new DependencyReader();
 	}
     }
 
@@ -207,6 +213,19 @@ public class XMLSAXParser extends DefaultHandler {
 	else if (qName.equalsIgnoreCase("DOMAINREADER")) {
 	    getAD().addDomainValues(tmpFieldDescription.getFieldName(),
 		    tmpDomainReader.getDomainValues());
+	}
+	
+	// save tmp values of widgets dependency
+	else if (qName.equalsIgnoreCase("COMPONENT")) {
+	    tmpDependencyReader.setComponent(tmpVal);
+	} else if (qName.equalsIgnoreCase("VALUE")) {
+	    tmpDependencyReader.setValue(tmpVal);
+	}
+	
+	// save tmp values of DependencyReader in ApplicationDomain
+	else if (qName.equalsIgnoreCase("ENABLEIF")) {
+	    getAD().addDependencyValues(tmpFieldDescription.getFieldName(),
+		    tmpDependencyReader);
 	}
     }
 
