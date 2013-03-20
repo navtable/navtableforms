@@ -2,6 +2,7 @@
 <LAYER alias="MyLayer">
 	<FIELD>
 		<FIELDNAME>my_code</FIELDNAME>
+		<NONEDITABLE/>
 		<VALIDATIONRULE>MANDATORY</VALIDATIONRULE>
 	</FIELD>
 	<FIELD>
@@ -25,7 +26,6 @@
 	<FIELD>
 		<FIELDNAME>my_widget</FIELDNAME>
 		<ENABLEIF>
-			<TYPE>checkbox</TYPE>
 			<COMPONENT>other_widget</COMPONENT>
 			<VALUE>true</VALUE>
 		</ENABLEIF>

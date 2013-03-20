@@ -28,11 +28,13 @@ public class ORMLiteAppDomain {
     private HashMap<String, ValidatorDomain> domainValidators;
     private HashMap<String, DomainValues> domainValues;
     private HashMap<String, DependencyReader> dependencyValues;
+    private HashMap<String, Boolean> nonEditableComponents;
 
     public ORMLiteAppDomain() {
 	domainValidators = new HashMap<String, ValidatorDomain>();
 	domainValues = new HashMap<String, DomainValues>();
 	dependencyValues = new HashMap<String, DependencyReader>();
+	nonEditableComponents = new HashMap<String, Boolean>();
     }
 
     public HashMap<String, DomainValues> getDomainValues() {
@@ -59,14 +61,23 @@ public class ORMLiteAppDomain {
 	    ValidatorDomain validatorDomain) {
 	domainValidators.put(componentName, validatorDomain);
     }
-    
+
     public DependencyReader getDependencyValuesForComponent(String componentName) {
 	return dependencyValues.get(componentName);
     }
-    
-    public void addDependencyValues(String componentName, 
+
+    public void addDependencyValues(String componentName,
 	    DependencyReader dependencyReader) {
 	dependencyValues.put(componentName, dependencyReader);
+    }
+
+    public Boolean isNonEditableComponent(String componentName) {
+	return nonEditableComponents.get(componentName);
+    }
+
+    public void addNonEditableComponent(String componentName,
+	    Boolean nonEditable) {
+	nonEditableComponents.put(componentName, nonEditable);
     }
 
 }
