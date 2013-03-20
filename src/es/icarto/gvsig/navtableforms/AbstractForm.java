@@ -47,8 +47,6 @@ import com.jeta.forms.components.panel.FormPanel;
 import es.icarto.gvsig.navtableforms.forms.windowproperties.FormWindowProperties;
 import es.icarto.gvsig.navtableforms.forms.windowproperties.FormWindowPropertiesSerializator;
 import es.icarto.gvsig.navtableforms.ormlite.ORMLite;
-import es.icarto.gvsig.navtableforms.ormlite.widgetsdependency.DependencyReader;
-import es.icarto.gvsig.navtableforms.ormlite.widgetsdependency.EnabledComponentBasedOnWidget;
 
 import es.icarto.gvsig.navtableforms.utils.AbeilleParser;
 import es.udc.cartolab.gvsig.navtable.AbstractNavTable;
@@ -58,29 +56,33 @@ import es.udc.cartolab.gvsig.navtable.dataacces.IController;
 public abstract class AbstractForm extends AbstractNavTable implements
 	IValidatableForm {
 
-    private IController layerController;
     protected FormPanel formBody;
     private boolean isFillingValues;
     private boolean isSavingValues = false;
 
-    private HashMap<String, JComponent> widgetsVector;
+    HashMap<String, JComponent> widgets;
 
     protected static Logger logger = null;
+
     private ORMLite ormlite;
 
     private FormWindowProperties formWindowProperties;
     private List<FormWindowProperties> formWindowPropertiesList;
     private FillHandler fillHandler;
 
-
     private ValidationHandler validationHandler;
+    private DependencyHandler dependencyHandler;
 
     public AbstractForm(FLyrVect layer) {
 	super(layer);
 	logger = Logger.getLogger(getClass());
 	formBody = getFormBody();
 	initFormWindowProperties();
-	validationHandler = new ValidationHandler(getXMLPath(), this);
+	widgets = AbeilleParser.getWidgetsFromContainer(formBody);
+	ormlite = new ORMLite(getXMLPath());
+	validationHandler = new ValidationHandler(ormlite, this);
+	dependencyHandler = new DependencyHandler(ormlite, widgets);
+
     }
     
     private void initFormWindowProperties() {
@@ -111,9 +113,6 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	    
 	}
     }
-
-
-
 
     public abstract FormPanel getFormBody();
 
@@ -147,23 +146,13 @@ public abstract class AbstractForm extends AbstractNavTable implements
     }
 
     protected void removeListeners() {
-	validationHandler.removeListeners(widgetsVector);
-	for (JComponent comp : widgetsVector.values()) {
-	    if (ormlite.getAppDomain().getDependencyValuesForComponent(comp.getName()) != null) {
-		DependencyReader values = ormlite.getAppDomain().getDependencyValuesForComponent(
-			comp.getName());
-		EnabledComponentBasedOnWidget componentBasedOnWidget = 
-			new EnabledComponentBasedOnWidget(getWidgetComponents().get(
-				values.getComponent()), comp, values.getValue());
-		componentBasedOnWidget.removeListeners();
-	    }
-	}
+	validationHandler.removeListeners(widgets);
+	dependencyHandler.removeListeners();
 
     }
 
     @Override
     protected void initWidgets() {
-	widgetsVector = AbeilleParser.getWidgetsFromContainer(formBody);
 	setListeners();
 	fillHandler = new FillHandler(getWidgetComponents(), layerController,
 		ormlite.getAppDomain());
@@ -194,35 +183,19 @@ public abstract class AbstractForm extends AbstractNavTable implements
     }
 
     public HashMap<String, JComponent> getWidgetComponents() {
-	return widgetsVector;
+	return widgets;
     }
 
     protected void setListeners() {  
-	validationHandler.setListeners(widgetsVector);
-	for (JComponent comp : widgetsVector.values()) {
-	    if (ormlite.getAppDomain().getDependencyValuesForComponent(
-		    comp.getName()) != null) {
-		DependencyReader values = ormlite.getAppDomain().getDependencyValuesForComponent(
-			comp.getName());
-		EnabledComponentBasedOnWidget componentBasedOnWidget = 
-			new EnabledComponentBasedOnWidget(getWidgetComponents().get(
-				values.getComponent()), comp, values.getValue());
-		componentBasedOnWidget.setRemoveDependentValues(true);
-		componentBasedOnWidget.setListeners();
-	    }
-	    
-	    if (ormlite.getAppDomain().isNonEditableComponent(comp.getName()) != null
-		    && ormlite.getAppDomain().isNonEditableComponent(
-			    comp.getName())) {
-		getWidgetComponents().get(comp.getName()).setEnabled(false);
-	    }
-	}
+	validationHandler.setListeners(widgets);
+	dependencyHandler.setListeners();
     }
 
     @Override
     public void fillEmptyValues() {
 	setFillingValues(true);
 	fillHandler.fillEmptyValues();
+	dependencyHandler.fillValues();
 	setFillingValues(false);
     }
 
@@ -232,16 +205,7 @@ public abstract class AbstractForm extends AbstractNavTable implements
     public void fillValues() {
 	setFillingValues(true);
 	fillHandler.fillValues();
-	for (JComponent comp : widgetsVector.values()) {
-	    if (ormlite.getAppDomain().getDependencyValuesForComponent(comp.getName()) != null) {
-		DependencyReader values = ormlite.getAppDomain().getDependencyValuesForComponent(
-			comp.getName());
-		EnabledComponentBasedOnWidget componentBasedOnWidget = 
-			new EnabledComponentBasedOnWidget(getWidgetComponents().get(
-				values.getComponent()), comp, values.getValue());
-		componentBasedOnWidget.fillSpecificValues();
-	    }
-	}
+	dependencyHandler.fillValues();
 	fillSpecificValues();
 	setFillingValues(false);
 	validationHandler.validate();
@@ -404,5 +368,6 @@ public abstract class AbstractForm extends AbstractNavTable implements
     @Override
     public FillHandler getFillHandler() {
 	return fillHandler;
+
     }
 }
