@@ -21,7 +21,6 @@ import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.listeners.Validatio
 
 public class ValidationHandler {
 
-    private String metadataResourcePath;
     private ORMLite ormlite;
     private ValidatorForm formValidator;
     private ValidationHandlerForFormattedTextFields validationHandlerForFormattedTextFields;
@@ -31,15 +30,14 @@ public class ValidationHandler {
     private ValidationHandlerForTextAreas validationHandlerForTextAreas;
     private IValidatableForm validatableForm;
 
-    public ValidationHandler(String metadataResourcePath,
-	    IValidatableForm validatableForm) {
-	this.metadataResourcePath = metadataResourcePath;
+    public ValidationHandler(ORMLite ormLite, IValidatableForm validatableForm) {
+	this.ormlite = ormLite;
 	this.validatableForm = validatableForm;
 	initValidation();
     }
 
     private void initValidation() {
-	ormlite = new ORMLite(metadataResourcePath);
+
 	formValidator = new ValidatorForm();
 	validationHandlerForFormattedTextFields = new ValidationHandlerForFormattedTextFields(
 		validatableForm);
@@ -53,8 +51,8 @@ public class ValidationHandler {
 		validatableForm);
     }
 
-    public void removeListeners(HashMap<String, JComponent> widgetsVector) {
-	for (JComponent c : widgetsVector.values()) {
+    public void removeListeners(HashMap<String, JComponent> widgets) {
+	for (JComponent c : widgets.values()) {
 	    if (c instanceof JFormattedTextField) {
 		((JTextField) c)
 			.removeKeyListener(validationHandlerForFormattedTextFields);
@@ -74,8 +72,8 @@ public class ValidationHandler {
 	}
     }
 
-    public void setListeners(HashMap<String, JComponent> widgetsVector) {
-	for (JComponent comp : widgetsVector.values()) {
+    public void setListeners(HashMap<String, JComponent> widgets) {
+	for (JComponent comp : widgets.values()) {
 	    if (comp instanceof JFormattedTextField) {
 		((JFormattedTextField) comp)
 			.addKeyListener(validationHandlerForFormattedTextFields);

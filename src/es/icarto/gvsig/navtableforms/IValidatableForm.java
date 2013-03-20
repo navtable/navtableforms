@@ -10,7 +10,7 @@ public interface IValidatableForm {
 
     public void setChangedValues();
 
-    public FillFactory getFillFactory();
+    public FillHandler getFillFactory();
 
     public void validateForm();
 
