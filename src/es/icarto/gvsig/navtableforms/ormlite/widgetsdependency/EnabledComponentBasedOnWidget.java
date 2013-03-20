@@ -74,7 +74,6 @@ public class EnabledComponentBasedOnWidget implements ActionListener {
 	    ((JTextField) c).setText("");
 	} else if (c instanceof JComboBox) {
 	    ((JComboBox) c).setSelectedIndex(0);
-	    System.out.println("EnableComponentBasedOnCheckBox: Buggy Feature");
 	} else if (c instanceof JCheckBox) {
 	    ((JCheckBox) c).setSelected(false);
 	} else if (c instanceof JTextArea) {
@@ -83,7 +82,12 @@ public class EnabledComponentBasedOnWidget implements ActionListener {
     }
 
     public void removeListeners() {
-	((JCheckBox) widget).removeActionListener(this);
+	if (widget instanceof JCheckBox) {
+	    ((JCheckBox)widget).removeActionListener(this);
+	}
+	if (widget instanceof JComboBox) {
+	    ((JComboBox)widget).removeActionListener(this);
+	}
     }
 
     public void fillSpecificValues() {
