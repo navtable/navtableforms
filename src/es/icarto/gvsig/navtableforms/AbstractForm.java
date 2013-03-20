@@ -248,6 +248,12 @@ PositionListener {
 		componentBasedOnWidget.setRemoveDependentValues(true);
 		componentBasedOnWidget.setListeners();
 	    }
+	    
+	    if (ormlite.getAppDomain().isNonEditableComponent(comp.getName()) != null
+		    && ormlite.getAppDomain().isNonEditableComponent(
+			    comp.getName())) {
+		getWidgetComponents().get(comp.getName()).setEnabled(false);
+	    }
 	}
     }
 
