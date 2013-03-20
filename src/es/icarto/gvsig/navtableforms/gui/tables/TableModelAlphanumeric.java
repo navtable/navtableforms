@@ -110,6 +110,7 @@ public class TableModelAlphanumeric extends AbstractTableModel {
 	return source;
     }
 
+
     public void create(HashMap<String, String> values)
 	    throws Exception {
 	long pos = tableController.create(values);
@@ -142,6 +143,10 @@ public class TableModelAlphanumeric extends AbstractTableModel {
 	tableController.delete(rowIndexes.get(row));
 	this.fireTableRowsDeleted(row, row);
 	initMetadata();
+    }
+    
+    public TableController getController() {
+	return tableController;
     }
 
 }

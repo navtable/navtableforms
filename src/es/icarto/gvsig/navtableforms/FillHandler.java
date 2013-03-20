@@ -49,6 +49,28 @@ public class FillHandler {
 	}
     }
 
+    public void fillEmptyWidgetsAndController() {
+	for (String w : widgetsVector.keySet()) {
+	    JComponent comp = widgetsVector.get(w);
+	    if ((comp instanceof JFormattedTextField)
+		    || (comp instanceof JTextField)
+		    || (comp instanceof JTextArea)) {
+		((JTextComponent) comp).setText("");
+		iController.setValue(w, "");
+	    } else if (comp instanceof JComboBox) {
+		if (((JComboBox) comp).getItemCount() > 0) {
+		    ((JComboBox) comp).removeAllItems();
+		}
+		((JComboBox) comp).addItem(" ");
+		((JComboBox) comp).setSelectedIndex(0);
+		iController.setValue(w, " ");
+	    } else if (comp instanceof JCheckBox) {
+		((JCheckBox) comp).setEnabled(false);
+		iController.setValue(w, "false");
+	    }
+	}
+    }
+
     protected void fillJTextField(JTextField field) {
 	String colName = field.getName();
 	String fieldValue = iController.getValue(colName);
