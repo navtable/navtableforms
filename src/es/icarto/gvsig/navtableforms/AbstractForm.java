@@ -39,6 +39,7 @@ import org.apache.log4j.Logger;
 import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
 import com.iver.andami.Launcher;
 import com.iver.andami.PluginServices;
+import com.iver.andami.ui.mdiFrame.MDIFrame;
 import com.iver.cit.gvsig.fmap.layers.FLyrVect;
 import com.jeta.forms.components.panel.FormPanel;
 
@@ -100,10 +101,20 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	if (!hasPropertiesSaved) {
 	    formWindowProperties = new FormWindowProperties();
 	    formWindowProperties.setFormName(getClass().getName());
-	    viewInfo.setHeight(
-		    formBody.getPreferredSize().height + 
+	    
+	    MDIFrame a = (MDIFrame) PluginServices.getMainFrame();
+	    int maxHeight = a.getHeight() - 175;
+	    
+	    int calculateTotalFormWindowHeight = formBody.getPreferredSize().height + 
 		    getNorthPanel().getPreferredSize().height +
-		    getSouthPanel().getPreferredSize().height);
+		    getSouthPanel().getPreferredSize().height;
+	   
+	    if (maxHeight < calculateTotalFormWindowHeight) {
+		viewInfo.setHeight(maxHeight);
+	    }else {
+		viewInfo.setHeight(calculateTotalFormWindowHeight);
+	    }
+	    
 	    if (getNorthPanel().getPreferredSize().width > 
 	    	formBody.getPreferredSize().width) {
 		viewInfo.setWidth(getNorthPanel().getPreferredSize().width);
