@@ -12,8 +12,8 @@ public class TableModelFactory {
     public static TableModelAlphanumeric createFromTable(String sourceTable,
 	    String rowFilterName,
 	    String rowFilterValue,
-	    List<String> columnNames,
-	    List<String> columnAliases)
+	    String[] columnNames,
+	    String[] columnAliases)
 		    throws ReadDriverException {
 
 	TOCTableManager toc = new TOCTableManager();

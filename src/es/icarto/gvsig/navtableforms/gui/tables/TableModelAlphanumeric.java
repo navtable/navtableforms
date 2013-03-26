@@ -24,8 +24,8 @@ public class TableModelAlphanumeric extends AbstractTableModel {
     private IRowFilter filter;
     private TableController tableController;
 
-    private List<String> colNames;
-    private List<String> colAliases;
+    private String[] colNames;
+    private String[] colAliases;
 
     private HashMap<Integer, Integer> rowIndexes;
     private int currentRow = NO_ROW;
@@ -34,7 +34,7 @@ public class TableModelAlphanumeric extends AbstractTableModel {
     private int colCount;
 
     public TableModelAlphanumeric(IEditableSource source, IRowFilter filter,
-	    List<String> colNames, List<String> colAliases) {
+	    String[] colNames, String[] colAliases) {
 	this.source = source;
 	this.filter = filter;
 	this.colNames = colNames;
@@ -46,7 +46,7 @@ public class TableModelAlphanumeric extends AbstractTableModel {
     private void initMetadata() {
 	rowIndexes = getRowIndexes();
 	rowCount = rowIndexes.size();
-	colCount = colNames.size();
+	colCount = colNames.length;
     }
 
     private HashMap<Integer, Integer> getRowIndexes() {
@@ -80,11 +80,11 @@ public class TableModelAlphanumeric extends AbstractTableModel {
 
     @Override
     public String getColumnName(int column) {
-	return colAliases.get(column);
+	return colAliases[column];
     }
 
     public String getColumnNameInSource(int column) {
-	return colNames.get(column);
+	return colNames[column];
     }
 
     @Override
@@ -99,7 +99,7 @@ public class TableModelAlphanumeric extends AbstractTableModel {
 		currentRow = row;
 		tableController.read(rowIndexes.get(row));
 	    }
-	    return tableController.getValue(colNames.get(col));
+	    return tableController.getValue(colNames[col]);
 	} catch (ReadDriverException e) {
 	    e.printStackTrace();
 	    return null;
