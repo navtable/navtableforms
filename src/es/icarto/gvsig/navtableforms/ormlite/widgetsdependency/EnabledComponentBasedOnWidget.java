@@ -90,7 +90,7 @@ public class EnabledComponentBasedOnWidget implements ActionListener {
 	}
     }
 
-    public void fillSpecificValues() {
+    public void fillValues() {
 	enableComponent();
     }
 

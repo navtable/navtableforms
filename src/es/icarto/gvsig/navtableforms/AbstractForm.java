@@ -17,92 +17,52 @@
 package es.icarto.gvsig.navtableforms;
 
 import java.awt.BorderLayout;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Vector;
 
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.text.JTextComponent;
-
-import net.miginfocom.swing.MigLayout;
 
 import org.apache.log4j.Logger;
 
 import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
 import com.iver.andami.PluginServices;
 import com.iver.cit.gvsig.fmap.layers.FLyrVect;
-import com.iver.cit.gvsig.fmap.layers.SelectableDataSource;
 import com.jeta.forms.components.panel.FormPanel;
 
-import es.icarto.gvsig.navtableforms.dataacces.LayerController;
-import es.icarto.gvsig.navtableforms.gui.formattedtextfields.FormatterFactory;
 import es.icarto.gvsig.navtableforms.ormlite.ORMLite;
-import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.ValidatorComponent;
-import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.ValidatorDomain;
-import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.ValidatorForm;
-import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.listeners.ValidationHandlerForCheckBoxes;
-import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.listeners.ValidationHandlerForComboBoxes;
-import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.listeners.ValidationHandlerForFormattedTextFields;
-import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.listeners.ValidationHandlerForTextAreas;
-import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.listeners.ValidationHandlerForTextFields;
-import es.icarto.gvsig.navtableforms.ormlite.domainvalues.DomainValues;
-import es.icarto.gvsig.navtableforms.ormlite.domainvalues.KeyValue;
-import es.icarto.gvsig.navtableforms.ormlite.widgetsdependency.DependencyReader;
-import es.icarto.gvsig.navtableforms.ormlite.widgetsdependency.EnabledComponentBasedOnWidget;
+
 import es.icarto.gvsig.navtableforms.utils.AbeilleParser;
 import es.udc.cartolab.gvsig.navtable.AbstractNavTable;
-import es.udc.cartolab.gvsig.navtable.listeners.PositionEvent;
-import es.udc.cartolab.gvsig.navtable.listeners.PositionListener;
+import es.udc.cartolab.gvsig.navtable.dataacces.IController;
 
 @SuppressWarnings("serial")
 public abstract class AbstractForm extends AbstractNavTable implements
-PositionListener {
+	IValidatableForm {
 
-    private ValidatorForm formValidator;
-    private LayerController layerController;
     protected FormPanel formBody;
     private boolean isFillingValues;
     private boolean isSavingValues = false;
 
-    private HashMap<String, JComponent> widgetsVector;
-
-    private ValidationHandlerForFormattedTextFields validationHandlerForFormattedTextFields;
-    private ValidationHandlerForTextFields validationHandlerForTextFields;
-    private ValidationHandlerForComboBoxes validationHandlerForComboBoxes;
-    private ValidationHandlerForCheckBoxes validationHandlerForCheckBoxes;
-    private ValidationHandlerForTextAreas validationHandlerForTextAreas;
+    HashMap<String, JComponent> widgets;
 
     protected static Logger logger = null;
-    private ORMLite ormlite;
+    ORMLite ormlite;
+    public FillHandler fillFactory;
+
+    private ValidationHandler validationHandler;
+    private DependencyHandler dependencyHandler;
 
     public AbstractForm(FLyrVect layer) {
 	super(layer);
 	logger = Logger.getLogger(getClass());
 	formBody = getFormBody();
-	initValidation();
-    }
-
-    private void initValidation() {
+	widgets = AbeilleParser.getWidgetsFromContainer(formBody);
 	ormlite = new ORMLite(getXMLPath());
-	formValidator = new ValidatorForm();
-	validationHandlerForFormattedTextFields = new ValidationHandlerForFormattedTextFields(
-		this);
-	validationHandlerForTextFields = new ValidationHandlerForTextFields(
-		this);
-	validationHandlerForComboBoxes = new ValidationHandlerForComboBoxes(
-		this);
-	validationHandlerForCheckBoxes = new ValidationHandlerForCheckBoxes(
-		this);
-	validationHandlerForTextAreas = new ValidationHandlerForTextAreas(
-		this);
+	validationHandler = new ValidationHandler(ormlite, this);
+	dependencyHandler = new DependencyHandler(ormlite, widgets);
     }
 
     public abstract FormPanel getFormBody();
@@ -112,6 +72,11 @@ PositionListener {
     @Deprecated
     public Logger getLoggerName() {
 	return Logger.getLogger(getClass());
+    }
+
+    @Override
+    public void validateForm() {
+	validationHandler.validate();
     }
 
     @Override
@@ -127,41 +92,22 @@ PositionListener {
     }
 
     protected void removeListeners() {
-	for (JComponent c : widgetsVector.values()) {
-	    if (c instanceof JFormattedTextField) {
-		((JTextField) c).removeKeyListener(validationHandlerForFormattedTextFields);
-	    } else if (c instanceof JTextField) {
-		((JTextField) c).removeKeyListener(validationHandlerForTextFields);
-	    } else if (c instanceof JComboBox) {
-		((JComboBox) c).removeActionListener(validationHandlerForComboBoxes);
-	    } else if (c instanceof JCheckBox) {
-		((JCheckBox) c).removeActionListener(validationHandlerForCheckBoxes);
-	    } else if (c instanceof JTextArea) {
-		((JTextArea) c).removeKeyListener(validationHandlerForTextAreas);
-	    }
-	}
-	
-	for (JComponent comp : widgetsVector.values()) {
-	    if (ormlite.getAppDomain().getDependencyValuesForComponent(comp.getName()) != null) {
-		DependencyReader values = ormlite.getAppDomain().getDependencyValuesForComponent(
-			comp.getName());
-		EnabledComponentBasedOnWidget componentBasedOnWidget = 
-			new EnabledComponentBasedOnWidget(getWidgetComponents().get(
-				values.getComponent()), comp, values.getValue());
-		componentBasedOnWidget.removeListeners();
-	    }
-	}
+	validationHandler.removeListeners(widgets);
+	dependencyHandler.removeListeners();
+
     }
 
-    public void initWidgets() {
-	widgetsVector = AbeilleParser.getWidgetsFromContainer(formBody);
-	widgetsVector.size();
+    @Override
+    protected void initWidgets() {
+	setListeners();
+	fillFactory = new FillHandler(getWidgetComponents(), layerController,
+		ormlite.getAppDomain());
     }
 
     /**
-     * This method has been deprecated in favor of formController,
-     * use instead getFormController().getValuesOriginal()
-     * or getFormController.getValuesChanged()
+     * This method has been deprecated in favor of formController, use instead
+     * getFormController().getValuesOriginal() or
+     * getFormController.getValuesChanged()
      */
     @Deprecated
     public HashMap<String, String> getWidgetValues() {
@@ -169,247 +115,34 @@ PositionListener {
     }
 
     /**
-     * This method has been deprecated in favor of formController,
-     * use instead getFormController().setValue(key, value)
+     * This method has been deprecated in favor of formController, use instead
+     * getFormController().setValue(key, value)
      */
     @Deprecated
     public void setWidgetValues(String key, String value) {
 	layerController.setValue(key, value);
     }
 
-
-    public LayerController getFormController() {
+    @Override
+    public IController getFormController() {
 	return layerController;
     }
 
     public HashMap<String, JComponent> getWidgetComponents() {
-	return widgetsVector;
+	return widgets;
     }
 
-    private void initGUI() {
-	MigLayout thisLayout = new MigLayout("inset 0, align center", "[grow]",
-		"[][grow][]");
-	this.setLayout(thisLayout);
-
-	this.add(getNorthPanel(), "shrink, wrap, align center");
-	this.add(getCenterPanel(), "shrink, growx, growy, wrap");
-	this.add(getSouthPanel(), "shrink, align center");
-    }
-
-    protected void setListeners() {
-	for (JComponent comp : widgetsVector.values()) {
-	    if (comp instanceof JFormattedTextField) {
-		((JFormattedTextField) comp).addKeyListener(
-			validationHandlerForFormattedTextFields);
-		ValidatorDomain dv = ormlite.getAppDomain()
-			.getDomainValidatorForComponent(
-				comp.getName());
-		if (dv != null) {
-		    ValidatorComponent cv = new ValidatorComponent(comp, dv);
-		    formValidator.addComponentValidator(cv);
-		}
-	    } else if (comp instanceof JTextField) {
-		((JTextField) comp).addKeyListener(
-			validationHandlerForTextFields);
-		ValidatorDomain dv = ormlite.getAppDomain()
-			.getDomainValidatorForComponent(
-				comp.getName());
-		if (dv != null) {
-		    ValidatorComponent cv = new ValidatorComponent(comp, dv);
-		    formValidator.addComponentValidator(cv);
-		}
-	    } else if (comp instanceof JComboBox) {
-		((JComboBox) comp).addActionListener(
-			validationHandlerForComboBoxes);
-		ValidatorDomain dv = ormlite.getAppDomain()
-			.getDomainValidatorForComponent(
-				comp.getName());
-		if (dv != null) {
-		    ValidatorComponent cv = new ValidatorComponent(comp, dv);
-		    formValidator.addComponentValidator(cv);
-		}
-	    } else if (comp instanceof JCheckBox) {
-		((JCheckBox) comp).addActionListener(
-			validationHandlerForCheckBoxes);
-	    } else if (comp instanceof JTextArea) {
-		((JTextArea) comp).addKeyListener(
-			validationHandlerForTextAreas);
-	    }
-	}
-	    
-	for (JComponent comp : widgetsVector.values()) {
-	    if (ormlite.getAppDomain().getDependencyValuesForComponent(
-		    comp.getName()) != null) {
-		DependencyReader values = ormlite.getAppDomain().getDependencyValuesForComponent(
-			comp.getName());
-		EnabledComponentBasedOnWidget componentBasedOnWidget = 
-			new EnabledComponentBasedOnWidget(getWidgetComponents().get(
-				values.getComponent()), comp, values.getValue());
-		componentBasedOnWidget.setRemoveDependentValues(true);
-		componentBasedOnWidget.setListeners();
-	    }
-	    
-	    if (ormlite.getAppDomain().isNonEditableComponent(comp.getName()) != null
-		    && ormlite.getAppDomain().isNonEditableComponent(
-			    comp.getName())) {
-		getWidgetComponents().get(comp.getName()).setEnabled(false);
-	    }
-	}
-    }
-
-    @Override
-    public boolean init() {
-	try {
-	    if (getRecordset().getRowCount() <= 0) {
-		JOptionPane.showMessageDialog(this,
-			PluginServices.getText(this, "emptyLayer"));
-		return false;
-	    }
-	    getRecordset().addSelectionListener(this);
-	    layerController = new LayerController(this.layer);
-	    layerController.read(getPosition());
-	} catch (ReadDriverException e) {
-	    logger.error(e.getMessage(), e);
-	    JOptionPane.showMessageDialog(this,
-		    PluginServices.getText(this, "emptyLayer"));
-	    return false;
-	}
-
-	initGUI();
-
-	super.addPositionListener(this);
-
-	initWidgets();
-	setListeners();
-
-	// super.last();
-	refreshGUI();
-	super.repaint();
-	super.setVisible(true);
-	super.setFocusCycleRoot(true);
-
-	super.setChangedValues(false);
-	super.enableSaveButton(true);
-	setOpenNavTableForm(true);
-	return true;
+    protected void setListeners() {  
+	validationHandler.setListeners(widgets);
+	dependencyHandler.setListeners();
     }
 
     @Override
     public void fillEmptyValues() {
 	setFillingValues(true);
-	for (JComponent comp : widgetsVector.values()) {
-	    if ((comp instanceof JFormattedTextField) ||
-		    (comp instanceof JTextField) ||
-		    (comp instanceof JTextArea)) {
-		((JTextComponent) comp).setText("");
-	    } else if (comp instanceof JComboBox) {
-		if (((JComboBox) comp).getItemCount() > 0) {
-		    ((JComboBox) comp).removeAllItems();
-		}
-		((JComboBox) comp).addItem("");
-		((JComboBox) comp).setSelectedIndex(0);
-	    }
-	}
+	fillFactory.fillEmptyValues();
+	dependencyHandler.fillValues();
 	setFillingValues(false);
-    }
-
-    protected void fillJTextField(JTextField field) {
-	String colName = field.getName();
-	String fieldValue = layerController.getValue(colName);
-	field.setText(fieldValue);
-    }
-
-    protected void fillJFormattedTextField(JFormattedTextField field) {
-	field.setFormatterFactory(FormatterFactory.createFormatterFactory(
-		layerController.getType(field.getName())));
-	String fieldValue = layerController.getValue(field.getName());
-	//field.setText(fieldValue);
-	field.setValue(fieldValue);
-    }
-
-    protected void fillJCheckBox(JCheckBox checkBox) {
-	String colName = checkBox.getName();
-	String fieldValue = layerController.getValue(colName);
-	checkBox.setSelected(Boolean.parseBoolean(fieldValue));
-    }
-
-    protected void fillJTextArea(JTextArea textArea) {
-	String colName = textArea.getName();
-	String fieldValue = layerController.getValue(colName);
-	textArea.setText(fieldValue);
-    }
-
-    protected void fillJComboBox(JComboBox combobox) {
-	String colName = combobox.getName();
-	String fieldValue = layerController.getValue(colName);
-	DomainValues dv = ormlite.getAppDomain().getDomainValuesForComponent(
-		colName);
-	if (dv != null) { // the component has domain values defined
-	    addDomainValuesToComboBox(combobox, dv.getValues());
-	    setDomainValueSelected(combobox, fieldValue);
-	} else {
-	    fillJComboBoxWithAbeilleValues(combobox, fieldValue);
-	}
-    }
-
-    public void fillJComboBox(JComboBox combobox, ArrayList<String> foreignKeys) {
-	String colName = combobox.getName();
-	String fieldValue = layerController.getValue(colName);
-	DomainValues dv = ormlite.getAppDomain().getDomainValuesForComponent(
-		colName);
-	if (dv != null) { // the component has domain values defined
-	    addDomainValuesToComboBox(combobox, dv.getValuesFilteredBy(foreignKeys));
-	    setDomainValueSelected(combobox, fieldValue);
-	} else {
-	    fillJComboBoxWithAbeilleValues(combobox, fieldValue);
-	}
-    }
-
-    protected void addDomainValuesToComboBox(JComboBox cb,
-	    ArrayList<KeyValue> keyValueList) {
-
-	if (cb.getItemCount() > 0) {
-	    cb.removeAllItems();
-	}
-	for (KeyValue kv : keyValueList) {
-	    cb.addItem(kv);
-	}
-    }
-
-    protected void setDomainValueSelected(JComboBox combobox, String fieldValue) {
-	// the value in this case here is the key in the key-value pair
-	// value = alias to be shown
-	// key = value to save in the database
-	if(fieldValue != null) {
-	    for (int j = 0; j < combobox.getItemCount(); j++) {
-		String value = ((KeyValue) combobox.getItemAt(j)).getKey();
-		if (value.compareTo(fieldValue.trim()) == 0) {
-		    combobox.setSelectedIndex(j);
-		    break;
-		}
-	    }
-	}
-	combobox.setEnabled(true);
-	if (combobox.getSelectedIndex() == -1) {
-	    combobox.addItem(new KeyValue("", "", ""));
-	    combobox.setSelectedIndex(0);
-	    combobox.setEnabled(false);
-	}
-    }
-
-    private void fillJComboBoxWithAbeilleValues(JComboBox combobox,
-	    String fieldValue) {
-	if (combobox.getItemCount() > 0) {
-	    combobox.setSelectedIndex(0);
-	}
-	if(fieldValue != null) {
-	    for (int j = 0; j < combobox.getItemCount(); j++) {
-		if (combobox.getItemAt(j).toString().compareTo(fieldValue.trim()) == 0) {
-		    combobox.setSelectedIndex(j);
-		    break;
-		}
-	    }
-	}
     }
 
     protected abstract void fillSpecificValues();
@@ -417,36 +150,14 @@ PositionListener {
     @Override
     public void fillValues() {
 	setFillingValues(true);
-	for (JComponent comp : widgetsVector.values()) {
-	    if (comp instanceof JFormattedTextField) {
-		fillJFormattedTextField((JFormattedTextField) comp);
-	    } else if (comp instanceof JTextField) {
-		fillJTextField((JTextField) comp);
-	    } else if (comp instanceof JCheckBox) {
-		fillJCheckBox((JCheckBox) comp);
-	    } else if (comp instanceof JTextArea) {
-		fillJTextArea((JTextArea) comp);
-	    } else if (comp instanceof JComboBox) {
-		fillJComboBox((JComboBox) comp);
-	    }
-	}
-	
-	for (JComponent comp : widgetsVector.values()) {
-	    if (ormlite.getAppDomain().getDependencyValuesForComponent(comp.getName()) != null) {
-		DependencyReader values = ormlite.getAppDomain().getDependencyValuesForComponent(
-			comp.getName());
-		EnabledComponentBasedOnWidget componentBasedOnWidget = 
-			new EnabledComponentBasedOnWidget(getWidgetComponents().get(
-				values.getComponent()), comp, values.getValue());
-		componentBasedOnWidget.fillSpecificValues();
-	    }
-	}
-	
+	fillFactory.fillValues();
+	dependencyHandler.fillValues();
 	fillSpecificValues();
 	setFillingValues(false);
-	formValidator.validate();
+	validationHandler.validate();
     }
 
+    @Override
     public boolean isFillingValues() {
 	return isFillingValues;
     }
@@ -456,9 +167,10 @@ PositionListener {
     }
 
     protected boolean validationHasErrors() {
-	boolean hasError = formValidator.hasValidationErrors();
+	boolean hasError = validationHandler.hasValidationErrors();
 	if (hasError) {
-	    JOptionPane.showMessageDialog(this, formValidator.getMessages(),
+	    JOptionPane.showMessageDialog(this,
+		    validationHandler.getMessages(),
 		    PluginServices.getText(this, "Error de validacion"),
 		    JOptionPane.ERROR_MESSAGE);
 	}
@@ -472,25 +184,24 @@ PositionListener {
 	return true;
     }
 
-    /*
-     * @return an vector whith the values changed. Take into account that this
-     * method will only check the values defined in the form which can be a
-     * subset of the ones in the layer. For example: gid field, which is
-     * something gvsig needs, is not useful for the user so showing it in the
-     * form makes no sense.
+    /**
+     * Use getFormController.getIndexesOfValuesChanged() instead
      */
+    @Deprecated
     protected Vector<Integer> getIndexesOfChangedValues() {
-	int[] idxs = getIndexes();
+	int[] idxs = layerController.getIndexesOfValuesChanged();
 	Vector<Integer> indexes = new Vector<Integer>();
-	for(int i=0; i<idxs.length; i++) {
+	for (int i = 0; i < idxs.length; i++) {
 	    indexes.add(idxs[i]);
 	}
 	return indexes;
     }
 
+    @Override
     public void setChangedValues() {
-	Vector<Integer> indexes = getIndexesOfChangedValues();
-	if (indexes.size() > 0) {
+	int[] indexes = layerController.getIndexesOfValuesChanged();
+
+	if (indexes.length > 0) {
 	    setChangedValues(true);
 	} else {
 	    setChangedValues(false);
@@ -499,13 +210,11 @@ PositionListener {
     }
 
     protected String[] getValues() {
-	return layerController.getValuesChanged().values().toArray(new String[0]);
+	return layerController.getValuesChanged().values()
+		.toArray(new String[0]);
     }
 
-    public int[] getIndexes() {
-	return layerController.getIndexesOfValuesChanged();
-    }
-
+    @Override
     public boolean isSavingValues() {
 	return isSavingValues;
     }
@@ -519,7 +228,7 @@ PositionListener {
 	if (isSaveable()) {
 	    setSavingValues(true);
 	    try {
-		layerController.save(getPosition());
+		layerController.update(getPosition());
 		setChangedValues(false);
 		setSavingValues(false);
 		return true;
@@ -540,6 +249,7 @@ PositionListener {
 	super.windowClosed();
     }
 
+    @Override
     public Object getWindowProfile() {
 	return null;
     }
@@ -547,31 +257,6 @@ PositionListener {
     @Override
     public void selectRow(int row) {
 
-    }
-
-    public SelectableDataSource getRecordset(){
-	try {
-	    return layer.getSource().getRecordset();
-	} catch (ReadDriverException e) {
-	    e.printStackTrace();
-	    return null;
-	}
-    }
-
-    public ValidatorForm getFormValidator() {
-	return this.formValidator;
-    }
-
-    public void onPositionChange(PositionEvent e) {
-	long position = ((AbstractNavTable) e.getSource()).getPosition();
-	try {
-	    layerController.read(position);
-	    ((AbstractNavTable) e.getSource()).refreshGUI();
-	} catch (ReadDriverException rde) {
-	    rde.printStackTrace();
-	    layerController.clearAll();
-	    ((AbstractNavTable) e.getSource()).refreshGUI();
-	}
     }
 
     @Override
@@ -584,5 +269,10 @@ PositionListener {
 	    layerController.clearAll();
 	}
 	refreshGUI();
+    }
+
+    @Override
+    public FillHandler getFillFactory() {
+	return fillFactory;
     }
 }

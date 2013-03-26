@@ -6,30 +6,33 @@ import java.util.ArrayList;
 
 import javax.swing.JComboBox;
 
-import es.icarto.gvsig.navtableforms.AbstractForm;
+import es.icarto.gvsig.navtableforms.IValidatableForm;
 import es.icarto.gvsig.navtableforms.ormlite.domainvalues.KeyValue;
 
 public class DependentComboboxesHandler implements ActionListener {
 
     private ArrayList<JComboBox> parentComponents;
     private JComboBox comboBoxToFill;
-    private AbstractForm form;
+    private IValidatableForm form;
 
-    public DependentComboboxesHandler(AbstractForm form, JComboBox parentComponent, JComboBox comboBoxToFill) {
+    public DependentComboboxesHandler(IValidatableForm form,
+	    JComboBox parentComponent, JComboBox comboBoxToFill) {
 	this.form = form;
 	this.comboBoxToFill = comboBoxToFill;
-	this.parentComponents = new ArrayList<JComboBox>();	
+	this.parentComponents = new ArrayList<JComboBox>();
 	this.parentComponents.add(parentComponent);
     }
 
-    public DependentComboboxesHandler(AbstractForm form, ArrayList<JComboBox> parentComponents, JComboBox comboBoxToFill) {
+    public DependentComboboxesHandler(IValidatableForm form,
+	    ArrayList<JComboBox> parentComponents, JComboBox comboBoxToFill) {
 	this.form = form;
 	this.parentComponents = parentComponents;
 	this.comboBoxToFill = comboBoxToFill;
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
-	if(!form.isFillingValues() && parentComponentsHaveItemSelected()) {	    
+	if (!form.isFillingValues() && parentComponentsHaveItemSelected()) {
 	    updateComboBoxValues();
 	}
     }
@@ -37,17 +40,17 @@ public class DependentComboboxesHandler implements ActionListener {
     public void updateComboBoxValues() {
 	ArrayList<String> foreignKeys = new ArrayList<String>();
 	for (JComboBox cb : parentComponents) {
-	if(cb.getSelectedItem() instanceof KeyValue) {
-	    String key = ((KeyValue) cb.getSelectedItem()).getKey();		    
-	    foreignKeys.add(key);
+	    if (cb.getSelectedItem() instanceof KeyValue) {
+		String key = ((KeyValue) cb.getSelectedItem()).getKey();
+		foreignKeys.add(key);
+	    }
 	}
-	}
-	form.fillJComboBox(comboBoxToFill, foreignKeys);
+	form.getFillFactory().fillJComboBox(comboBoxToFill, foreignKeys);
     }
 
     private boolean parentComponentsHaveItemSelected() {
 	for (JComboBox cb : parentComponents) {
-	    if(cb.getSelectedItem() == null) {
+	    if (cb.getSelectedItem() == null) {
 		return false;
 	    }
 	}

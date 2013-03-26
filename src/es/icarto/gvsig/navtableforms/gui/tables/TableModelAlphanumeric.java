@@ -13,8 +13,9 @@ import com.iver.cit.gvsig.exceptions.visitors.StartWriterVisitorException;
 import com.iver.cit.gvsig.exceptions.visitors.StopWriterVisitorException;
 import com.iver.cit.gvsig.fmap.edition.IEditableSource;
 
-import es.icarto.gvsig.navtableforms.dataacces.TableController;
+import es.udc.cartolab.gvsig.navtable.dataacces.TableController;
 
+@SuppressWarnings("serial")
 public class TableModelAlphanumeric extends AbstractTableModel {
 
     private static int NO_ROW = -1;
@@ -23,8 +24,8 @@ public class TableModelAlphanumeric extends AbstractTableModel {
     private IRowFilter filter;
     private TableController tableController;
 
-    private List<String> colNames;
-    private List<String> colAliases;
+    private String[] colNames;
+    private String[] colAliases;
 
     private HashMap<Integer, Integer> rowIndexes;
     private int currentRow = NO_ROW;
@@ -32,10 +33,8 @@ public class TableModelAlphanumeric extends AbstractTableModel {
     private int rowCount;
     private int colCount;
 
-    public TableModelAlphanumeric(IEditableSource source,
-	    IRowFilter filter,
-	    List<String> colNames,
-	    List<String> colAliases) {
+    public TableModelAlphanumeric(IEditableSource source, IRowFilter filter,
+	    String[] colNames, String[] colAliases) {
 	this.source = source;
 	this.filter = filter;
 	this.colNames = colNames;
@@ -47,7 +46,7 @@ public class TableModelAlphanumeric extends AbstractTableModel {
     private void initMetadata() {
 	rowIndexes = getRowIndexes();
 	rowCount = rowIndexes.size();
-	colCount = colNames.size();
+	colCount = colNames.length;
     }
 
     private HashMap<Integer, Integer> getRowIndexes() {
@@ -69,33 +68,38 @@ public class TableModelAlphanumeric extends AbstractTableModel {
 	}
     }
 
+    @Override
     public int getColumnCount() {
 	return colCount;
     }
 
+    @Override
     public int getRowCount() {
 	return rowCount;
     }
 
+    @Override
     public String getColumnName(int column) {
-	return colAliases.get(column);
+	return colAliases[column];
     }
 
     public String getColumnNameInSource(int column) {
-	return colNames.get(column);
+	return colNames[column];
     }
 
+    @Override
     public boolean isCellEditable(int arg0, int arg1) {
 	return false;
     }
 
+    @Override
     public Object getValueAt(int row, int col) {
 	try {
 	    if (currentRow != row) {
 		currentRow = row;
 		tableController.read(rowIndexes.get(row));
 	    }
-	    return tableController.getValue(colNames.get(col));
+	    return tableController.getValue(colNames[col]);
 	} catch (ReadDriverException e) {
 	    e.printStackTrace();
 	    return null;
@@ -106,9 +110,7 @@ public class TableModelAlphanumeric extends AbstractTableModel {
 	return source;
     }
 
-    public void create(HashMap<String, String> values)
-	    throws ExpansionFileWriteException, ReadDriverException,
-	    ParseException {
+    public void create(HashMap<String, String> values) throws Exception {
 	long pos = tableController.create(values);
 	if (pos != TableController.NO_ROW) {
 	    initMetadata();
@@ -134,11 +136,15 @@ public class TableModelAlphanumeric extends AbstractTableModel {
     }
 
     public void delete(int row) throws StopWriterVisitorException,
-    StartWriterVisitorException, InitializeWriterException,
-    ReadDriverException {
+	    StartWriterVisitorException, InitializeWriterException,
+	    ReadDriverException {
 	tableController.delete(rowIndexes.get(row));
 	this.fireTableRowsDeleted(row, row);
 	initMetadata();
+    }
+    
+    public TableController getController() {
+	return tableController;
     }
 
 }
