@@ -1,0 +1,17 @@
+<forms-window-properties>
+  <form>
+    <formName>MyForm</formName>
+    <formWindowHeight>600</formWindowHeight>
+    <formWindowWidth>400</formWindowWidth>
+  </form>
+  <form>
+    <formName>MyForm2</formName>
+    <formWindowHeight>600</formWindowHeight>
+    <formWindowWidth>400</formWindowWidth>
+  </form>
+  <form>
+    <formName>MyForm3</formName>
+    <formWindowHeight>800</formWindowHeight>
+    <formWindowWidth>600</formWindowWidth>
+  </form>
+</forms-window-properties>

@@ -17,8 +17,16 @@
 package es.icarto.gvsig.navtableforms;
 
 import java.awt.BorderLayout;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JCheckBox;
@@ -36,13 +44,21 @@ import net.miginfocom.swing.MigLayout;
 
 import org.apache.log4j.Logger;
 
+import sun.print.PSPrinterJob.PluginPrinter;
+
 import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
+import com.iver.andami.Launcher;
 import com.iver.andami.PluginServices;
+import com.iver.andami.ui.mdiManager.IWindowListener;
 import com.iver.cit.gvsig.fmap.layers.FLyrVect;
 import com.iver.cit.gvsig.fmap.layers.SelectableDataSource;
 import com.jeta.forms.components.panel.FormPanel;
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.StaxDriver;
 
 import es.icarto.gvsig.navtableforms.dataacces.LayerController;
+import es.icarto.gvsig.navtableforms.forms.windowproperties.FormWindowProperties;
+import es.icarto.gvsig.navtableforms.forms.windowproperties.FormWindowPropertiesSerializator;
 import es.icarto.gvsig.navtableforms.gui.formattedtextfields.FormatterFactory;
 import es.icarto.gvsig.navtableforms.ormlite.ORMLite;
 import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.ValidatorComponent;
@@ -82,12 +98,45 @@ PositionListener {
 
     protected static Logger logger = null;
     private ORMLite ormlite;
+    
+    private FormWindowProperties formWindowProperties;
+    private List<FormWindowProperties> formWindowPropertiesList;
 
     public AbstractForm(FLyrVect layer) {
 	super(layer);
 	logger = Logger.getLogger(getClass());
 	formBody = getFormBody();
+	initFormWindowProperties();
 	initValidation();
+    }
+    
+    private void initFormWindowProperties() {
+	boolean hasPropertiesSaved = false;
+	getFormWindowProperties();
+	
+	for (FormWindowProperties fwp : formWindowPropertiesList) {
+	    if (fwp.getFormName().equalsIgnoreCase(getClass().getName())) {
+		viewInfo.setHeight(fwp.getFormWindowHeight());
+		viewInfo.setWidth(fwp.getFormWindowWidth());
+		hasPropertiesSaved = true;
+	    }
+	}
+	
+	if (!hasPropertiesSaved) {
+	    formWindowProperties = new FormWindowProperties();
+	    formWindowProperties.setFormName(getClass().getName());
+	    viewInfo.setHeight(
+		    formBody.getPreferredSize().height + 
+		    getNorthPanel().getPreferredSize().height +
+		    getSouthPanel().getPreferredSize().height);
+	    if (getNorthPanel().getPreferredSize().width > 
+	    	formBody.getPreferredSize().width) {
+		viewInfo.setWidth(getNorthPanel().getPreferredSize().width);
+	    }else {
+		viewInfo.setWidth(formBody.getPreferredSize().width);
+	    }
+	    
+	}
     }
 
     private void initValidation() {
@@ -108,6 +157,11 @@ PositionListener {
     public abstract FormPanel getFormBody();
 
     public abstract String getXMLPath();
+    
+    public String getFormWindowPropertiesXMLPath() {
+	return Launcher.getAppHomeDir() + File.separator +
+		"FormWindowProperties.xml";
+    }
 
     @Deprecated
     public Logger getLoggerName() {
@@ -536,8 +590,48 @@ PositionListener {
 
     @Override
     public void windowClosed() {
-	removeListeners();
 	super.windowClosed();
+	removeListeners();
+	writeFormWindowProperties();
+    }
+
+    private void writeFormWindowProperties() {
+	boolean update = false;
+	for (FormWindowProperties fwp : formWindowPropertiesList) {
+	    if (fwp.getFormName().equalsIgnoreCase(getClass().getName())) {
+		fwp.setFormWindowHeight(viewInfo.getHeight());
+		fwp.setFormWindowWidth(viewInfo.getWidth());
+		update = true;
+		break;
+	    }
+	}
+
+	if (!update) {
+	    FormWindowProperties fwpToAdd = new FormWindowProperties();
+	    fwpToAdd.setFormName(getClass().getName());
+	    fwpToAdd.setFormWindowHeight(viewInfo.getHeight());
+	    fwpToAdd.setFormWindowWidth(viewInfo.getWidth());
+	    formWindowPropertiesList.add(fwpToAdd);
+	}
+	
+	String xml = FormWindowPropertiesSerializator.toXML(formWindowPropertiesList);
+	try {
+	    FileWriter fileWriter= new FileWriter(new File(getFormWindowPropertiesXMLPath()));
+            Writer writer = new BufferedWriter(fileWriter);
+            writer.write(xml);
+            writer.close();
+	} catch (IOException e) {
+	    e.printStackTrace();
+	}
+    }
+    
+    private void getFormWindowProperties() {
+	if (!new File(getFormWindowPropertiesXMLPath()).exists()) {
+	    formWindowPropertiesList = new ArrayList<FormWindowProperties>();
+	} else {
+	    formWindowPropertiesList = FormWindowPropertiesSerializator.fromXML(
+		    new File(getFormWindowPropertiesXMLPath()));
+	}
     }
 
     public Object getWindowProfile() {
@@ -585,4 +679,5 @@ PositionListener {
 	}
 	refreshGUI();
     }
+
 }
