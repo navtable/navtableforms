@@ -58,15 +58,11 @@ public class FillHandler {
 		((JTextComponent) comp).setText("");
 		iController.setValue(w, "");
 	    } else if (comp instanceof JComboBox) {
-		if (((JComboBox) comp).getItemCount() > 0) {
-		    ((JComboBox) comp).removeAllItems();
-		}
-		((JComboBox) comp).addItem(" ");
-		((JComboBox) comp).setSelectedIndex(0);
 		iController.setValue(w, " ");
+		fillJComboBox((JComboBox) comp);
 	    } else if (comp instanceof JCheckBox) {
-		((JCheckBox) comp).setEnabled(false);
 		iController.setValue(w, "false");
+		((JCheckBox) comp).setSelected(false);
 	    }
 	}
     }
