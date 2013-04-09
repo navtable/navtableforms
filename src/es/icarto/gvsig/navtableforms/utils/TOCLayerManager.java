@@ -70,15 +70,22 @@ public class TOCLayerManager {
     }
 
     public FLyrVect getActiveLayer() {
-	if(mapControl != null) {
-	    return (FLyrVect) mapControl.getMapContext().getLayers().getActives()[0];
+	if (mapControl != null) {
+	    FLayer[] activeLayers = mapControl.getMapContext().getLayers()
+		    .getActives();
+	    for (FLayer layer : activeLayers) {
+		if (layer instanceof FLyrVect) {
+		    return (FLyrVect) layer;
+		}
+	    }
 	}
 	return null;
     }
 
     public String getNameOfActiveLayer() {
-	if(mapControl != null) {
-	    return mapControl.getMapContext().getLayers().getActives()[0].getName();
+	FLyrVect layer = getActiveLayer();
+	if (layer != null) {
+	    return layer.getName();
 	}
 	return null;
     }
