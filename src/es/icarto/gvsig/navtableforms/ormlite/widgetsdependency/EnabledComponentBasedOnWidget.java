@@ -11,7 +11,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 public class EnabledComponentBasedOnWidget implements ActionListener {
-    
+
     private JComponent component;
     private JComponent widget;
     private String value;
@@ -36,6 +36,7 @@ public class EnabledComponentBasedOnWidget implements ActionListener {
 	}
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
 	enableComponent();
     }
@@ -43,7 +44,7 @@ public class EnabledComponentBasedOnWidget implements ActionListener {
     private void enableComponent() {
 	if (widget instanceof JCheckBox) {
 	    enableComponentIfWidgetIsCheckBox();
-	}else if (widget instanceof JComboBox) {
+	} else if (widget instanceof JComboBox) {
 	    enableComponentIfWidgetIsCombBox();
 	}
     }
@@ -61,9 +62,13 @@ public class EnabledComponentBasedOnWidget implements ActionListener {
 
     private void enableComponentIfWidgetIsCheckBox() {
 	boolean enabled = ((JCheckBox) widget).isSelected();
-	component.setEnabled(enabled);
+	if (String.valueOf(enabled).equalsIgnoreCase(value)) {
+	    component.setEnabled(true);
+	} else {
+	    component.setEnabled(false);
+	}
 	if (removeDependentValues) {
-	removeValue(component);
+	    removeValue(component);
 	}
     }
 
@@ -83,10 +88,10 @@ public class EnabledComponentBasedOnWidget implements ActionListener {
 
     public void removeListeners() {
 	if (widget instanceof JCheckBox) {
-	    ((JCheckBox)widget).removeActionListener(this);
+	    ((JCheckBox) widget).removeActionListener(this);
 	}
 	if (widget instanceof JComboBox) {
-	    ((JComboBox)widget).removeActionListener(this);
+	    ((JComboBox) widget).removeActionListener(this);
 	}
     }
 
