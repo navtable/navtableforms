@@ -10,18 +10,22 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import es.icarto.gvsig.navtableforms.IValidatableForm;
+
 public class EnabledComponentBasedOnWidget implements ActionListener {
 
     private JComponent component;
     private JComponent widget;
     private String value;
     private boolean removeDependentValues;
+    private IValidatableForm form;
 
     public EnabledComponentBasedOnWidget(JComponent widget,
-	    JComponent component, String value) {
+	    JComponent component, String value, IValidatableForm form) {
 	this.widget = widget;
 	this.component = component;
 	this.value = value;
+	this.form = form;
     }
 
     public void setRemoveDependentValues(boolean removeDependentValues) {
@@ -38,7 +42,9 @@ public class EnabledComponentBasedOnWidget implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-	enableComponent();
+	if (!form.isFillingValues()) {
+	    enableComponent();
+	}
     }
 
     private void enableComponent() {
@@ -73,16 +79,22 @@ public class EnabledComponentBasedOnWidget implements ActionListener {
     }
 
     private void removeValue(JComponent c) {
+	String fieldName = c.getName();
 	if (c instanceof JFormattedTextField) {
 	    ((JFormattedTextField) c).setText("");
+	    form.getFormController().setValue(fieldName, "");
 	} else if (c instanceof JTextField) {
 	    ((JTextField) c).setText("");
+	    form.getFormController().setValue(fieldName, "");
 	} else if (c instanceof JComboBox) {
 	    ((JComboBox) c).setSelectedIndex(0);
+	    form.getFormController().setValue(fieldName, " ");
 	} else if (c instanceof JCheckBox) {
 	    ((JCheckBox) c).setSelected(false);
+	    form.getFormController().setValue(fieldName, "false");
 	} else if (c instanceof JTextArea) {
 	    ((JTextArea) c).setText("");
+	    form.getFormController().setValue(fieldName, "");
 	}
     }
 

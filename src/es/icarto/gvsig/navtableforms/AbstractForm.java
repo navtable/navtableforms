@@ -77,7 +77,7 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	widgets = AbeilleParser.getWidgetsFromContainer(formBody);
 	ormlite = new ORMLite(getXMLPath());
 	validationHandler = new ValidationHandler(ormlite, this);
-	dependencyHandler = new DependencyHandler(ormlite, widgets);
+	dependencyHandler = new DependencyHandler(ormlite, widgets, this);
 
     }
 

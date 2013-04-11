@@ -67,7 +67,7 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 	initGUI();
 	ormlite = new ORMLite(getMetadataPath());
 	validationHandler = new ValidationHandler(ormlite, this);
-	dependencyHandler = new DependencyHandler(ormlite, widgets);
+	dependencyHandler = new DependencyHandler(ormlite, widgets, this);
 	setListeners();
     }
 
@@ -326,13 +326,13 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
     }
 
     private final class SaveAction implements ActionListener {
-	
+
 	private IWindow iWindow;
 
 	public SaveAction(IWindow iWindow) {
 	    this.iWindow = iWindow;
 	}
-	
+
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 	    try {
