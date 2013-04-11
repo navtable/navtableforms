@@ -151,4 +151,9 @@ public class TableModelAlphanumeric extends AbstractTableModel {
 	return rowIndexes.get(row);
     }
 
+    public void dataChanged() {
+	this.fireTableDataChanged();
+	initMetadata();
+    }
+
 }
