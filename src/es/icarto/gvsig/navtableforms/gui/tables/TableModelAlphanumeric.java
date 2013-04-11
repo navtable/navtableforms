@@ -147,4 +147,8 @@ public class TableModelAlphanumeric extends AbstractTableModel {
 	return tableController;
     }
 
+    public int convertRowIndexToModel(int row) {
+	return rowIndexes.get(row);
+    }
+
 }
