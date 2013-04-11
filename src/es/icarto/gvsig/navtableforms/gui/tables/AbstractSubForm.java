@@ -285,7 +285,8 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
     @Override
     public void actionDeleteRecord(long position) {
 	try {
-	    model.delete((int) position);
+	    iController.delete((int) position);
+	    model.dataChanged();
 	} catch (Exception e) {
 	    NotificationManager.addError(e);
 	}
@@ -299,7 +300,7 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
     @Override
     public void setModel(TableModelAlphanumeric model) {
 	this.model = model;
-	iController = model.getController();
+	iController = model.getController().clone();
 	fillHandler = new FillHandler(widgets, iController,
 		ormlite.getAppDomain());
     }
@@ -316,7 +317,8 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 	public void actionPerformed(ActionEvent arg0) {
 	    HashMap<String, String> values = iController.getValues();
 	    try {
-		model.create(values);
+		iController.create(values);
+		model.dataChanged();
 	    } catch (Exception e) {
 		iController.clearAll();
 		position = -1;
@@ -337,7 +339,8 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 	    try {
-		model.update((int) position);
+		iController.update((int) position);
+		model.dataChanged();
 	    } catch (ReadDriverException e) {
 		iController.clearAll();
 		position = -1;
