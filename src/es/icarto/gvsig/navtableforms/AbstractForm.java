@@ -100,11 +100,14 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	    formWindowProperties.setFormName(getClass().getName());
 
 	    MDIFrame a = (MDIFrame) PluginServices.getMainFrame();
-	    int maxHeight = a.getHeight() - 175;
+	    final int SCROLL_AND_BORDER = 50;
+	    final int TOOL_MENU_STATE_BAR = 180;
+	    int maxHeight = a.getHeight() - TOOL_MENU_STATE_BAR;
 
 	    int calculateTotalFormWindowHeight = formBody.getPreferredSize().height
 		    + getNorthPanel().getPreferredSize().height
-		    + getSouthPanel().getPreferredSize().height;
+		    + getSouthPanel().getPreferredSize().height
+		    + SCROLL_AND_BORDER;
 
 	    if (maxHeight < calculateTotalFormWindowHeight) {
 		viewInfo.setHeight(maxHeight);
@@ -112,9 +115,10 @@ public abstract class AbstractForm extends AbstractNavTable implements
 		viewInfo.setHeight(calculateTotalFormWindowHeight);
 	    }
 
-	    if (getNorthPanel().getPreferredSize().width > formBody
-		    .getPreferredSize().width) {
-		viewInfo.setWidth(getNorthPanel().getPreferredSize().width);
+	    final int calculateTotalFormWidth = getNorthPanel()
+		    .getPreferredSize().width + SCROLL_AND_BORDER;
+	    if (calculateTotalFormWidth > formBody.getPreferredSize().width) {
+		viewInfo.setWidth(calculateTotalFormWidth);
 	    } else {
 		viewInfo.setWidth(formBody.getPreferredSize().width);
 	    }
