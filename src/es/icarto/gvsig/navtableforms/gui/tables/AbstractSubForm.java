@@ -56,7 +56,6 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
     private WindowInfo windowInfo;
     private final static int windowInfoCode = WindowInfo.MODELESSDIALOG
 	    | WindowInfo.PALETTE;
-    private final String windowTitle = "";
     private long position;
     private ActionListener action;
     private TableModelAlphanumeric model;
@@ -224,7 +223,7 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
     public WindowInfo getWindowInfo() {
 	if (windowInfo == null) {
 	    windowInfo = new WindowInfo(windowInfoCode);
-	    windowInfo.setTitle(windowTitle);
+	    windowInfo.setTitle(PluginServices.getText(this, getBasicName()));
 	    Dimension dim = getPreferredSize();
 	    MDIFrame a = (MDIFrame) PluginServices.getMainFrame();
 	    int maxHeight = a.getHeight() - 175;
