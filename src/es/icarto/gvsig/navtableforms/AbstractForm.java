@@ -62,7 +62,6 @@ public abstract class AbstractForm extends AbstractNavTable implements
 
     private ORMLite ormlite;
 
-    private List<FormWindowProperties> formWindowPropertiesList;
     private FillHandler fillHandler;
 
     private ValidationHandler validationHandler;
@@ -84,9 +83,8 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	if (windowInfo == null) {
 	    super.getWindowInfo();
 	    
-	    getFormWindowProperties();
 
-	    for (FormWindowProperties fwp : formWindowPropertiesList) {
+	    for (FormWindowProperties fwp : getFormWindowProperties()) {
 		if (fwp.getFormName().equalsIgnoreCase(getClass().getName())) {
 		    windowInfo.setHeight(fwp.getFormWindowHeight());
 		    windowInfo.setWidth(fwp.getFormWindowWidth());
@@ -290,6 +288,7 @@ public abstract class AbstractForm extends AbstractNavTable implements
 
     private void writeFormWindowProperties() {
 	boolean update = false;
+	List<FormWindowProperties> formWindowPropertiesList = getFormWindowProperties();
 	for (FormWindowProperties fwp : formWindowPropertiesList) {
 	    if (fwp.getFormName().equalsIgnoreCase(getClass().getName())) {
 		fwp.setFormWindowHeight(windowInfo.getHeight());
@@ -324,11 +323,11 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	}
     }
 
-    private void getFormWindowProperties() {
+    private List<FormWindowProperties> getFormWindowProperties() {
 	if (!new File(getFormWindowPropertiesXMLPath()).exists()) {
-	    formWindowPropertiesList = new ArrayList<FormWindowProperties>();
+	    return new ArrayList<FormWindowProperties>();
 	} else {
-	    formWindowPropertiesList = FormWindowPropertiesSerializator
+	    return FormWindowPropertiesSerializator
 		    .fromXML(new File(getFormWindowPropertiesXMLPath()));
 	}
     }
