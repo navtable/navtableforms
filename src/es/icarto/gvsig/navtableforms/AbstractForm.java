@@ -37,7 +37,7 @@ import org.apache.log4j.Logger;
 import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
 import com.iver.andami.Launcher;
 import com.iver.andami.PluginServices;
-import com.iver.andami.ui.mdiFrame.MDIFrame;
+import com.iver.andami.ui.mdiManager.WindowInfo;
 import com.iver.cit.gvsig.fmap.layers.FLyrVect;
 import com.jeta.forms.components.panel.FormPanel;
 
@@ -62,7 +62,6 @@ public abstract class AbstractForm extends AbstractNavTable implements
 
     private ORMLite ormlite;
 
-    private FormWindowProperties formWindowProperties;
     private List<FormWindowProperties> formWindowPropertiesList;
     private FillHandler fillHandler;
 
@@ -73,7 +72,6 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	super(layer);
 	logger = Logger.getLogger(getClass());
 	formBody = getFormBody();
-	initFormWindowProperties();
 	widgets = AbeilleParser.getWidgetsFromContainer(formBody);
 	ormlite = new ORMLite(getXMLPath());
 	validationHandler = new ValidationHandler(ormlite, this);
@@ -81,49 +79,23 @@ public abstract class AbstractForm extends AbstractNavTable implements
 
     }
 
-    private void initFormWindowProperties() {
-	boolean hasPropertiesSaved = false;
-	getFormWindowProperties();
+    @Override
+    public WindowInfo getWindowInfo() {
+	if (windowInfo == null) {
+	    super.getWindowInfo();
+	    
+	    getFormWindowProperties();
 
-	for (FormWindowProperties fwp : formWindowPropertiesList) {
-	    if (fwp.getFormName().equalsIgnoreCase(getClass().getName())) {
-		viewInfo.setHeight(fwp.getFormWindowHeight());
-		viewInfo.setWidth(fwp.getFormWindowWidth());
-		viewInfo.setX(fwp.getFormWindowXPosition());
-		viewInfo.setY(fwp.getFormWindowYPosition());
-		hasPropertiesSaved = true;
+	    for (FormWindowProperties fwp : formWindowPropertiesList) {
+		if (fwp.getFormName().equalsIgnoreCase(getClass().getName())) {
+		    windowInfo.setHeight(fwp.getFormWindowHeight());
+		    windowInfo.setWidth(fwp.getFormWindowWidth());
+		    windowInfo.setX(fwp.getFormWindowXPosition());
+		    windowInfo.setY(fwp.getFormWindowYPosition());
+		}
 	    }
 	}
-
-	if (!hasPropertiesSaved) {
-	    formWindowProperties = new FormWindowProperties();
-	    formWindowProperties.setFormName(getClass().getName());
-
-	    MDIFrame a = (MDIFrame) PluginServices.getMainFrame();
-	    final int SCROLL_AND_BORDER = 50;
-	    final int TOOL_MENU_STATE_BAR = 180;
-	    int maxHeight = a.getHeight() - TOOL_MENU_STATE_BAR;
-
-	    int calculateTotalFormWindowHeight = formBody.getPreferredSize().height
-		    + getNorthPanel().getPreferredSize().height
-		    + getSouthPanel().getPreferredSize().height
-		    + SCROLL_AND_BORDER;
-
-	    if (maxHeight < calculateTotalFormWindowHeight) {
-		viewInfo.setHeight(maxHeight);
-	    } else {
-		viewInfo.setHeight(calculateTotalFormWindowHeight);
-	    }
-
-	    final int calculateTotalFormWidth = getNorthPanel()
-		    .getPreferredSize().width + SCROLL_AND_BORDER;
-	    if (calculateTotalFormWidth > formBody.getPreferredSize().width) {
-		viewInfo.setWidth(calculateTotalFormWidth);
-	    } else {
-		viewInfo.setWidth(formBody.getPreferredSize().width);
-	    }
-
-	}
+	return windowInfo;
     }
 
     public abstract FormPanel getFormBody();
@@ -320,10 +292,10 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	boolean update = false;
 	for (FormWindowProperties fwp : formWindowPropertiesList) {
 	    if (fwp.getFormName().equalsIgnoreCase(getClass().getName())) {
-		fwp.setFormWindowHeight(viewInfo.getHeight());
-		fwp.setFormWindowWidth(viewInfo.getWidth());
-		fwp.setFormWindowXPosition(viewInfo.getX());
-		fwp.setFormWindowYPosition(viewInfo.getY());
+		fwp.setFormWindowHeight(windowInfo.getHeight());
+		fwp.setFormWindowWidth(windowInfo.getWidth());
+		fwp.setFormWindowXPosition(windowInfo.getX());
+		fwp.setFormWindowYPosition(windowInfo.getY());
 		update = true;
 		break;
 	    }
@@ -332,10 +304,10 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	if (!update) {
 	    FormWindowProperties fwpToAdd = new FormWindowProperties();
 	    fwpToAdd.setFormName(getClass().getName());
-	    fwpToAdd.setFormWindowHeight(viewInfo.getHeight());
-	    fwpToAdd.setFormWindowWidth(viewInfo.getWidth());
-	    fwpToAdd.setFormWindowXPosition(viewInfo.getX());
-	    fwpToAdd.setFormWindowYPosition(viewInfo.getY());
+	    fwpToAdd.setFormWindowHeight(windowInfo.getHeight());
+	    fwpToAdd.setFormWindowWidth(windowInfo.getWidth());
+	    fwpToAdd.setFormWindowXPosition(windowInfo.getX());
+	    fwpToAdd.setFormWindowYPosition(windowInfo.getY());
 	    formWindowPropertiesList.add(fwpToAdd);
 	}
 
