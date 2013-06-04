@@ -86,7 +86,10 @@ public abstract class AbstractForm extends AbstractNavTable implements
 
 	    for (FormWindowProperties fwp : getFormWindowProperties()) {
 		if (fwp.getFormName().equalsIgnoreCase(getClass().getName())) {
-		    windowInfo.setHeight(fwp.getFormWindowHeight());
+		    // WindowInfoSupport.getWindowInfo adds 40 to the getWindowInfo declared
+		    // by IWindow objects
+		    final int ANDAMI_CORRECTION = 40;
+		    windowInfo.setHeight(fwp.getFormWindowHeight() - ANDAMI_CORRECTION);
 		    windowInfo.setWidth(fwp.getFormWindowWidth());
 		    windowInfo.setX(fwp.getFormWindowXPosition());
 		    windowInfo.setY(fwp.getFormWindowYPosition());
