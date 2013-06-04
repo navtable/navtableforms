@@ -55,7 +55,7 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 
     private WindowInfo windowInfo;
     private final static int windowInfoCode = WindowInfo.MODELESSDIALOG
-	    | WindowInfo.PALETTE;
+	    | WindowInfo.PALETTE | WindowInfo.RESIZABLE;
     private long position;
     private ActionListener action;
     private TableModelAlphanumeric model;
