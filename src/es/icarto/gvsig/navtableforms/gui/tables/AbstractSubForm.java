@@ -1,6 +1,5 @@
 package es.icarto.gvsig.navtableforms.gui.tables;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -25,7 +24,6 @@ import com.iver.andami.ui.mdiFrame.MDIFrame;
 import com.iver.andami.ui.mdiManager.IWindow;
 import com.iver.andami.ui.mdiManager.IWindowListener;
 import com.iver.andami.ui.mdiManager.WindowInfo;
-import com.iver.cit.gvsig.CADExtension;
 import com.iver.cit.gvsig.fmap.edition.IEditableSource;
 import com.jeta.forms.components.panel.FormPanel;
 import com.jeta.forms.gui.common.FormException;
@@ -278,7 +276,7 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 	saveButton.addActionListener(action);
 	fillEmptyValues();
 	setListeners();
-	PluginServices.getMDIManager().addWindow(this);
+	PluginServices.getMDIManager().addCentredWindow(this);
     }
 
     @Override
@@ -289,7 +287,7 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 	saveButton.addActionListener(action);
 	fillValues();
 	setListeners();
-	PluginServices.getMDIManager().addWindow(this);
+	PluginServices.getMDIManager().addCentredWindow(this);
     }
 
     @Override
