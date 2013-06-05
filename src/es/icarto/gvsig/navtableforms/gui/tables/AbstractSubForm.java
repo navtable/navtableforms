@@ -12,6 +12,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import org.apache.log4j.Logger;
@@ -73,11 +74,12 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
     private void initGUI() {
 	setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 	FormPanel formPanel = getFormPanel("ui/" + getBasicName() + ".xml");
+	JScrollPane scrollPane = new JScrollPane(formPanel);
 	widgets = AbeilleParser.getWidgetsFromContainer(formPanel);
 	// AbeilleUtils au = new AbeilleUtils();
 	// au.formatLabels(formPanel);
 	// au.formatTextArea(formPanel);
-	add(formPanel);
+	add(scrollPane);
 	add(getSouthPanel());
 	setFocusCycleRoot(true);
     }
@@ -225,8 +227,11 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 	    windowInfo = new WindowInfo(windowInfoCode);
 	    windowInfo.setTitle(PluginServices.getText(this, getBasicName()));
 	    Dimension dim = getPreferredSize();
+	    //To calculate the maximum size of a form we take the size of the 
+	    // main frame minus a "magic number" for the menus, toolbar, state bar
+	    // Take into account that in edition mode there is less available space
 	    MDIFrame a = (MDIFrame) PluginServices.getMainFrame();
-	    int maxHeight = a.getHeight() - 175;
+	    int maxHeight = a.getHeight() - 205;
 	    int maxWidth = a.getWidth() - 15;
 
 	    int width, heigth = 0;
@@ -240,7 +245,11 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 	    } else {
 		width = new Double(dim.getWidth()).intValue();
 	    }
-	    windowInfo.setWidth(width + 15);
+	    
+	    // getPreferredSize doesn't take into account the borders and other stuff
+	    // introduced by Andami, neither scroll bars so we must increase the "preferred"
+	    // dimensions
+	    windowInfo.setWidth(width + 25);
 	    windowInfo.setHeight(heigth + 15);
 	}
 	return windowInfo;
@@ -267,7 +276,7 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 	action = new CreateAction(this);
 	saveButton.addActionListener(action);
 	fillEmptyValues();
-	PluginServices.getMDIManager().addWindow(this);
+	PluginServices.getMDIManager().addCentredWindow(this);
     }
 
     @Override
@@ -277,7 +286,7 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 	action = new SaveAction(this);
 	saveButton.addActionListener(action);
 	fillValues();
-	PluginServices.getMDIManager().addWindow(this);
+	PluginServices.getMDIManager().addCentredWindow(this);
     }
 
     @Override
