@@ -2,11 +2,13 @@ package es.icarto.gvsig.navtableforms.ormlite.widgetsdependency;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseListener;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
@@ -19,6 +21,8 @@ public class EnabledComponentBasedOnWidget implements ActionListener {
     private String value;
     private boolean removeDependentValues;
     private IValidatableForm form;
+    // to store the table listeners when the component is a jtable
+    private MouseListener[] listeners = new MouseListener[0];
 
     public EnabledComponentBasedOnWidget(JComponent widget,
 	    JComponent component, String value, IValidatableForm form) {
@@ -38,6 +42,8 @@ public class EnabledComponentBasedOnWidget implements ActionListener {
 	} else if (widget instanceof JComboBox) {
 	    ((JComboBox) widget).addActionListener(this);
 	}
+	listeners = component.getMouseListeners() != null ? component
+		.getMouseListeners() : new MouseListener[0];
     }
 
     @Override
@@ -60,6 +66,11 @@ public class EnabledComponentBasedOnWidget implements ActionListener {
 	    boolean enabled = ((JComboBox) widget).getSelectedItem().toString()
 		    .equalsIgnoreCase(value);
 	    component.setEnabled(enabled);
+	    if (enabled) {
+		enableJTable();
+	    } else {
+		disableJTable();
+	    }
 	    if (removeDependentValues) {
 		removeValue(component);
 	    }
@@ -70,11 +81,33 @@ public class EnabledComponentBasedOnWidget implements ActionListener {
 	boolean enabled = ((JCheckBox) widget).isSelected();
 	if (String.valueOf(enabled).equalsIgnoreCase(value)) {
 	    component.setEnabled(true);
+	    enableJTable();
 	} else {
 	    component.setEnabled(false);
+	    disableJTable();
+
 	}
 	if (removeDependentValues) {
 	    removeValue(component);
+	}
+    }
+
+    private void disableJTable() {
+	if (component instanceof JTable) {
+	    ((JTable) component).setFillsViewportHeight(false);
+	    listeners = component.getMouseListeners();
+	    for (MouseListener l : listeners) {
+		component.removeMouseListener(l);
+	    }
+	}
+    }
+
+    private void enableJTable() {
+	if (component instanceof JTable) {
+	    ((JTable) component).setFillsViewportHeight(true);
+	    for (MouseListener l : listeners) {
+		component.addMouseListener(l);
+	    }
 	}
     }
 
@@ -105,6 +138,8 @@ public class EnabledComponentBasedOnWidget implements ActionListener {
 	if (widget instanceof JComboBox) {
 	    ((JComboBox) widget).removeActionListener(this);
 	}
+
+	listeners = new MouseListener[0];
     }
 
     public void fillValues() {
