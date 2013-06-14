@@ -274,8 +274,8 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 	saveButton.removeActionListener(action);
 	action = new CreateAction(this);
 	saveButton.addActionListener(action);
-	fillEmptyValues();
 	setListeners();
+	fillEmptyValues();
 	PluginServices.getMDIManager().addCentredWindow(this);
     }
 
@@ -285,8 +285,8 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 	saveButton.removeActionListener(action);
 	action = new SaveAction(this);
 	saveButton.addActionListener(action);
-	fillValues();
 	setListeners();
+	fillValues();
 	PluginServices.getMDIManager().addCentredWindow(this);
     }
 
