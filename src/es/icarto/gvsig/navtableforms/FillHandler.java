@@ -128,7 +128,9 @@ public class FillHandler {
 		}
 	    }
 	}
-	combobox.setEnabled(true);
+	// We shouldn't enable the combobox if it isn't
+	// by the form logic itself.
+	// combobox.setEnabled(true);
 	if (combobox.getSelectedIndex() == -1) {
 	    combobox.addItem(new KeyValue("", "", ""));
 	    combobox.setSelectedIndex(0);
