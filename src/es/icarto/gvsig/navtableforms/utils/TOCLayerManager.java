@@ -1,5 +1,8 @@
 package es.icarto.gvsig.navtableforms.utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.iver.andami.PluginServices;
 import com.iver.andami.ui.mdiManager.IWindow;
 import com.iver.cit.gvsig.fmap.MapControl;
@@ -80,6 +83,20 @@ public class TOCLayerManager {
 	    }
 	}
 	return null;
+    }
+
+    public FLyrVect[] getActiveLayers() {
+	List<FLyrVect> layers = new ArrayList<FLyrVect>();
+	if (mapControl != null) {
+	    FLayer[] activeLayers = mapControl.getMapContext().getLayers()
+		    .getActives();
+	    for (FLayer layer : activeLayers) {
+		if (layer instanceof FLyrVect) {
+		    layers.add((FLyrVect) layer);
+		}
+	    }
+	}
+	return layers.toArray(new FLyrVect[0]);
     }
 
     public String getNameOfActiveLayer() {
