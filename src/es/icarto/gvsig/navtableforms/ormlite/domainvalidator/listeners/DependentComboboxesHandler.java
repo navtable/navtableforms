@@ -5,26 +5,28 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JTextField;
 
 import es.icarto.gvsig.navtableforms.IValidatableForm;
 import es.icarto.gvsig.navtableforms.ormlite.domainvalues.KeyValue;
 
 public class DependentComboboxesHandler implements ActionListener {
 
-    private ArrayList<JComboBox> parentComponents;
+    private ArrayList<JComponent> parentComponents;
     private JComboBox comboBoxToFill;
     private IValidatableForm form;
 
     public DependentComboboxesHandler(IValidatableForm form,
-	    JComboBox parentComponent, JComboBox comboBoxToFill) {
+	    JComponent parentComponent, JComboBox comboBoxToFill) {
 	this.form = form;
 	this.comboBoxToFill = comboBoxToFill;
-	this.parentComponents = new ArrayList<JComboBox>();
+	this.parentComponents = new ArrayList<JComponent>();
 	this.parentComponents.add(parentComponent);
     }
 
     public DependentComboboxesHandler(IValidatableForm form,
-	    ArrayList<JComboBox> parentComponents, JComboBox comboBoxToFill) {
+	    ArrayList<JComponent> parentComponents, JComboBox comboBoxToFill) {
 	this.form = form;
 	this.parentComponents = parentComponents;
 	this.comboBoxToFill = comboBoxToFill;
@@ -39,19 +41,41 @@ public class DependentComboboxesHandler implements ActionListener {
 
     public void updateComboBoxValues() {
 	ArrayList<String> foreignKeys = new ArrayList<String>();
-	for (JComboBox cb : parentComponents) {
-	    if (cb.getSelectedItem() instanceof KeyValue) {
-		String key = ((KeyValue) cb.getSelectedItem()).getKey();
-		foreignKeys.add(key);
+	for (JComponent cp : parentComponents) {
+	    if (cp instanceof JComboBox) {
+		JComboBox cb = (JComboBox) cp;
+		if (cb.getSelectedItem() instanceof KeyValue) {
+		    String key = ((KeyValue) cb.getSelectedItem()).getKey();
+		    foreignKeys.add(key);
+		}
+	    } else {
+		if (cp instanceof JTextField) {
+		    JTextField tf = (JTextField) cp;
+		    String key = tf.getText();
+		    if (key != null) {
+			foreignKeys.add(key);
+		    }
+		}
 	    }
 	}
 	form.getFillHandler().fillJComboBox(comboBoxToFill, foreignKeys);
     }
 
     private boolean parentComponentsHaveItemSelected() {
-	for (JComboBox cb : parentComponents) {
-	    if (cb.getSelectedItem() == null) {
-		return false;
+	for (JComponent cp : parentComponents) {
+	    if (cp instanceof JComboBox) {
+		JComboBox cb = (JComboBox) cp;
+		if (cb.getSelectedItem() == null) {
+		    return false;
+		}
+	    } else {
+		if (cp instanceof JTextField) {
+		    JTextField tf = (JTextField) cp;
+		    String value = tf.getText();
+		    if ((value == null) || (value.length() == 0)) {
+			return false;
+		    }
+		}
 	    }
 	}
 	return true;
