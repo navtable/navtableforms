@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -115,7 +116,21 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 	fillHandler.fillEmptyWidgetsAndController();
 	for (String f : foreingKey.keySet()) {
 	    String value = foreingKey.get(f);
-	    ((JTextField) widgets.get(f)).setText(value);
+	    JComponent widget = widgets.get(f);
+	    if (widget != null) {
+		if (widget instanceof JTextField) {
+		    ((JTextField) widgets.get(f)).setText(value);
+		} else {
+		    if (widget instanceof JComboBox) {
+			JComboBox combo = (JComboBox) widgets.get(f);
+			for (int i = combo.getItemCount() - 1; i >= 0; i--) {
+			    if (combo.getItemAt(i).equals(value)) {
+				combo.setSelectedIndex(i);
+			    }
+			}
+		    }
+		}
+	    }
 	    iController.setValue(f, value);
 	}
 	fillSpecificValues();
