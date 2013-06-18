@@ -4,6 +4,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -77,12 +79,14 @@ public class ORMLiteAppDomainTests {
 
     @Test
     public void checkDependencyValuesOfMyWidget() {
-	assertTrue(ormlite.getAppDomain()
-		.getDependencyValuesForComponent("my_widget").getComponent()
-		.equalsIgnoreCase("other_widget"));
-	assertTrue(ormlite.getAppDomain()
-		.getDependencyValuesForComponent("my_widget").getValue()
-		.equalsIgnoreCase("true"));
+	Map<String, List<String>> conditions = ormlite.getAppDomain()
+		.getDependencyValuesForComponent("my_widget").getConditions();
+	assertTrue(conditions.keySet().size() == 1);
+	String component = conditions.keySet().toArray(new String[0])[0];
+	assertTrue(component.equalsIgnoreCase("other_widget"));
+	assertTrue(conditions.get(component).size() == 1);
+	String value = conditions.get(component).toArray(new String[0])[0];
+	assertTrue(value.equalsIgnoreCase("true"));
     }
 
     @Test

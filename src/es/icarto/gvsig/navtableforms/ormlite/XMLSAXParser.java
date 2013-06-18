@@ -62,6 +62,7 @@ public class XMLSAXParser extends DefaultHandler {
     private DomainReader tmpDomainReader = null;
     private FieldDescription tmpFieldDescription = null;
     private DependencyReader tmpDependencyReader = null;
+    private String latestDpnComponent, latestDpnValue;
 
     private static Logger logger = Logger.getLogger("SAX Parser");
 
@@ -120,8 +121,14 @@ public class XMLSAXParser extends DefaultHandler {
 	    // set field
 	    tmpFieldDescription = new FieldDescription();
 	}
-	if (qName.equalsIgnoreCase("ENABLEIF")) {
+
+	else if (qName.equalsIgnoreCase("ENABLEIF")) {
 	    tmpDependencyReader = new DependencyReader();
+	}
+
+	else if (qName.equalsIgnoreCase("CONDITION")) {
+	    latestDpnComponent = null;
+	    latestDpnValue = null;
 	}
     }
 
@@ -218,9 +225,18 @@ public class XMLSAXParser extends DefaultHandler {
 
 	// save tmp values of widgets dependency
 	else if (qName.equalsIgnoreCase("COMPONENT")) {
-	    tmpDependencyReader.setComponent(tmpVal);
-	} else if (qName.equalsIgnoreCase("VALUE")) {
-	    tmpDependencyReader.setValue(tmpVal);
+	    latestDpnComponent = tmpVal;
+	}
+
+	else if (qName.equalsIgnoreCase("VALUE")) {
+	    latestDpnValue = tmpVal;
+	}
+
+	else if (qName.equalsIgnoreCase("CONDITION")) {
+	    if ((latestDpnValue != null) && (latestDpnComponent != null)) {
+		tmpDependencyReader.addCondition(latestDpnComponent,
+			latestDpnValue);
+	    }
 	}
 
 	// save tmp values of DependencyReader in ApplicationDomain

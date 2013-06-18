@@ -17,41 +17,52 @@
 
 package es.icarto.gvsig.navtableforms.ormlite.widgetsdependency;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * DependencyReader which saves information about the widgets dependency.
+ * 
+ * Please note multiple dependencies onto the same component are considered
+ * an OR, whereas dependencies among different ones are always evaluated with
+ * an AND. There is no problem combining them, this behaviour is transparent.
  * 
  * XML syntax example:
  * 
  * <ENABLEIF>
+ * 	<CONDITION>
  *	<COMPONENT>componentName</COMPONENT>
  *	<VALUE>value</VALUE>
+ * 	</CONDITION>
+ * 	[<CONDITION>...]
  * </ENABLEIF>
  * 
  * @author Pablo Sanxiao <psanxiao@icarto.es>
+ * @author Jorge López Fernández <jlopez@cartolab.es>
  * 
  */
 public class DependencyReader {
-
-    private String component = null;
-    private String value = null;
+    
+    private Map<String, List<String>> conditions = new HashMap<String, List<String>>();
     
     public DependencyReader() {
 	
     }
     
-    public void setComponent(String component) {
-	this.component = component;
+    public void addCondition(String component, String value) {
+	if (!conditions.containsKey(component)) {
+	    conditions.put(component, new ArrayList<String>());
+	}
+	conditions.get(component).add(value);
     }
-    
-    public String getComponent() {
- 	return this.component;
-     }
-    
-    public void setValue(String value) {
-	this.value = value;
+
+    public Map<String, List<String>> getConditions() {
+	return conditions;
     }
-    
-    public String getValue() {
- 	return this.value;
-     }
+
+    public List<String> getCondition(String component) {
+	return conditions.get(component);
+    }
 }

@@ -26,8 +26,10 @@
 	<FIELD>
 		<FIELDNAME>my_widget</FIELDNAME>
 		<ENABLEIF>
-			<COMPONENT>other_widget</COMPONENT>
-			<VALUE>true</VALUE>
+			<CONDITION>
+				<COMPONENT>other_widget</COMPONENT>
+				<VALUE>true</VALUE>
+			</CONDITION>
 		</ENABLEIF>
 	</FIELD>
 </LAYER>

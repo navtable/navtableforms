@@ -3,6 +3,11 @@ package es.icarto.gvsig.navtableforms.ormlite.widgetsdependency;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -14,22 +19,32 @@ import javax.swing.JTextField;
 
 import es.icarto.gvsig.navtableforms.IValidatableForm;
 
-public class EnabledComponentBasedOnWidget implements ActionListener {
+public class EnabledComponentBasedOnWidgets implements ActionListener {
 
     private JComponent component;
-    private JComponent widget;
-    private String value;
+    private Map<JComponent, List<String>> conditions = new HashMap<JComponent, List<String>>();
     private boolean removeDependentValues;
     private IValidatableForm form;
     // to store the table listeners when the component is a jtable
     private MouseListener[] listeners = new MouseListener[0];
 
-    public EnabledComponentBasedOnWidget(JComponent widget,
-	    JComponent component, String value, IValidatableForm form) {
-	this.widget = widget;
+    public EnabledComponentBasedOnWidgets(JComponent component, IValidatableForm form) {
 	this.component = component;
-	this.value = value;
 	this.form = form;
+    }
+    
+    public void addCondition(JComponent widget, String value) {
+	if (!conditions.containsKey(widget)) {
+	    conditions.put(widget, new ArrayList<String>());
+	}
+	conditions.get(widget).add(value);
+    }
+
+    public void addConditions(JComponent widget, List<String> values) {
+	if (!conditions.containsKey(widget)) {
+	    conditions.put(widget, new ArrayList<String>());
+	}
+	conditions.get(widget).addAll(values);
     }
 
     public void setRemoveDependentValues(boolean removeDependentValues) {
@@ -37,10 +52,12 @@ public class EnabledComponentBasedOnWidget implements ActionListener {
     }
 
     public void setListeners() {
-	if (widget instanceof JCheckBox) {
-	    ((JCheckBox) widget).addActionListener(this);
-	} else if (widget instanceof JComboBox) {
-	    ((JComboBox) widget).addActionListener(this);
+	for (JComponent widget : conditions.keySet()) {
+	    if (widget instanceof JCheckBox) {
+		((JCheckBox) widget).addActionListener(this);
+	    } else if (widget instanceof JComboBox) {
+		((JComboBox) widget).addActionListener(this);
+	    }
 	}
 	listeners = component.getMouseListeners() != null ? component
 		.getMouseListeners() : new MouseListener[0];
@@ -54,29 +71,42 @@ public class EnabledComponentBasedOnWidget implements ActionListener {
     }
 
     private void enableComponent() {
-	if (widget instanceof JCheckBox) {
-	    enableComponentIfWidgetIsCheckBox();
-	} else if (widget instanceof JComboBox) {
-	    enableComponentIfWidgetIsComboBox();
-	}
-    }
-
-    private void enableComponentIfWidgetIsComboBox() {
-	if (((JComboBox) widget).getSelectedItem() != null) {
-	    String selected = ((JComboBox) widget).getSelectedItem().toString();
-	    changeComponentState(selected.equalsIgnoreCase(value));
-	    if (removeDependentValues) {
-		removeValue(component);
+	Set<JComponent> widgets = conditions.keySet();
+	boolean enable = true;
+	for (JComponent widget : widgets) {
+	    if (widget instanceof JCheckBox) {
+		enable = enable
+			&& checkCheckBoxCondition((JCheckBox) widget,
+			conditions.get(widget));
+	    } else if (widget instanceof JComboBox) {
+		enable = enable
+			&& checkComboBoxCondition((JComboBox) widget,
+			conditions.get(widget));
 	    }
 	}
+	changeComponentState(enable);
     }
 
-    private void enableComponentIfWidgetIsCheckBox() {
-	boolean selected = ((JCheckBox) widget).isSelected();
-	changeComponentState(String.valueOf(selected).equalsIgnoreCase(value));
-	if (removeDependentValues) {
-	    removeValue(component);
+    private boolean checkComboBoxCondition(JComboBox widget, List<String> values) {
+	if (widget.getSelectedItem() != null) {
+	    String selected = ((JComboBox) widget).getSelectedItem().toString();
+	    for (String value : values) {
+		if (value.equalsIgnoreCase(selected)) {
+		    return true;
+		}
+	    }
 	}
+	return false;
+    }
+
+    private boolean checkCheckBoxCondition(JCheckBox widget, List<String> values) {
+	String selected = String.valueOf(widget.isSelected());
+	for (String value : values) {
+	    if (value.equalsIgnoreCase(selected)) {
+		return true;
+	    }
+	}
+	return false;
     }
 
     private void changeComponentState(boolean enabled) {
@@ -112,6 +142,9 @@ public class EnabledComponentBasedOnWidget implements ActionListener {
 	    }
 	}
 	component.setEnabled(enabled);
+	if (removeDependentValues) {
+	    removeValue(component);
+	}
     }
 
     private void removeValue(JComponent c) {
@@ -135,11 +168,13 @@ public class EnabledComponentBasedOnWidget implements ActionListener {
     }
 
     public void removeListeners() {
-	if (widget instanceof JCheckBox) {
-	    ((JCheckBox) widget).removeActionListener(this);
-	}
-	if (widget instanceof JComboBox) {
-	    ((JComboBox) widget).removeActionListener(this);
+	for (JComponent widget : conditions.keySet()) {
+	    if (widget instanceof JCheckBox) {
+		((JCheckBox) widget).removeActionListener(this);
+	    }
+	    if (widget instanceof JComboBox) {
+		((JComboBox) widget).removeActionListener(this);
+	    }
 	}
 
 	listeners = new MouseListener[0];
