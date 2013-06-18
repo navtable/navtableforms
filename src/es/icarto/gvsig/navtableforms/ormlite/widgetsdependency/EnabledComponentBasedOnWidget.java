@@ -57,20 +57,14 @@ public class EnabledComponentBasedOnWidget implements ActionListener {
 	if (widget instanceof JCheckBox) {
 	    enableComponentIfWidgetIsCheckBox();
 	} else if (widget instanceof JComboBox) {
-	    enableComponentIfWidgetIsCombBox();
+	    enableComponentIfWidgetIsComboBox();
 	}
     }
 
-    private void enableComponentIfWidgetIsCombBox() {
+    private void enableComponentIfWidgetIsComboBox() {
 	if (((JComboBox) widget).getSelectedItem() != null) {
-	    boolean enabled = ((JComboBox) widget).getSelectedItem().toString()
-		    .equalsIgnoreCase(value);
-	    component.setEnabled(enabled);
-	    if (enabled) {
-		enableJTable();
-	    } else {
-		disableJTable();
-	    }
+	    String selected = ((JComboBox) widget).getSelectedItem().toString();
+	    changeComponentState(selected.equalsIgnoreCase(value));
 	    if (removeDependentValues) {
 		removeValue(component);
 	    }
@@ -78,37 +72,46 @@ public class EnabledComponentBasedOnWidget implements ActionListener {
     }
 
     private void enableComponentIfWidgetIsCheckBox() {
-	boolean enabled = ((JCheckBox) widget).isSelected();
-	if (String.valueOf(enabled).equalsIgnoreCase(value)) {
-	    component.setEnabled(true);
-	    enableJTable();
-	} else {
-	    component.setEnabled(false);
-	    disableJTable();
-
-	}
+	boolean selected = ((JCheckBox) widget).isSelected();
+	changeComponentState(String.valueOf(selected).equalsIgnoreCase(value));
 	if (removeDependentValues) {
 	    removeValue(component);
 	}
     }
 
-    private void disableJTable() {
+    private void changeComponentState(boolean enabled) {
 	if (component instanceof JTable) {
-	    ((JTable) component).setFillsViewportHeight(false);
-	    listeners = component.getMouseListeners();
-	    for (MouseListener l : listeners) {
-		component.removeMouseListener(l);
+	    // If the component is a table, we adjust its viewport and
+	    // remove/restore its listeners.
+	    if (enabled) {
+		((JTable) component).setFillsViewportHeight(false);
+		listeners = component.getMouseListeners();
+		for (MouseListener l : listeners) {
+		    component.removeMouseListener(l);
+		}
+	    } else {
+		if (component instanceof JTable) {
+		    ((JTable) component).setFillsViewportHeight(true);
+		    for (MouseListener l : listeners) {
+			component.addMouseListener(l);
+		    }
+		}
+	    }
+	} else {
+	    if ((component instanceof JComboBox) && !enabled) {
+		// If the component is a combobox and we are disabling
+		// it, prior to that we select the default item.
+		((JComboBox) component).setSelectedIndex(0);
+	    } else {
+		if ((component instanceof JCheckBox) && !enabled
+			&& ((JCheckBox) component).isSelected()) {
+		    // If the component is a checkbox, we are disabling
+		    // it and it was checked, prior to that we uncheck it.
+		    ((JCheckBox) component).doClick();
+		}
 	    }
 	}
-    }
-
-    private void enableJTable() {
-	if (component instanceof JTable) {
-	    ((JTable) component).setFillsViewportHeight(true);
-	    for (MouseListener l : listeners) {
-		component.addMouseListener(l);
-	    }
-	}
+	component.setEnabled(enabled);
     }
 
     private void removeValue(JComponent c) {
