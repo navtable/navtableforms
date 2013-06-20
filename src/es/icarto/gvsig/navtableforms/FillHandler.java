@@ -43,8 +43,9 @@ public class FillHandler {
 		}
 		((JComboBox) comp).addItem("");
 		((JComboBox) comp).setSelectedIndex(0);
-	    } else if (comp instanceof JCheckBox) {
-		((JCheckBox) comp).setEnabled(false);
+	    } else if ((comp instanceof JCheckBox)
+		    && (((JCheckBox) comp).isSelected())) {
+		((JCheckBox) comp).doClick();
 	    }
 	}
     }
@@ -62,7 +63,9 @@ public class FillHandler {
 		fillJComboBox((JComboBox) comp);
 	    } else if (comp instanceof JCheckBox) {
 		iController.setValue(w, "false");
-		((JCheckBox) comp).setSelected(false);
+		if (((JCheckBox) comp).isSelected()) {
+		    ((JCheckBox) comp).doClick();
+		}
 	    }
 	}
     }
