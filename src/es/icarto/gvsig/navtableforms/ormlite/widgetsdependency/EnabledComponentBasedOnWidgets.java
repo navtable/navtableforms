@@ -114,17 +114,15 @@ public class EnabledComponentBasedOnWidgets implements ActionListener {
 	    // If the component is a table, we adjust its viewport and
 	    // remove/restore its listeners.
 	    if (enabled) {
+		((JTable) component).setFillsViewportHeight(true);
+		for (MouseListener l : listeners) {
+		    component.addMouseListener(l);
+		}
+	    } else {
 		((JTable) component).setFillsViewportHeight(false);
 		listeners = component.getMouseListeners();
 		for (MouseListener l : listeners) {
 		    component.removeMouseListener(l);
-		}
-	    } else {
-		if (component instanceof JTable) {
-		    ((JTable) component).setFillsViewportHeight(true);
-		    for (MouseListener l : listeners) {
-			component.addMouseListener(l);
-		    }
 		}
 	    }
 	} else {
