@@ -61,27 +61,27 @@ public class ValidatorComponent {
 		if (c.isEnabled()) {
 		    c.setBackground(defaultbg);
 		} else {
-		    // Only way I found that works properly in both windows and
-		    // linux for setting the default disabled background
-		    c.setEnabled(true);
-		    c.setBackground(defaultbg);
-		    c.setEnabled(false);
+		    setDisabledBackground();
 		}
 		return true;
 	    }
 	    if (c.isEnabled()) {
 		c.setBackground(new Color(249, 112, 140));
 	    } else {
-		// Only way I found that works properly in both windows and
-		// linux for setting the default disabled background
-		c.setEnabled(true);
-		c.setBackground(defaultbg);
-		c.setEnabled(false);
+		setDisabledBackground();
 	    }
 	    return false;
 	}
 	return true;
 
+    }
+
+    private void setDisabledBackground() {
+	// Only way I found that works properly in both windows and
+	// linux for setting the default disabled background
+	c.setEnabled(true);
+	c.setBackground(defaultbg);
+	c.setEnabled(false);
     }
 
     public boolean isValid(String name, String value) {
