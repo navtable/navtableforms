@@ -44,7 +44,11 @@ public class TableModelAlphanumeric extends AbstractTableModel {
     private void initMetadata() {
 	rowIndexes = getRowIndexes();
 	rowCount = rowIndexes.size();
-	colCount = colNames.length;
+	if (colNames != null) {
+	    colCount = colNames.length;
+	} else {
+	    colCount = 0;
+	}
 	currentRow = NO_ROW;
     }
 
