@@ -34,6 +34,7 @@ import es.icarto.gvsig.navtableforms.FillHandler;
 import es.icarto.gvsig.navtableforms.IValidatableForm;
 import es.icarto.gvsig.navtableforms.ValidationHandler;
 import es.icarto.gvsig.navtableforms.ormlite.ORMLite;
+import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.ValidatorForm;
 import es.icarto.gvsig.navtableforms.utils.AbeilleParser;
 import es.udc.cartolab.gvsig.navtable.dataacces.IController;
 import es.udc.cartolab.gvsig.navtable.dataacces.TableController;
@@ -229,6 +230,11 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
     public void validateForm() {
 	validationHandler.validate();
 	enableSaveButton(isChangedValues());
+    }
+    
+    @Override
+    public ValidatorForm getValidatorForm() {
+	return validationHandler.getValidatorForm();
     }
 
     protected void setChangedValues(boolean bool) {

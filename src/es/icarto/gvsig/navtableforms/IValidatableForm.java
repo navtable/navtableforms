@@ -1,5 +1,6 @@
 package es.icarto.gvsig.navtableforms;
 
+import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.ValidatorForm;
 import es.udc.cartolab.gvsig.navtable.dataacces.IController;
 
 public interface IValidatableForm {
@@ -13,5 +14,7 @@ public interface IValidatableForm {
     public FillHandler getFillHandler();
 
     public void validateForm();
+
+    public ValidatorForm getValidatorForm();
 
 }

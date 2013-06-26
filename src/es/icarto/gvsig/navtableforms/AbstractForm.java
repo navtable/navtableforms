@@ -44,6 +44,7 @@ import com.jeta.forms.components.panel.FormPanel;
 import es.icarto.gvsig.navtableforms.forms.windowproperties.FormWindowProperties;
 import es.icarto.gvsig.navtableforms.forms.windowproperties.FormWindowPropertiesSerializator;
 import es.icarto.gvsig.navtableforms.ormlite.ORMLite;
+import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.ValidatorForm;
 import es.icarto.gvsig.navtableforms.utils.AbeilleParser;
 import es.udc.cartolab.gvsig.navtable.AbstractNavTable;
 import es.udc.cartolab.gvsig.navtable.dataacces.IController;
@@ -119,6 +120,10 @@ public abstract class AbstractForm extends AbstractNavTable implements
     }
 
     @Override
+    public ValidatorForm getValidatorForm() {
+	return validationHandler.getValidatorForm();
+    }
+
     public JPanel getCenterPanel() {
 	JPanel panel = new JPanel(new BorderLayout());
 	JScrollPane scrollPane = new JScrollPane(formBody);

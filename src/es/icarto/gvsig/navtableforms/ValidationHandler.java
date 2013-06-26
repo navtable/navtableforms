@@ -22,7 +22,7 @@ import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.listeners.Validatio
 public class ValidationHandler {
 
     private ORMLite ormlite;
-    private ValidatorForm formValidator;
+    private ValidatorForm validatorForm;
     private ValidationHandlerForFormattedTextFields validationHandlerForFormattedTextFields;
     private ValidationHandlerForTextFields validationHandlerForTextFields;
     private ValidationHandlerForComboBoxes validationHandlerForComboBoxes;
@@ -38,7 +38,7 @@ public class ValidationHandler {
 
     private void initValidation() {
 
-	formValidator = new ValidatorForm();
+	validatorForm = new ValidatorForm();
 	validationHandlerForFormattedTextFields = new ValidationHandlerForFormattedTextFields(
 		validatableForm);
 	validationHandlerForTextFields = new ValidationHandlerForTextFields(
@@ -81,7 +81,7 @@ public class ValidationHandler {
 			.getDomainValidatorForComponent(comp.getName());
 		if (dv != null) {
 		    ValidatorComponent cv = new ValidatorComponent(comp, dv);
-		    formValidator.addComponentValidator(cv);
+		    validatorForm.addComponentValidator(cv);
 		}
 	    } else if (comp instanceof JTextField) {
 		((JTextField) comp)
@@ -90,7 +90,7 @@ public class ValidationHandler {
 			.getDomainValidatorForComponent(comp.getName());
 		if (dv != null) {
 		    ValidatorComponent cv = new ValidatorComponent(comp, dv);
-		    formValidator.addComponentValidator(cv);
+		    validatorForm.addComponentValidator(cv);
 		}
 	    } else if (comp instanceof JComboBox) {
 		((JComboBox) comp)
@@ -99,7 +99,7 @@ public class ValidationHandler {
 			.getDomainValidatorForComponent(comp.getName());
 		if (dv != null) {
 		    ValidatorComponent cv = new ValidatorComponent(comp, dv);
-		    formValidator.addComponentValidator(cv);
+		    validatorForm.addComponentValidator(cv);
 		}
 	    } else if (comp instanceof JCheckBox) {
 		((JCheckBox) comp)
@@ -112,15 +112,19 @@ public class ValidationHandler {
     }
 
     public boolean hasValidationErrors() {
-	return formValidator.hasValidationErrors();
+	return validatorForm.hasValidationErrors();
     }
 
     public String getMessages() {
-	return formValidator.getMessages();
+	return validatorForm.getMessages();
     }
 
     public void validate() {
-	formValidator.validate();
+	validatorForm.validate();
+    }
+
+    public ValidatorForm getValidatorForm() {
+	return validatorForm;
     }
 
 }
