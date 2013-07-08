@@ -38,6 +38,7 @@ import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
 import com.iver.andami.Launcher;
 import com.iver.andami.PluginServices;
 import com.iver.andami.ui.mdiManager.WindowInfo;
+import com.iver.cit.gvsig.exceptions.visitors.StopWriterVisitorException;
 import com.iver.cit.gvsig.fmap.layers.FLyrVect;
 import com.jeta.forms.components.panel.FormPanel;
 
@@ -268,7 +269,7 @@ public abstract class AbstractForm extends AbstractNavTable implements
     }
 
     @Override
-    public boolean saveRecord() {
+    public boolean saveRecord() throws StopWriterVisitorException {
 	if (isSaveable()) {
 	    setSavingValues(true);
 	    try {
@@ -282,6 +283,9 @@ public abstract class AbstractForm extends AbstractNavTable implements
 		setChangedValues(false);
 		setSavingValues(false);
 		return false;
+	    } catch (StopWriterVisitorException e) {
+		setSavingValues(false);
+		throw e;
 	    }
 	}
 	return false;

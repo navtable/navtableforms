@@ -1,5 +1,6 @@
 package es.icarto.gvsig.navtableforms.gui.tables;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -12,6 +13,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -25,6 +27,7 @@ import com.iver.andami.ui.mdiFrame.MDIFrame;
 import com.iver.andami.ui.mdiManager.IWindow;
 import com.iver.andami.ui.mdiManager.IWindowListener;
 import com.iver.andami.ui.mdiManager.WindowInfo;
+import com.iver.cit.gvsig.exceptions.visitors.StopWriterVisitorException;
 import com.iver.cit.gvsig.fmap.edition.IEditableSource;
 import com.jeta.forms.components.panel.FormPanel;
 import com.jeta.forms.gui.common.FormException;
@@ -374,6 +377,21 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 		iController.clearAll();
 		position = -1;
 		logger.error(e.getStackTrace());
+	    } catch (StopWriterVisitorException e) {
+		logger.error(e.getStackTrace());
+		String errorMessage = (e.getCause() != null) ? e.getCause()
+			.getMessage() : e.getMessage(), auxMessage = errorMessage
+			.replace("ERROR: ", "").replace(" ", "_")
+			.replace("\n", ""), auxMessageIntl = PluginServices
+			.getText(this, auxMessage);
+		if (auxMessageIntl.compareToIgnoreCase(auxMessage) != 0) {
+		    errorMessage = auxMessageIntl;
+		}
+		JOptionPane.showMessageDialog(
+			(Component) PluginServices.getMainFrame(),
+			errorMessage,
+			PluginServices.getText(this, "save_layer_error"),
+			JOptionPane.ERROR_MESSAGE);
 	    }
 	    PluginServices.getMDIManager().closeWindow(iWindow);
 	}
