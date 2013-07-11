@@ -10,6 +10,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.table.TableModel;
 
+import es.icarto.gvsig.navtableforms.gui.tables.model.TableModelAlphanumeric;
+
 public class JTableContextualMenu implements MouseListener {
 
     private static final int NO_ROW_SELECTED = -1;

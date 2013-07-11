@@ -1,0 +1,101 @@
+package es.icarto.gvsig.navtableforms.gui.tables.model;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
+import com.iver.cit.gvsig.fmap.edition.IEditableSource;
+import com.iver.cit.gvsig.fmap.layers.FLyrVect;
+
+import es.icarto.gvsig.navtableforms.gui.tables.IRowFilter;
+import es.icarto.gvsig.navtableforms.gui.tables.IRowFilterImplementer;
+import es.icarto.gvsig.navtableforms.gui.tables.IRowMultipleOrFilterImplementer;
+import es.icarto.gvsig.navtableforms.utils.TOCLayerManager;
+import es.icarto.gvsig.navtableforms.utils.TOCTableManager;
+
+public class TableModelFactory {
+
+    public static TableModelAlphanumeric createFromTable(String sourceTable,
+	    String[] columnNames, String[] columnAliases) {
+
+	TOCTableManager toc = new TOCTableManager();
+	IEditableSource model = toc.getTableByName(sourceTable).getModel()
+		.getModelo();
+	return new TableModelAlphanumeric(model, columnNames, columnAliases);
+    }
+
+    public static TableModelAlphanumeric createFromTableWithFilter(String sourceTable,
+	    String rowFilterName,
+	    String rowFilterValue,
+	    String[] columnNames,
+	    String[] columnAliases)
+		    throws ReadDriverException {
+
+	TOCTableManager toc = new TOCTableManager();
+	IEditableSource model = toc.getTableByName(sourceTable).getModel()
+		.getModelo();
+	int fieldIndex = model.getRecordset()
+		.getFieldIndexByName(rowFilterName);
+	IRowFilter filter = new IRowFilterImplementer(
+		fieldIndex, rowFilterValue);
+	return new TableModelAlphanumeric(model, columnNames, columnAliases,
+		filter);
+    }
+
+    public static TableModelAlphanumeric createFromTableWithOrFilter(
+	    String sourceTable,
+	    String rowFilterName, String[] rowFilterValues,
+	    String[] columnNames, String[] columnAliases)
+	    throws ReadDriverException {
+
+	TOCTableManager toc = new TOCTableManager();
+	IEditableSource model = toc.getTableByName(sourceTable).getModel()
+		.getModelo();
+	int fieldIndex = model.getRecordset()
+		.getFieldIndexByName(rowFilterName);
+	List<IRowFilter> filters = new ArrayList<IRowFilter>();
+	for (String rowFilterValue : rowFilterValues) {
+	    filters.add(new IRowFilterImplementer(fieldIndex, rowFilterValue));
+	}
+	return new TableModelAlphanumeric(model, columnNames, columnAliases,
+		new IRowMultipleOrFilterImplementer(filters));
+    }
+
+    public static TableModelVectorial createFromLayer(String layerName,
+	    String[] columnNames, String[] columnAliases) {
+
+	FLyrVect layer = new TOCLayerManager().getLayerByName(layerName);
+	return new TableModelVectorial(layer, columnNames, columnAliases);
+    }
+
+    public static TableModelVectorial createFromLayerWithFilter(
+	    String layerName, String rowFilterName, String rowFilterValue,
+	    String[] columnNames, String[] columnAliases)
+	    throws ReadDriverException {
+
+	FLyrVect layer = new TOCLayerManager().getLayerByName(layerName);
+	int fieldIndex = layer.getRecordset()
+		.getFieldIndexByName(rowFilterName);
+	IRowFilter filter = new IRowFilterImplementer(fieldIndex,
+		rowFilterValue);
+	return new TableModelVectorial(layer, columnNames, columnAliases,
+		filter);
+    }
+
+    public static TableModelVectorial createFromLayerWithOrFilter(
+	    String layerName, String rowFilterName, String[] rowFilterValues,
+	    String[] columnNames, String[] columnAliases)
+	    throws ReadDriverException {
+
+	FLyrVect layer = new TOCLayerManager().getLayerByName(layerName);
+	int fieldIndex = layer.getRecordset()
+		.getFieldIndexByName(rowFilterName);
+	List<IRowFilter> filters = new ArrayList<IRowFilter>();
+	for (String rowFilterValue : rowFilterValues) {
+	    filters.add(new IRowFilterImplementer(fieldIndex, rowFilterValue));
+	}
+	return new TableModelVectorial(layer, columnNames, columnAliases,
+		new IRowMultipleOrFilterImplementer(filters));
+    }
+
+}

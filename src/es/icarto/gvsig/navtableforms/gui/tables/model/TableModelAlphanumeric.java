@@ -1,98 +1,38 @@
-package es.icarto.gvsig.navtableforms.gui.tables;
+package es.icarto.gvsig.navtableforms.gui.tables.model;
 
 import java.util.HashMap;
-
-import javax.swing.table.AbstractTableModel;
 
 import com.hardcode.gdbms.driver.exceptions.InitializeWriterException;
 import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
 import com.iver.andami.PluginServices;
 import com.iver.cit.gvsig.exceptions.visitors.StartWriterVisitorException;
 import com.iver.cit.gvsig.exceptions.visitors.StopWriterVisitorException;
+import com.iver.cit.gvsig.fmap.core.IRow;
 import com.iver.cit.gvsig.fmap.edition.IEditableSource;
 
+import es.icarto.gvsig.navtableforms.gui.tables.IRowFilter;
 import es.udc.cartolab.gvsig.navtable.dataacces.TableController;
 
 @SuppressWarnings("serial")
-public class TableModelAlphanumeric extends AbstractTableModel {
-
-    private static int NO_ROW = -1;
+public class TableModelAlphanumeric extends TableModelBase {
 
     private IEditableSource source;
-    private IRowFilter filter;
     private TableController tableController;
 
-    private String[] colNames;
-    private String[] colAliases;
-
-    private HashMap<Integer, Integer> rowIndexes;
-    private int currentRow = NO_ROW;
-
-    private int rowCount;
-    private int colCount;
-
-    public TableModelAlphanumeric(IEditableSource source, IRowFilter filter,
-	    String[] colNames, String[] colAliases) {
+    public TableModelAlphanumeric(IEditableSource source, String[] colNames,
+	    String[] colAliases, IRowFilter filter) {
+	super(colNames, colAliases, filter);
 	this.source = source;
-	this.filter = filter;
-	this.colNames = colNames;
-	this.colAliases = colAliases;
 	this.tableController = new TableController(source);
 	initMetadata();
     }
 
-    private void initMetadata() {
-	rowIndexes = getRowIndexes();
-	rowCount = rowIndexes.size();
-	if (colNames != null) {
-	    colCount = colNames.length;
-	} else {
-	    colCount = 0;
-	}
-	currentRow = NO_ROW;
-    }
-
-    private HashMap<Integer, Integer> getRowIndexes() {
-	int indexInJTable = 0;
-	this.rowIndexes = new HashMap<Integer, Integer>();
-	try {
-	    for (int indexInSource = 0; indexInSource < source.getRowCount(); indexInSource++) {
-		if (filter.evaluate(source.getRow(indexInSource))) {
-		    rowIndexes.put(indexInJTable, indexInSource);
-		    indexInJTable++;
-		}
-	    }
-	    return rowIndexes;
-	} catch (Exception e) {
-	    e.printStackTrace();
-	    rowIndexes.clear();
-	    currentRow = NO_ROW;
-	    return rowIndexes;
-	}
-    }
-
-    @Override
-    public int getColumnCount() {
-	return colCount;
-    }
-
-    @Override
-    public int getRowCount() {
-	return rowCount;
-    }
-
-    @Override
-    public String getColumnName(int column) {
-	return colAliases[column];
-    }
-
-    public String getColumnNameInSource(int column) {
-	return colNames[column];
-    }
-
-    @Override
-    public boolean isCellEditable(int arg0, int arg1) {
-	return false;
+    public TableModelAlphanumeric(IEditableSource source, String[] colNames,
+	    String[] colAliases) {
+	super(colNames, colAliases);
+	this.source = source;
+	this.tableController = new TableController(source);
+	initMetadata();
     }
 
     @Override
@@ -171,13 +111,24 @@ public class TableModelAlphanumeric extends AbstractTableModel {
 	return tableController;
     }
 
-    public int convertRowIndexToModel(int row) {
-	return rowIndexes.get(row);
+    @Override
+    protected int getModelRowCount() {
+	try {
+	    return source.getRowCount();
+	} catch (ReadDriverException e) {
+	    e.printStackTrace();
+	    return 0;
+	}
     }
 
-    public void dataChanged() {
-	this.fireTableDataChanged();
-	initMetadata();
+    @Override
+    protected IRow getSourceRow(int row) {
+	try {
+	    return source.getRow(row);
+	} catch (Exception e) {
+	    e.printStackTrace();
+	    return null;
+	}
     }
 
 }
