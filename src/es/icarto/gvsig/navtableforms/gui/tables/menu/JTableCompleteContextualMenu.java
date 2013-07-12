@@ -1,44 +1,23 @@
-package es.icarto.gvsig.navtableforms.gui.tables;
+package es.icarto.gvsig.navtableforms.gui.tables.menu;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.table.TableModel;
 
+import es.icarto.gvsig.navtableforms.gui.tables.IForm;
+import es.icarto.gvsig.navtableforms.gui.tables.JTableUtils;
 import es.icarto.gvsig.navtableforms.gui.tables.model.TableModelAlphanumeric;
+import es.icarto.gvsig.navtableforms.gui.tables.model.TableModelBase;
 
-public class JTableContextualMenu implements MouseListener {
+public class JTableCompleteContextualMenu extends JTableContextualMenu {
 
-    private static final int NO_ROW_SELECTED = -1;
-    private static final int BUTTON_RIGHT = 3;
-
-    private JTable table;
-    private IForm form;
-    private JMenuItem openMenuItem;
-    private JMenuItem updateMenuItem;
-    private JMenuItem deleteMenuItem;
-    private JPopupMenu popupMenu;
-
-    /**
-     * When attaching this listener to your table, you should care if it fills
-     * the whole space of its viewport or on empty tables it won't show up.
-     * 
-     * So, for this to work on empty tables, you should make:
-     * yourTable.setFillsViewportHeight(true);
-     * 
-     * More info:
-     * http://docs.oracle.com/javase/6/docs/api/javax/swing/JTable.html
-     * #setFillsViewportHeight(boolean)
-     * http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4310721
-     */
-    public JTableContextualMenu(IForm form) {
-	this.form = form;
-	initContextualMenu();
+    public JTableCompleteContextualMenu(IForm form) {
+	super(form);
     }
 
     public void mouseClicked(MouseEvent e) {
@@ -70,24 +49,24 @@ public class JTableContextualMenu implements MouseListener {
 	}
     }
 
-    private void initContextualMenu() {
+    protected void initContextualMenu() {
 	popupMenu = new JPopupMenu();
 
 	// Create record
-	openMenuItem = new JMenuItem("Crear nuevo");
-	openMenuItem.addActionListener(new ActionListener() {
+	newMenuItem = new JMenuItem("Crear nuevo");
+	newMenuItem.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent arg0) {
 		form.actionCreateRecord();
 	    }
 	});
-	popupMenu.add(openMenuItem);
+	popupMenu.add(newMenuItem);
 
 	updateMenuItem = new JMenuItem("Actualizar registro");
 	updateMenuItem.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent arg0) {
 		TableModel model = table.getModel();
-		if (model instanceof TableModelAlphanumeric) {
-		    form.actionUpdateRecord(((TableModelAlphanumeric) model)
+		if (model instanceof TableModelBase) {
+		    form.actionUpdateRecord(((TableModelBase) model)
 			    .convertRowIndexToModel(table.getSelectedRow()));
 		} else {
 		    form.actionUpdateRecord(table.convertRowIndexToModel(table
@@ -111,18 +90,6 @@ public class JTableContextualMenu implements MouseListener {
 	    }
 	});
 	popupMenu.add(deleteMenuItem);
-    }
-
-    public void mouseEntered(MouseEvent arg0) {
-    }
-
-    public void mouseExited(MouseEvent arg0) {
-    }
-
-    public void mousePressed(MouseEvent arg0) {
-    }
-
-    public void mouseReleased(MouseEvent arg0) {
     }
 
 }
