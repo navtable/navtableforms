@@ -4,8 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.table.TableModel;
 
@@ -50,10 +48,6 @@ public class JTableCompleteContextualMenu extends JTableContextualMenu {
     }
 
     protected void initContextualMenu() {
-	popupMenu = new JPopupMenu();
-
-	// Create record
-	newMenuItem = new JMenuItem("Crear nuevo");
 	newMenuItem.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent arg0) {
 		form.actionCreateRecord();
@@ -61,7 +55,6 @@ public class JTableCompleteContextualMenu extends JTableContextualMenu {
 	});
 	popupMenu.add(newMenuItem);
 
-	updateMenuItem = new JMenuItem("Actualizar registro");
 	updateMenuItem.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent arg0) {
 		TableModel model = table.getModel();
@@ -76,7 +69,6 @@ public class JTableCompleteContextualMenu extends JTableContextualMenu {
 	});
 	popupMenu.add(updateMenuItem);
 
-	deleteMenuItem = new JMenuItem("Borrar registro");
 	deleteMenuItem.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent arg0) {
 		TableModel model = table.getModel();

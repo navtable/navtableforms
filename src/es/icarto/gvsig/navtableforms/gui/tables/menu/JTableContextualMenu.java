@@ -7,6 +7,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 
+import com.iver.andami.PluginServices;
+
 import es.icarto.gvsig.navtableforms.gui.tables.IForm;
 
 public abstract class JTableContextualMenu implements MouseListener {
@@ -16,10 +18,13 @@ public abstract class JTableContextualMenu implements MouseListener {
 
     protected JTable table;
     protected IForm form;
-    protected JMenuItem newMenuItem;
-    protected JMenuItem updateMenuItem;
-    protected JMenuItem deleteMenuItem;
-    protected JPopupMenu popupMenu;
+    protected JMenuItem newMenuItem = new JMenuItem(PluginServices.getText(
+	    this, "create_new"));
+    protected JMenuItem updateMenuItem = new JMenuItem(PluginServices.getText(
+	    this, "update_item"));
+    protected JMenuItem deleteMenuItem = new JMenuItem(PluginServices.getText(
+	    this, "delete_item"));
+    protected JPopupMenu popupMenu = new JPopupMenu();
 
     /**
      * When attaching this listener to your table, you should care if it fills
