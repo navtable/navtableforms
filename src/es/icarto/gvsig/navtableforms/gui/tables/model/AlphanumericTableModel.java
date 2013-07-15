@@ -14,12 +14,12 @@ import es.icarto.gvsig.navtableforms.gui.tables.IRowFilter;
 import es.udc.cartolab.gvsig.navtable.dataacces.TableController;
 
 @SuppressWarnings("serial")
-public class TableModelAlphanumeric extends TableModelBase {
+public class AlphanumericTableModel extends BaseTableModel {
 
     private IEditableSource source;
     private TableController tableController;
 
-    public TableModelAlphanumeric(IEditableSource source, String[] colNames,
+    public AlphanumericTableModel(IEditableSource source, String[] colNames,
 	    String[] colAliases, IRowFilter filter) {
 	super(colNames, colAliases, filter);
 	this.source = source;
@@ -27,7 +27,7 @@ public class TableModelAlphanumeric extends TableModelBase {
 	initMetadata();
     }
 
-    public TableModelAlphanumeric(IEditableSource source, String[] colNames,
+    public AlphanumericTableModel(IEditableSource source, String[] colNames,
 	    String[] colAliases) {
 	super(colNames, colAliases);
 	this.source = source;

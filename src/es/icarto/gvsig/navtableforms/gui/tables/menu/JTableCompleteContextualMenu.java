@@ -9,8 +9,8 @@ import javax.swing.table.TableModel;
 
 import es.icarto.gvsig.navtableforms.gui.tables.IForm;
 import es.icarto.gvsig.navtableforms.gui.tables.JTableUtils;
-import es.icarto.gvsig.navtableforms.gui.tables.model.TableModelAlphanumeric;
-import es.icarto.gvsig.navtableforms.gui.tables.model.TableModelBase;
+import es.icarto.gvsig.navtableforms.gui.tables.model.AlphanumericTableModel;
+import es.icarto.gvsig.navtableforms.gui.tables.model.BaseTableModel;
 
 public class JTableCompleteContextualMenu extends JTableContextualMenu {
 
@@ -27,8 +27,8 @@ public class JTableCompleteContextualMenu extends JTableContextualMenu {
 	table = (JTable) e.getComponent();
 	if ((e.getClickCount() == 2) && (table.getSelectedRow() > -1)) {
 	    TableModel model = table.getModel();
-	    if (model instanceof TableModelAlphanumeric) {
-		form.actionUpdateRecord(((TableModelAlphanumeric) model)
+	    if (model instanceof AlphanumericTableModel) {
+		form.actionUpdateRecord(((AlphanumericTableModel) model)
 			.convertRowIndexToModel(table.getSelectedRow()));
 	    } else {
 		form.actionUpdateRecord(table.convertRowIndexToModel(table
@@ -58,8 +58,8 @@ public class JTableCompleteContextualMenu extends JTableContextualMenu {
 	updateMenuItem.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent arg0) {
 		TableModel model = table.getModel();
-		if (model instanceof TableModelBase) {
-		    form.actionUpdateRecord(((TableModelBase) model)
+		if (model instanceof BaseTableModel) {
+		    form.actionUpdateRecord(((BaseTableModel) model)
 			    .convertRowIndexToModel(table.getSelectedRow()));
 		} else {
 		    form.actionUpdateRecord(table.convertRowIndexToModel(table
@@ -72,8 +72,8 @@ public class JTableCompleteContextualMenu extends JTableContextualMenu {
 	deleteMenuItem.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent arg0) {
 		TableModel model = table.getModel();
-		if (model instanceof TableModelAlphanumeric) {
-		    form.actionDeleteRecord(((TableModelAlphanumeric) model)
+		if (model instanceof AlphanumericTableModel) {
+		    form.actionDeleteRecord(((AlphanumericTableModel) model)
 			    .convertRowIndexToModel(table.getSelectedRow()));
 		} else {
 		    form.actionDeleteRecord(table.convertRowIndexToModel(table

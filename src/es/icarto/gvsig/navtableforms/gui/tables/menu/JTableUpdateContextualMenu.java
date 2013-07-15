@@ -9,7 +9,7 @@ import javax.swing.table.TableModel;
 
 import es.icarto.gvsig.navtableforms.gui.tables.IForm;
 import es.icarto.gvsig.navtableforms.gui.tables.JTableUtils;
-import es.icarto.gvsig.navtableforms.gui.tables.model.TableModelAlphanumeric;
+import es.icarto.gvsig.navtableforms.gui.tables.model.AlphanumericTableModel;
 
 public class JTableUpdateContextualMenu extends JTableContextualMenu {
 
@@ -26,8 +26,8 @@ public class JTableUpdateContextualMenu extends JTableContextualMenu {
 	table = (JTable) e.getComponent();
 	if ((e.getClickCount() == 2) && (table.getSelectedRow() > -1)) {
 	    TableModel model = table.getModel();
-	    if (model instanceof TableModelAlphanumeric) {
-		form.actionUpdateRecord(((TableModelAlphanumeric) model)
+	    if (model instanceof AlphanumericTableModel) {
+		form.actionUpdateRecord(((AlphanumericTableModel) model)
 			.convertRowIndexToModel(table.getSelectedRow()));
 	    } else {
 		form.actionUpdateRecord(table.convertRowIndexToModel(table
@@ -47,7 +47,7 @@ public class JTableUpdateContextualMenu extends JTableContextualMenu {
     protected void initContextualMenu() {
 	updateMenuItem.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent arg0) {
-		form.actionUpdateRecord(((TableModelAlphanumeric) table
+		form.actionUpdateRecord(((AlphanumericTableModel) table
 			.getModel()).convertRowIndexToModel(table
 			.getSelectedRow()));
 	    }

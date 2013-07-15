@@ -9,7 +9,7 @@ import com.iver.cit.gvsig.fmap.core.IRow;
 import es.icarto.gvsig.navtableforms.gui.tables.IRowFilter;
 
 @SuppressWarnings("serial")
-public abstract class TableModelBase extends AbstractTableModel {
+public abstract class BaseTableModel extends AbstractTableModel {
 
     protected static final int NO_ROW = -1;
 
@@ -24,12 +24,12 @@ public abstract class TableModelBase extends AbstractTableModel {
     protected int rowCount;
     protected int colCount;
 
-    protected TableModelBase(String[] colNames, String[] colAliases) {
+    protected BaseTableModel(String[] colNames, String[] colAliases) {
 	this.colNames = colNames;
 	this.colAliases = colAliases;
     }
 
-    protected TableModelBase(String[] colNames, String[] colAliases,
+    protected BaseTableModel(String[] colNames, String[] colAliases,
 	    IRowFilter filter) {
 	this.colNames = colNames;
 	this.colAliases = colAliases;

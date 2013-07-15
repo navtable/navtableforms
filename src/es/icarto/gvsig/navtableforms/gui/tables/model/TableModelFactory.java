@@ -15,16 +15,16 @@ import es.icarto.gvsig.navtableforms.utils.TOCTableManager;
 
 public class TableModelFactory {
 
-    public static TableModelAlphanumeric createFromTable(String sourceTable,
+    public static AlphanumericTableModel createFromTable(String sourceTable,
 	    String[] columnNames, String[] columnAliases) {
 
 	TOCTableManager toc = new TOCTableManager();
 	IEditableSource model = toc.getTableByName(sourceTable).getModel()
 		.getModelo();
-	return new TableModelAlphanumeric(model, columnNames, columnAliases);
+	return new AlphanumericTableModel(model, columnNames, columnAliases);
     }
 
-    public static TableModelAlphanumeric createFromTableWithFilter(String sourceTable,
+    public static AlphanumericTableModel createFromTableWithFilter(String sourceTable,
 	    String rowFilterName,
 	    String rowFilterValue,
 	    String[] columnNames,
@@ -38,11 +38,11 @@ public class TableModelFactory {
 		.getFieldIndexByName(rowFilterName);
 	IRowFilter filter = new IRowFilterImplementer(
 		fieldIndex, rowFilterValue);
-	return new TableModelAlphanumeric(model, columnNames, columnAliases,
+	return new AlphanumericTableModel(model, columnNames, columnAliases,
 		filter);
     }
 
-    public static TableModelAlphanumeric createFromTableWithOrFilter(
+    public static AlphanumericTableModel createFromTableWithOrFilter(
 	    String sourceTable,
 	    String rowFilterName, String[] rowFilterValues,
 	    String[] columnNames, String[] columnAliases)
@@ -57,18 +57,18 @@ public class TableModelFactory {
 	for (String rowFilterValue : rowFilterValues) {
 	    filters.add(new IRowFilterImplementer(fieldIndex, rowFilterValue));
 	}
-	return new TableModelAlphanumeric(model, columnNames, columnAliases,
+	return new AlphanumericTableModel(model, columnNames, columnAliases,
 		new IRowMultipleOrFilterImplementer(filters));
     }
 
-    public static TableModelVectorial createFromLayer(String layerName,
+    public static VectorialTableModel createFromLayer(String layerName,
 	    String[] columnNames, String[] columnAliases) {
 
 	FLyrVect layer = new TOCLayerManager().getLayerByName(layerName);
-	return new TableModelVectorial(layer, columnNames, columnAliases);
+	return new VectorialTableModel(layer, columnNames, columnAliases);
     }
 
-    public static TableModelVectorial createFromLayerWithFilter(
+    public static VectorialTableModel createFromLayerWithFilter(
 	    String layerName, String rowFilterName, String rowFilterValue,
 	    String[] columnNames, String[] columnAliases)
 	    throws ReadDriverException {
@@ -78,11 +78,11 @@ public class TableModelFactory {
 		.getFieldIndexByName(rowFilterName);
 	IRowFilter filter = new IRowFilterImplementer(fieldIndex,
 		rowFilterValue);
-	return new TableModelVectorial(layer, columnNames, columnAliases,
+	return new VectorialTableModel(layer, columnNames, columnAliases,
 		filter);
     }
 
-    public static TableModelVectorial createFromLayerWithOrFilter(
+    public static VectorialTableModel createFromLayerWithOrFilter(
 	    String layerName, String rowFilterName, String[] rowFilterValues,
 	    String[] columnNames, String[] columnAliases)
 	    throws ReadDriverException {
@@ -94,7 +94,7 @@ public class TableModelFactory {
 	for (String rowFilterValue : rowFilterValues) {
 	    filters.add(new IRowFilterImplementer(fieldIndex, rowFilterValue));
 	}
-	return new TableModelVectorial(layer, columnNames, columnAliases,
+	return new VectorialTableModel(layer, columnNames, columnAliases,
 		new IRowMultipleOrFilterImplementer(filters));
     }
 
