@@ -8,7 +8,7 @@ import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
 
 import es.icarto.gvsig.navtableforms.gui.tables.AbstractSubForm;
 import es.icarto.gvsig.navtableforms.gui.tables.IForm;
-import es.icarto.gvsig.navtableforms.gui.tables.menu.JTableCompleteContextualMenu;
+import es.icarto.gvsig.navtableforms.gui.tables.menu.AlphanumericCompleteJTableContextualMenu;
 import es.icarto.gvsig.navtableforms.gui.tables.model.AlphanumericTableModel;
 import es.icarto.gvsig.navtableforms.gui.tables.model.TableModelFactory;
 import es.icarto.gvsig.navtableforms.utils.FormFactory;
@@ -42,7 +42,7 @@ public class AlphanumericTableHandler extends BaseTableHandler {
 
     @Override
     protected void createTableListener() {
-	listener = new JTableCompleteContextualMenu(form);
+	listener = new AlphanumericCompleteJTableContextualMenu(form);
     }
 
 }

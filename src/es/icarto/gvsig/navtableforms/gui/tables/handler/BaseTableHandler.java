@@ -9,7 +9,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
 
-import es.icarto.gvsig.navtableforms.gui.tables.menu.JTableContextualMenu;
+import es.icarto.gvsig.navtableforms.gui.tables.menu.BaseJTableContextualMenu;
 import es.icarto.gvsig.navtableforms.gui.tables.model.BaseTableModel;
 
 public abstract class BaseTableHandler {
@@ -22,7 +22,7 @@ public abstract class BaseTableHandler {
     protected String[] colNames;
     protected String[] colAliases;
     protected int keyColumn = 0;
-    protected JTableContextualMenu listener;
+    protected BaseJTableContextualMenu listener;
 
     public BaseTableHandler(String tableName,
 	    HashMap<String, JComponent> widgets, String foreignKeyId,
@@ -96,7 +96,7 @@ public abstract class BaseTableHandler {
 	return originKeyValue;
     }
 
-    public JTableContextualMenu getListener() {
+    public BaseJTableContextualMenu getListener() {
 	return listener;
     }
 

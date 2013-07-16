@@ -6,7 +6,7 @@ import javax.swing.JComponent;
 
 import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
 
-import es.icarto.gvsig.navtableforms.gui.tables.menu.JTableVectorialContextualMenu;
+import es.icarto.gvsig.navtableforms.gui.tables.menu.VectorialJTableContextualMenu;
 import es.icarto.gvsig.navtableforms.gui.tables.model.TableModelFactory;
 import es.icarto.gvsig.navtableforms.gui.tables.model.VectorialTableModel;
 import es.icarto.gvsig.navtableforms.utils.FormFactory;
@@ -35,7 +35,7 @@ public class VectorialTableHandler extends BaseTableHandler {
 
     @Override
     protected void createTableListener() {
-	listener = new JTableVectorialContextualMenu(sourceTableName);
+	listener = new VectorialJTableContextualMenu(sourceTableName);
     }
 
 }

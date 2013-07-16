@@ -7,21 +7,18 @@ import java.awt.event.MouseEvent;
 import javax.swing.JTable;
 
 import com.iver.andami.PluginServices;
-import com.iver.cit.gvsig.fmap.layers.FLyrVect;
 
 import es.icarto.gvsig.navtableforms.AbstractForm;
 import es.icarto.gvsig.navtableforms.gui.tables.JTableUtils;
 import es.icarto.gvsig.navtableforms.gui.tables.model.BaseTableModel;
 import es.icarto.gvsig.navtableforms.utils.FormFactory;
-import es.icarto.gvsig.navtableforms.utils.TOCLayerManager;
 
-public class JTableVectorialContextualMenu extends JTableContextualMenu {
+public class VectorialJTableContextualMenu extends BaseJTableContextualMenu {
 
-    private FLyrVect layer;
-    private JTable table;
+    private String layerName;
 
-    public JTableVectorialContextualMenu(String layerName) {
-	this.layer = new TOCLayerManager().getLayerByName(layerName);
+    public VectorialJTableContextualMenu(String layerName) {
+	this.layerName = layerName;
 	initContextualMenu();
     }
 
@@ -42,22 +39,6 @@ public class JTableVectorialContextualMenu extends JTableContextualMenu {
     }
 
     @Override
-    public void mousePressed(MouseEvent e) {
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-    }
-
-    @Override
     protected void initContextualMenu() {
 	updateMenuItem.addActionListener(new ActionListener() {
 	    @Override
@@ -69,7 +50,7 @@ public class JTableVectorialContextualMenu extends JTableContextualMenu {
     }
 
     protected void openDialog() {
-	AbstractForm form = FormFactory.createFormRegistered(layer);
+	AbstractForm form = FormFactory.createFormRegistered(layerName);
 	form.init();
 	form.setPosition(((BaseTableModel) table.getModel())
 		.convertRowIndexToModel(table.getSelectedRow()));

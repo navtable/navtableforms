@@ -11,7 +11,7 @@ import javax.swing.table.TableModel;
 import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
 
 import es.icarto.gvsig.navtableforms.AbstractForm;
-import es.icarto.gvsig.navtableforms.gui.tables.menu.JTableEditableNNRelContextualMenu;
+import es.icarto.gvsig.navtableforms.gui.tables.menu.EditableNNRelJTableContextualMenu;
 import es.icarto.gvsig.navtableforms.gui.tables.model.TableModelFactory;
 import es.icarto.gvsig.navtableforms.utils.FormFactory;
 import es.udc.cartolab.gvsig.users.utils.DBSession;
@@ -38,7 +38,7 @@ public class VectorialEditableNNRelTableHandler extends
     }
 
     protected void createTableListener() {
-	listener = new JTableEditableNNRelContextualMenu(this, form);
+	listener = new EditableNNRelJTableContextualMenu(this, form);
     }
 
     public void reload(AbstractForm form) {

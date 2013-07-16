@@ -10,10 +10,11 @@ import javax.swing.table.TableModel;
 import es.icarto.gvsig.navtableforms.gui.tables.IForm;
 import es.icarto.gvsig.navtableforms.gui.tables.JTableUtils;
 import es.icarto.gvsig.navtableforms.gui.tables.model.AlphanumericTableModel;
+import es.icarto.gvsig.navtableforms.gui.tables.model.BaseTableModel;
 
-public class JTableUpdateContextualMenu extends JTableContextualMenu {
+public class AlphanumericCompleteJTableContextualMenu extends AlphanumericJTableContextualMenu {
 
-    public JTableUpdateContextualMenu(IForm form) {
+    public AlphanumericCompleteJTableContextualMenu(IForm form) {
 	super(form);
     }
 
@@ -37,22 +38,50 @@ public class JTableUpdateContextualMenu extends JTableContextualMenu {
 	    if (!JTableUtils.hasRows(table)
 		    || (table.getSelectedRow() == NO_ROW_SELECTED)) {
 		updateMenuItem.setEnabled(false);
+		deleteMenuItem.setEnabled(false);
 	    } else {
 		updateMenuItem.setEnabled(true);
+		deleteMenuItem.setEnabled(true);
 	    }
 	    popupMenu.show(e.getComponent(), e.getX(), e.getY());
 	}
     }
 
     protected void initContextualMenu() {
+	newMenuItem.addActionListener(new ActionListener() {
+	    public void actionPerformed(ActionEvent arg0) {
+		form.actionCreateRecord();
+	    }
+	});
+	popupMenu.add(newMenuItem);
+
 	updateMenuItem.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent arg0) {
-		form.actionUpdateRecord(((AlphanumericTableModel) table
-			.getModel()).convertRowIndexToModel(table
-			.getSelectedRow()));
+		TableModel model = table.getModel();
+		if (model instanceof BaseTableModel) {
+		    form.actionUpdateRecord(((BaseTableModel) model)
+			    .convertRowIndexToModel(table.getSelectedRow()));
+		} else {
+		    form.actionUpdateRecord(table.convertRowIndexToModel(table
+			    .getSelectedRow()));
+		}
 	    }
 	});
 	popupMenu.add(updateMenuItem);
+
+	deleteMenuItem.addActionListener(new ActionListener() {
+	    public void actionPerformed(ActionEvent arg0) {
+		TableModel model = table.getModel();
+		if (model instanceof AlphanumericTableModel) {
+		    form.actionDeleteRecord(((AlphanumericTableModel) model)
+			    .convertRowIndexToModel(table.getSelectedRow()));
+		} else {
+		    form.actionDeleteRecord(table.convertRowIndexToModel(table
+			    .getSelectedRow()));
+		}
+	    }
+	});
+	popupMenu.add(deleteMenuItem);
     }
 
 }

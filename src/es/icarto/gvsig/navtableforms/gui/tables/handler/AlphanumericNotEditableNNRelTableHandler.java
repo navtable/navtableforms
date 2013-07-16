@@ -7,7 +7,7 @@ import javax.swing.JComponent;
 import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
 
 import es.icarto.gvsig.navtableforms.gui.tables.IForm;
-import es.icarto.gvsig.navtableforms.gui.tables.menu.JTableUpdateContextualMenu;
+import es.icarto.gvsig.navtableforms.gui.tables.menu.AlphanumericUpdateJTableContextualMenu;
 import es.icarto.gvsig.navtableforms.gui.tables.model.AlphanumericTableModel;
 import es.icarto.gvsig.navtableforms.gui.tables.model.TableModelFactory;
 import es.icarto.gvsig.navtableforms.utils.FormFactory;
@@ -37,7 +37,7 @@ public class AlphanumericNotEditableNNRelTableHandler extends
     }
 
     protected void createTableListener() {
-	listener = new JTableUpdateContextualMenu(form);
+	listener = new AlphanumericUpdateJTableContextualMenu(form);
     }
 
     public void reload(IForm form) {

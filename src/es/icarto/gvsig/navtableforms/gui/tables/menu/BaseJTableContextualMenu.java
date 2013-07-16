@@ -9,15 +9,12 @@ import javax.swing.JTable;
 
 import com.iver.andami.PluginServices;
 
-import es.icarto.gvsig.navtableforms.gui.tables.IForm;
-
-public abstract class JTableContextualMenu implements MouseListener {
+public abstract class BaseJTableContextualMenu implements MouseListener {
 
     protected static final int NO_ROW_SELECTED = -1;
     protected static final int BUTTON_RIGHT = 3;
 
     protected JTable table;
-    protected IForm form;
     protected JMenuItem newMenuItem = new JMenuItem(PluginServices.getText(
 	    this, "create_new"));
     protected JMenuItem updateMenuItem = new JMenuItem(PluginServices.getText(
@@ -26,24 +23,8 @@ public abstract class JTableContextualMenu implements MouseListener {
 	    this, "delete_item"));
     protected JPopupMenu popupMenu = new JPopupMenu();
 
-    /**
-     * When attaching this listener to your table, you should care if it fills
-     * the whole space of its viewport or on empty tables it won't show up.
-     * 
-     * So, for this to work on empty tables, you should make:
-     * yourTable.setFillsViewportHeight(true);
-     * 
-     * More info:
-     * http://docs.oracle.com/javase/6/docs/api/javax/swing/JTable.html
-     * #setFillsViewportHeight(boolean)
-     * http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4310721
-     */
-    public JTableContextualMenu(IForm form) {
-	this.form = form;
+    public BaseJTableContextualMenu() {
 	initContextualMenu();
-    }
-
-    public JTableContextualMenu() {
     }
 
     public abstract void mouseClicked(MouseEvent e);

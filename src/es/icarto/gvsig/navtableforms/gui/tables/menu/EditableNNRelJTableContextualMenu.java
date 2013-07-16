@@ -14,14 +14,16 @@ import es.icarto.gvsig.navtableforms.gui.tables.handler.EditableNNRelTableForm;
 import es.icarto.gvsig.navtableforms.gui.tables.handler.VectorialEditableNNRelTableHandler;
 import es.icarto.gvsig.navtableforms.gui.tables.model.VectorialTableModel;
 
-public class JTableEditableNNRelContextualMenu extends JTableContextualMenu {
+public class EditableNNRelJTableContextualMenu extends
+	VectorialJTableContextualMenu {
 
     protected VectorialEditableNNRelTableHandler tableRelationship;
     protected AbstractForm dialog;
     protected boolean dialogInitialized = false;
 
-    public JTableEditableNNRelContextualMenu(
+    public EditableNNRelJTableContextualMenu(
 	    VectorialEditableNNRelTableHandler tableRelationship, AbstractForm dialog) {
+	super("");
 	newMenuItem
 		.setText(PluginServices.getText(this, "create_new_relation"));
 	updateMenuItem.setText(PluginServices.getText(this,
@@ -79,7 +81,7 @@ public class JTableEditableNNRelContextualMenu extends JTableContextualMenu {
 	}
     }
 
-    private void openDialog() {
+    protected void openDialog() {
 	if (!dialogInitialized) {
 	    if ((dialog != null) && (dialog.init())) {
 		dialogInitialized = true;
