@@ -10,6 +10,7 @@ import es.icarto.gvsig.navtableforms.gui.tables.IForm;
 import es.icarto.gvsig.navtableforms.gui.tables.menu.JTableUpdateContextualMenu;
 import es.icarto.gvsig.navtableforms.gui.tables.model.AlphanumericTableModel;
 import es.icarto.gvsig.navtableforms.gui.tables.model.TableModelFactory;
+import es.icarto.gvsig.navtableforms.utils.FormFactory;
 
 public class AlphanumericNotEditableNNRelTableHandler extends
 	BaseNNRelTableHandler {
@@ -22,6 +23,7 @@ public class AlphanumericNotEditableNNRelTableHandler extends
 	    String[] colNames, String[] colAliases) {
 	super(sourceTableName, widgets, dbSchema, originKey, relTable,
 		destinationKey, colNames, colAliases);
+	FormFactory.checkTableLoadedRegistered(sourceTableName);
     }
 
     protected void createTableModel() throws ReadDriverException {
