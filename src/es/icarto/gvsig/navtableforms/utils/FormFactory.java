@@ -24,6 +24,10 @@ public abstract class FormFactory {
 	instance = factory;
     }
 
+    public static boolean hasRegisteredFactory() {
+	return (instance != null);
+    }
+
     public static void checkLayerLoadedRegistered(String layerName) {
 	if (instance != null) {
 	    instance.checkLayerLoaded(layerName);
@@ -34,5 +38,33 @@ public abstract class FormFactory {
 	if (instance != null) {
 	    instance.checkTableLoaded(layerName);
 	}
+    }
+
+    public static AbstractForm createFormRegistered(FLyrVect layer) {
+	if (instance != null) {
+	    return instance.createForm(layer);
+	}
+	return null;
+    }
+
+    public static AbstractForm createSingletonFormRegistered(FLyrVect layer) {
+	if (instance != null) {
+	    return instance.createSingletonForm(layer);
+	}
+	return null;
+    }
+
+    public static boolean hasMainFormRegistered(String layerName) {
+	if (instance != null) {
+	    return instance.hasMainForm(layerName);
+	}
+	return false;
+    }
+
+    public static boolean allLayersLoadedRegistered() {
+	if (instance != null) {
+	    return instance.allLayersLoaded();
+	}
+	return false;
     }
 }
