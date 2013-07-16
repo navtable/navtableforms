@@ -10,16 +10,13 @@ import javax.swing.table.TableModel;
 
 import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
 
-import es.icarto.gvsig.navtableforms.AbstractForm;
-import es.icarto.gvsig.navtableforms.gui.tables.menu.EditableNNRelJTableContextualMenu;
+import es.icarto.gvsig.navtableforms.gui.tables.menu.VectorialEditableNNRelJTableContextualMenu;
 import es.icarto.gvsig.navtableforms.gui.tables.model.TableModelFactory;
 import es.icarto.gvsig.navtableforms.utils.FormFactory;
 import es.udc.cartolab.gvsig.users.utils.DBSession;
 
 public class VectorialEditableNNRelTableHandler extends
 	EditableNNRelTableHandler {
-
-    private AbstractForm form;
 
     public VectorialEditableNNRelTableHandler(String sourceTableName,
 	    HashMap<String, JComponent> widgets, String dbSchema,
@@ -38,12 +35,11 @@ public class VectorialEditableNNRelTableHandler extends
     }
 
     protected void createTableListener() {
-	listener = new EditableNNRelJTableContextualMenu(this, form);
+	listener = new VectorialEditableNNRelJTableContextualMenu(this);
     }
 
-    public void reload(AbstractForm form) {
-	this.form = form;
-	reload();
+    public void reload() {
+	super.reload();
     }
 
     public List<String> getUnlinkedSecondaryValues() {

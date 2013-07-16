@@ -6,7 +6,7 @@ import javax.swing.JComponent;
 
 import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
 
-import es.icarto.gvsig.navtableforms.gui.tables.menu.VectorialJTableContextualMenu;
+import es.icarto.gvsig.navtableforms.gui.tables.menu.VectorialUpdateJTableContextualMenu;
 import es.icarto.gvsig.navtableforms.gui.tables.model.TableModelFactory;
 import es.icarto.gvsig.navtableforms.gui.tables.model.VectorialTableModel;
 import es.icarto.gvsig.navtableforms.utils.FormFactory;
@@ -20,9 +20,8 @@ public class VectorialTableHandler extends BaseTableHandler {
 	FormFactory.checkLayerLoadedRegistered(layerName);
     }
 
-    public void reload(String layerName) {
-	this.sourceTableName = layerName;
-	reload();
+    public void reload() {
+	super.reload();
     }
 
     @Override
@@ -35,7 +34,7 @@ public class VectorialTableHandler extends BaseTableHandler {
 
     @Override
     protected void createTableListener() {
-	listener = new VectorialJTableContextualMenu(sourceTableName);
+	listener = new VectorialUpdateJTableContextualMenu(sourceTableName);
     }
 
 }

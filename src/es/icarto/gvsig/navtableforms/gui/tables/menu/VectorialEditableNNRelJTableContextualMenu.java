@@ -13,26 +13,26 @@ import es.icarto.gvsig.navtableforms.gui.tables.JTableUtils;
 import es.icarto.gvsig.navtableforms.gui.tables.handler.EditableNNRelTableForm;
 import es.icarto.gvsig.navtableforms.gui.tables.handler.VectorialEditableNNRelTableHandler;
 import es.icarto.gvsig.navtableforms.gui.tables.model.VectorialTableModel;
+import es.icarto.gvsig.navtableforms.utils.FormFactory;
 
-public class EditableNNRelJTableContextualMenu extends
+public class VectorialEditableNNRelJTableContextualMenu extends
 	VectorialJTableContextualMenu {
 
     protected VectorialEditableNNRelTableHandler tableRelationship;
     protected AbstractForm dialog;
     protected boolean dialogInitialized = false;
 
-    public EditableNNRelJTableContextualMenu(
-	    VectorialEditableNNRelTableHandler tableRelationship, AbstractForm dialog) {
-	super("");
+    public VectorialEditableNNRelJTableContextualMenu(
+	    VectorialEditableNNRelTableHandler tableRelationship) {
+	super(tableRelationship.getSourceTableName());
 	newMenuItem
 		.setText(PluginServices.getText(this, "create_new_relation"));
 	updateMenuItem.setText(PluginServices.getText(this,
 		"update_item_relation"));
 	deleteMenuItem.setText(PluginServices.getText(this,
 		"delete_item_relation"));
-	this.dialog = dialog;
+	this.dialog = FormFactory.createSingletonFormRegistered(layerName);
 	this.tableRelationship = tableRelationship;
-	initContextualMenu();
     }
 
     protected void initContextualMenu() {
