@@ -66,9 +66,6 @@ public abstract class BaseTableHandler {
 
     public void fillValues(String foreignKeyValue) {
 	this.originKeyValue = foreignKeyValue;
-	// Map<String, String> foreignKey = new HashMap<String, String>(1);
-	// foreignKey.put(foreignKeyId, foreignKeyValue);
-	// form.setForeingKey(foreignKey);
 	try {
 	    createTableModel();
 	    ((DefaultTableCellRenderer) jtable.getTableHeader()
