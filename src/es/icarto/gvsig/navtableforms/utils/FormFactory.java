@@ -12,6 +12,10 @@ public abstract class FormFactory {
 
     public abstract AbstractForm createSingletonForm(FLyrVect layer);
 
+    public abstract AbstractForm createForm(String layerName);
+
+    public abstract AbstractForm createSingletonForm(String layerName);
+
     public abstract boolean hasMainForm(String layerName);
 
     public abstract boolean allLayersLoaded();
@@ -43,6 +47,20 @@ public abstract class FormFactory {
     public static AbstractForm createFormRegistered(FLyrVect layer) {
 	if (instance != null) {
 	    return instance.createForm(layer);
+	}
+	return null;
+    }
+
+    public static AbstractForm createSingletonFormRegistered(String layerName) {
+	if (instance != null) {
+	    return instance.createSingletonForm(layerName);
+	}
+	return null;
+    }
+
+    public static AbstractForm createFormRegistered(String layerName) {
+	if (instance != null) {
+	    return instance.createForm(layerName);
 	}
 	return null;
     }
