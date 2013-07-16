@@ -28,7 +28,7 @@ public class VectorialTableModel extends BaseTableModel {
     @Override
     public Object getValueAt(int row, int col) {
 	try {
-	    return layer.getRecordset().getFieldValue(row,
+	    return layer.getRecordset().getFieldValue(rowIndexes.get(row),
 		    layer.getRecordset().getFieldIndexByName(colNames[col]));
 	} catch (ReadDriverException e) {
 	    e.printStackTrace();
