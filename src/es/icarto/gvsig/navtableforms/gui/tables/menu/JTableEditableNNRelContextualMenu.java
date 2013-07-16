@@ -6,14 +6,13 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.JTable;
 
-import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
 import com.iver.andami.PluginServices;
 
 import es.icarto.gvsig.navtableforms.AbstractForm;
 import es.icarto.gvsig.navtableforms.gui.tables.JTableUtils;
 import es.icarto.gvsig.navtableforms.gui.tables.handler.EditableNNRelTableForm;
 import es.icarto.gvsig.navtableforms.gui.tables.handler.VectorialEditableNNRelTableHandler;
-import es.udc.cartolab.gvsig.navtable.dataacces.IController;
+import es.icarto.gvsig.navtableforms.gui.tables.model.VectorialTableModel;
 
 public class JTableEditableNNRelContextualMenu extends JTableContextualMenu {
 
@@ -94,24 +93,8 @@ public class JTableEditableNNRelContextualMenu extends JTableContextualMenu {
     }
 
     private void readSelectedPosition() {
-	IController controller = dialog.getFormController();
-	String keySelected = table.getModel()
-		.getValueAt(
-			table.convertRowIndexToModel(table.getSelectedRow()),
-			tableRelationship.getKeyColumn())
-		.toString();
-	try {
-	    for (long i = controller.getRowCount() - 1; i >= 0; i--) {
-		controller.read(i);
-		if (controller.getValue(tableRelationship.getDestinationKey())
-			.equals(keySelected)) {
-		    dialog.setPosition(i);
-		    break;
-		}
-	    }
-	} catch (ReadDriverException e) {
-	    e.printStackTrace();
-	}
+	dialog.setPosition(((VectorialTableModel) table.getModel())
+		.convertRowIndexToModel(table.getSelectedRow()));
     }
 
 }
