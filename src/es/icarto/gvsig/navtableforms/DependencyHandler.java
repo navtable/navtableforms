@@ -15,6 +15,7 @@ public class DependencyHandler {
     private ORMLite ormlite;
     private HashMap<String, JComponent> widgets;
     private IValidatableForm form;
+    private Map<JComponent, EnabledComponentBasedOnWidgets> enabledIfs = new HashMap<JComponent, EnabledComponentBasedOnWidgets>();
 
     public DependencyHandler(ORMLite ormlite,
 	    HashMap<String, JComponent> widgetsVector, IValidatableForm form) {
@@ -41,6 +42,7 @@ public class DependencyHandler {
 		}
 		componentBasedOnWidget.setRemoveDependentValues(true);
 		componentBasedOnWidget.setListeners();
+		enabledIfs.put(comp, componentBasedOnWidget);
 	    }
 	    if (ormlite.getAppDomain().isNonEditableComponent(comp.getName()) != null
 		    && ormlite.getAppDomain().isNonEditableComponent(
@@ -52,42 +54,17 @@ public class DependencyHandler {
 
     public void removeListeners() {
 	for (JComponent comp : widgets.values()) {
-	    if (ormlite.getAppDomain().getDependencyValuesForComponent(
-		    comp.getName()) != null) {
-		DependencyReader values = ormlite.getAppDomain()
-			.getDependencyValuesForComponent(comp.getName());
-		EnabledComponentBasedOnWidgets componentBasedOnWidget = new EnabledComponentBasedOnWidgets(
-			comp, form);
-		Map<String, List<String>> conditions = values.getConditions();
-		for (String component : conditions.keySet()) {
-		    JComponent widget = widgets.get(component);
-		    if (widget != null) {
-			componentBasedOnWidget.addConditions(widget,
-				conditions.get(component));
-		    }
-		}
-		componentBasedOnWidget.removeListeners();
+	    if (enabledIfs.containsKey(comp)) {
+		enabledIfs.get(comp).removeListeners();
+		enabledIfs.remove(comp);
 	    }
 	}
     }
 
     public void fillValues() {
 	for (JComponent comp : widgets.values()) {
-	    if (ormlite.getAppDomain().getDependencyValuesForComponent(
-		    comp.getName()) != null) {
-		DependencyReader values = ormlite.getAppDomain()
-			.getDependencyValuesForComponent(comp.getName());
-		EnabledComponentBasedOnWidgets componentBasedOnWidget = new EnabledComponentBasedOnWidgets(
-			comp, form);
-		Map<String, List<String>> conditions = values.getConditions();
-		for (String component : conditions.keySet()) {
-		    JComponent widget = widgets.get(component);
-		    if (widget != null) {
-			componentBasedOnWidget.addConditions(widget,
-				conditions.get(component));
-		    }
-		}
-		componentBasedOnWidget.fillValues();
+	    if (enabledIfs.containsKey(comp)) {
+		enabledIfs.get(comp).fillValues();
 	    }
 	}
     }
