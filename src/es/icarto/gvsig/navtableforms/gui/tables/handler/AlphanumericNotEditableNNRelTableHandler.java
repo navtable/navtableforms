@@ -6,7 +6,7 @@ import javax.swing.JComponent;
 
 import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
 
-import es.icarto.gvsig.navtableforms.gui.tables.IForm;
+import es.icarto.gvsig.navtableforms.gui.tables.AbstractSubForm;
 import es.icarto.gvsig.navtableforms.gui.tables.menu.AlphanumericUpdateJTableContextualMenu;
 import es.icarto.gvsig.navtableforms.gui.tables.model.AlphanumericTableModel;
 import es.icarto.gvsig.navtableforms.gui.tables.model.TableModelFactory;
@@ -15,7 +15,7 @@ import es.icarto.gvsig.navtableforms.utils.FormFactory;
 public class AlphanumericNotEditableNNRelTableHandler extends
 	BaseNNRelTableHandler {
 
-    private IForm form;
+    private AbstractSubForm form;
 
     public AlphanumericNotEditableNNRelTableHandler(String sourceTableName,
 	    HashMap<String, JComponent> widgets, String dbSchema,
@@ -24,6 +24,7 @@ public class AlphanumericNotEditableNNRelTableHandler extends
 	super(sourceTableName, widgets, dbSchema, originKey, relTable,
 		destinationKey, colNames, colAliases);
 	FormFactory.checkTableLoadedRegistered(sourceTableName);
+	form = FormFactory.createSubFormRegistered(sourceTableName);
     }
 
     protected void createTableModel() throws ReadDriverException {
@@ -40,9 +41,8 @@ public class AlphanumericNotEditableNNRelTableHandler extends
 	listener = new AlphanumericUpdateJTableContextualMenu(form);
     }
 
-    public void reload(IForm form) {
-	this.form = form;
-	reload();
+    public void reload() {
+	super.reload();
     }
 
 }

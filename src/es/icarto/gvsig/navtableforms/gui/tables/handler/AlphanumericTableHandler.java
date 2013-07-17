@@ -22,11 +22,11 @@ public class AlphanumericTableHandler extends BaseTableHandler {
 	    String[] colNames, String[] colAliases) {
 	super(tableName, widgets, foreignKeyId, colNames, colAliases);
 	FormFactory.checkTableLoadedRegistered(tableName);
+	form = FormFactory.createSubFormRegistered(tableName);
     }
 
-    public void reload(AbstractSubForm form) {
-	this.form = form;
-	reload();
+    public void reload() {
+	super.reload();
     }
 
     @Override
