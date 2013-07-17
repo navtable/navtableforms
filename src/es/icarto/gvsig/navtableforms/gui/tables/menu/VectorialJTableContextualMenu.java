@@ -9,18 +9,26 @@ import es.icarto.gvsig.navtableforms.utils.FormFactory;
 public abstract class VectorialJTableContextualMenu extends
 	BaseJTableContextualMenu {
 
-    protected String layerName;
+    protected AbstractForm form;
+    protected boolean formInitialized = false;
 
     public VectorialJTableContextualMenu(String layerName) {
-	this.layerName = layerName;
+	this.form = FormFactory.createFormRegistered(layerName);
     }
 
     protected void openDialog() {
-	AbstractForm form = FormFactory.createFormRegistered(layerName);
-	form.init();
+	if (!formInitialized) {
+	    formInitialized = true;
+	    form.init();
+	}
 	form.setPosition(((BaseTableModel) table.getModel())
 		.convertRowIndexToModel(table.getSelectedRow()));
 	PluginServices.getMDIManager().addWindow(form);
+    }
+
+    @Deprecated
+    public void setDialog(AbstractForm form) {
+	this.form = form;
     }
 
 }

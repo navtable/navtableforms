@@ -6,6 +6,7 @@ import javax.swing.JComponent;
 
 import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
 
+import es.icarto.gvsig.navtableforms.AbstractForm;
 import es.icarto.gvsig.navtableforms.gui.tables.menu.VectorialUpdateJTableContextualMenu;
 import es.icarto.gvsig.navtableforms.gui.tables.model.TableModelFactory;
 import es.icarto.gvsig.navtableforms.gui.tables.model.VectorialTableModel;
@@ -26,6 +27,12 @@ public class VectorialTableHandler extends BaseTableHandler {
 		.createFromLayerWithFilter(sourceTableName, destinationKey,
 			originKeyValue, colNames, colAliases);
 	jtable.setModel(model);
+    }
+
+    @Deprecated
+    public void reload(AbstractForm form) {
+	reload();
+	((VectorialUpdateJTableContextualMenu) listener).setDialog(form);
     }
 
     @Override

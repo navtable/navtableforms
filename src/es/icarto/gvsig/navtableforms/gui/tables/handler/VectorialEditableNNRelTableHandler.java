@@ -10,6 +10,7 @@ import javax.swing.table.TableModel;
 
 import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
 
+import es.icarto.gvsig.navtableforms.AbstractForm;
 import es.icarto.gvsig.navtableforms.gui.tables.menu.VectorialEditableNNRelJTableContextualMenu;
 import es.icarto.gvsig.navtableforms.gui.tables.model.TableModelFactory;
 import es.icarto.gvsig.navtableforms.utils.FormFactory;
@@ -36,6 +37,12 @@ public class VectorialEditableNNRelTableHandler extends
 
     protected void createTableListener() {
 	listener = new VectorialEditableNNRelJTableContextualMenu(this);
+    }
+
+    @Deprecated
+    public void reload(AbstractForm form) {
+	reload();
+	((VectorialEditableNNRelJTableContextualMenu) listener).setDialog(form);
     }
 
     public List<String> getUnlinkedSecondaryValues() {

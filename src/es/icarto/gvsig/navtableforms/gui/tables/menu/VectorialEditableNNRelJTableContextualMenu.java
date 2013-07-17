@@ -8,7 +8,6 @@ import javax.swing.JTable;
 
 import com.iver.andami.PluginServices;
 
-import es.icarto.gvsig.navtableforms.AbstractForm;
 import es.icarto.gvsig.navtableforms.gui.tables.JTableUtils;
 import es.icarto.gvsig.navtableforms.gui.tables.handler.EditableNNRelTableForm;
 import es.icarto.gvsig.navtableforms.gui.tables.handler.VectorialEditableNNRelTableHandler;
@@ -19,8 +18,6 @@ public class VectorialEditableNNRelJTableContextualMenu extends
 	VectorialJTableContextualMenu {
 
     protected VectorialEditableNNRelTableHandler tableRelationship;
-    protected AbstractForm dialog;
-    protected boolean dialogInitialized = false;
 
     public VectorialEditableNNRelJTableContextualMenu(
 	    VectorialEditableNNRelTableHandler tableRelationship) {
@@ -31,7 +28,9 @@ public class VectorialEditableNNRelJTableContextualMenu extends
 		"update_item_relation"));
 	deleteMenuItem.setText(PluginServices.getText(this,
 		"delete_item_relation"));
-	this.dialog = FormFactory.createSingletonFormRegistered(layerName);
+	this.form = FormFactory
+		.createSingletonFormRegistered(tableRelationship
+			.getSourceTableName());
 	this.tableRelationship = tableRelationship;
     }
 
@@ -82,20 +81,20 @@ public class VectorialEditableNNRelJTableContextualMenu extends
     }
 
     protected void openDialog() {
-	if (!dialogInitialized) {
-	    if ((dialog != null) && (dialog.init())) {
-		dialogInitialized = true;
+	if (!formInitialized) {
+	    if ((form != null) && (form.init())) {
+		formInitialized = true;
 		readSelectedPosition();
-		PluginServices.getMDIManager().addWindow(dialog);
+		PluginServices.getMDIManager().addWindow(form);
 	    }
 	} else {
 	    readSelectedPosition();
-	    PluginServices.getMDIManager().addWindow(dialog);
+	    PluginServices.getMDIManager().addWindow(form);
 	}
     }
 
     private void readSelectedPosition() {
-	dialog.setPosition(((VectorialTableModel) table.getModel())
+	form.setPosition(((VectorialTableModel) table.getModel())
 		.convertRowIndexToModel(table.getSelectedRow()));
     }
 

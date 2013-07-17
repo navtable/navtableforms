@@ -37,6 +37,12 @@ public class AlphanumericNotEditableNNRelTableHandler extends
 	}
     }
 
+    @Deprecated
+    public void reload(AbstractSubForm form) {
+	this.form = form;
+	reload();
+    }
+
     protected void createTableListener() {
 	listener = new AlphanumericUpdateJTableContextualMenu(form);
     }

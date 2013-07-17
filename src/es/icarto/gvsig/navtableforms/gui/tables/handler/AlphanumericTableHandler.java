@@ -36,6 +36,12 @@ public class AlphanumericTableHandler extends BaseTableHandler {
 	}
     }
 
+    @Deprecated
+    public void reload(AbstractSubForm form) {
+	this.form = form;
+	reload();
+    }
+
     @Override
     public void fillValues(String foreignKeyValue) {
 	super.fillValues(foreignKeyValue);
