@@ -7,9 +7,9 @@ import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
 import com.iver.cit.gvsig.fmap.edition.IEditableSource;
 import com.iver.cit.gvsig.fmap.layers.FLyrVect;
 
-import es.icarto.gvsig.navtableforms.gui.tables.IRowFilter;
-import es.icarto.gvsig.navtableforms.gui.tables.IRowFilterImplementer;
-import es.icarto.gvsig.navtableforms.gui.tables.IRowMultipleOrFilterImplementer;
+import es.icarto.gvsig.navtableforms.gui.tables.filter.IRowFilter;
+import es.icarto.gvsig.navtableforms.gui.tables.filter.IRowFilterImplementer;
+import es.icarto.gvsig.navtableforms.gui.tables.filter.IRowMultipleOrFilterImplementer;
 import es.icarto.gvsig.navtableforms.utils.TOCLayerManager;
 import es.icarto.gvsig.navtableforms.utils.TOCTableManager;
 

@@ -6,7 +6,7 @@ import javax.swing.table.AbstractTableModel;
 
 import com.iver.cit.gvsig.fmap.core.IRow;
 
-import es.icarto.gvsig.navtableforms.gui.tables.IRowFilter;
+import es.icarto.gvsig.navtableforms.gui.tables.filter.IRowFilter;
 
 @SuppressWarnings("serial")
 public abstract class BaseTableModel extends AbstractTableModel {

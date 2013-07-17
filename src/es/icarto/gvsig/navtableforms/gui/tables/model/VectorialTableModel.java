@@ -4,7 +4,7 @@ import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
 import com.iver.cit.gvsig.fmap.core.IRow;
 import com.iver.cit.gvsig.fmap.layers.FLyrVect;
 
-import es.icarto.gvsig.navtableforms.gui.tables.IRowFilter;
+import es.icarto.gvsig.navtableforms.gui.tables.filter.IRowFilter;
 
 @SuppressWarnings("serial")
 public class VectorialTableModel extends BaseTableModel {

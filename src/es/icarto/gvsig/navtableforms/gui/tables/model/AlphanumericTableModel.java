@@ -10,7 +10,7 @@ import com.iver.cit.gvsig.exceptions.visitors.StopWriterVisitorException;
 import com.iver.cit.gvsig.fmap.core.IRow;
 import com.iver.cit.gvsig.fmap.edition.IEditableSource;
 
-import es.icarto.gvsig.navtableforms.gui.tables.IRowFilter;
+import es.icarto.gvsig.navtableforms.gui.tables.filter.IRowFilter;
 import es.udc.cartolab.gvsig.navtable.dataacces.TableController;
 
 @SuppressWarnings("serial")

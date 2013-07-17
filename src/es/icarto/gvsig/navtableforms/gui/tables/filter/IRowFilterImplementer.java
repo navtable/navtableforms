@@ -1,4 +1,4 @@
-package es.icarto.gvsig.navtableforms.gui.tables;
+package es.icarto.gvsig.navtableforms.gui.tables.filter;
 
 import com.hardcode.gdbms.engine.values.Value;
 import com.iver.cit.gvsig.fmap.core.IRow;
