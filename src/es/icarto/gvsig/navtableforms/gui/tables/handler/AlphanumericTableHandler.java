@@ -25,10 +25,6 @@ public class AlphanumericTableHandler extends BaseTableHandler {
 	form = FormFactory.createSubFormRegistered(tableName);
     }
 
-    public void reload() {
-	super.reload();
-    }
-
     @Override
     protected void createTableModel() throws ReadDriverException {
 	AlphanumericTableModel model = TableModelFactory

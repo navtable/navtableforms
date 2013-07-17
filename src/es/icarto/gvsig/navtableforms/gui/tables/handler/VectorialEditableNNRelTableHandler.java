@@ -38,10 +38,6 @@ public class VectorialEditableNNRelTableHandler extends
 	listener = new VectorialEditableNNRelJTableContextualMenu(this);
     }
 
-    public void reload() {
-	super.reload();
-    }
-
     public List<String> getUnlinkedSecondaryValues() {
 	try {
 	    String where = "";

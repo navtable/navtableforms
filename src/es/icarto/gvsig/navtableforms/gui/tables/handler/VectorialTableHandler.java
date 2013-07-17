@@ -20,10 +20,6 @@ public class VectorialTableHandler extends BaseTableHandler {
 	FormFactory.checkLayerLoadedRegistered(layerName);
     }
 
-    public void reload() {
-	super.reload();
-    }
-
     @Override
     protected void createTableModel() throws ReadDriverException {
 	VectorialTableModel model = TableModelFactory

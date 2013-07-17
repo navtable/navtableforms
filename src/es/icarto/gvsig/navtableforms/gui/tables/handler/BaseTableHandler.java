@@ -51,7 +51,7 @@ public abstract class BaseTableHandler {
 
     protected abstract void createTableListener();
 
-    protected void reload() {
+    public void reload() {
 	createTableListener();
 	if (listener != null) {
 	    jtable.addMouseListener(listener);

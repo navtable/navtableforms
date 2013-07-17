@@ -41,8 +41,4 @@ public class AlphanumericNotEditableNNRelTableHandler extends
 	listener = new AlphanumericUpdateJTableContextualMenu(form);
     }
 
-    public void reload() {
-	super.reload();
-    }
-
 }
