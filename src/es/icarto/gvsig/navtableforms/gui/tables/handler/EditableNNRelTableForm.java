@@ -1,8 +1,10 @@
 package es.icarto.gvsig.navtableforms.gui.tables.handler;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.InputStream;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -12,8 +14,6 @@ import javax.swing.table.TableModel;
 import com.iver.andami.PluginServices;
 import com.iver.andami.ui.mdiManager.IWindow;
 import com.iver.andami.ui.mdiManager.WindowInfo;
-import com.jeta.forms.components.panel.FormPanel;
-import com.jeta.forms.gui.common.FormException;
 
 
 @SuppressWarnings("serial")
@@ -24,7 +24,6 @@ public class EditableNNRelTableForm extends JPanel implements IWindow,
 
     private EditableNNRelTableHandler tableRelationship;
 
-    private FormPanel formPanel;
     private JComboBox secondaryPKValueCB;
     private JButton addButton;
     private int keyColumn = 0;
@@ -44,20 +43,30 @@ public class EditableNNRelTableForm extends JPanel implements IWindow,
     }
 
     private void createForm() {
-	InputStream stream = getClass().getClassLoader().getResourceAsStream(
-		"ui/r_add_subform.xml");
-	try {
-	    formPanel = new FormPanel(stream);
-	    this.add(formPanel);
-	} catch (FormException e) {
-	    e.printStackTrace();
-	}
-	secondaryPKValueCB = (JComboBox) formPanel
-		.getComponentByName("secondaryPKValueCB");
-	addButton = (JButton) formPanel.getComponentByName("addButton");
+
+	this.setLayout(new GridBagLayout());
+	GridBagConstraints c = new GridBagConstraints();
+
+	secondaryPKValueCB = new JComboBox();
+	c.fill = GridBagConstraints.HORIZONTAL;
+	c.ipady = 5; // make this component tall
+	c.insets = new Insets(10, 5, 10, 5);
+	c.gridwidth = 1;
+	c.gridx = 0;
+	c.gridy = 0;
+	this.add(secondaryPKValueCB, c);
+
+	addButton = new JButton(PluginServices.getText(this, "add_relation"));
+	c.insets = new Insets(10, 10, 10, 10);
+	c.ipady = 0;
+	c.gridy = 1;
+	c.anchor = GridBagConstraints.PAGE_END; // bottom of space
+	this.add(addButton, c);
+
 	for (String value : tableRelationship.getUnlinkedSecondaryValues()) {
 	    secondaryPKValueCB.addItem(value);
 	}
+
 	addButton.addActionListener(this);
     }
 
