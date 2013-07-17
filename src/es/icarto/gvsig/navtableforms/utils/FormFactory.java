@@ -3,6 +3,7 @@ package es.icarto.gvsig.navtableforms.utils;
 import com.iver.cit.gvsig.fmap.layers.FLyrVect;
 
 import es.icarto.gvsig.navtableforms.AbstractForm;
+import es.icarto.gvsig.navtableforms.gui.tables.AbstractSubForm;
 
 public abstract class FormFactory {
 
@@ -15,6 +16,8 @@ public abstract class FormFactory {
     public abstract AbstractForm createForm(String layerName);
 
     public abstract AbstractForm createSingletonForm(String layerName);
+
+    public abstract AbstractSubForm createSubForm(String tableName);
 
     public abstract boolean hasMainForm(String layerName);
 
@@ -68,6 +71,13 @@ public abstract class FormFactory {
     public static AbstractForm createSingletonFormRegistered(FLyrVect layer) {
 	if (instance != null) {
 	    return instance.createSingletonForm(layer);
+	}
+	return null;
+    }
+
+    public static AbstractSubForm createSubFormRegistered(String tableName) {
+	if (instance != null) {
+	    return instance.createSubForm(tableName);
 	}
 	return null;
     }
