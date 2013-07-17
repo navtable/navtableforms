@@ -44,11 +44,13 @@ import com.jeta.forms.components.panel.FormPanel;
 
 import es.icarto.gvsig.navtableforms.forms.windowproperties.FormWindowProperties;
 import es.icarto.gvsig.navtableforms.forms.windowproperties.FormWindowPropertiesSerializator;
+import es.icarto.gvsig.navtableforms.gui.tables.handler.BaseTableHandler;
 import es.icarto.gvsig.navtableforms.ormlite.ORMLite;
 import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.ValidatorForm;
 import es.icarto.gvsig.navtableforms.utils.AbeilleParser;
 import es.udc.cartolab.gvsig.navtable.AbstractNavTable;
 import es.udc.cartolab.gvsig.navtable.dataacces.IController;
+import es.udc.cartolab.gvsig.navtable.listeners.PositionEvent;
 
 @SuppressWarnings("serial")
 public abstract class AbstractForm extends AbstractNavTable implements
@@ -57,6 +59,7 @@ public abstract class AbstractForm extends AbstractNavTable implements
     protected FormPanel formBody;
     private boolean isFillingValues;
     private boolean isSavingValues = false;
+    private List<BaseTableHandler> tableHandlers = new ArrayList<BaseTableHandler>();
 
     HashMap<String, JComponent> widgets;
 
@@ -139,7 +142,9 @@ public abstract class AbstractForm extends AbstractNavTable implements
     protected void removeListeners() {
 	validationHandler.removeListeners(widgets);
 	dependencyHandler.removeListeners();
-
+	for (BaseTableHandler tableHandler : tableHandlers) {
+	    tableHandler.removeListeners();
+	}
     }
 
     @Override
@@ -180,6 +185,9 @@ public abstract class AbstractForm extends AbstractNavTable implements
     protected void setListeners() {
 	validationHandler.setListeners(widgets);
 	dependencyHandler.setListeners();
+	for (BaseTableHandler tableHandler : tableHandlers) {
+	    tableHandler.reload();
+	}
     }
 
     @Override
@@ -190,7 +198,18 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	setFillingValues(false);
     }
 
-    protected abstract void fillSpecificValues();
+    protected void fillSpecificValues() {
+	String key = getPrimaryKeyValue();
+	if (key != null) {
+	    for (BaseTableHandler tableHandler : tableHandlers) {
+		tableHandler.fillValues(key);
+	    }
+	}
+    }
+
+    protected String getPrimaryKeyValue() {
+	return null;
+    }
 
     @Override
     public void fillValues() {
@@ -370,5 +389,19 @@ public abstract class AbstractForm extends AbstractNavTable implements
     public FillHandler getFillHandler() {
 	return fillHandler;
 
+    }
+
+    protected void addTableHandler(BaseTableHandler tableHandler) {
+	tableHandlers.add(tableHandler);
+    }
+
+    public List<BaseTableHandler> getTableHandlers() {
+	return tableHandlers;
+    }
+
+    @Override
+    public void onPositionChange(PositionEvent e) {
+	super.onPositionChange(e);
+	fillSpecificValues();
     }
 }
