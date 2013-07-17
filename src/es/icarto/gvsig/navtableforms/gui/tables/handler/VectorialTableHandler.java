@@ -18,7 +18,7 @@ public class VectorialTableHandler extends BaseTableHandler {
 	    HashMap<String, JComponent> widgets, String foreignKeyId,
 	    String[] colNames, String[] colAliases) {
 	super(layerName, widgets, foreignKeyId, colNames, colAliases);
-	FormFactory.checkLayerLoadedRegistered(layerName);
+	FormFactory.checkAndLoadLayerRegistered(layerName);
     }
 
     @Override

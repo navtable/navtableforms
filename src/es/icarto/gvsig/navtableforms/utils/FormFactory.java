@@ -7,7 +7,7 @@ import es.icarto.gvsig.navtableforms.gui.tables.AbstractSubForm;
 
 public abstract class FormFactory {
 
-    protected static FormFactory instance;
+    private static FormFactory instance;
     
     public abstract AbstractForm createForm(FLyrVect layer);
 
@@ -23,9 +23,25 @@ public abstract class FormFactory {
 
     public abstract boolean allLayersLoaded();
 
-    public abstract void checkLayerLoaded(String layerName);
+    public abstract boolean checkLayerLoaded(String layerName);
 
-    public abstract void checkTableLoaded(String tableName);
+    public abstract boolean checkTableLoaded(String tableName);
+
+    public abstract void loadLayer(String layerName);
+
+    public abstract void loadTable(String tableName);
+
+    public void checkAndLoadLayer(String layerName) {
+	if (!checkLayerLoaded(layerName)) {
+	    loadLayer(layerName);
+	}
+    }
+
+    public void checkAndLoadTable(String tableName) {
+	if (!checkTableLoaded(tableName)) {
+	    loadTable(tableName);
+	}
+    }
 
     public static void registerFormFactory(FormFactory factory) {
 	instance = factory;
@@ -35,15 +51,41 @@ public abstract class FormFactory {
 	return (instance != null);
     }
 
-    public static void checkLayerLoadedRegistered(String layerName) {
+    public static void loadLayerRegistered(String layerName) {
 	if (instance != null) {
-	    instance.checkLayerLoaded(layerName);
+	    instance.loadLayer(layerName);
 	}
     }
 
-    public static void checkTableLoadedRegistered(String layerName) {
+    public static void loadTableRegistered(String layerName) {
 	if (instance != null) {
-	    instance.checkTableLoaded(layerName);
+	    instance.loadTable(layerName);
+	}
+    }
+
+    public static boolean checkLayerLoadedRegistered(String layerName) {
+	if (instance != null) {
+	    return instance.checkLayerLoaded(layerName);
+	}
+	return false;
+    }
+
+    public static boolean checkTableLoadedRegistered(String tableName) {
+	if (instance != null) {
+	    return instance.checkTableLoaded(tableName);
+	}
+	return false;
+    }
+
+    public static void checkAndLoadLayerRegistered(String layerName) {
+	if (instance != null) {
+	    instance.checkAndLoadLayer(layerName);
+	}
+    }
+
+    public static void checkAndLoadTableRegistered(String layerName) {
+	if (instance != null) {
+	    instance.checkAndLoadTable(layerName);
 	}
     }
 

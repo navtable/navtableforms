@@ -25,7 +25,7 @@ public class VectorialEditableNNRelTableHandler extends
 	    String[] colNames, String[] colAliases) {
 	super(sourceTableName, widgets, dbSchema, originKey, relTable,
 		destinationKey, colNames, colAliases);
-	FormFactory.checkLayerLoadedRegistered(sourceTableName);
+	FormFactory.checkAndLoadLayerRegistered(sourceTableName);
     }
 
     protected void createTableModel() throws ReadDriverException {

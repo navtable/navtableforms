@@ -21,7 +21,7 @@ public class AlphanumericTableHandler extends BaseTableHandler {
 	    HashMap<String, JComponent> widgets, String foreignKeyId,
 	    String[] colNames, String[] colAliases) {
 	super(tableName, widgets, foreignKeyId, colNames, colAliases);
-	FormFactory.checkTableLoadedRegistered(tableName);
+	FormFactory.checkAndLoadTableRegistered(tableName);
 	form = FormFactory.createSubFormRegistered(tableName);
     }
 

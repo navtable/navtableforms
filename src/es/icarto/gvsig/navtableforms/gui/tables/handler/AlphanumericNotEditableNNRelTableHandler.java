@@ -23,7 +23,7 @@ public class AlphanumericNotEditableNNRelTableHandler extends
 	    String[] colNames, String[] colAliases) {
 	super(sourceTableName, widgets, dbSchema, originKey, relTable,
 		destinationKey, colNames, colAliases);
-	FormFactory.checkTableLoadedRegistered(sourceTableName);
+	FormFactory.checkAndLoadTableRegistered(sourceTableName);
 	form = FormFactory.createSubFormRegistered(sourceTableName);
     }
 

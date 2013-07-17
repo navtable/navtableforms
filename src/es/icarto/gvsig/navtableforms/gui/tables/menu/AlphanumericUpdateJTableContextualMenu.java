@@ -18,11 +18,6 @@ public class AlphanumericUpdateJTableContextualMenu extends AlphanumericJTableCo
     }
 
     public void mouseClicked(MouseEvent e) {
-	// Make sure the JTable fills the parent viewport for this listener to
-	// work on empty tables (see comment on constructor):
-	//
-	// yourTable.setFillsViewportHeight(true);
-	//
 	table = (JTable) e.getComponent();
 	if ((e.getClickCount() == 2) && (table.getSelectedRow() > -1)) {
 	    TableModel model = table.getModel();
