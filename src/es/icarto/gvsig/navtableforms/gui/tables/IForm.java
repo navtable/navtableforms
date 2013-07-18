@@ -2,7 +2,7 @@ package es.icarto.gvsig.navtableforms.gui.tables;
 
 import com.iver.cit.gvsig.fmap.edition.IEditableSource;
 
-import es.icarto.gvsig.navtableforms.gui.tables.model.TableModelAlphanumeric;
+import es.icarto.gvsig.navtableforms.gui.tables.model.AlphanumericTableModel;
 
 
 public interface IForm {
@@ -15,6 +15,6 @@ public interface IForm {
 
     public IEditableSource getSource();
 
-    public void setModel(TableModelAlphanumeric model);
+    public void setModel(AlphanumericTableModel model);
 
 }

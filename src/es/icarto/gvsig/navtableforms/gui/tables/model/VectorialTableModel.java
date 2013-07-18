@@ -4,21 +4,21 @@ import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
 import com.iver.cit.gvsig.fmap.core.IRow;
 import com.iver.cit.gvsig.fmap.layers.FLyrVect;
 
-import es.icarto.gvsig.navtableforms.gui.tables.IRowFilter;
+import es.icarto.gvsig.navtableforms.gui.tables.filter.IRowFilter;
 
 @SuppressWarnings("serial")
-public class TableModelVectorial extends TableModelBase {
+public class VectorialTableModel extends BaseTableModel {
 
     protected FLyrVect layer;
 
-    public TableModelVectorial(FLyrVect layer, String[] colNames,
+    public VectorialTableModel(FLyrVect layer, String[] colNames,
 	    String[] colAliases) {
 	super(colNames, colAliases);
 	this.layer = layer;
 	initMetadata();
     }
 
-    public TableModelVectorial(FLyrVect layer, String[] colNames,
+    public VectorialTableModel(FLyrVect layer, String[] colNames,
 	    String[] colAliases, IRowFilter filter) {
 	super(colNames, colAliases, filter);
 	this.layer = layer;
@@ -28,7 +28,7 @@ public class TableModelVectorial extends TableModelBase {
     @Override
     public Object getValueAt(int row, int col) {
 	try {
-	    return layer.getRecordset().getFieldValue(row,
+	    return layer.getRecordset().getFieldValue(rowIndexes.get(row),
 		    layer.getRecordset().getFieldIndexByName(colNames[col]));
 	} catch (ReadDriverException e) {
 	    e.printStackTrace();

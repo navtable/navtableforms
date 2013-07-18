@@ -36,7 +36,7 @@ import es.icarto.gvsig.navtableforms.DependencyHandler;
 import es.icarto.gvsig.navtableforms.FillHandler;
 import es.icarto.gvsig.navtableforms.IValidatableForm;
 import es.icarto.gvsig.navtableforms.ValidationHandler;
-import es.icarto.gvsig.navtableforms.gui.tables.model.TableModelAlphanumeric;
+import es.icarto.gvsig.navtableforms.gui.tables.model.AlphanumericTableModel;
 import es.icarto.gvsig.navtableforms.ormlite.ORMLite;
 import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.ValidatorForm;
 import es.icarto.gvsig.navtableforms.utils.AbeilleParser;
@@ -65,7 +65,7 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 	    | WindowInfo.PALETTE | WindowInfo.RESIZABLE;
     private long position;
     private ActionListener action;
-    private TableModelAlphanumeric model;
+    private AlphanumericTableModel model;
 
     public AbstractSubForm() {
 	super();
@@ -331,7 +331,7 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
     }
 
     @Override
-    public void setModel(TableModelAlphanumeric model) {
+    public void setModel(AlphanumericTableModel model) {
 	this.model = model;
 	iController = model.getController().clone();
 	fillHandler = new FillHandler(widgets, iController,

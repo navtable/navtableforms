@@ -7,24 +7,33 @@ import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
 import com.iver.cit.gvsig.fmap.edition.IEditableSource;
 import com.iver.cit.gvsig.fmap.layers.FLyrVect;
 
-import es.icarto.gvsig.navtableforms.gui.tables.IRowFilter;
-import es.icarto.gvsig.navtableforms.gui.tables.IRowFilterImplementer;
-import es.icarto.gvsig.navtableforms.gui.tables.IRowMultipleOrFilterImplementer;
+import es.icarto.gvsig.navtableforms.gui.tables.filter.IRowFilter;
+import es.icarto.gvsig.navtableforms.gui.tables.filter.IRowFilterImplementer;
+import es.icarto.gvsig.navtableforms.gui.tables.filter.IRowMultipleOrFilterImplementer;
 import es.icarto.gvsig.navtableforms.utils.TOCLayerManager;
 import es.icarto.gvsig.navtableforms.utils.TOCTableManager;
 
+/**
+ * TableModelFactory
+ * 
+ * Factory for creating table models from layers or source tables, with or
+ * without filters.
+ * 
+ * @author Jorge López Fernández <jlopez@cartolab.es>
+ */
+
 public class TableModelFactory {
 
-    public static TableModelAlphanumeric createFromTable(String sourceTable,
+    public static AlphanumericTableModel createFromTable(String sourceTable,
 	    String[] columnNames, String[] columnAliases) {
 
 	TOCTableManager toc = new TOCTableManager();
 	IEditableSource model = toc.getTableByName(sourceTable).getModel()
 		.getModelo();
-	return new TableModelAlphanumeric(model, columnNames, columnAliases);
+	return new AlphanumericTableModel(model, columnNames, columnAliases);
     }
 
-    public static TableModelAlphanumeric createFromTableWithFilter(String sourceTable,
+    public static AlphanumericTableModel createFromTableWithFilter(String sourceTable,
 	    String rowFilterName,
 	    String rowFilterValue,
 	    String[] columnNames,
@@ -38,11 +47,11 @@ public class TableModelFactory {
 		.getFieldIndexByName(rowFilterName);
 	IRowFilter filter = new IRowFilterImplementer(
 		fieldIndex, rowFilterValue);
-	return new TableModelAlphanumeric(model, columnNames, columnAliases,
+	return new AlphanumericTableModel(model, columnNames, columnAliases,
 		filter);
     }
 
-    public static TableModelAlphanumeric createFromTableWithOrFilter(
+    public static AlphanumericTableModel createFromTableWithOrFilter(
 	    String sourceTable,
 	    String rowFilterName, String[] rowFilterValues,
 	    String[] columnNames, String[] columnAliases)
@@ -57,18 +66,18 @@ public class TableModelFactory {
 	for (String rowFilterValue : rowFilterValues) {
 	    filters.add(new IRowFilterImplementer(fieldIndex, rowFilterValue));
 	}
-	return new TableModelAlphanumeric(model, columnNames, columnAliases,
+	return new AlphanumericTableModel(model, columnNames, columnAliases,
 		new IRowMultipleOrFilterImplementer(filters));
     }
 
-    public static TableModelVectorial createFromLayer(String layerName,
+    public static VectorialTableModel createFromLayer(String layerName,
 	    String[] columnNames, String[] columnAliases) {
 
 	FLyrVect layer = new TOCLayerManager().getLayerByName(layerName);
-	return new TableModelVectorial(layer, columnNames, columnAliases);
+	return new VectorialTableModel(layer, columnNames, columnAliases);
     }
 
-    public static TableModelVectorial createFromLayerWithFilter(
+    public static VectorialTableModel createFromLayerWithFilter(
 	    String layerName, String rowFilterName, String rowFilterValue,
 	    String[] columnNames, String[] columnAliases)
 	    throws ReadDriverException {
@@ -78,11 +87,11 @@ public class TableModelFactory {
 		.getFieldIndexByName(rowFilterName);
 	IRowFilter filter = new IRowFilterImplementer(fieldIndex,
 		rowFilterValue);
-	return new TableModelVectorial(layer, columnNames, columnAliases,
+	return new VectorialTableModel(layer, columnNames, columnAliases,
 		filter);
     }
 
-    public static TableModelVectorial createFromLayerWithOrFilter(
+    public static VectorialTableModel createFromLayerWithOrFilter(
 	    String layerName, String rowFilterName, String[] rowFilterValues,
 	    String[] columnNames, String[] columnAliases)
 	    throws ReadDriverException {
@@ -94,7 +103,7 @@ public class TableModelFactory {
 	for (String rowFilterValue : rowFilterValues) {
 	    filters.add(new IRowFilterImplementer(fieldIndex, rowFilterValue));
 	}
-	return new TableModelVectorial(layer, columnNames, columnAliases,
+	return new VectorialTableModel(layer, columnNames, columnAliases,
 		new IRowMultipleOrFilterImplementer(filters));
     }
 

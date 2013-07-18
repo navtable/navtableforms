@@ -10,16 +10,16 @@ import com.iver.cit.gvsig.exceptions.visitors.StopWriterVisitorException;
 import com.iver.cit.gvsig.fmap.core.IRow;
 import com.iver.cit.gvsig.fmap.edition.IEditableSource;
 
-import es.icarto.gvsig.navtableforms.gui.tables.IRowFilter;
+import es.icarto.gvsig.navtableforms.gui.tables.filter.IRowFilter;
 import es.udc.cartolab.gvsig.navtable.dataacces.TableController;
 
 @SuppressWarnings("serial")
-public class TableModelAlphanumeric extends TableModelBase {
+public class AlphanumericTableModel extends BaseTableModel {
 
     private IEditableSource source;
     private TableController tableController;
 
-    public TableModelAlphanumeric(IEditableSource source, String[] colNames,
+    public AlphanumericTableModel(IEditableSource source, String[] colNames,
 	    String[] colAliases, IRowFilter filter) {
 	super(colNames, colAliases, filter);
 	this.source = source;
@@ -27,7 +27,7 @@ public class TableModelAlphanumeric extends TableModelBase {
 	initMetadata();
     }
 
-    public TableModelAlphanumeric(IEditableSource source, String[] colNames,
+    public AlphanumericTableModel(IEditableSource source, String[] colNames,
 	    String[] colAliases) {
 	super(colNames, colAliases);
 	this.source = source;
