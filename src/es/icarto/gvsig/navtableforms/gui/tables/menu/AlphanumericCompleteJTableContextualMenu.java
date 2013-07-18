@@ -12,6 +12,15 @@ import es.icarto.gvsig.navtableforms.gui.tables.JTableUtils;
 import es.icarto.gvsig.navtableforms.gui.tables.model.AlphanumericTableModel;
 import es.icarto.gvsig.navtableforms.gui.tables.model.BaseTableModel;
 
+/**
+ * AlphanumericCompleteJTableContextualMenu
+ * 
+ * Relationship table contextual menus which opens subforms and has options for
+ * updating, creating and deleting registers.
+ * 
+ * @author Jorge López Fernández <jlopez@cartolab.es>
+ */
+
 public class AlphanumericCompleteJTableContextualMenu extends AlphanumericJTableContextualMenu {
 
     public AlphanumericCompleteJTableContextualMenu(IForm form) {

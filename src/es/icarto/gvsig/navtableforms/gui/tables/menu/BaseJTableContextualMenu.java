@@ -9,6 +9,14 @@ import javax.swing.JTable;
 
 import com.iver.andami.PluginServices;
 
+/**
+ * BaseJTableContextualMenu
+ * 
+ * Core code for relationship table contextual menus used by table handlers.
+ * 
+ * @author Jorge López Fernández <jlopez@cartolab.es>
+ */
+
 public abstract class BaseJTableContextualMenu implements MouseListener {
 
     protected static final int NO_ROW_SELECTED = -1;

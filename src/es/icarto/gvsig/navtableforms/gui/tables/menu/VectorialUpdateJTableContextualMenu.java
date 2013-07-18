@@ -8,6 +8,15 @@ import javax.swing.JTable;
 
 import es.icarto.gvsig.navtableforms.gui.tables.JTableUtils;
 
+/**
+ * VectorialUpdateJTableContextualMenu
+ * 
+ * Relationship table contextual menus which opens forms and has option only for
+ * updating registers.
+ * 
+ * @author Jorge López Fernández <jlopez@cartolab.es>
+ */
+
 public class VectorialUpdateJTableContextualMenu extends
 	VectorialJTableContextualMenu {
 

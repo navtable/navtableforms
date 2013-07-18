@@ -13,6 +13,14 @@ import es.icarto.gvsig.navtableforms.gui.tables.model.AlphanumericTableModel;
 import es.icarto.gvsig.navtableforms.gui.tables.model.TableModelFactory;
 import es.icarto.gvsig.navtableforms.utils.FormFactory;
 
+/**
+ * AlphanumericTableHandler
+ * 
+ * Handler for relationships tables that link to a subform.
+ * 
+ * @author Jorge López Fernández <jlopez@cartolab.es>
+ */
+
 public class AlphanumericTableHandler extends BaseTableHandler {
 
     private AbstractSubForm form;

@@ -17,6 +17,15 @@ import com.iver.cit.gvsig.project.documents.view.gui.BaseView;
 
 import es.udc.cartolab.gvsig.users.utils.DBSession;
 
+/**
+ * DBConnectionBaseFormFactory
+ * 
+ * This abstract class provides some code that can be used by other factories
+ * which load layers and tables through extDBConnection.
+ * 
+ * @author Jorge López Fernández <jlopez@cartolab.es>
+ */
+
 public abstract class DBConnectionBaseFormFactory extends FormFactory {
 
     @Override

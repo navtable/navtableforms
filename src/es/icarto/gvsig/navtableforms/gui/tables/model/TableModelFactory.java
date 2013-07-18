@@ -13,6 +13,15 @@ import es.icarto.gvsig.navtableforms.gui.tables.filter.IRowMultipleOrFilterImple
 import es.icarto.gvsig.navtableforms.utils.TOCLayerManager;
 import es.icarto.gvsig.navtableforms.utils.TOCTableManager;
 
+/**
+ * TableModelFactory
+ * 
+ * Factory for creating table models from layers or source tables, with or
+ * without filters.
+ * 
+ * @author Jorge López Fernández <jlopez@cartolab.es>
+ */
+
 public class TableModelFactory {
 
     public static AlphanumericTableModel createFromTable(String sourceTable,

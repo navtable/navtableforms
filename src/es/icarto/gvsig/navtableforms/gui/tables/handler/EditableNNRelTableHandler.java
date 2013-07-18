@@ -5,6 +5,14 @@ import java.util.List;
 
 import javax.swing.JComponent;
 
+/**
+ * EditableNNRelTableHandler
+ * 
+ * Base code for handlers for n:n relationships tables in which we can
+ * add/delete relations.
+ * 
+ * @author Jorge López Fernández <jlopez@cartolab.es>
+ */
 
 public abstract class EditableNNRelTableHandler extends BaseNNRelTableHandler {
 

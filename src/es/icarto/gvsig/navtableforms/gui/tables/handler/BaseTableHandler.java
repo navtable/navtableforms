@@ -12,16 +12,60 @@ import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
 import es.icarto.gvsig.navtableforms.gui.tables.menu.BaseJTableContextualMenu;
 import es.icarto.gvsig.navtableforms.gui.tables.model.BaseTableModel;
 
+/**
+ * BaseTableHandler
+ * 
+ * Core code for table handlers (handlers of tables that contain info on
+ * entities related to the one displayed in the current form).
+ * 
+ * @author Jorge López Fernández <jlopez@cartolab.es>
+ */
+
 public abstract class BaseTableHandler {
 
+    /**
+     * The name of the table, which should also provide us the related form.
+     */
     protected String sourceTableName;
+
+    /**
+     * The table widget.
+     */
     protected JTable jtable;
+
+    /**
+     * The table model.
+     */
     protected BaseTableModel model;
+
+    /**
+     * The name of the foreign key in the related entity.
+     */
     protected String destinationKey;
+
+    /**
+     * The current value of the primary key in the current form.
+     */
     protected String originKeyValue;
+
+    /**
+     * The columns we want to show of those related entities.
+     */
     protected String[] colNames;
+
+    /**
+     * The titles for those columns.
+     */
     protected String[] colAliases;
+
+    /**
+     * The column which contains the foreign key.
+     */
     protected int keyColumn = 0;
+
+    /**
+     * The contextual menu for the table.
+     */
     protected BaseJTableContextualMenu listener;
 
     public BaseTableHandler(String tableName,

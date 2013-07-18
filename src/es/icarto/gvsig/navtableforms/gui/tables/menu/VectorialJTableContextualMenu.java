@@ -6,6 +6,14 @@ import es.icarto.gvsig.navtableforms.AbstractForm;
 import es.icarto.gvsig.navtableforms.gui.tables.model.BaseTableModel;
 import es.icarto.gvsig.navtableforms.utils.FormFactory;
 
+/**
+ * VectorialJTableContextualMenu
+ * 
+ * Base code for relationship table contextual menus that open vectorial forms.
+ * 
+ * @author Jorge López Fernández <jlopez@cartolab.es>
+ */
+
 public abstract class VectorialJTableContextualMenu extends
 	BaseJTableContextualMenu {
 

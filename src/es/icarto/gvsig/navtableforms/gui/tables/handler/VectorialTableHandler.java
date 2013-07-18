@@ -12,6 +12,14 @@ import es.icarto.gvsig.navtableforms.gui.tables.model.TableModelFactory;
 import es.icarto.gvsig.navtableforms.gui.tables.model.VectorialTableModel;
 import es.icarto.gvsig.navtableforms.utils.FormFactory;
 
+/**
+ * VectorialTableHandler
+ * 
+ * Handler for relationships tables that link to a vectorial form.
+ * 
+ * @author Jorge López Fernández <jlopez@cartolab.es>
+ */
+
 public class VectorialTableHandler extends BaseTableHandler {
 
     public VectorialTableHandler(String layerName,

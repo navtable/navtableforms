@@ -16,6 +16,15 @@ import es.icarto.gvsig.navtableforms.gui.tables.model.TableModelFactory;
 import es.icarto.gvsig.navtableforms.utils.FormFactory;
 import es.udc.cartolab.gvsig.users.utils.DBSession;
 
+/**
+ * VectorialEditableNNRelTableHandler
+ * 
+ * Handler for n:n relationships tables that link to a vectorial form and in
+ * which we can add/delete relations.
+ * 
+ * @author Jorge López Fernández <jlopez@cartolab.es>
+ */
+
 public class VectorialEditableNNRelTableHandler extends
 	EditableNNRelTableHandler {
 

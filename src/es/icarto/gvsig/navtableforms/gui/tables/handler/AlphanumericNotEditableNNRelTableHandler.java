@@ -12,6 +12,14 @@ import es.icarto.gvsig.navtableforms.gui.tables.model.AlphanumericTableModel;
 import es.icarto.gvsig.navtableforms.gui.tables.model.TableModelFactory;
 import es.icarto.gvsig.navtableforms.utils.FormFactory;
 
+/**
+ * AlphanumericNotEditableNNRelTableHandler
+ * 
+ * Handler for n:n relationships tables that simply link to a subform.
+ * 
+ * @author Jorge López Fernández <jlopez@cartolab.es>
+ */
+
 public class AlphanumericNotEditableNNRelTableHandler extends
 	BaseNNRelTableHandler {
 

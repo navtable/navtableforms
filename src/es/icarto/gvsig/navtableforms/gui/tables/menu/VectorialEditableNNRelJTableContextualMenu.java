@@ -14,6 +14,15 @@ import es.icarto.gvsig.navtableforms.gui.tables.handler.VectorialEditableNNRelTa
 import es.icarto.gvsig.navtableforms.gui.tables.model.VectorialTableModel;
 import es.icarto.gvsig.navtableforms.utils.FormFactory;
 
+/**
+ * VectorialEditableNNRelJTableContextualMenu
+ * 
+ * n:n relationship table contextual menus which opens forms and has options for
+ * updating, creating and deleting registers.
+ * 
+ * @author Jorge López Fernández <jlopez@cartolab.es>
+ */
+
 public class VectorialEditableNNRelJTableContextualMenu extends
 	VectorialJTableContextualMenu {
 
