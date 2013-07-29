@@ -100,7 +100,6 @@ public class DomainReaderDB implements DomainReader {
 	    DBSession ds = DBSession.getCurrentSession();
 
  	    try {
-		String schema = this.schema == null ? ds.getSchema() : this.schema;
 		String[][] values = ds.getTable(table, schema,
 			getFieldColumns(), "", new String[] {columnAlias}, false);
 		// ds.getDistinctValues(table, columns[0]);

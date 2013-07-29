@@ -70,13 +70,13 @@ public abstract class DBConnectionBaseFormFactory extends FormFactory {
 	}
 	DBSession session = DBSession.getCurrentSession();
 
-	String completeTableName = dbSchema
-		+ (dbSchema.length() > 1 ? "." : "") + tableName;
+	String completeTableName = session.getCompleteTableName(tableName,
+		dbSchema);
 
 	LayerFactory.getDataSourceFactory().addDBDataSourceByTable(tableName,
 		session.getServer(), session.getPort(), session.getUserName(),
 		session.getPassword(), session.getDatabase(),
-		completeTableName, "PostgreSQL Alphanumeric");
+		completeTableName, session.getAlphanumericDriverName());
 
 	try {
 	    DataSource dataSource;
