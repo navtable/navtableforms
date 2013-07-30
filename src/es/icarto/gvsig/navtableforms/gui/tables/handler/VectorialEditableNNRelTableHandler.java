@@ -65,7 +65,7 @@ public class VectorialEditableNNRelTableHandler extends
 		where = where.substring(0, where.length() - 2) + ")";
 	    }
 	    String[] values = DBSession.getCurrentSession().getDistinctValues(
-		    relTable, dbSchema, destinationKey, false, false,
+		    sourceTableName, dbSchema, destinationKey, false, false,
 		    where);
 	    return Arrays.asList(values);
 	} catch (SQLException e) {
