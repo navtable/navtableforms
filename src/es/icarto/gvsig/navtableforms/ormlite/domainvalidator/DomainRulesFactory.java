@@ -4,6 +4,7 @@ import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.rules.DateRule;
 import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.rules.DoublePositiveRule;
 import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.rules.IntegerPositiveRule;
 import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.rules.MandatoryRule;
+import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.rules.PercentageRule;
 import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.rules.ValidationRule;
 
 public class DomainRulesFactory {
@@ -13,6 +14,8 @@ public class DomainRulesFactory {
 	    return new IntegerPositiveRule();
 	} else if (id.equalsIgnoreCase("DOUBLE_POSITIVE")) {
 	    return new DoublePositiveRule();
+	} else if (id.equalsIgnoreCase("PERCENTAGE")) {
+	    return new PercentageRule();
 	} else if (id.equalsIgnoreCase("MANDATORY")) {
 	    return new MandatoryRule();
 	} else if (id.equalsIgnoreCase("DATE")) {
