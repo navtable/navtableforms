@@ -55,7 +55,9 @@ public class AlphanumericTableHandler extends BaseTableHandler {
 	super.fillValues(foreignKeyValue);
 	Map<String, String> foreignKey = new HashMap<String, String>(1);
 	foreignKey.put(destinationKey, originKeyValue);
-	form.setForeingKey(foreignKey);
+	if (form != null) {
+	    form.setForeingKey(foreignKey);
+	}
     }
 
     @Override
