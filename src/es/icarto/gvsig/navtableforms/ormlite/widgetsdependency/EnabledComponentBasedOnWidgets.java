@@ -66,11 +66,11 @@ public class EnabledComponentBasedOnWidgets implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
 	if (!form.isFillingValues()) {
-	    enableComponent();
+	    enableComponent(false);
 	}
     }
 
-    private void enableComponent() {
+    private void enableComponent(boolean initialLoad) {
 	Set<JComponent> widgets = conditions.keySet();
 	boolean enable = true;
 	for (JComponent widget : widgets) {
@@ -84,7 +84,7 @@ public class EnabledComponentBasedOnWidgets implements ActionListener {
 			conditions.get(widget));
 	    }
 	}
-	changeComponentState(enable);
+	changeComponentState(enable, initialLoad);
     }
 
     private boolean checkComboBoxCondition(JComboBox widget, List<String> values) {
@@ -109,7 +109,7 @@ public class EnabledComponentBasedOnWidgets implements ActionListener {
 	return false;
     }
 
-    private void changeComponentState(boolean enabled) {
+    private void changeComponentState(boolean enabled, boolean initialLoad) {
 	if (component instanceof JTable) {
 	    // If the component is a table, we adjust its viewport and
 	    // remove/restore its listeners.
@@ -140,7 +140,7 @@ public class EnabledComponentBasedOnWidgets implements ActionListener {
 	    }
 	}
 	component.setEnabled(enabled);
-	if (removeDependentValues) {
+	if (removeDependentValues && !initialLoad) {
 	    removeValue(component);
 	}
     }
@@ -179,7 +179,7 @@ public class EnabledComponentBasedOnWidgets implements ActionListener {
     }
 
     public void fillValues() {
-	enableComponent();
+	enableComponent(true);
     }
 
 }
