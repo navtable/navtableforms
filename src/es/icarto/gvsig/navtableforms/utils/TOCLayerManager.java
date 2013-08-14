@@ -99,12 +99,50 @@ public class TOCLayerManager {
 	return layers.toArray(new FLyrVect[0]);
     }
 
+    public FLyrVect[] getVisibleLayers() {
+	List<FLyrVect> layers = new ArrayList<FLyrVect>();
+	if (mapControl != null) {
+	    FLayer[] activeLayers = mapControl.getMapContext().getLayers()
+		    .getVisibles();
+	    for (FLayer layer : activeLayers) {
+		if (layer instanceof FLyrVect) {
+		    layers.add((FLyrVect) layer);
+		}
+	    }
+	}
+	return layers.toArray(new FLyrVect[0]);
+    }
+
     public String getNameOfActiveLayer() {
 	FLyrVect layer = getActiveLayer();
 	if (layer != null) {
 	    return layer.getName();
 	}
 	return null;
+    }
+
+    public FLyrVect[] getAllLayers() {
+	List<FLyrVect> layers = new ArrayList<FLyrVect>();
+	if (mapControl != null) {
+	    layers.addAll(getInnerLayers(mapControl.getMapContext().getLayers()));
+	}
+	return layers.toArray(new FLyrVect[0]);
+    }
+
+    protected List<FLyrVect> getInnerLayers(FLayers layerGroup) {
+	List<FLyrVect> layers = new ArrayList<FLyrVect>();
+	for (int i = 0, len = layerGroup.getLayersCount(); i < len; i++) {
+	    FLayer layer = layerGroup.getLayer(i);
+	    if (layer instanceof FLayers) {
+		layers.addAll(getInnerLayers((FLayers) layer));
+		continue;
+	    }
+	    if (layer instanceof FLyrVect) {
+		layers.add((FLyrVect) layer);
+		continue;
+	    }
+	}
+	return layers;
     }
 
 }
