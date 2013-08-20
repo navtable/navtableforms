@@ -10,15 +10,16 @@ import com.iver.cit.gvsig.fmap.layers.FLayer;
 import com.iver.cit.gvsig.fmap.layers.FLayers;
 import com.iver.cit.gvsig.fmap.layers.FLyrVect;
 import com.iver.cit.gvsig.project.documents.view.gui.BaseView;
+import com.iver.cit.gvsig.project.documents.view.gui.View;
 
 public class TOCLayerManager {
 
+    private BaseView view = null;
     private FLayers layersInTOC = null;
     private MapControl mapControl = null;
 
     public TOCLayerManager() {
 	IWindow[] windows = PluginServices.getMDIManager().getOrderedWindows();
-	BaseView view = null;
 	for (IWindow w : windows) {
 	    if (w instanceof BaseView) {
 		view = (BaseView) w;
@@ -127,6 +128,13 @@ public class TOCLayerManager {
 	    layers.addAll(getInnerLayers(mapControl.getMapContext().getLayers()));
 	}
 	return layers.toArray(new FLyrVect[0]);
+    }
+
+    public View getView() {
+	if (view instanceof View) {
+	    return (View) view;
+	}
+	return null;
     }
 
     protected List<FLyrVect> getInnerLayers(FLayers layerGroup) {
