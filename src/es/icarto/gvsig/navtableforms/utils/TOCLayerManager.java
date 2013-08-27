@@ -153,4 +153,18 @@ public class TOCLayerManager {
 	return layers;
     }
 
+    public void removeAllLayers() {
+	layersInTOC.setAllVisibles(false);
+	removeAllLayers(layersInTOC);
+    }
+
+    private void removeAllLayers(FLayers layers) {
+	while (layers.getLayersCount() > 0) {
+	    FLayer layer = layers.getLayer(0);
+	    if (layer instanceof FLayers) {
+		removeAllLayers((FLayers) layer);
+	    }
+	    layers.removeLayer(0);
+	}
+    }
 }
