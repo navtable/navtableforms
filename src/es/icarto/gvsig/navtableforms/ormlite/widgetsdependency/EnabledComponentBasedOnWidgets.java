@@ -110,38 +110,41 @@ public class EnabledComponentBasedOnWidgets implements ActionListener {
     }
 
     private void changeComponentState(boolean enabled, boolean initialLoad) {
-	if (component instanceof JTable) {
-	    // If the component is a table, we adjust its viewport and
-	    // remove/restore its listeners.
-	    if (enabled) {
-		((JTable) component).setFillsViewportHeight(true);
-		for (MouseListener l : listeners) {
-		    component.addMouseListener(l);
+	// We don't have to do anything if state hasn't changed
+	if (enabled != component.isEnabled()) {
+	    if (component instanceof JTable) {
+		// If the component is a table, we adjust its viewport and
+		// remove/restore its listeners.
+		if (enabled) {
+		    ((JTable) component).setFillsViewportHeight(true);
+		    for (MouseListener l : listeners) {
+			component.addMouseListener(l);
+		    }
+		} else {
+		    ((JTable) component).setFillsViewportHeight(false);
+		    listeners = component.getMouseListeners();
+		    for (MouseListener l : listeners) {
+			component.removeMouseListener(l);
+		    }
 		}
 	    } else {
-		((JTable) component).setFillsViewportHeight(false);
-		listeners = component.getMouseListeners();
-		for (MouseListener l : listeners) {
-		    component.removeMouseListener(l);
+		if ((component instanceof JComboBox) && !enabled) {
+		    // If the component is a combobox and we are disabling
+		    // it, prior to that we select the default item.
+		    ((JComboBox) component).setSelectedIndex(0);
+		} else {
+		    if ((component instanceof JCheckBox) && !enabled
+			    && ((JCheckBox) component).isSelected()) {
+			// If the component is a checkbox, we are disabling
+			// it and it was checked, prior to that we uncheck it.
+			((JCheckBox) component).doClick();
+		    }
 		}
 	    }
-	} else {
-	    if ((component instanceof JComboBox) && !enabled) {
-		// If the component is a combobox and we are disabling
-		// it, prior to that we select the default item.
-		((JComboBox) component).setSelectedIndex(0);
-	    } else {
-		if ((component instanceof JCheckBox) && !enabled
-			&& ((JCheckBox) component).isSelected()) {
-		    // If the component is a checkbox, we are disabling
-		    // it and it was checked, prior to that we uncheck it.
-		    ((JCheckBox) component).doClick();
-		}
+	    component.setEnabled(enabled);
+	    if (removeDependentValues && !initialLoad) {
+		removeValue(component);
 	    }
-	}
-	component.setEnabled(enabled);
-	if (removeDependentValues && !initialLoad) {
-	    removeValue(component);
 	}
     }
 
