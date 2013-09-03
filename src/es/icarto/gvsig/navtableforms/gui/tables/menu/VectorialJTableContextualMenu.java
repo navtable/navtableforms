@@ -28,6 +28,8 @@ public abstract class VectorialJTableContextualMenu extends
 	if (!formInitialized) {
 	    formInitialized = true;
 	    form.init();
+	} else {
+	    form.resetListeners();
 	}
 	form.setPosition(((BaseTableModel) table.getModel())
 		.convertRowIndexToModel(table.getSelectedRow()));

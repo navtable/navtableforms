@@ -190,6 +190,12 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	}
     }
 
+    public void resetListeners() {
+	super.resetListeners();
+	removeListeners();
+	setListeners();
+    }
+
     @Override
     public void fillEmptyValues() {
 	setFillingValues(true);
