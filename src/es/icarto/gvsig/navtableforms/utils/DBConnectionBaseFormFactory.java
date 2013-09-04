@@ -35,7 +35,7 @@ public abstract class DBConnectionBaseFormFactory extends FormFactory {
 
     @Override
     public boolean checkTableLoaded(String tableName) {
-	return (new TOCTableManager().getTableByName(tableName) != null);
+	return (new TOCTableManager().getTableModelByName(tableName) != null);
     }
 
     protected void loadLayer(String layerName, String dbSchema) {

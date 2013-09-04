@@ -28,8 +28,7 @@ public class TableModelFactory {
 	    String[] columnNames, String[] columnAliases) {
 
 	TOCTableManager toc = new TOCTableManager();
-	IEditableSource model = toc.getTableByName(sourceTable).getModel()
-		.getModelo();
+	IEditableSource model = toc.getTableModelByName(sourceTable);
 	return new AlphanumericTableModel(model, columnNames, columnAliases);
     }
 
@@ -41,8 +40,7 @@ public class TableModelFactory {
 		    throws ReadDriverException {
 
 	TOCTableManager toc = new TOCTableManager();
-	IEditableSource model = toc.getTableByName(sourceTable).getModel()
-		.getModelo();
+	IEditableSource model = toc.getTableModelByName(sourceTable);
 	int fieldIndex = model.getRecordset()
 		.getFieldIndexByName(rowFilterName);
 	IRowFilter filter = new IRowFilterImplementer(
@@ -58,8 +56,7 @@ public class TableModelFactory {
 	    throws ReadDriverException {
 
 	TOCTableManager toc = new TOCTableManager();
-	IEditableSource model = toc.getTableByName(sourceTable).getModel()
-		.getModelo();
+	IEditableSource model = toc.getTableModelByName(sourceTable);
 	int fieldIndex = model.getRecordset()
 		.getFieldIndexByName(rowFilterName);
 	List<IRowFilter> filters = new ArrayList<IRowFilter>();
