@@ -73,6 +73,7 @@ public abstract class BaseTableHandler {
 	    String[] colNames, String[] colAliases) {
 	this.sourceTableName = tableName;
 	getJTable(widgets);
+	jtable.getTableHeader().setReorderingAllowed(false);
 	this.destinationKey = foreignKeyId;
 	this.colNames = colNames;
 	this.colAliases = colAliases;
