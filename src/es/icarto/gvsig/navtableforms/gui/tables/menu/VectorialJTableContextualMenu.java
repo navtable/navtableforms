@@ -29,7 +29,7 @@ public abstract class VectorialJTableContextualMenu extends
 	    formInitialized = true;
 	    form.init();
 	} else {
-	    form.resetListeners();
+	    form.reinit();
 	}
 	form.setPosition(((BaseTableModel) table.getModel())
 		.convertRowIndexToModel(table.getSelectedRow()));

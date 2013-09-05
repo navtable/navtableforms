@@ -97,7 +97,7 @@ public class VectorialEditableNNRelJTableContextualMenu extends
 		PluginServices.getMDIManager().addWindow(form);
 	    }
 	} else {
-	    form.resetListeners();
+	    form.reinit();
 	    readSelectedPosition();
 	    PluginServices.getMDIManager().addWindow(form);
 	}
