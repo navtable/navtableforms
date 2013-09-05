@@ -54,11 +54,15 @@ public class ValidationHandler {
     public void removeListeners(HashMap<String, JComponent> widgets) {
 	for (JComponent c : widgets.values()) {
 	    if (c instanceof JFormattedTextField) {
-		((JTextField) c)
+		((JFormattedTextField) c)
 			.removeKeyListener(validationHandlerForFormattedTextFields);
+		((JFormattedTextField) c)
+			.removeFocusListener(validationHandlerForFormattedTextFields);
 	    } else if (c instanceof JTextField) {
 		((JTextField) c)
 			.removeKeyListener(validationHandlerForTextFields);
+		((JTextField) c)
+			.removeFocusListener(validationHandlerForTextFields);
 	    } else if (c instanceof JComboBox) {
 		((JComboBox) c)
 			.removeActionListener(validationHandlerForComboBoxes);
@@ -77,6 +81,8 @@ public class ValidationHandler {
 	    if (comp instanceof JFormattedTextField) {
 		((JFormattedTextField) comp)
 			.addKeyListener(validationHandlerForFormattedTextFields);
+		((JFormattedTextField) comp)
+			.addFocusListener(validationHandlerForFormattedTextFields);
 		ValidatorDomain dv = ormlite.getAppDomain()
 			.getDomainValidatorForComponent(comp.getName());
 		if (dv != null) {
@@ -86,6 +92,8 @@ public class ValidationHandler {
 	    } else if (comp instanceof JTextField) {
 		((JTextField) comp)
 			.addKeyListener(validationHandlerForTextFields);
+		((JTextField) comp)
+			.addFocusListener(validationHandlerForTextFields);
 		ValidatorDomain dv = ormlite.getAppDomain()
 			.getDomainValidatorForComponent(comp.getName());
 		if (dv != null) {

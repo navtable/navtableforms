@@ -1,5 +1,8 @@
 package es.icarto.gvsig.navtableforms.ormlite.domainvalidator.listeners;
 
+import java.awt.event.ComponentEvent;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.text.ParseException;
@@ -10,7 +13,7 @@ import javax.swing.JFormattedTextField.AbstractFormatter;
 import es.icarto.gvsig.navtableforms.IValidatableForm;
 import es.icarto.gvsig.navtableforms.gui.formattedtextfields.FormatterFactory;
 
-public class ValidationHandlerForFormattedTextFields implements KeyListener {
+public class ValidationHandlerForFormattedTextFields implements KeyListener, FocusListener {
 
     private IValidatableForm dialog = null;
 
@@ -18,16 +21,7 @@ public class ValidationHandlerForFormattedTextFields implements KeyListener {
 	this.dialog = dialog;
     }
 
-    @Override
-    public void keyTyped(KeyEvent e) {
-    }
-
-    @Override
-    public void keyPressed(KeyEvent e) {
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
+    private void confirmChange(ComponentEvent e) {
 	if (!dialog.isFillingValues()) {
 	    JFormattedTextField c = ((JFormattedTextField) e.getSource());
 	    try {
@@ -44,6 +38,28 @@ public class ValidationHandlerForFormattedTextFields implements KeyListener {
 		e1.printStackTrace();
 	    }
 	}
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+	confirmChange(e);
+    }
+
+    @Override
+    public void focusGained(FocusEvent e) {
+    }
+
+    @Override
+    public void focusLost(FocusEvent e) {
+	confirmChange(e);
     }
 
 }

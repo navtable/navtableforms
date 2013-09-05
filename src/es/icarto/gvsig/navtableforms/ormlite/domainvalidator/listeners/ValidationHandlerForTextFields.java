@@ -17,6 +17,9 @@
 
 package es.icarto.gvsig.navtableforms.ormlite.domainvalidator.listeners;
 
+import java.awt.event.ComponentEvent;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -24,12 +27,22 @@ import javax.swing.JTextField;
 
 import es.icarto.gvsig.navtableforms.IValidatableForm;
 
-public class ValidationHandlerForTextFields implements KeyListener {
+public class ValidationHandlerForTextFields implements KeyListener,
+	FocusListener {
 
     private IValidatableForm dialog = null;
 
     public ValidationHandlerForTextFields(IValidatableForm dialog) {
 	this.dialog = dialog;
+    }
+
+    private void confirmChange(ComponentEvent e) {
+	if (!dialog.isFillingValues()) {
+	    JTextField c = ((JTextField) e.getSource());
+	    dialog.getFormController().setValue(c.getName(), c.getText());
+	    dialog.setChangedValues(); // placed after updating widgetvalues
+	    dialog.validateForm();
+	}
     }
 
     @Override
@@ -42,12 +55,16 @@ public class ValidationHandlerForTextFields implements KeyListener {
 
     @Override
     public void keyReleased(KeyEvent e) {
-	if (!dialog.isFillingValues()) {
-	    JTextField c = ((JTextField) e.getSource());
-	    dialog.getFormController().setValue(c.getName(), c.getText());
-	    dialog.setChangedValues(); // placed after updating widgetvalues
-	    dialog.validateForm();
-	}
+	confirmChange(e);
+    }
+
+    @Override
+    public void focusGained(FocusEvent e) {
+    }
+
+    @Override
+    public void focusLost(FocusEvent e) {
+	confirmChange(e);
     }
 
 }
