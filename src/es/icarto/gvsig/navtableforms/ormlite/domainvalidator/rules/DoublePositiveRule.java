@@ -17,7 +17,7 @@
 package es.icarto.gvsig.navtableforms.ormlite.domainvalidator.rules;
 
 import java.text.NumberFormat;
-import java.text.ParseException;
+import java.text.ParsePosition;
 
 import es.udc.cartolab.gvsig.navtable.format.DoubleFormatNT;
 
@@ -36,14 +36,13 @@ public class DoublePositiveRule extends ValidationRule {
 
     private boolean isDoublePositive(String value) {
 	try {
-	    double doubleValue = format.parse(value).doubleValue();
-	    if (doubleValue >= 0.0) {
+	    ParsePosition pp = new ParsePosition(0);
+	    double doubleValue = format.parse(value, pp).doubleValue();
+	    if ((pp.getIndex() == value.length()) && (doubleValue >= 0.0)) {
 		return true;
 	    }
 	    return false;
 	} catch (NumberFormatException nfe) {
-	    return false;
-	} catch (ParseException e) {
 	    return false;
 	}
     }
