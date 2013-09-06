@@ -167,4 +167,9 @@ public class TOCLayerManager {
 	    layers.removeLayer(0);
 	}
     }
+
+    public void removeAllOverviewLayer() {
+	FLayers layers = view.getMapOverview().getMapContext().getLayers();
+	removeAllLayers(layers);
+    }
 }
