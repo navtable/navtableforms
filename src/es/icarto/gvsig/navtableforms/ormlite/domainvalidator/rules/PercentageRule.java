@@ -27,8 +27,8 @@ public class PercentageRule extends ValidationRule {
     private boolean isPercentage(String value) {
 	boolean percentage = false;
 	try {
-	    int int_value = Math.abs(Integer.parseInt(value));
-	    if ((int_value >= 0) && (int_value <= 100)) {
+	    double double_value = Math.abs(Double.parseDouble(value));
+	    if ((double_value >= 0) && (double_value <= 100)) {
 		percentage = true;
 	    }
 	    return percentage;
