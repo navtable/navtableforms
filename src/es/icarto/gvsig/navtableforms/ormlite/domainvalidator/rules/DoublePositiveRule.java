@@ -42,7 +42,7 @@ public class DoublePositiveRule extends ValidationRule {
 		return true;
 	    }
 	    return false;
-	} catch (NumberFormatException nfe) {
+	} catch (NullPointerException npe) {
 	    return false;
 	}
     }
