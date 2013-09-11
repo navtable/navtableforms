@@ -10,6 +10,7 @@ import com.iver.cit.gvsig.fmap.layers.FLyrVect;
 import es.icarto.gvsig.navtableforms.gui.tables.filter.IRowFilter;
 import es.icarto.gvsig.navtableforms.gui.tables.filter.IRowFilterImplementer;
 import es.icarto.gvsig.navtableforms.gui.tables.filter.IRowMultipleOrFilterImplementer;
+import es.icarto.gvsig.navtableforms.gui.tables.filter.IRowNotFilterImplementer;
 import es.icarto.gvsig.navtableforms.utils.TOCLayerManager;
 import es.icarto.gvsig.navtableforms.utils.TOCTableManager;
 
@@ -49,6 +50,21 @@ public class TableModelFactory {
 		filter);
     }
 
+    public static AlphanumericTableModel createFromTableWithNotFilter(
+	    String sourceTable, String rowFilterName, String rowFilterValue,
+	    String[] columnNames, String[] columnAliases)
+	    throws ReadDriverException {
+
+	TOCTableManager toc = new TOCTableManager();
+	IEditableSource model = toc.getTableModelByName(sourceTable);
+	int fieldIndex = model.getRecordset()
+		.getFieldIndexByName(rowFilterName);
+	IRowFilter filter = new IRowNotFilterImplementer(
+		new IRowFilterImplementer(fieldIndex, rowFilterValue));
+	return new AlphanumericTableModel(model, columnNames, columnAliases,
+		filter);
+    }
+
     public static AlphanumericTableModel createFromTableWithOrFilter(
 	    String sourceTable,
 	    String rowFilterName, String[] rowFilterValues,
@@ -84,6 +100,20 @@ public class TableModelFactory {
 		.getFieldIndexByName(rowFilterName);
 	IRowFilter filter = new IRowFilterImplementer(fieldIndex,
 		rowFilterValue);
+	return new VectorialTableModel(layer, columnNames, columnAliases,
+		filter);
+    }
+
+    public static VectorialTableModel createFromLayerWithNotFilter(
+	    String layerName, String rowFilterName, String rowFilterValue,
+	    String[] columnNames, String[] columnAliases)
+	    throws ReadDriverException {
+
+	FLyrVect layer = new TOCLayerManager().getLayerByName(layerName);
+	int fieldIndex = layer.getRecordset()
+		.getFieldIndexByName(rowFilterName);
+	IRowFilter filter = new IRowNotFilterImplementer(
+		new IRowFilterImplementer(fieldIndex, rowFilterValue));
 	return new VectorialTableModel(layer, columnNames, columnAliases,
 		filter);
     }
