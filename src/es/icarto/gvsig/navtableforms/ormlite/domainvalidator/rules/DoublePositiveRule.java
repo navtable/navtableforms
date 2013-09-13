@@ -16,18 +16,8 @@
  */
 package es.icarto.gvsig.navtableforms.ormlite.domainvalidator.rules;
 
-import java.text.NumberFormat;
-import java.text.ParsePosition;
-
-import es.udc.cartolab.gvsig.navtable.format.DoubleFormatNT;
 
 public class DoublePositiveRule extends ValidationRule {
-
-    private NumberFormat format;
-
-    public DoublePositiveRule() {
-	format = DoubleFormatNT.getEditingFormat();
-    }
 
     @Override
     public boolean validate(String value) {
@@ -36,15 +26,28 @@ public class DoublePositiveRule extends ValidationRule {
 
     private boolean isDoublePositive(String value) {
 	try {
-	    ParsePosition pp = new ParsePosition(0);
-	    double doubleValue = format.parse(value, pp).doubleValue();
-	    if ((pp.getIndex() == value.length()) && (doubleValue >= 0.0)) {
+	    value = removeStartingTrailingZeros(value);
+	    Double doubleValue = Double.parseDouble(value);
+	    if ((doubleValue.toString().length() == value.length())
+		    && (doubleValue >= 0.0)) {
 		return true;
 	    }
 	    return false;
-	} catch (NullPointerException npe) {
+	} catch (NumberFormatException nfe) {
 	    return false;
 	}
+    }
+
+    private String removeStartingTrailingZeros(String number) {
+	String aux = number.replaceAll("^[0]*", "").replaceAll("[0]*$", "")
+		.replaceAll("\\.$", "");
+	if (!aux.contains(".")) {
+	    aux += ".0";
+	}
+	if (aux.startsWith(".")) {
+	    aux = "0" + aux;
+	}
+	return aux;
     }
 
 }
