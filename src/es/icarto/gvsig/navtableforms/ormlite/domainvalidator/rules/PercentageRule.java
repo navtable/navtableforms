@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011. iCarto
+ * Copyright (c) 2013. iCarto
  *
  * This file is part of extNavTableForms
  *
@@ -17,7 +17,18 @@
 
 package es.icarto.gvsig.navtableforms.ormlite.domainvalidator.rules;
 
+import java.text.NumberFormat;
+import java.text.ParseException;
+
+import es.udc.cartolab.gvsig.navtable.format.DoubleFormatNT;
+
 public class PercentageRule extends ValidationRule {
+
+    private NumberFormat format;
+
+    public PercentageRule() {
+	format = DoubleFormatNT.getDisplayingFormat();
+    }
 
     @Override
     public boolean validate(String value) {
@@ -25,15 +36,14 @@ public class PercentageRule extends ValidationRule {
     }
 
     private boolean isPercentage(String value) {
-	boolean percentage = false;
 	try {
-	    double double_value = Math.abs(Double.parseDouble(value));
+	    double double_value = Math.abs(format.parse(value).doubleValue());
 	    if ((double_value >= 0) && (double_value <= 100)) {
-		percentage = true;
+		return true;
 	    }
-	    return percentage;
-	} catch (NumberFormatException nfe) {
-	    return percentage;
+	    return false;
+	} catch (ParseException nfe) {
+	    return false;
 	}
     }
 
