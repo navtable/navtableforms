@@ -101,9 +101,11 @@ public abstract class DBConnectionBaseFormFactory extends FormFactory {
 	    ext.getProject().addDocument(projectTable);
 	    frame.toBack();
 	    frame.setSelected(false);
-	    JInternalFrame frameBaseView = (JInternalFrame) ((BaseView) baseView)
-		    .getRootPane().getParent();
-	    frameBaseView.setSelected(true);
+	    if (baseView != null) {
+		JInternalFrame frameBaseView = (JInternalFrame) ((BaseView) baseView)
+			.getRootPane().getParent();
+		frameBaseView.setSelected(true);
+	    }
 	} catch (Exception e) {
 	    e.printStackTrace();
 	}
