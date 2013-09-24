@@ -23,7 +23,7 @@ import es.icarto.gvsig.navtableforms.utils.FormFactory;
 
 public class AlphanumericTableHandler extends BaseTableHandler {
 
-    private AbstractSubForm form;
+    protected AbstractSubForm form;
 
     public AlphanumericTableHandler(String tableName,
 	    HashMap<String, JComponent> widgets, String foreignKeyId,
