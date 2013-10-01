@@ -15,17 +15,16 @@ import com.iver.cit.gvsig.project.documents.table.gui.Table;
 public class TOCTableManager {
 
     private HashMap<String, Table> tables;
-    private HashMap<String, IEditableSource> tableModels;
+    private HashMap<String, ProjectTable> projectTables;
 
     public TOCTableManager() {
 	ProjectExtension projectExt = (ProjectExtension) PluginServices
 		.getExtension(ProjectExtension.class);
 	List<ProjectDocument> tableDocs = projectExt.getProject()
 		.getDocumentsByType(ProjectTableFactory.registerName);
-	tableModels = new HashMap<String, IEditableSource>();
+	projectTables = new HashMap<String, ProjectTable>();
 	for (ProjectDocument table : tableDocs) {
-	    tableModels
-		    .put(table.getName(), ((ProjectTable) table).getModelo());
+	    projectTables.put(table.getName(), ((ProjectTable) table));
 	}
 	tables = new HashMap<String, Table>();
 	IWindow[] windows = PluginServices.getMDIManager().getAllWindows();
@@ -36,12 +35,22 @@ public class TOCTableManager {
 	}
     }
 
+    public void closeTableByName(String tableName) {
+	ProjectExtension projectExt = (ProjectExtension) PluginServices
+		.getExtension(ProjectExtension.class);
+	ProjectTable table = projectTables.get(tableName);
+	if (table != null) {
+	    projectExt.getProject().delDocument(table);
+	}
+    }
+
     public Table getTableByName(String tableName) {
 	return tables.get(tableName);
     }
 
     public IEditableSource getTableModelByName(String tableName) {
-	return tableModels.get(tableName);
+	ProjectTable table = projectTables.get(tableName);
+	return (table != null) ? table.getModelo() : null;
     }
 
 }
