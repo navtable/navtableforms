@@ -188,6 +188,11 @@ public class XMLSAXParser extends DefaultHandler {
 	    if (tmpDomainReader instanceof DomainReaderDB) {
 		((DomainReaderDB) tmpDomainReader).addColumnForeignKey(tmpVal);
 	    }
+	} else if (qName.equalsIgnoreCase("DRADDVOIDVALUE")) {
+	    if (tmpDomainReader instanceof DomainReaderDB) {
+		((DomainReaderDB) tmpDomainReader).setAddVoidValue(Boolean
+			.parseBoolean(tmpVal));
+	    }
 	}
 
 	// set tmp domain file reader configuration

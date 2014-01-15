@@ -25,15 +25,15 @@ import es.udc.cartolab.gvsig.users.utils.DBSession;
 /**
  * DomainReader which reads the values from a database.
  * 
+ * With ADDVOIDVALUE we can tell it to add an additional void value before the
+ * ones retrieved from DB.
+ * 
  * XML syntax example:
  * 
- * <DOMAINREADER>
- *	<DRTYPE>db</DRTYPE>
- *	<DRDBTABLE>table</DRDBTABLE>
- *	<DRDBCOLUMNALIAS>alias</DRDBCOLUMNALIAS>
- *	<DRDBCOLUMNVALUE>value</DRDBCOLUMNVALUE>
- *	<DRDBFOREIGNKEY>key</DRDBFOREIGNKEY>
- * </DOMAINREADER>
+ * <DOMAINREADER> <DRTYPE>db</DRTYPE> <DRDBTABLE>table</DRDBTABLE>
+ * <DRDBCOLUMNALIAS>alias</DRDBCOLUMNALIAS>
+ * <DRDBCOLUMNVALUE>value</DRDBCOLUMNVALUE> <DRDBFOREIGNKEY>key</DRDBFOREIGNKEY>
+ * <DRADDVOIDVALUE>boolean</DRADDVOIDVALUE> </DOMAINREADER>
  * 
  * @author Andrés Maneiro <amaneiro@icarto.es>
  * @author Jorge López <jlopez@cartolab.es>
@@ -45,6 +45,7 @@ public class DomainReaderDB implements DomainReader {
     private String schema = null;
     private String columnAlias = null;
     private String columnValue = null;
+    private boolean addVoidValue = false;
     private ArrayList<String> columnForeignKey = new ArrayList<String>();
 
     public DomainReaderDB() {
@@ -68,6 +69,10 @@ public class DomainReaderDB implements DomainReader {
 
     public void addColumnForeignKey(String name) {
 	this.columnForeignKey.add(name);
+    }
+
+    public void setAddVoidValue(boolean addVoidValue) {
+	this.addVoidValue = addVoidValue;
     }
 
     private String[] convertArrayToString(ArrayList<String> array) {
@@ -119,7 +124,7 @@ public class DomainReaderDB implements DomainReader {
 		e.printStackTrace(System.out);
 		return null;
 	    }
-	    return new DomainValues(list);
+	    return new DomainValues(list, addVoidValue);
 	}
 	return null;
     }

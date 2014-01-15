@@ -21,17 +21,31 @@ import java.util.ArrayList;
 public class DomainValues {
 
     private ArrayList<KeyValue> data;
+    private boolean addVoidValue = false;
 
     public DomainValues(ArrayList<KeyValue> values) {
 	this.data = values;
     }
 
+    public DomainValues(ArrayList<KeyValue> values, boolean addVoidValue) {
+	this.data = values;
+	this.addVoidValue = addVoidValue;
+    }
+
     public ArrayList<KeyValue> getValues() {
+	ArrayList<KeyValue> subset = new ArrayList<KeyValue>();
+	if (addVoidValue) {
+	    subset.add(new KeyValue("", " "));
+	}
+	subset.addAll(data);
 	return data;
     }
 
     public ArrayList<KeyValue> getValuesFilteredBy(ArrayList<String> ids) {
 	ArrayList<KeyValue> subset = new ArrayList<KeyValue>();
+	if (addVoidValue) {
+	    subset.add(new KeyValue("", " "));
+	}
 	for (KeyValue kv : data) {
 	    if (kv.getForeignKeys().containsAll(ids)) {
 		subset.add(kv);
