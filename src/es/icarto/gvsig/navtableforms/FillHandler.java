@@ -125,7 +125,8 @@ public class FillHandler {
 	if (fieldValue != null) {
 	    for (int j = 0; j < combobox.getItemCount(); j++) {
 		String value = ((KeyValue) combobox.getItemAt(j)).getKey();
-		if (value.compareTo(fieldValue.trim()) == 0) {
+		if ((value != null)
+			&& (value.compareTo(fieldValue.trim()) == 0)) {
 		    combobox.setSelectedIndex(j);
 		    break;
 		}
