@@ -6,7 +6,9 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.BoxLayout;
@@ -36,6 +38,7 @@ import es.icarto.gvsig.navtableforms.DependencyHandler;
 import es.icarto.gvsig.navtableforms.FillHandler;
 import es.icarto.gvsig.navtableforms.IValidatableForm;
 import es.icarto.gvsig.navtableforms.ValidationHandler;
+import es.icarto.gvsig.navtableforms.gui.tables.handler.BaseTableHandler;
 import es.icarto.gvsig.navtableforms.gui.tables.model.AlphanumericTableModel;
 import es.icarto.gvsig.navtableforms.ormlite.ORMLite;
 import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.ValidatorForm;
@@ -48,17 +51,18 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 	IValidatableForm, IWindow, IWindowListener {
     private FormPanel formPanel;
     private HashMap<String, JComponent> widgets;
-    private ValidationHandler validationHandler;
+    private final ValidationHandler validationHandler;
     private IController iController;
-    private ORMLite ormlite;
+    private final ORMLite ormlite;
     private FillHandler fillHandler;
-    private DependencyHandler dependencyHandler;
+    private final DependencyHandler dependencyHandler;
     private boolean isFillingValues;
     private boolean changedValues;
-    private Logger logger;
+    private final Logger logger;
     private JPanel southPanel;
     private JButton saveButton;
     private Map<String, String> foreingKey;
+    private final List<BaseTableHandler> tableHandlers = new ArrayList<BaseTableHandler>();
 
     private WindowInfo windowInfo;
     private final static int windowInfoCode = WindowInfo.MODELESSDIALOG
@@ -107,11 +111,17 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
     public void setListeners() {
 	validationHandler.setListeners(widgets);
 	dependencyHandler.setListeners();
+	for (BaseTableHandler tableHandler : tableHandlers) {
+	    tableHandler.reload();
+	}
     }
 
     public void removeListeners() {
 	validationHandler.removeListeners(widgets);
 	dependencyHandler.removeListeners();
+	for (BaseTableHandler tableHandler : tableHandlers) {
+	    tableHandler.removeListeners();
+	}
     }
 
     public void fillEmptyValues() {
@@ -147,7 +157,18 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 	isFillingValues = b;
     }
 
-    protected abstract void fillSpecificValues();
+    protected void fillSpecificValues() {
+	String key = getPrimaryKeyValue();
+	if (key != null) {
+	    for (BaseTableHandler tableHandler : tableHandlers) {
+		tableHandler.fillValues(key);
+	    }
+	}
+    }
+
+    protected String getPrimaryKeyValue() {
+	return null;
+    }
 
     protected abstract String getBasicName();
 
@@ -165,7 +186,7 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 	validationHandler.validate();
     }
 
-    private FormPanel getFormPanel(String resourcePath) {
+    protected FormPanel getFormPanel(String resourcePath) {
 	if (formPanel == null) {
 	    InputStream stream = getClass().getClassLoader()
 		    .getResourceAsStream(resourcePath);
@@ -183,7 +204,14 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 		.getResource("metadata/" + getBasicName() + ".xml").getPath();
     }
 
+    @Deprecated
+    // fpuga. We should use the same method name for AbstractSubForm
+    // and AbstracForm, but i'm not sure which is the best name
     public HashMap<String, JComponent> getWidgets() {
+	return getWidgetComponents();
+    }
+
+    public HashMap<String, JComponent> getWidgetComponents() {
 	return widgets;
     }
 
@@ -235,7 +263,7 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 	validationHandler.validate();
 	enableSaveButton(isChangedValues());
     }
-    
+
     @Override
     public ValidatorForm getValidatorForm() {
 	return validationHandler.getValidatorForm();
@@ -251,9 +279,11 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 	    windowInfo = new WindowInfo(windowInfoCode);
 	    windowInfo.setTitle(PluginServices.getText(this, getBasicName()));
 	    Dimension dim = getPreferredSize();
-	    //To calculate the maximum size of a form we take the size of the 
-	    // main frame minus a "magic number" for the menus, toolbar, state bar
-	    // Take into account that in edition mode there is less available space
+	    // To calculate the maximum size of a form we take the size of the
+	    // main frame minus a "magic number" for the menus, toolbar, state
+	    // bar
+	    // Take into account that in edition mode there is less available
+	    // space
 	    MDIFrame a = (MDIFrame) PluginServices.getMainFrame();
 	    int maxHeight = a.getHeight() - 205;
 	    int maxWidth = a.getWidth() - 15;
@@ -269,9 +299,11 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 	    } else {
 		width = new Double(dim.getWidth()).intValue();
 	    }
-	    
-	    // getPreferredSize doesn't take into account the borders and other stuff
-	    // introduced by Andami, neither scroll bars so we must increase the "preferred"
+
+	    // getPreferredSize doesn't take into account the borders and other
+	    // stuff
+	    // introduced by Andami, neither scroll bars so we must increase the
+	    // "preferred"
 	    // dimensions
 	    windowInfo.setWidth(width + 25);
 	    windowInfo.setHeight(heigth + 15);
@@ -338,9 +370,17 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 		ormlite.getAppDomain());
     }
 
+    protected void addTableHandler(BaseTableHandler tableHandler) {
+	tableHandlers.add(tableHandler);
+    }
+
+    public List<BaseTableHandler> getTableHandlers() {
+	return tableHandlers;
+    }
+
     private final class CreateAction implements ActionListener {
 
-	private IWindow iWindow;
+	private final IWindow iWindow;
 
 	public CreateAction(IWindow iWindow) {
 	    this.iWindow = iWindow;
@@ -363,7 +403,7 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 
     private final class SaveAction implements ActionListener {
 
-	private IWindow iWindow;
+	private final IWindow iWindow;
 
 	public SaveAction(IWindow iWindow) {
 	    this.iWindow = iWindow;
