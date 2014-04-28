@@ -85,7 +85,6 @@ public abstract class BaseTableHandler {
 		}
 	    }
 	}
-	getJTable(widgets);
     }
 
     protected void getJTable(HashMap<String, JComponent> widgets) {
