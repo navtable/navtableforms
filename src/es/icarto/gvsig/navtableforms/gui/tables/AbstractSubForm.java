@@ -82,7 +82,7 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 
     private void initGUI() {
 	setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-	FormPanel formPanel = getFormPanel("ui/" + getBasicName() + ".xml");
+	getFormPanel("ui/" + getBasicName() + ".xml");
 	JScrollPane scrollPane = new JScrollPane(formPanel);
 	widgets = AbeilleParser.getWidgetsFromContainer(formPanel);
 	// AbeilleUtils au = new AbeilleUtils();
