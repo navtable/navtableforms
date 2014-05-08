@@ -59,8 +59,8 @@ public class TOCLayerManager {
     }
 
     public FLyrVect getLayerByName(String layerName) {
-	layersInTOC.getLayer(layerName);
 	if(layersInTOC != null) {
+	    layersInTOC.getLayer(layerName);
 	    for (int i = 0; i < layersInTOC.getLayersCount(); i++) {
 		//Checking if layer is a group
 		final FLayer layer = layersInTOC.getLayer(i);
