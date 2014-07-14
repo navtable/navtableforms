@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011. iCarto
+ * Copyright (c) 2011-2014. iCarto
  *
  * This file is part of extNavTableForms
  *
@@ -73,5 +73,21 @@ public class KeyValue {
     public String toString() {
 	return this.value;
     }
+    
+    /**
+     * Returns true if obj is a KeyValue object with the same key and value fields, or
+     * if obj is a string equals to the value field 
+     */
+    @Override
+    public boolean equals(Object obj) {
+	if (obj instanceof String) {
+	    return getValue().equals(obj);
+	} else if (obj instanceof KeyValue) {
+	    KeyValue kvObj = (KeyValue) obj;
+	    return getValue().equals(kvObj.getValue())
+		    && getKey().equals(kvObj.getKey());
+	}
+	return false;
+	}
 
 }
