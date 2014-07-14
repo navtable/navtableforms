@@ -50,7 +50,7 @@ import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.ValidatorForm;
 import es.icarto.gvsig.navtableforms.utils.AbeilleParser;
 import es.udc.cartolab.gvsig.navtable.AbstractNavTable;
 import es.udc.cartolab.gvsig.navtable.dataacces.IController;
-import es.udc.cartolab.gvsig.navtable.listeners.PositionEvent;
+
 
 @SuppressWarnings("serial")
 public abstract class AbstractForm extends AbstractNavTable implements
@@ -403,11 +403,5 @@ public abstract class AbstractForm extends AbstractNavTable implements
 
     public List<BaseTableHandler> getTableHandlers() {
 	return tableHandlers;
-    }
-
-    @Override
-    public void onPositionChange(PositionEvent e) {
-	super.onPositionChange(e);
-	fillSpecificValues();
     }
 }
