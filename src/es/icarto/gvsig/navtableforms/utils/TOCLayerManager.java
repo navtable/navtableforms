@@ -26,9 +26,9 @@ public class TOCLayerManager {
 		break;
 	    }
 	}
-	if(view != null) {
+	if (view != null) {
 	    mapControl = view.getMapControl();
-	    layersInTOC = mapControl.getMapContext().getLayers();	    
+	    layersInTOC = mapControl.getMapContext().getLayers();
 	}
     }
 
@@ -38,13 +38,13 @@ public class TOCLayerManager {
     }
 
     public void setVisibleAllLayers() {
-	if(layersInTOC != null) {	    
+	if (layersInTOC != null) {
 	    layersInTOC.setAllVisibles(true);
 	}
     }
 
     public void setActiveAndVisibleLayer(String layerName) {
-	if(layersInTOC != null) {
+	if (layersInTOC != null) {
 	    layersInTOC.setAllVisibles(false);
 	    layersInTOC.setAllActives(false);
 	    for (int i = 0; i < layersInTOC.getLayersCount(); i++) {
@@ -59,22 +59,11 @@ public class TOCLayerManager {
     }
 
     public FLyrVect getLayerByName(String layerName) {
-	if(layersInTOC != null) {
-	    layersInTOC.getLayer(layerName);
-	    for (int i = 0; i < layersInTOC.getLayersCount(); i++) {
-		//Checking if layer is a group
-		final FLayer layer = layersInTOC.getLayer(i);
-		if (isFLayers(layer)) {
-		    FLayers layersInGroup = (FLayers) layer;
-		    for (int j = 0; j < layersInGroup.getLayersCount(); j++) {
-			final FLayer innerLayer = layersInGroup.getLayer(j);
-			if (isFLyrVect(innerLayer) && hasName(innerLayer, layerName)) {
-			    return (FLyrVect) innerLayer;
-			}
-		    }
-		}
-		if (isFLyrVect(layer) && hasName(layer, layerName)) {
-		    return (FLyrVect) layer;
+	if (layersInTOC != null) {
+	    List<FLyrVect> innerLayers = getInnerLayers(layersInTOC);
+	    for (FLyrVect l : innerLayers) {
+		if (hasName(l, layerName)) {
+		    return l;
 		}
 	    }
 	}
@@ -180,16 +169,16 @@ public class TOCLayerManager {
 	FLayers layers = view.getMapOverview().getMapContext().getLayers();
 	removeAllLayers(layers);
     }
-    
+
     public boolean hasName(FLayer layer, String layerName) {
 	return layer.getName().equalsIgnoreCase(layerName);
     }
-    
+
     public boolean isFLyrVect(FLayer layer) {
- 	return layer instanceof FLyrVect;
+	return layer instanceof FLyrVect;
     }
-    
+
     public boolean isFLayers(final FLayer layer) {
-   	return layer instanceof FLayers;
+	return layer instanceof FLayers;
     }
 }
