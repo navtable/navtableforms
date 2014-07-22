@@ -25,6 +25,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.JComponent;
@@ -42,6 +43,8 @@ import com.iver.cit.gvsig.exceptions.visitors.StopWriterVisitorException;
 import com.iver.cit.gvsig.fmap.layers.FLyrVect;
 import com.jeta.forms.components.panel.FormPanel;
 
+import es.icarto.gvsig.navtableforms.calculation.Calculation;
+import es.icarto.gvsig.navtableforms.calculation.CalculationHandler;
 import es.icarto.gvsig.navtableforms.forms.windowproperties.FormWindowProperties;
 import es.icarto.gvsig.navtableforms.forms.windowproperties.FormWindowPropertiesSerializator;
 import es.icarto.gvsig.navtableforms.gui.tables.handler.BaseTableHandler;
@@ -51,7 +54,6 @@ import es.icarto.gvsig.navtableforms.utils.AbeilleParser;
 import es.udc.cartolab.gvsig.navtable.AbstractNavTable;
 import es.udc.cartolab.gvsig.navtable.dataacces.IController;
 
-
 @SuppressWarnings("serial")
 public abstract class AbstractForm extends AbstractNavTable implements
 	IValidatableForm {
@@ -59,18 +61,19 @@ public abstract class AbstractForm extends AbstractNavTable implements
     protected FormPanel formBody;
     private boolean isFillingValues;
     private boolean isSavingValues = false;
-    private List<BaseTableHandler> tableHandlers = new ArrayList<BaseTableHandler>();
+    private final List<BaseTableHandler> tableHandlers = new ArrayList<BaseTableHandler>();
 
     HashMap<String, JComponent> widgets;
 
     protected static Logger logger = null;
 
-    private ORMLite ormlite;
+    private final ORMLite ormlite;
 
     private FillHandler fillHandler;
 
-    private ValidationHandler validationHandler;
-    private DependencyHandler dependencyHandler;
+    private final ValidationHandler validationHandler;
+    private final DependencyHandler dependencyHandler;
+    private final CalculationHandler calculationHandler;
 
     public AbstractForm(FLyrVect layer) {
 	super(layer);
@@ -80,21 +83,22 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	ormlite = new ORMLite(getXMLPath());
 	validationHandler = new ValidationHandler(ormlite, this);
 	dependencyHandler = new DependencyHandler(ormlite, widgets, this);
-
+	calculationHandler = new CalculationHandler();
     }
 
     @Override
     public WindowInfo getWindowInfo() {
 	if (windowInfo == null) {
 	    super.getWindowInfo();
-	    
 
 	    for (FormWindowProperties fwp : getFormWindowProperties()) {
 		if (fwp.getFormName().equalsIgnoreCase(getClass().getName())) {
-		    // WindowInfoSupport.getWindowInfo adds 40 to the getWindowInfo declared
+		    // WindowInfoSupport.getWindowInfo adds 40 to the
+		    // getWindowInfo declared
 		    // by IWindow objects
 		    final int ANDAMI_CORRECTION = 40;
-		    windowInfo.setHeight(fwp.getFormWindowHeight() - ANDAMI_CORRECTION);
+		    windowInfo.setHeight(fwp.getFormWindowHeight()
+			    - ANDAMI_CORRECTION);
 		    windowInfo.setWidth(fwp.getFormWindowWidth());
 		    windowInfo.setX(fwp.getFormWindowXPosition());
 		    windowInfo.setY(fwp.getFormWindowYPosition());
@@ -128,6 +132,7 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	return validationHandler.getValidatorForm();
     }
 
+    @Override
     public JPanel getCenterPanel() {
 	JPanel panel = new JPanel(new BorderLayout());
 	JScrollPane scrollPane = new JScrollPane(formBody);
@@ -145,6 +150,7 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	for (BaseTableHandler tableHandler : tableHandlers) {
 	    tableHandler.removeListeners();
 	}
+	calculationHandler.removeListeners();
     }
 
     @Override
@@ -178,7 +184,13 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	return layerController;
     }
 
+    @Deprecated
     public HashMap<String, JComponent> getWidgetComponents() {
+	return widgets;
+    }
+    
+    @Override
+    public Map<String, JComponent> getWidgets() {
 	return widgets;
     }
 
@@ -188,8 +200,10 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	for (BaseTableHandler tableHandler : tableHandlers) {
 	    tableHandler.reload();
 	}
+	calculationHandler.setListeners();
     }
 
+    @Override
     public void resetListeners() {
 	super.resetListeners();
 	removeListeners();
@@ -364,8 +378,8 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	if (!new File(getFormWindowPropertiesXMLPath()).exists()) {
 	    return new ArrayList<FormWindowProperties>();
 	} else {
-	    return FormWindowPropertiesSerializator
-		    .fromXML(new File(getFormWindowPropertiesXMLPath()));
+	    return FormWindowPropertiesSerializator.fromXML(new File(
+		    getFormWindowPropertiesXMLPath()));
 	}
     }
 
@@ -403,5 +417,9 @@ public abstract class AbstractForm extends AbstractNavTable implements
 
     public List<BaseTableHandler> getTableHandlers() {
 	return tableHandlers;
+    }
+
+    protected void addCalculation(Calculation calculation) {
+	calculationHandler.add(calculation);
     }
 }

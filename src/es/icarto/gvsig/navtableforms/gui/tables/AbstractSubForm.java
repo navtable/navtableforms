@@ -38,6 +38,7 @@ import es.icarto.gvsig.navtableforms.DependencyHandler;
 import es.icarto.gvsig.navtableforms.FillHandler;
 import es.icarto.gvsig.navtableforms.IValidatableForm;
 import es.icarto.gvsig.navtableforms.ValidationHandler;
+import es.icarto.gvsig.navtableforms.calculation.CalculationHandler;
 import es.icarto.gvsig.navtableforms.gui.tables.handler.BaseTableHandler;
 import es.icarto.gvsig.navtableforms.gui.tables.model.AlphanumericTableModel;
 import es.icarto.gvsig.navtableforms.ormlite.ORMLite;
@@ -56,6 +57,7 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
     private final ORMLite ormlite;
     private FillHandler fillHandler;
     private final DependencyHandler dependencyHandler;
+    private final CalculationHandler calculationHandler;
     private boolean isFillingValues;
     private boolean changedValues;
     private final Logger logger;
@@ -78,6 +80,7 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 	ormlite = new ORMLite(getMetadataPath());
 	validationHandler = new ValidationHandler(ormlite, this);
 	dependencyHandler = new DependencyHandler(ormlite, widgets, this);
+	calculationHandler = new CalculationHandler();
     }
 
     private void initGUI() {
@@ -114,6 +117,7 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 	for (BaseTableHandler tableHandler : tableHandlers) {
 	    tableHandler.reload();
 	}
+	calculationHandler.setListeners();
     }
 
     public void removeListeners() {
@@ -122,6 +126,7 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 	for (BaseTableHandler tableHandler : tableHandlers) {
 	    tableHandler.removeListeners();
 	}
+	calculationHandler.removeListeners();
     }
 
     public void fillEmptyValues() {
@@ -205,13 +210,12 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
     }
 
     @Deprecated
-    // fpuga. We should use the same method name for AbstractSubForm
-    // and AbstracForm, but i'm not sure which is the best name
-    public HashMap<String, JComponent> getWidgets() {
-	return getWidgetComponents();
-    }
-
     public HashMap<String, JComponent> getWidgetComponents() {
+	return widgets;
+    }
+    
+    @Override
+    public Map<String, JComponent> getWidgets() {
 	return widgets;
     }
 

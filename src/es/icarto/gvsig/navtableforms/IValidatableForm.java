@@ -1,5 +1,9 @@
 package es.icarto.gvsig.navtableforms;
 
+import java.util.Map;
+
+import javax.swing.JComponent;
+
 import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.ValidatorForm;
 import es.udc.cartolab.gvsig.navtable.dataacces.IController;
 
@@ -16,5 +20,7 @@ public interface IValidatableForm {
     public void validateForm();
 
     public ValidatorForm getValidatorForm();
+
+    public Map<String, JComponent> getWidgets();
 
 }
