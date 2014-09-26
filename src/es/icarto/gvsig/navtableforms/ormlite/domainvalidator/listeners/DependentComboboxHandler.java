@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -28,7 +29,7 @@ import es.icarto.gvsig.navtableforms.ormlite.domainvalues.KeyValue;
 public class DependentComboboxHandler implements ActionListener,
 	FocusListener {
 
-    private ArrayList<JComponent> parentComponents;
+    private List<JComponent> parentComponents;
     private JComboBox comboBoxToFill;
     private IValidatableForm form;
 
@@ -41,7 +42,7 @@ public class DependentComboboxHandler implements ActionListener,
     }
 
     public DependentComboboxHandler(IValidatableForm form,
-	    ArrayList<JComponent> parentComponents, JComboBox comboBoxToFill) {
+	    List<JComponent> parentComponents, JComboBox comboBoxToFill) {
 	this.form = form;
 	this.parentComponents = parentComponents;
 	this.comboBoxToFill = comboBoxToFill;

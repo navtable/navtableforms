@@ -29,11 +29,13 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import com.toedter.calendar.JDateChooser;
+
 public class AbeilleParser {
 
     /**
-     * A legacy method to guarantee backwards compatibility.
-     * Should be sage remove it in modern versions of navtableforms.
+     * A legacy method to guarantee backwards compatibility. Should be sage
+     * remove it in modern versions of navtableforms.
      */
     private static String getNameBeforeDots(String widgetName) {
 	if (widgetName.contains(".")) {
@@ -58,8 +60,8 @@ public class AbeilleParser {
 		    || (comp instanceof JFormattedTextField)
 		    || (comp instanceof JCheckBox)
 		    || (comp instanceof JTextArea)
-		    || (comp instanceof JComboBox)
-		    || (comp instanceof JTable)) {
+		    || (comp instanceof JComboBox) || (comp instanceof JTable)
+		    || (comp instanceof JDateChooser)) {
 		String newName = getNameBeforeDots(comp.getName());
 		comp.setName(newName);
 		map.put(comp.getName(), (JComponent) comp);
@@ -96,7 +98,7 @@ public class AbeilleParser {
 		    for (JButton w : recursiveMap.values()) {
 			String newName = getNameBeforeDots(w.getName());
 			comp.setName(newName);
-			map.put(w.getName(), (JButton) w);
+			map.put(w.getName(), w);
 		    }
 		}
 	    }

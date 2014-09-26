@@ -2,6 +2,7 @@ package es.icarto.gvsig.navtableforms;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -20,11 +21,11 @@ import es.udc.cartolab.gvsig.navtable.dataacces.IController;
 public class FillHandler {
 
     // TODO: make as much methods as possible private
-    private HashMap<String, JComponent> widgetsVector;
+    private Map<String, JComponent> widgetsVector;
     private IController iController;
     private ORMLiteAppDomain appDomain;
 
-    public FillHandler(HashMap<String, JComponent> widgetsVector,
+    public FillHandler(Map<String, JComponent> widgetsVector,
 	    IController layerController, ORMLiteAppDomain appDomain) {
 	this.widgetsVector = widgetsVector;
 	this.iController = layerController;
