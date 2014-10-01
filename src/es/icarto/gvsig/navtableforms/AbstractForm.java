@@ -23,6 +23,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +46,7 @@ import com.jeta.forms.components.panel.FormPanel;
 
 import es.icarto.gvsig.navtableforms.calculation.Calculation;
 import es.icarto.gvsig.navtableforms.calculation.CalculationHandler;
+import es.icarto.gvsig.navtableforms.chained.ChainedHandler;
 import es.icarto.gvsig.navtableforms.forms.windowproperties.FormWindowProperties;
 import es.icarto.gvsig.navtableforms.forms.windowproperties.FormWindowPropertiesSerializator;
 import es.icarto.gvsig.navtableforms.gui.tables.handler.BaseTableHandler;
@@ -74,6 +76,7 @@ public abstract class AbstractForm extends AbstractNavTable implements
     private final ValidationHandler validationHandler;
     private final DependencyHandler dependencyHandler;
     private final CalculationHandler calculationHandler;
+    private final ChainedHandler chainedHandler;
 
     public AbstractForm(FLyrVect layer) {
 	super(layer);
@@ -84,6 +87,7 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	validationHandler = new ValidationHandler(ormlite, this);
 	dependencyHandler = new DependencyHandler(ormlite, widgets, this);
 	calculationHandler = new CalculationHandler();
+	chainedHandler = new ChainedHandler();
     }
 
     @Override
@@ -151,6 +155,7 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	    tableHandler.removeListeners();
 	}
 	calculationHandler.removeListeners();
+	chainedHandler.removeListeners();
     }
 
     @Override
@@ -188,7 +193,7 @@ public abstract class AbstractForm extends AbstractNavTable implements
     public HashMap<String, JComponent> getWidgetComponents() {
 	return widgets;
     }
-    
+
     @Override
     public Map<String, JComponent> getWidgets() {
 	return widgets;
@@ -201,6 +206,7 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	    tableHandler.reload();
 	}
 	calculationHandler.setListeners();
+	chainedHandler.setListeners();
     }
 
     @Override
@@ -215,6 +221,7 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	setFillingValues(true);
 	fillHandler.fillEmptyValues();
 	dependencyHandler.fillValues();
+	chainedHandler.fillEmptyValues();
 	setFillingValues(false);
     }
 
@@ -236,6 +243,7 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	setFillingValues(true);
 	fillHandler.fillValues();
 	dependencyHandler.fillValues();
+	chainedHandler.fillValues();
 	fillSpecificValues();
 	setFillingValues(false);
 	validationHandler.validate();
@@ -421,5 +429,25 @@ public abstract class AbstractForm extends AbstractNavTable implements
 
     protected void addCalculation(Calculation calculation) {
 	calculationHandler.add(calculation);
+    }
+
+    protected void addChained(JComponent chained, JComponent parent) {
+	chainedHandler.add(this, chained, parent);
+    }
+
+    protected void addChained(String chained, String parent) {
+	chainedHandler.add(this, widgets.get(chained), widgets.get(parent));
+    }
+
+    protected void addChained(JComponent chained, JComponent... parents) {
+	chainedHandler.add(this, chained, Arrays.asList(parents));
+    }
+
+    protected void addChained(String chained, String... parents) {
+	List<JComponent> parentList = new ArrayList<JComponent>();
+	for (String parent : parents) {
+	    parentList.add(widgets.get(parent));
+	}
+	chainedHandler.add(this, widgets.get(chained), parentList);
     }
 }

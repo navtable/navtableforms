@@ -29,23 +29,23 @@ import es.icarto.gvsig.navtableforms.ormlite.domainvalues.KeyValue;
 public class DependentComboboxHandler implements ActionListener,
 	FocusListener {
 
-    private List<JComponent> parentComponents;
-    private JComboBox comboBoxToFill;
-    private IValidatableForm form;
+    private final List<JComponent> parentComponents;
+    private final JComponent chainedComp;
+    private final IValidatableForm form;
 
     public DependentComboboxHandler(IValidatableForm form,
-	    JComponent parentComponent, JComboBox comboBoxToFill) {
+	    JComponent parentComponent, JComponent comboBoxToFill) {
 	this.form = form;
-	this.comboBoxToFill = comboBoxToFill;
+	this.chainedComp = comboBoxToFill;
 	this.parentComponents = new ArrayList<JComponent>();
 	this.parentComponents.add(parentComponent);
     }
 
     public DependentComboboxHandler(IValidatableForm form,
-	    List<JComponent> parentComponents, JComboBox comboBoxToFill) {
+	    List<JComponent> parentComponents, JComponent comboBoxToFill) {
 	this.form = form;
 	this.parentComponents = parentComponents;
-	this.comboBoxToFill = comboBoxToFill;
+	this.chainedComp = comboBoxToFill;
     }
 
     @Override
@@ -53,7 +53,7 @@ public class DependentComboboxHandler implements ActionListener,
 	// Value may have changed in a ComboBox,
 	// or enter is pressed inside a TextField.
 	if (!form.isFillingValues() && parentComponentsHaveItemSelected()) {
-	    updateComboBoxValues();
+	    updateChainedComponent();
 	}
     }
 
@@ -67,12 +67,42 @@ public class DependentComboboxHandler implements ActionListener,
 	// Value may have changed in a TextField or
 	// a ComboBox
 	if (!form.isFillingValues() && parentComponentsHaveItemSelected()) {
-	    updateComboBoxValues();
+	    updateChainedComponent();
 	}
     }
 
-    public void updateComboBoxValues() {
-	ArrayList<String> foreignKeys = new ArrayList<String>();
+    /**
+     * Used on listener updates of the component. In this case JTextField value
+     * must be updated
+     */
+    public void updateChainedComponent() {
+	List<String> foreignKeys = getForeignKeys();
+	if (chainedComp instanceof JComboBox) {
+	    JComboBox jCombobox = ((JComboBox) chainedComp);
+	    form.getFillHandler().fillJComboBox(jCombobox, foreignKeys);
+	} else if (chainedComp instanceof JTextField) {
+	    JTextField jTextField = ((JTextField) chainedComp);
+	    form.getFillHandler().fillJTextField(jTextField, foreignKeys);
+	}
+    }
+
+    /**
+     * Used the first time the component should be filled. In this case
+     * JTextField value must be retrieved from the datastore
+     */
+    public void fillChainedComponent() {
+	List<String> foreignKeys = getForeignKeys();
+	if (chainedComp instanceof JComboBox) {
+	    JComboBox jCombobox = ((JComboBox) chainedComp);
+	    form.getFillHandler().fillJComboBox(jCombobox, foreignKeys);
+	} else if (chainedComp instanceof JTextField) {
+	    JTextField jTextField = ((JTextField) chainedComp);
+	    form.getFillHandler().fillJTextField(jTextField);
+	}
+    }
+
+    private List<String> getForeignKeys() {
+	List<String> foreignKeys = new ArrayList<String>();
 	for (JComponent cp : parentComponents) {
 	    if (cp instanceof JComboBox) {
 		JComboBox cb = (JComboBox) cp;
@@ -90,7 +120,12 @@ public class DependentComboboxHandler implements ActionListener,
 		}
 	    }
 	}
-	form.getFillHandler().fillJComboBox(comboBoxToFill, foreignKeys);
+	return foreignKeys;
+    }
+
+    @Deprecated
+    public void updateComboBoxValues() {
+	updateChainedComponent();
     }
 
     private boolean parentComponentsHaveItemSelected() {
@@ -111,6 +146,10 @@ public class DependentComboboxHandler implements ActionListener,
 	    }
 	}
 	return true;
+    }
+    
+    public List<JComponent> getParents() {
+	return parentComponents;
     }
 
 }

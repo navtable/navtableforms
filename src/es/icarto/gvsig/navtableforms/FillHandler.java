@@ -1,7 +1,6 @@
 package es.icarto.gvsig.navtableforms;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.JCheckBox;
@@ -71,10 +70,28 @@ public class FillHandler {
 	}
     }
 
-    protected void fillJTextField(JTextField field) {
+    public void fillJTextField(JTextField field) {
 	String colName = field.getName();
 	String fieldValue = iController.getValue(colName);
 	field.setText(fieldValue);
+    }
+
+    public void fillJTextField(JTextField field, List<String> foreignKeys) {
+	String colName = field.getName();
+	String fieldValue = iController.getValue(colName);
+	DomainValues dv = appDomain.getDomainValuesForComponent(colName);
+	if (dv != null) { // the component has domain values defined
+	    List<KeyValue> valuesFiltered = dv.getValuesFilteredBy(foreignKeys);
+	    // If the xml uses addvoidvalue this will not work, we will have two
+	    // values here
+	    if (valuesFiltered.size() == 1) {
+		fieldValue = valuesFiltered.get(0).getValue();
+	    } else {
+		fieldValue = "";
+	    }
+	}
+	field.setText(fieldValue);
+	iController.setValue(colName, fieldValue);
     }
 
     protected void fillJFormattedTextField(JFormattedTextField field) {
