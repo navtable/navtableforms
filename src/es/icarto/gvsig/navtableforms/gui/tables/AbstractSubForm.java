@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,7 @@ import es.icarto.gvsig.navtableforms.FillHandler;
 import es.icarto.gvsig.navtableforms.IValidatableForm;
 import es.icarto.gvsig.navtableforms.ValidationHandler;
 import es.icarto.gvsig.navtableforms.calculation.CalculationHandler;
+import es.icarto.gvsig.navtableforms.chained.ChainedHandler;
 import es.icarto.gvsig.navtableforms.gui.tables.handler.BaseTableHandler;
 import es.icarto.gvsig.navtableforms.gui.tables.model.AlphanumericTableModel;
 import es.icarto.gvsig.navtableforms.ormlite.ORMLite;
@@ -58,6 +60,7 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
     private FillHandler fillHandler;
     private final DependencyHandler dependencyHandler;
     private final CalculationHandler calculationHandler;
+    private final ChainedHandler chainedHandler;
     private boolean isFillingValues;
     private boolean changedValues;
     private final Logger logger;
@@ -81,6 +84,7 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 	validationHandler = new ValidationHandler(ormlite, this);
 	dependencyHandler = new DependencyHandler(ormlite, widgets, this);
 	calculationHandler = new CalculationHandler();
+	chainedHandler = new ChainedHandler();
     }
 
     private void initGUI() {
@@ -118,6 +122,7 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 	    tableHandler.reload();
 	}
 	calculationHandler.setListeners();
+	chainedHandler.setListeners();
     }
 
     public void removeListeners() {
@@ -127,6 +132,7 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 	    tableHandler.removeListeners();
 	}
 	calculationHandler.removeListeners();
+	chainedHandler.removeListeners();
     }
 
     public void fillEmptyValues() {
@@ -155,6 +161,7 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 	}
 	fillSpecificValues();
 	dependencyHandler.fillValues();
+	chainedHandler.fillEmptyValues();
 	setFillingValues(false);
     }
 
@@ -187,6 +194,7 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 	} catch (ReadDriverException e) {
 	    logger.error(e.getStackTrace());
 	}
+	chainedHandler.fillValues();
 	setFillingValues(false);
 	validationHandler.validate();
     }
@@ -380,6 +388,26 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 
     public List<BaseTableHandler> getTableHandlers() {
 	return tableHandlers;
+    }
+    
+    protected void addChained(JComponent chained, JComponent parent) {
+	chainedHandler.add(this, chained, parent);
+    }
+
+    protected void addChained(String chained, String parent) {
+	chainedHandler.add(this, widgets.get(chained), widgets.get(parent));
+    }
+
+    protected void addChained(JComponent chained, JComponent... parents) {
+	chainedHandler.add(this, chained, Arrays.asList(parents));
+    }
+
+    protected void addChained(String chained, String... parents) {
+	List<JComponent> parentList = new ArrayList<JComponent>();
+	for (String parent : parents) {
+	    parentList.add(widgets.get(parent));
+	}
+	chainedHandler.add(this, widgets.get(chained), parentList);
     }
 
     private final class CreateAction implements ActionListener {

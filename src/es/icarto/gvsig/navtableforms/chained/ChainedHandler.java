@@ -53,6 +53,10 @@ public class ChainedHandler {
 	chainedList.add(new DependentComboboxHandler(form, parent, chained));
     }
 
+    /**
+     * The order of the parent components must be the same that the order of the
+     * foreign key elements added in the rules xml file
+     */
     public void add(IValidatableForm form, JComponent chained,
 	    List<JComponent> parents) {
 	chainedList.add(new DependentComboboxHandler(form, parents, chained));
