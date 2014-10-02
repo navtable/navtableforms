@@ -47,7 +47,7 @@ public class DomainValues {
 	    subset.add(new KeyValue("", " "));
 	}
 	for (KeyValue kv : data) {
-	    if (kv.getForeignKeys().containsAll(ids)) {
+	    if (kv.getForeignKeys().equals(ids)) {
 		subset.add(kv);
 	    }
 	}
