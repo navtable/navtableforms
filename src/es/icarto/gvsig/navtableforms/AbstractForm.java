@@ -161,7 +161,7 @@ public abstract class AbstractForm extends AbstractNavTable implements
     @Override
     protected void initWidgets() {
 	setListeners();
-	fillHandler = new FillHandler(getWidgetComponents(), layerController,
+	fillHandler = new FillHandler(getWidgets(), layerController,
 		ormlite.getAppDomain());
     }
 

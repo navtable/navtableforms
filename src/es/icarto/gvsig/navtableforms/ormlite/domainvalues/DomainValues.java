@@ -17,6 +17,7 @@
 
 package es.icarto.gvsig.navtableforms.ormlite.domainvalues;
 import java.util.ArrayList;
+import java.util.List;
 
 public class DomainValues {
 
@@ -41,7 +42,7 @@ public class DomainValues {
 	return data;
     }
 
-    public ArrayList<KeyValue> getValuesFilteredBy(ArrayList<String> ids) {
+    public ArrayList<KeyValue> getValuesFilteredBy(List<String> ids) {
 	ArrayList<KeyValue> subset = new ArrayList<KeyValue>();
 	if (addVoidValue) {
 	    subset.add(new KeyValue("", " "));

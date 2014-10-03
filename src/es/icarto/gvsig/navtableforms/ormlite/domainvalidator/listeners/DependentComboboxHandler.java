@@ -26,8 +26,7 @@ import es.icarto.gvsig.navtableforms.ormlite.domainvalues.KeyValue;
  * suggest using the focus one on text fields, and the action one with combos.
  */
 
-public class DependentComboboxHandler implements ActionListener,
-	FocusListener {
+public class DependentComboboxHandler implements ActionListener, FocusListener {
 
     private final List<JComponent> parentComponents;
     private final JComponent chainedComp;
@@ -147,7 +146,7 @@ public class DependentComboboxHandler implements ActionListener,
 	}
 	return true;
     }
-    
+
     public List<JComponent> getParents() {
 	return parentComponents;
     }
