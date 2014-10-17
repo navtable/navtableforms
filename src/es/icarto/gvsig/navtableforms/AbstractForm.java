@@ -60,6 +60,7 @@ import es.udc.cartolab.gvsig.navtable.dataacces.IController;
 public abstract class AbstractForm extends AbstractNavTable implements
 	IValidatableForm {
 
+    private WindowInfo windowInfoMask = null;
     protected FormPanel formBody;
     private boolean isFillingValues;
     private boolean isSavingValues = false;
@@ -92,8 +93,8 @@ public abstract class AbstractForm extends AbstractNavTable implements
 
     @Override
     public WindowInfo getWindowInfo() {
-	if (windowInfo == null) {
-	    super.getWindowInfo();
+	if (windowInfoMask == null) {
+	    windowInfoMask = super.getWindowInfo();
 
 	    for (FormWindowProperties fwp : getFormWindowProperties()) {
 		if (fwp.getFormName().equalsIgnoreCase(getClass().getName())) {
@@ -101,15 +102,15 @@ public abstract class AbstractForm extends AbstractNavTable implements
 		    // getWindowInfo declared
 		    // by IWindow objects
 		    final int ANDAMI_CORRECTION = 40;
-		    windowInfo.setHeight(fwp.getFormWindowHeight()
+		    windowInfoMask.setHeight(fwp.getFormWindowHeight()
 			    - ANDAMI_CORRECTION);
-		    windowInfo.setWidth(fwp.getFormWindowWidth());
-		    windowInfo.setX(fwp.getFormWindowXPosition());
-		    windowInfo.setY(fwp.getFormWindowYPosition());
+		    windowInfoMask.setWidth(fwp.getFormWindowWidth());
+		    windowInfoMask.setX(fwp.getFormWindowXPosition());
+		    windowInfoMask.setY(fwp.getFormWindowYPosition());
 		}
 	    }
 	}
-	return windowInfo;
+	return windowInfoMask;
     }
 
     public abstract FormPanel getFormBody();
@@ -350,10 +351,10 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	List<FormWindowProperties> formWindowPropertiesList = getFormWindowProperties();
 	for (FormWindowProperties fwp : formWindowPropertiesList) {
 	    if (fwp.getFormName().equalsIgnoreCase(getClass().getName())) {
-		fwp.setFormWindowHeight(windowInfo.getHeight());
-		fwp.setFormWindowWidth(windowInfo.getWidth());
-		fwp.setFormWindowXPosition(windowInfo.getX());
-		fwp.setFormWindowYPosition(windowInfo.getY());
+		fwp.setFormWindowHeight(windowInfoMask.getHeight());
+		fwp.setFormWindowWidth(windowInfoMask.getWidth());
+		fwp.setFormWindowXPosition(windowInfoMask.getX());
+		fwp.setFormWindowYPosition(windowInfoMask.getY());
 		update = true;
 		break;
 	    }
@@ -362,10 +363,10 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	if (!update) {
 	    FormWindowProperties fwpToAdd = new FormWindowProperties();
 	    fwpToAdd.setFormName(getClass().getName());
-	    fwpToAdd.setFormWindowHeight(windowInfo.getHeight());
-	    fwpToAdd.setFormWindowWidth(windowInfo.getWidth());
-	    fwpToAdd.setFormWindowXPosition(windowInfo.getX());
-	    fwpToAdd.setFormWindowYPosition(windowInfo.getY());
+	    fwpToAdd.setFormWindowHeight(windowInfoMask.getHeight());
+	    fwpToAdd.setFormWindowWidth(windowInfoMask.getWidth());
+	    fwpToAdd.setFormWindowXPosition(windowInfoMask.getX());
+	    fwpToAdd.setFormWindowYPosition(windowInfoMask.getY());
 	    formWindowPropertiesList.add(fwpToAdd);
 	}
 
