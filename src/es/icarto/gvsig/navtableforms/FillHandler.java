@@ -185,6 +185,10 @@ public class FillHandler {
 	    addDomainValuesToComboBox(combobox,
 		    dv.getValuesFilteredBy(foreignKeys));
 	    setDomainValueSelected(combobox, fieldValue);
+	    KeyValue selected = (KeyValue) combobox.getSelectedItem();
+	    if (selected != null) {
+		iController.setValue(colName, selected.getKey());
+	    }
 	} else {
 	    fillJComboBoxWithAbeilleValues(combobox, fieldValue);
 	}
