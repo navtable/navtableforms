@@ -9,6 +9,8 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import com.toedter.calendar.JDateChooser;
+
 import es.icarto.gvsig.navtableforms.ormlite.ORMLite;
 import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.ValidatorComponent;
 import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.ValidatorDomain;
@@ -16,6 +18,7 @@ import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.ValidatorForm;
 import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.listeners.ValidationHandlerForCheckBoxes;
 import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.listeners.ValidationHandlerForComboBoxes;
 import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.listeners.ValidationHandlerForFormattedTextFields;
+import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.listeners.ValidationHandlerForJDateChooser;
 import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.listeners.ValidationHandlerForTextAreas;
 import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.listeners.ValidationHandlerForTextFields;
 
@@ -28,6 +31,7 @@ public class ValidationHandler {
     private ValidationHandlerForComboBoxes validationHandlerForComboBoxes;
     private ValidationHandlerForCheckBoxes validationHandlerForCheckBoxes;
     private ValidationHandlerForTextAreas validationHandlerForTextAreas;
+    private ValidationHandlerForJDateChooser validationHandlerForJDateChooser;
     private IValidatableForm validatableForm;
 
     public ValidationHandler(ORMLite ormLite, IValidatableForm validatableForm) {
@@ -49,6 +53,7 @@ public class ValidationHandler {
 		validatableForm);
 	validationHandlerForTextAreas = new ValidationHandlerForTextAreas(
 		validatableForm);
+	validationHandlerForJDateChooser = new ValidationHandlerForJDateChooser(validatableForm);
     }
 
     public void removeListeners(HashMap<String, JComponent> widgets) {
@@ -72,49 +77,59 @@ public class ValidationHandler {
 	    } else if (c instanceof JTextArea) {
 		((JTextArea) c)
 			.removeKeyListener(validationHandlerForTextAreas);
+	    } else if (c instanceof JDateChooser) {
+		((JDateChooser) c).removePropertyChangeListener("date", validationHandlerForJDateChooser);
 	    }
 	}
     }
 
     public void setListeners(HashMap<String, JComponent> widgets) {
-	for (JComponent comp : widgets.values()) {
-	    if (comp instanceof JFormattedTextField) {
-		((JFormattedTextField) comp)
+	for (JComponent c : widgets.values()) {
+	    if (c instanceof JFormattedTextField) {
+		((JFormattedTextField) c)
 			.addKeyListener(validationHandlerForFormattedTextFields);
-		((JFormattedTextField) comp)
+		((JFormattedTextField) c)
 			.addFocusListener(validationHandlerForFormattedTextFields);
 		ValidatorDomain dv = ormlite.getAppDomain()
-			.getDomainValidatorForComponent(comp.getName());
+			.getDomainValidatorForComponent(c.getName());
 		if (dv != null) {
-		    ValidatorComponent cv = new ValidatorComponent(comp, dv);
+		    ValidatorComponent cv = new ValidatorComponent(c, dv);
 		    validatorForm.addComponentValidator(cv);
 		}
-	    } else if (comp instanceof JTextField) {
-		((JTextField) comp)
+	    } else if (c instanceof JTextField) {
+		((JTextField) c)
 			.addKeyListener(validationHandlerForTextFields);
-		((JTextField) comp)
+		((JTextField) c)
 			.addFocusListener(validationHandlerForTextFields);
 		ValidatorDomain dv = ormlite.getAppDomain()
-			.getDomainValidatorForComponent(comp.getName());
+			.getDomainValidatorForComponent(c.getName());
 		if (dv != null) {
-		    ValidatorComponent cv = new ValidatorComponent(comp, dv);
+		    ValidatorComponent cv = new ValidatorComponent(c, dv);
 		    validatorForm.addComponentValidator(cv);
 		}
-	    } else if (comp instanceof JComboBox) {
-		((JComboBox) comp)
+	    } else if (c instanceof JComboBox) {
+		((JComboBox) c)
 			.addActionListener(validationHandlerForComboBoxes);
 		ValidatorDomain dv = ormlite.getAppDomain()
-			.getDomainValidatorForComponent(comp.getName());
+			.getDomainValidatorForComponent(c.getName());
 		if (dv != null) {
-		    ValidatorComponent cv = new ValidatorComponent(comp, dv);
+		    ValidatorComponent cv = new ValidatorComponent(c, dv);
 		    validatorForm.addComponentValidator(cv);
 		}
-	    } else if (comp instanceof JCheckBox) {
-		((JCheckBox) comp)
+	    } else if (c instanceof JCheckBox) {
+		((JCheckBox) c)
 			.addActionListener(validationHandlerForCheckBoxes);
-	    } else if (comp instanceof JTextArea) {
-		((JTextArea) comp)
+	    } else if (c instanceof JTextArea) {
+		((JTextArea) c)
 			.addKeyListener(validationHandlerForTextAreas);
+	    }  else if (c instanceof JDateChooser) {
+		((JDateChooser) c).addPropertyChangeListener("date", validationHandlerForJDateChooser);
+		ValidatorDomain dv = ormlite.getAppDomain()
+			.getDomainValidatorForComponent(c.getName());
+		if (dv != null) {
+		    ValidatorComponent cv = new ValidatorComponent(c, dv);
+		    validatorForm.addComponentValidator(cv);
+		}
 	    }
 	}
     }

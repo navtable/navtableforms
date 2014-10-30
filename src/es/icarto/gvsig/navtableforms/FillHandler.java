@@ -12,11 +12,14 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.text.JTextComponent;
 
+import com.toedter.calendar.JDateChooser;
+
 import es.icarto.gvsig.navtableforms.gui.formattedtextfields.FormatterFactory;
 import es.icarto.gvsig.navtableforms.ormlite.ORMLiteAppDomain;
 import es.icarto.gvsig.navtableforms.ormlite.domainvalues.DomainValues;
 import es.icarto.gvsig.navtableforms.ormlite.domainvalues.KeyValue;
 import es.udc.cartolab.gvsig.navtable.dataacces.IController;
+import es.udc.cartolab.gvsig.navtable.format.DateFormatNT;
 
 public class FillHandler {
 
@@ -193,6 +196,12 @@ public class FillHandler {
 	    fillJComboBoxWithAbeilleValues(combobox, fieldValue);
 	}
     }
+    
+    private void fillJDateChooser(JDateChooser field) {
+	String colName = field.getName();
+	String fieldValue = iController.getValue(colName);
+	field.setDate(DateFormatNT.convertStringToDate(fieldValue));
+    }
 
     public void fillValues() {
 	for (JComponent comp : widgetsVector.values()) {
@@ -206,8 +215,9 @@ public class FillHandler {
 		fillJTextArea((JTextArea) comp);
 	    } else if (comp instanceof JComboBox) {
 		fillJComboBox((JComboBox) comp);
+	    } else if (comp instanceof JDateChooser) {
+		fillJDateChooser((JDateChooser)comp);
 	    }
 	}
     }
-
 }

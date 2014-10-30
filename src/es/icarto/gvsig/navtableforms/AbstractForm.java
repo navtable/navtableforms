@@ -17,11 +17,14 @@
 package es.icarto.gvsig.navtableforms;
 
 import java.awt.BorderLayout;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -43,6 +46,8 @@ import com.iver.andami.ui.mdiManager.WindowInfo;
 import com.iver.cit.gvsig.exceptions.visitors.StopWriterVisitorException;
 import com.iver.cit.gvsig.fmap.layers.FLyrVect;
 import com.jeta.forms.components.panel.FormPanel;
+import com.toedter.calendar.JDateChooser;
+import com.toedter.calendar.JTextFieldDateEditor;
 
 import es.icarto.gvsig.navtableforms.calculation.Calculation;
 import es.icarto.gvsig.navtableforms.calculation.CalculationHandler;
@@ -55,6 +60,7 @@ import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.ValidatorForm;
 import es.icarto.gvsig.navtableforms.utils.AbeilleParser;
 import es.udc.cartolab.gvsig.navtable.AbstractNavTable;
 import es.udc.cartolab.gvsig.navtable.dataacces.IController;
+import es.udc.cartolab.gvsig.navtable.format.DateFormatNT;
 
 @SuppressWarnings("serial")
 public abstract class AbstractForm extends AbstractNavTable implements
@@ -164,6 +170,13 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	setListeners();
 	fillHandler = new FillHandler(getWidgets(), layerController,
 		ormlite.getAppDomain());
+	for (JComponent c : getWidgets().values()) {
+	    if (c instanceof JDateChooser) {
+		SimpleDateFormat dateFormat = DateFormatNT.getDateFormat();
+		((JDateChooser) c).setDateFormatString(dateFormat.toPattern());
+		((JDateChooser) c).getDateEditor().setEnabled(false);
+	    }
+	}
     }
 
     /**

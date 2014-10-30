@@ -23,6 +23,9 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JTextField;
 
+import com.toedter.calendar.JDateChooser;
+import com.toedter.calendar.JTextFieldDateEditor;
+
 import es.icarto.gvsig.navtableforms.ormlite.domainvalues.KeyValue;
 
 public class ValidatorComponent {
@@ -32,8 +35,13 @@ public class ValidatorComponent {
     private ValidatorDomain domain = null;
 
     public ValidatorComponent(JComponent c, ValidatorDomain dv) {
-	this.c = c;
-	defaultbg = c.getBackground();
+	if (c instanceof JDateChooser) {
+	    this.c = ((JDateChooser) c).getDateEditor().getUiComponent();
+	    this.c.setName(c.getName());
+	} else {
+	    this.c = c;
+	}
+	defaultbg = this.c.getBackground();
 	this.domain = dv;
     }
 
@@ -41,6 +49,7 @@ public class ValidatorComponent {
 	String name = null;
 	String value = null;
 
+	// The editor of JDateChooser is also a JTextField, so is handled in this path
 	if (c instanceof JTextField) {
 	    name = c.getName();
 	    value = ((JTextField) c).getText();
@@ -58,14 +67,14 @@ public class ValidatorComponent {
 
 	if (name != null) {
 	    if (isValid(name, value)) {
-		if (c.isEnabled()) {
+		if (c.isEnabled() || (c instanceof JTextFieldDateEditor) ) {
 		    c.setBackground(defaultbg);
 		} else {
 		    setDisabledBackground();
 		}
 		return true;
 	    }
-	    if (c.isEnabled()) {
+	    if (c.isEnabled() || (c instanceof JTextFieldDateEditor)) {
 		c.setBackground(new Color(249, 112, 140));
 	    } else {
 		setDisabledBackground();
