@@ -94,7 +94,7 @@ public abstract class AbstractSubForm extends AbstractIWindow implements IForm,
 
     private void initGUI() {
 	setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-	getFormPanel("ui/" + getBasicName() + ".xml");
+	getFormPanel();
 	JScrollPane scrollPane = new JScrollPane(formPanel);
 	widgets = AbeilleParser.getWidgetsFromContainer(formPanel);
 	for (JComponent c : getWidgets().values()) {
@@ -211,14 +211,18 @@ public abstract class AbstractSubForm extends AbstractIWindow implements IForm,
 	validationHandler.validate();
     }
 
-    protected FormPanel getFormPanel(String resourcePath) {
+    protected FormPanel getFormPanel() {
 	if (formPanel == null) {
 	    InputStream stream = getClass().getClassLoader()
-		    .getResourceAsStream(resourcePath);
+		    .getResourceAsStream("/forms/" + getBasicName() + ".jfrm");
+	    if (stream == null) {
+		stream = getClass().getClassLoader().getResourceAsStream(
+			"/forms/" + getBasicName() + ".xml");
+	    }
 	    try {
 		formPanel = new FormPanel(stream);
 	    } catch (FormException e) {
-		logger.error(e.getStackTrace());
+		e.printStackTrace();
 	    }
 	}
 	return formPanel;
@@ -226,14 +230,15 @@ public abstract class AbstractSubForm extends AbstractIWindow implements IForm,
 
     private String getMetadataPath() {
 	return this.getClass().getClassLoader()
-		.getResource("metadata/" + getBasicName() + ".xml").getPath();
+		.getResource("rules/" + getBasicName() + "_metadata.xml")
+		.getPath();
     }
 
     @Deprecated
     public HashMap<String, JComponent> getWidgetComponents() {
 	return widgets;
     }
-    
+
     @Override
     public Map<String, JComponent> getWidgets() {
 	return widgets;
