@@ -40,6 +40,7 @@ import es.icarto.gvsig.navtableforms.DependencyHandler;
 import es.icarto.gvsig.navtableforms.FillHandler;
 import es.icarto.gvsig.navtableforms.IValidatableForm;
 import es.icarto.gvsig.navtableforms.ValidationHandler;
+import es.icarto.gvsig.navtableforms.calculation.Calculation;
 import es.icarto.gvsig.navtableforms.calculation.CalculationHandler;
 import es.icarto.gvsig.navtableforms.chained.ChainedHandler;
 import es.icarto.gvsig.navtableforms.gui.tables.handler.BaseTableHandler;
@@ -356,6 +357,10 @@ public abstract class AbstractSubForm extends AbstractIWindow implements IForm,
 
     public List<BaseTableHandler> getTableHandlers() {
 	return tableHandlers;
+    }
+
+    protected void addCalculation(Calculation calculation) {
+	calculationHandler.add(calculation);
     }
 
     protected void addChained(JComponent chained, JComponent parent) {
