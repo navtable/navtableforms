@@ -20,6 +20,7 @@ import javax.swing.JTextField;
 import org.apache.log4j.Logger;
 
 import es.icarto.gvsig.navtableforms.IValidatableForm;
+import es.icarto.gvsig.navtableforms.ormlite.domainvalues.KeyValue;
 import es.udc.cartolab.gvsig.navtable.format.DoubleFormatNT;
 
 public abstract class Calculation {
@@ -136,18 +137,49 @@ public abstract class Calculation {
      */
     protected boolean allEmpty() {
 	for (JComponent c : operands.values()) {
-	    if (!((JTextField) c).getText().trim().isEmpty()) {
-		return false;
+	    if (c instanceof JFormattedTextField) {
+		if (!((JFormattedTextField) c).getText().trim().isEmpty()) {
+		    return false;
+		}
+	    } else if (c instanceof JTextField) {
+		if (!((JTextField) c).getText().trim().isEmpty()) {
+		    return false;
+		}
+	    } else if (c instanceof JComboBox) {
+		JComboBox jcomboBox = ((JComboBox) c);
+		final Object selectedItem = jcomboBox.getSelectedItem();
+		if ((selectedItem != null)
+			&& !selectedItem.toString().trim().isEmpty()) {
+		    return false;
+		}
+	    } else if (c instanceof JTextArea) {
+		if (!((JTextArea) c).getText().trim().isEmpty()) {
+		    return false;
+		}
 	    }
+
 	}
 	return true;
     }
 
     protected BigDecimal operandValue(String name) {
-	JTextField textField = (JTextField) operands.get(name);
+	JComponent jComponent = operands.get(name);
+	String importe = "";
+	if (jComponent instanceof JTextField) {
+	    importe = ((JTextField) jComponent).getText().trim();
+	} else if (jComponent instanceof JComboBox) {
+	    Object selectedItem = ((JComboBox) jComponent).getSelectedItem();
+	    if (selectedItem != null) {
+		if (selectedItem instanceof KeyValue) {
+		    importe = ((KeyValue) selectedItem).getKey();
+		} else {
+		    importe = selectedItem.toString().trim();
+		}
+	    }
+	}
+
 	BigDecimal value = new BigDecimal(0);
-	if (!textField.getText().isEmpty()) {
-	    String importe = textField.getText();
+	if (!importe.isEmpty()) {
 	    try {
 		value = (BigDecimal) formatter.parse(importe);
 	    } catch (ParseException e) {
