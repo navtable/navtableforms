@@ -1,9 +1,10 @@
 package es.icarto.gvsig.navtableforms.gui.tables.menu;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 
+import javax.swing.AbstractAction;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.TableModel;
 
@@ -20,13 +21,18 @@ import es.icarto.gvsig.navtableforms.gui.tables.model.BaseTableModel;
  * 
  * @author Jorge López Fernández <jlopez@cartolab.es>
  */
+public class AlphanumericCompleteJTableContextualMenu extends
+	AlphanumericJTableContextualMenu {
 
-public class AlphanumericCompleteJTableContextualMenu extends AlphanumericJTableContextualMenu {
+    private CreateAction createAction;
+    private UpdateAction updateAction;
+    private DeleteAction deleteAction;
 
     public AlphanumericCompleteJTableContextualMenu(IForm form) {
 	super(form);
     }
 
+    @Override
     public void mouseClicked(MouseEvent e) {
 	table = (JTable) e.getComponent();
 	if ((e.getClickCount() == 2) && (table.getSelectedRow() > -1)) {
@@ -51,41 +57,113 @@ public class AlphanumericCompleteJTableContextualMenu extends AlphanumericJTable
 	}
     }
 
+    @Override
     protected void initContextualMenu() {
-	newMenuItem.addActionListener(new ActionListener() {
-	    public void actionPerformed(ActionEvent arg0) {
-		form.actionCreateRecord();
-	    }
-	});
+	createAction = new CreateAction();
+	updateAction = new UpdateAction();
+	deleteAction = new DeleteAction();
+
+	newMenuItem.setAction(createAction);
 	popupMenu.add(newMenuItem);
 
-	updateMenuItem.addActionListener(new ActionListener() {
-	    public void actionPerformed(ActionEvent arg0) {
-		TableModel model = table.getModel();
-		if (model instanceof BaseTableModel) {
-		    form.actionUpdateRecord(((BaseTableModel) model)
-			    .convertRowIndexToModel(table.getSelectedRow()));
-		} else {
-		    form.actionUpdateRecord(table.convertRowIndexToModel(table
-			    .getSelectedRow()));
-		}
-	    }
-	});
+	updateMenuItem.setAction(updateAction);
 	popupMenu.add(updateMenuItem);
 
-	deleteMenuItem.addActionListener(new ActionListener() {
-	    public void actionPerformed(ActionEvent arg0) {
-		TableModel model = table.getModel();
-		if (model instanceof AlphanumericTableModel) {
-		    form.actionDeleteRecord(((AlphanumericTableModel) model)
-			    .convertRowIndexToModel(table.getSelectedRow()));
-		} else {
-		    form.actionDeleteRecord(table.convertRowIndexToModel(table
-			    .getSelectedRow()));
-		}
-	    }
-	});
+	deleteMenuItem.setAction(deleteAction);
 	popupMenu.add(deleteMenuItem);
     }
 
+    // TODO: fpuga. {Create, Update, Delete}Action and the methods related with
+    // it, are used to handle the case that we want an interface with add,
+    // update, delete buttons instead or plus the listener in the table. This
+    // implementation should be improved before used, take it only as a
+    // prototype
+    public AbstractAction getCreateAction() {
+	return createAction;
+    }
+
+    public AbstractAction getUpdateAction() {
+	return updateAction;
+    }
+
+    public AbstractAction getDeleteAction() {
+	return deleteAction;
+    }
+
+    private class CreateAction extends AbstractAction {
+
+	public CreateAction() {
+	    super("Añadir");
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+	    form.actionCreateRecord();
+	}
+    }
+
+    private class UpdateAction extends AbstractAction {
+
+	public UpdateAction() {
+	    super("Editar");
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+	    TableModel model = table.getModel();
+	    if (table.getSelectedRowCount() != 1) {
+		JOptionPane.showMessageDialog(null,
+			"Debe seleccionar una fila para editar los datos.",
+			"Ninguna fila seleccionada",
+			JOptionPane.INFORMATION_MESSAGE);
+		return;
+	    }
+	    if (model instanceof BaseTableModel) {
+		form.actionUpdateRecord(((BaseTableModel) model)
+			.convertRowIndexToModel(table.getSelectedRow()));
+	    } else {
+		form.actionUpdateRecord(table.convertRowIndexToModel(table
+			.getSelectedRow()));
+	    }
+	}
+    }
+
+    private class DeleteAction extends AbstractAction {
+
+	public DeleteAction() {
+	    super("Eliminar");
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+	    TableModel model = table.getModel();
+
+	    if (table.getSelectedRowCount() != 1) {
+		JOptionPane.showMessageDialog(null,
+			"Debe seleccionar una fila para eliminar los datos.",
+			"Ninguna fila seleccionada",
+			JOptionPane.INFORMATION_MESSAGE);
+		return;
+	    } else {
+		Object[] options = { "Eliminar", "Cancelar" };
+		int response = JOptionPane
+			.showOptionDialog(
+				null,
+				"Los datos seleccionados se eliminarán de forma permanente.",
+				"Eliminar", JOptionPane.YES_NO_OPTION,
+				JOptionPane.WARNING_MESSAGE, null, options,
+				options[0]);
+		if (response == JOptionPane.YES_OPTION) {
+		    if (model instanceof AlphanumericTableModel) {
+			form.actionDeleteRecord(((AlphanumericTableModel) model)
+				.convertRowIndexToModel(table.getSelectedRow()));
+		    } else {
+			form.actionDeleteRecord(table
+				.convertRowIndexToModel(table.getSelectedRow()));
+		    }
+		}
+
+	    }
+	}
+    }
 }
