@@ -1,7 +1,6 @@
 package es.icarto.gvsig.navtableforms.gui.tables;
 
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,7 +25,6 @@ import org.apache.log4j.Logger;
 import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
 import com.iver.andami.PluginServices;
 import com.iver.andami.messages.NotificationManager;
-import com.iver.andami.ui.mdiFrame.MDIFrame;
 import com.iver.andami.ui.mdiManager.IWindow;
 import com.iver.andami.ui.mdiManager.IWindowListener;
 import com.iver.andami.ui.mdiManager.WindowInfo;
@@ -35,6 +33,7 @@ import com.iver.cit.gvsig.fmap.edition.IEditableSource;
 import com.jeta.forms.components.panel.FormPanel;
 import com.jeta.forms.gui.common.FormException;
 
+import es.icarto.gvsig.commons.gui.AbstractIWindow;
 import es.icarto.gvsig.navtableforms.DependencyHandler;
 import es.icarto.gvsig.navtableforms.FillHandler;
 import es.icarto.gvsig.navtableforms.IValidatableForm;
@@ -48,10 +47,15 @@ import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.ValidatorForm;
 import es.icarto.gvsig.navtableforms.utils.AbeilleParser;
 import es.udc.cartolab.gvsig.navtable.dataacces.IController;
 import es.udc.cartolab.gvsig.navtable.dataacces.TableController;
+import es.udc.cartolab.gvsig.navtable.format.DateFormatNT;
 
 @SuppressWarnings("serial")
-public abstract class AbstractSubForm extends JPanel implements IForm,
-	IValidatableForm, IWindow, IWindowListener {
+public abstract class AbstractSubForm extends AbstractIWindow implements IForm,
+	IValidatableForm, IWindowListener {
+
+    private static final Logger logger = Logger
+	    .getLogger(AbstractSubForm.class);
+
     private FormPanel formPanel;
     private HashMap<String, JComponent> widgets;
     private final ValidationHandler validationHandler;
@@ -63,22 +67,20 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
     private final ChainedHandler chainedHandler;
     private boolean isFillingValues;
     private boolean changedValues;
-    private final Logger logger;
     private JPanel southPanel;
     private JButton saveButton;
     private Map<String, String> foreingKey;
     private final List<BaseTableHandler> tableHandlers = new ArrayList<BaseTableHandler>();
 
-    private WindowInfo windowInfo;
-    private final static int windowInfoCode = WindowInfo.MODELESSDIALOG
-	    | WindowInfo.PALETTE | WindowInfo.RESIZABLE;
     private long position;
     private ActionListener action;
     private AlphanumericTableModel model;
 
     public AbstractSubForm() {
 	super();
-	logger = Logger.getLogger(getClass());
+	setWindowInfoProperties(WindowInfo.MODELESSDIALOG | WindowInfo.PALETTE
+		| WindowInfo.RESIZABLE);
+	setWindowTitle(PluginServices.getText(this, getBasicName()));
 	initGUI();
 	ormlite = new ORMLite(getMetadataPath());
 	validationHandler = new ValidationHandler(ormlite, this);
@@ -283,49 +285,6 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 
     protected void setChangedValues(boolean bool) {
 	changedValues = bool;
-    }
-
-    @Override
-    public WindowInfo getWindowInfo() {
-	if (windowInfo == null) {
-	    windowInfo = new WindowInfo(windowInfoCode);
-	    windowInfo.setTitle(PluginServices.getText(this, getBasicName()));
-	    Dimension dim = getPreferredSize();
-	    // To calculate the maximum size of a form we take the size of the
-	    // main frame minus a "magic number" for the menus, toolbar, state
-	    // bar
-	    // Take into account that in edition mode there is less available
-	    // space
-	    MDIFrame a = (MDIFrame) PluginServices.getMainFrame();
-	    int maxHeight = a.getHeight() - 205;
-	    int maxWidth = a.getWidth() - 15;
-
-	    int width, heigth = 0;
-	    if (dim.getHeight() > maxHeight) {
-		heigth = maxHeight;
-	    } else {
-		heigth = new Double(dim.getHeight()).intValue();
-	    }
-	    if (dim.getWidth() > maxWidth) {
-		width = maxWidth;
-	    } else {
-		width = new Double(dim.getWidth()).intValue();
-	    }
-
-	    // getPreferredSize doesn't take into account the borders and other
-	    // stuff
-	    // introduced by Andami, neither scroll bars so we must increase the
-	    // "preferred"
-	    // dimensions
-	    windowInfo.setWidth(width + 25);
-	    windowInfo.setHeight(heigth + 15);
-	}
-	return windowInfo;
-    }
-
-    @Override
-    public Object getWindowProfile() {
-	return WindowInfo.DIALOG_PROFILE;
     }
 
     @Override
