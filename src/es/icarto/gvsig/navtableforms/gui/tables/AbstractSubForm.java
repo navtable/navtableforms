@@ -5,6 +5,7 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -32,6 +33,7 @@ import com.iver.cit.gvsig.exceptions.visitors.StopWriterVisitorException;
 import com.iver.cit.gvsig.fmap.edition.IEditableSource;
 import com.jeta.forms.components.panel.FormPanel;
 import com.jeta.forms.gui.common.FormException;
+import com.toedter.calendar.JDateChooser;
 
 import es.icarto.gvsig.commons.gui.AbstractIWindow;
 import es.icarto.gvsig.navtableforms.DependencyHandler;
@@ -94,6 +96,13 @@ public abstract class AbstractSubForm extends AbstractIWindow implements IForm,
 	getFormPanel("ui/" + getBasicName() + ".xml");
 	JScrollPane scrollPane = new JScrollPane(formPanel);
 	widgets = AbeilleParser.getWidgetsFromContainer(formPanel);
+	for (JComponent c : getWidgets().values()) {
+	    if (c instanceof JDateChooser) {
+		SimpleDateFormat dateFormat = DateFormatNT.getDateFormat();
+		((JDateChooser) c).setDateFormatString(dateFormat.toPattern());
+		((JDateChooser) c).getDateEditor().setEnabled(false);
+	    }
+	}
 	// AbeilleUtils au = new AbeilleUtils();
 	// au.formatLabels(formPanel);
 	// au.formatTextArea(formPanel);
@@ -348,7 +357,7 @@ public abstract class AbstractSubForm extends AbstractIWindow implements IForm,
     public List<BaseTableHandler> getTableHandlers() {
 	return tableHandlers;
     }
-    
+
     protected void addChained(JComponent chained, JComponent parent) {
 	chainedHandler.add(this, chained, parent);
     }
