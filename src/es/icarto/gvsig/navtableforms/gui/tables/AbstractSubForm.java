@@ -79,8 +79,24 @@ public abstract class AbstractSubForm extends AbstractIWindow implements IForm,
     private ActionListener action;
     private AlphanumericTableModel model;
 
+    private String basicName;
+
+    public AbstractSubForm(String basicName) {
+	super(null);
+	this.basicName = basicName;
+	setWindowInfoProperties(WindowInfo.MODELESSDIALOG | WindowInfo.PALETTE
+		| WindowInfo.RESIZABLE);
+	setWindowTitle(PluginServices.getText(this, getBasicName()));
+	initGUI();
+	ormlite = new ORMLite(getMetadataPath());
+	validationHandler = new ValidationHandler(ormlite, this);
+	dependencyHandler = new DependencyHandler(ormlite, widgets, this);
+	calculationHandler = new CalculationHandler();
+	chainedHandler = new ChainedHandler();
+    }
+
     public AbstractSubForm() {
-	super();
+	super(null);
 	setWindowInfoProperties(WindowInfo.MODELESSDIALOG | WindowInfo.PALETTE
 		| WindowInfo.RESIZABLE);
 	setWindowTitle(PluginServices.getText(this, getBasicName()));
@@ -194,7 +210,16 @@ public abstract class AbstractSubForm extends AbstractIWindow implements IForm,
 	return null;
     }
 
-    protected abstract String getBasicName();
+    /*
+     * TODO call a method in a constructor (getBasicName) that can be override
+     * for subclasses is no considered a good programming practice, in the
+     * medium term this should be changed override for subclasses is no
+     * considered a good programming practice, in the medium term this should be
+     * changed
+     */
+    protected String getBasicName() {
+	return this.basicName;
+    }
 
     public void fillValues() {
 	setFillingValues(true);
