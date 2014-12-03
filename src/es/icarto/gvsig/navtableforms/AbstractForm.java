@@ -17,8 +17,6 @@
 package es.icarto.gvsig.navtableforms;
 
 import java.awt.BorderLayout;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -47,7 +45,6 @@ import com.iver.cit.gvsig.exceptions.visitors.StopWriterVisitorException;
 import com.iver.cit.gvsig.fmap.layers.FLyrVect;
 import com.jeta.forms.components.panel.FormPanel;
 import com.toedter.calendar.JDateChooser;
-import com.toedter.calendar.JTextFieldDateEditor;
 
 import es.icarto.gvsig.navtableforms.calculation.Calculation;
 import es.icarto.gvsig.navtableforms.calculation.CalculationHandler;
@@ -66,14 +63,14 @@ import es.udc.cartolab.gvsig.navtable.format.DateFormatNT;
 public abstract class AbstractForm extends AbstractNavTable implements
 	IValidatableForm {
 
+    private static final Logger logger = Logger.getLogger(AbstractForm.class);
+
     protected FormPanel formBody;
     private boolean isFillingValues;
     private boolean isSavingValues = false;
     private final List<BaseTableHandler> tableHandlers = new ArrayList<BaseTableHandler>();
 
     HashMap<String, JComponent> widgets;
-
-    protected static Logger logger = null;
 
     private final ORMLite ormlite;
 
@@ -86,7 +83,6 @@ public abstract class AbstractForm extends AbstractNavTable implements
 
     public AbstractForm(FLyrVect layer) {
 	super(layer);
-	logger = Logger.getLogger(getClass());
 	formBody = getFormBody();
 	widgets = AbeilleParser.getWidgetsFromContainer(formBody);
 	ormlite = new ORMLite(getXMLPath());

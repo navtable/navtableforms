@@ -55,6 +55,10 @@ import es.udc.cartolab.gvsig.navtable.dataacces.TableController;
 @SuppressWarnings("serial")
 public abstract class AbstractSubForm extends JPanel implements IForm,
 	IValidatableForm, IWindow, IWindowListener {
+
+    private static final Logger logger = Logger
+	    .getLogger(AbstractSubForm.class);
+
     private FormPanel formPanel;
     private HashMap<String, JComponent> widgets;
     private final ValidationHandler validationHandler;
@@ -66,7 +70,7 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
     private final ChainedHandler chainedHandler;
     private boolean isFillingValues;
     private boolean changedValues;
-    private final Logger logger;
+
     private JPanel southPanel;
     private JButton saveButton;
     private Map<String, String> foreingKey;
@@ -94,7 +98,6 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 
     public AbstractSubForm() {
 	super();
-	logger = Logger.getLogger(getClass());
 	initGUI();
 	ormlite = new ORMLite(getMetadataPath());
 	validationHandler = new ValidationHandler(ormlite, this);
