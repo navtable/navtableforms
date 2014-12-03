@@ -1,5 +1,6 @@
 package es.icarto.gvsig.navtableforms.gui.tables.model;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 import javax.swing.table.AbstractTableModel;
@@ -103,6 +104,21 @@ public abstract class BaseTableModel extends AbstractTableModel {
     public void dataChanged() {
 	this.fireTableDataChanged();
 	initMetadata();
+    }
+
+    public int[] getMaxLengths() {
+	int[] maxLengths = new int[getColumnCount()];
+	Arrays.fill(maxLengths, 0);
+
+	for (int i = 0; i < getRowCount(); i++) {
+	    for (int j = 0; j < getColumnCount(); j++) {
+		int l = getValueAt(i, j).toString().length();
+		if (l > maxLengths[j]) {
+		    maxLengths[j] = l;
+		}
+	    }
+	}
+	return maxLengths;
     }
 
     protected abstract int getModelRowCount();

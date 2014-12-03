@@ -110,14 +110,14 @@ public class AlphanumericCompleteJTableContextualMenu extends
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-	    TableModel model = table.getModel();
-	    if (table.getSelectedRowCount() != 1) {
+	    if ((table != null) && (table.getSelectedRowCount() != 1)) {
 		JOptionPane.showMessageDialog(null,
 			"Debe seleccionar una fila para editar los datos.",
 			"Ninguna fila seleccionada",
 			JOptionPane.INFORMATION_MESSAGE);
 		return;
 	    }
+	    TableModel model = table.getModel();
 	    if (model instanceof BaseTableModel) {
 		form.actionUpdateRecord(((BaseTableModel) model)
 			.convertRowIndexToModel(table.getSelectedRow()));
@@ -136,9 +136,8 @@ public class AlphanumericCompleteJTableContextualMenu extends
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-	    TableModel model = table.getModel();
 
-	    if (table.getSelectedRowCount() != 1) {
+	    if ((table != null) && (table.getSelectedRowCount() != 1)) {
 		JOptionPane.showMessageDialog(null,
 			"Debe seleccionar una fila para eliminar los datos.",
 			"Ninguna fila seleccionada",
@@ -154,6 +153,7 @@ public class AlphanumericCompleteJTableContextualMenu extends
 				JOptionPane.WARNING_MESSAGE, null, options,
 				options[0]);
 		if (response == JOptionPane.YES_OPTION) {
+		    TableModel model = table.getModel();
 		    if (model instanceof AlphanumericTableModel) {
 			form.actionDeleteRecord(((AlphanumericTableModel) model)
 				.convertRowIndexToModel(table.getSelectedRow()));
