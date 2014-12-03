@@ -81,6 +81,8 @@ public abstract class AbstractForm extends AbstractNavTable implements
     private final CalculationHandler calculationHandler;
     private final ChainedHandler chainedHandler;
 
+    private String title;
+
     public AbstractForm(FLyrVect layer) {
 	super(layer);
 	formBody = getFormBody();
@@ -96,7 +98,9 @@ public abstract class AbstractForm extends AbstractNavTable implements
     public WindowInfo getWindowInfo() {
 	if (windowInfo == null) {
 	    super.getWindowInfo();
-
+	    if (title != null) {
+		windowInfo.setTitle(title);
+	    }
 	    for (FormWindowProperties fwp : getFormWindowProperties()) {
 		if (fwp.getFormName().equalsIgnoreCase(getClass().getName())) {
 		    // WindowInfoSupport.getWindowInfo adds 40 to the
@@ -403,6 +407,10 @@ public abstract class AbstractForm extends AbstractNavTable implements
     @Override
     public Object getWindowProfile() {
 	return null;
+    }
+
+    protected void setTitle(String title) {
+	this.title = title;
     }
 
     @Override
