@@ -73,16 +73,16 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
     private boolean changedValues;
 
     private JPanel southPanel;
-    private JButton saveButton;
+    protected JButton saveButton;
     private Map<String, String> foreingKey;
     private final List<BaseTableHandler> tableHandlers = new ArrayList<BaseTableHandler>();
 
     private WindowInfo windowInfo;
     private final static int windowInfoCode = WindowInfo.MODELESSDIALOG
 	    | WindowInfo.PALETTE | WindowInfo.RESIZABLE;
-    private long position;
-    private ActionListener action;
-    private AlphanumericTableModel model;
+    protected long position;
+    protected ActionListener action;
+    protected AlphanumericTableModel model;
 
     private String basicName;
 
