@@ -51,6 +51,7 @@ import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.ValidatorForm;
 import es.icarto.gvsig.navtableforms.utils.AbeilleParser;
 import es.udc.cartolab.gvsig.navtable.dataacces.IController;
 import es.udc.cartolab.gvsig.navtable.dataacces.TableController;
+import es.udc.cartolab.gvsig.navtable.format.DateFormatNT;
 
 @SuppressWarnings("serial")
 public abstract class AbstractSubForm extends JPanel implements IForm,
@@ -116,6 +117,8 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 		SimpleDateFormat dateFormat = DateFormatNT.getDateFormat();
 		((JDateChooser) c).setDateFormatString(dateFormat.toPattern());
 		((JDateChooser) c).getDateEditor().setEnabled(false);
+		((JDateChooser) c).getDateEditor().getUiComponent()
+			.setToolTipText(null);
 	    }
 	}
 	// AbeilleUtils au = new AbeilleUtils();
