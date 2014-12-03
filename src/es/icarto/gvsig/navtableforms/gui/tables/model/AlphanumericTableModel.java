@@ -16,8 +16,8 @@ import es.udc.cartolab.gvsig.navtable.dataacces.TableController;
 @SuppressWarnings("serial")
 public class AlphanumericTableModel extends BaseTableModel {
 
-    private IEditableSource source;
-    private TableController tableController;
+    private final IEditableSource source;
+    private final TableController tableController;
 
     public AlphanumericTableModel(IEditableSource source, String[] colNames,
 	    String[] colAliases, IRowFilter filter) {
@@ -72,13 +72,11 @@ public class AlphanumericTableModel extends BaseTableModel {
 	return source;
     }
 
-
-    public void create(HashMap<String, String> values)
-	    throws Exception {
+    public void create(HashMap<String, String> values) throws Exception {
 	long pos = tableController.create(values);
 	if (pos != TableController.NO_ROW) {
 	    initMetadata();
-	    this.fireTableRowsInserted(rowCount, rowCount);
+	    this.fireTableDataChanged();
 	}
     }
 
@@ -103,10 +101,10 @@ public class AlphanumericTableModel extends BaseTableModel {
 	    StartWriterVisitorException, InitializeWriterException,
 	    ReadDriverException {
 	tableController.delete(rowIndexes.get(row));
-	this.fireTableRowsDeleted(row, row);
+	this.fireTableDataChanged();
 	initMetadata();
     }
-    
+
     public TableController getController() {
 	return tableController;
     }

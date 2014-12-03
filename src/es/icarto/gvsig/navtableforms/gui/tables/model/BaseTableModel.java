@@ -102,8 +102,8 @@ public abstract class BaseTableModel extends AbstractTableModel {
     }
 
     public void dataChanged() {
-	this.fireTableDataChanged();
 	initMetadata();
+	this.fireTableDataChanged();
     }
 
     public int[] getMaxLengths() {

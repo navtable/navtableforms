@@ -35,18 +35,18 @@ public class AlphanumericCompleteJTableContextualMenu extends
     @Override
     public void mouseClicked(MouseEvent e) {
 	table = (JTable) e.getComponent();
-	if ((e.getClickCount() == 2) && (table.getSelectedRow() > -1)) {
+	int selectedRow = getSelectedRowIdx();
+	if ((e.getClickCount() == 2) && (selectedRow > -1)) {
 	    TableModel model = table.getModel();
 	    if (model instanceof AlphanumericTableModel) {
 		form.actionUpdateRecord(((AlphanumericTableModel) model)
-			.convertRowIndexToModel(table.getSelectedRow()));
+			.convertRowIndexToModel(selectedRow));
 	    } else {
-		form.actionUpdateRecord(table.convertRowIndexToModel(table
-			.getSelectedRow()));
+		form.actionUpdateRecord(table
+			.convertRowIndexToModel(selectedRow));
 	    }
 	} else if (e.getButton() == BUTTON_RIGHT) {
-	    if (!JTableUtils.hasRows(table)
-		    || (table.getSelectedRow() == NO_ROW_SELECTED)) {
+	    if (!JTableUtils.hasRows(table) || (selectedRow == NO_ROW_SELECTED)) {
 		updateMenuItem.setEnabled(false);
 		deleteMenuItem.setEnabled(false);
 	    } else {
@@ -55,6 +55,14 @@ public class AlphanumericCompleteJTableContextualMenu extends
 	    }
 	    popupMenu.show(e.getComponent(), e.getX(), e.getY());
 	}
+    }
+
+    private int getSelectedRowIdx() {
+	int selectedRow = table.getSelectedRow();
+	if ((table.getRowSorter() != null) && (selectedRow > -1)) {
+	    return table.getRowSorter().convertRowIndexToModel(selectedRow);
+	}
+	return selectedRow;
     }
 
     @Override
@@ -118,12 +126,13 @@ public class AlphanumericCompleteJTableContextualMenu extends
 		return;
 	    }
 	    TableModel model = table.getModel();
+	    final int selectedRow = getSelectedRowIdx();
 	    if (model instanceof BaseTableModel) {
 		form.actionUpdateRecord(((BaseTableModel) model)
-			.convertRowIndexToModel(table.getSelectedRow()));
+			.convertRowIndexToModel(selectedRow));
 	    } else {
-		form.actionUpdateRecord(table.convertRowIndexToModel(table
-			.getSelectedRow()));
+		form.actionUpdateRecord(table
+			.convertRowIndexToModel(selectedRow));
 	    }
 	}
     }
@@ -154,12 +163,13 @@ public class AlphanumericCompleteJTableContextualMenu extends
 				options[0]);
 		if (response == JOptionPane.YES_OPTION) {
 		    TableModel model = table.getModel();
+		    final int selectedRow = getSelectedRowIdx();
 		    if (model instanceof AlphanumericTableModel) {
 			form.actionDeleteRecord(((AlphanumericTableModel) model)
-				.convertRowIndexToModel(table.getSelectedRow()));
+				.convertRowIndexToModel(selectedRow));
 		    } else {
 			form.actionDeleteRecord(table
-				.convertRowIndexToModel(table.getSelectedRow()));
+				.convertRowIndexToModel(selectedRow));
 		    }
 		}
 
