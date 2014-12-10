@@ -50,6 +50,8 @@ public class FillHandler {
 	    } else if ((comp instanceof JCheckBox)
 		    && (((JCheckBox) comp).isSelected())) {
 		((JCheckBox) comp).doClick();
+	    } else if (comp instanceof JDateChooser) {
+		((JDateChooser) comp).setDate(null);
 	    }
 	}
     }
@@ -70,6 +72,9 @@ public class FillHandler {
 		if (((JCheckBox) comp).isSelected()) {
 		    ((JCheckBox) comp).doClick();
 		}
+	    } else if (comp instanceof JDateChooser) {
+		((JDateChooser) comp).setDate(null);
+		iController.setValue(w, "");
 	    }
 	}
     }
@@ -196,7 +201,7 @@ public class FillHandler {
 	    fillJComboBoxWithAbeilleValues(combobox, fieldValue);
 	}
     }
-    
+
     private void fillJDateChooser(JDateChooser field) {
 	String colName = field.getName();
 	String fieldValue = iController.getValue(colName);
@@ -216,7 +221,7 @@ public class FillHandler {
 	    } else if (comp instanceof JComboBox) {
 		fillJComboBox((JComboBox) comp);
 	    } else if (comp instanceof JDateChooser) {
-		fillJDateChooser((JDateChooser)comp);
+		fillJDateChooser((JDateChooser) comp);
 	    }
 	}
     }
