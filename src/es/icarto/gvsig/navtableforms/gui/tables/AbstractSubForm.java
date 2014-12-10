@@ -1,8 +1,10 @@
 package es.icarto.gvsig.navtableforms.gui.tables;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.InputStream;
@@ -114,11 +116,7 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 	widgets = AbeilleParser.getWidgetsFromContainer(formPanel);
 	for (JComponent c : getWidgets().values()) {
 	    if (c instanceof JDateChooser) {
-		SimpleDateFormat dateFormat = DateFormatNT.getDateFormat();
-		((JDateChooser) c).setDateFormatString(dateFormat.toPattern());
-		((JDateChooser) c).getDateEditor().setEnabled(false);
-		((JDateChooser) c).getDateEditor().getUiComponent()
-			.setToolTipText(null);
+		initDateChooser((JDateChooser) c);
 	    }
 	}
 	// AbeilleUtils au = new AbeilleUtils();
@@ -127,6 +125,18 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 	add(scrollPane);
 	add(getSouthPanel());
 	setFocusCycleRoot(true);
+    }
+
+    private void initDateChooser(JDateChooser c) {
+	SimpleDateFormat dateFormat = DateFormatNT.getDateFormat();
+	c.setDateFormatString(dateFormat.toPattern());
+	c.getDateEditor().setEnabled(false);
+	c.getDateEditor().getUiComponent()
+		.setBackground(new Color(255, 255, 255));
+	c.getDateEditor().getUiComponent()
+		.setFont(new Font("Arial", Font.PLAIN, 11));
+	c.getDateEditor().getUiComponent().setToolTipText(null);
+
     }
 
     public void setForeingKey(Map<String, String> foreingKey) {

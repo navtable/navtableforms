@@ -17,6 +17,8 @@
 package es.icarto.gvsig.navtableforms;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -171,13 +173,21 @@ public abstract class AbstractForm extends AbstractNavTable implements
 		ormlite.getAppDomain());
 	for (JComponent c : getWidgets().values()) {
 	    if (c instanceof JDateChooser) {
-		SimpleDateFormat dateFormat = DateFormatNT.getDateFormat();
-		((JDateChooser) c).setDateFormatString(dateFormat.toPattern());
-		((JDateChooser) c).getDateEditor().setEnabled(false);
-		((JDateChooser) c).getDateEditor().getUiComponent()
-			.setToolTipText(null);
+		initDateChooser((JDateChooser) c);
 	    }
 	}
+    }
+
+    private void initDateChooser(JDateChooser c) {
+	SimpleDateFormat dateFormat = DateFormatNT.getDateFormat();
+	c.setDateFormatString(dateFormat.toPattern());
+	c.getDateEditor().setEnabled(false);
+	c.getDateEditor().getUiComponent()
+		.setBackground(new Color(255, 255, 255));
+	c.getDateEditor().getUiComponent()
+		.setFont(new Font("Arial", Font.PLAIN, 11));
+	c.getDateEditor().getUiComponent().setToolTipText(null);
+
     }
 
     /**
