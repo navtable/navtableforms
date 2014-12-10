@@ -118,7 +118,7 @@ public class AlphanumericCompleteJTableContextualMenu extends
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-	    if ((table != null) && (table.getSelectedRowCount() != 1)) {
+	    if ((table == null) || (table.getSelectedRowCount() != 1)) {
 		JOptionPane.showMessageDialog(null,
 			"Debe seleccionar una fila para editar los datos.",
 			"Ninguna fila seleccionada",
@@ -146,7 +146,7 @@ public class AlphanumericCompleteJTableContextualMenu extends
 	@Override
 	public void actionPerformed(ActionEvent e) {
 
-	    if ((table != null) && (table.getSelectedRowCount() != 1)) {
+	    if ((table == null) || (table.getSelectedRowCount() != 1)) {
 		JOptionPane.showMessageDialog(null,
 			"Debe seleccionar una fila para eliminar los datos.",
 			"Ninguna fila seleccionada",
