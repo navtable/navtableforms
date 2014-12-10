@@ -145,7 +145,7 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 
     private JPanel getSouthPanel() {
 	if (southPanel == null) {
-	    southPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+	    southPanel = new JPanel(new FlowLayout(FlowLayout.TRAILING));
 	    saveButton = new JButton("Guardar");
 	    action = new CreateAction(this);
 	    saveButton.addActionListener(action);
@@ -185,13 +185,11 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 	    if (widget != null) {
 		if (widget instanceof JTextField) {
 		    ((JTextField) widgets.get(f)).setText(value);
-		} else {
-		    if (widget instanceof JComboBox) {
-			JComboBox combo = (JComboBox) widgets.get(f);
-			for (int i = combo.getItemCount() - 1; i >= 0; i--) {
-			    if (combo.getItemAt(i).equals(value)) {
-				combo.setSelectedIndex(i);
-			    }
+		} else if (widget instanceof JComboBox) {
+		    JComboBox combo = (JComboBox) widgets.get(f);
+		    for (int i = combo.getItemCount() - 1; i >= 0; i--) {
+			if (combo.getItemAt(i).equals(value)) {
+			    combo.setSelectedIndex(i);
 			}
 		    }
 		}
@@ -484,7 +482,7 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 	    } catch (Exception e) {
 		iController.clearAll();
 		position = -1;
-		logger.error(e.getStackTrace());
+		logger.error(e.getStackTrace(), e);
 	    }
 	    PluginServices.getMDIManager().closeWindow(iWindow);
 	}
