@@ -17,49 +17,28 @@
 package es.icarto.gvsig.navtableforms.ormlite.domainvalidator.rules;
 
 import java.text.NumberFormat;
-import java.text.ParseException;
+import java.text.ParsePosition;
 
 import es.udc.cartolab.gvsig.navtable.format.DoubleFormatNT;
 
-
 public class DoublePositiveRule extends ValidationRule {
 
-    private NumberFormat format;
-
     public DoublePositiveRule() {
-	format = DoubleFormatNT.getDisplayingFormat();
+	super();
     }
 
     @Override
     public boolean validate(String value) {
-	return isEmpty (value) || isDoublePositive(value);
+	return isEmpty(value) || isDoublePositive(value);
     }
 
     private boolean isDoublePositive(String value) {
-	try {
-	    value = removeStartingTrailingZeros(value);
-	    Double doubleValue = format.parse(value).doubleValue();
-	    if ((doubleValue.toString().length() == value.length())
-		    && (doubleValue >= 0.0)) {
-		return true;
-	    }
-	    return false;
-	} catch (ParseException nfe) {
-	    return false;
-	}
-    }
-
-    private String removeStartingTrailingZeros(String number) {
-	char decimalSeparator = format.format(1.1).charAt(1);
-	String aux = number.replaceAll("^[0]*", "").replaceAll("[0]*$", "")
-		.replaceAll("\\" + decimalSeparator + "$", "");
-	if (!aux.contains("" + decimalSeparator)) {
-	    aux += decimalSeparator + "0";
-	}
-	if (aux.startsWith("" + decimalSeparator)) {
-	    aux = "0" + aux;
-	}
-	return aux;
+	value = value.trim();
+	NumberFormat formatter = DoubleFormatNT.getDisplayingFormat();
+	ParsePosition pos = new ParsePosition(0);
+	Number number = formatter.parse(value, pos);
+	return (value.length() == pos.getIndex())
+		&& (number.doubleValue() >= 0);
     }
 
 }
