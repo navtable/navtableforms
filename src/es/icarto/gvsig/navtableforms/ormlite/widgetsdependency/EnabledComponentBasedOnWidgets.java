@@ -131,7 +131,9 @@ public class EnabledComponentBasedOnWidgets implements ActionListener {
 		if ((component instanceof JComboBox) && !enabled) {
 		    // If the component is a combobox and we are disabling
 		    // it, prior to that we select the default item.
-		    ((JComboBox) component).setSelectedIndex(0);
+		    if (((JComboBox) component).getItemCount() > 0) {
+			((JComboBox) component).setSelectedIndex(0);
+		    }
 		} else {
 		    if ((component instanceof JCheckBox) && !enabled
 			    && ((JCheckBox) component).isSelected()) {
