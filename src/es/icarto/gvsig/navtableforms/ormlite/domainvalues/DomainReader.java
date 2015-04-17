@@ -22,10 +22,13 @@ package es.icarto.gvsig.navtableforms.ormlite.domainvalues;
  * Interface for all DomainReaders.
  * 
  * @author Jorge López <jlopez@cartolab.es>
+ * @author Francisco Puga <fpuga@icarto.es>
  * 
  */
 public interface DomainReader {
 
     public DomainValues getDomainValues();
+    
+    public void setAddVoidValue(boolean addVoidValue);
 
 }

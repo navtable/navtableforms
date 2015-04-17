@@ -45,6 +45,7 @@ import es.icarto.gvsig.navtableforms.ormlite.widgetsdependency.DependencyReader;
  * @author Andrés Maneiro <amaneiro@icarto.es>
  * @author Jorge López <jlopez@cartolab.es>
  * @author Pablo Sanxiao <psanxiao@icarto.es>
+ * @author Franciscoo Puga <fpuga@icarto.es>
  * 
  */
 public class XMLSAXParser extends DefaultHandler {
@@ -189,10 +190,7 @@ public class XMLSAXParser extends DefaultHandler {
 		((DomainReaderDB) tmpDomainReader).addColumnForeignKey(tmpVal);
 	    }
 	} else if (qName.equalsIgnoreCase("DRADDVOIDVALUE")) {
-	    if (tmpDomainReader instanceof DomainReaderDB) {
-		((DomainReaderDB) tmpDomainReader).setAddVoidValue(Boolean
-			.parseBoolean(tmpVal));
-	    }
+		tmpDomainReader.setAddVoidValue(Boolean.parseBoolean(tmpVal));
 	}
 
 	// set tmp domain file reader configuration

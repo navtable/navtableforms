@@ -29,12 +29,15 @@ import java.util.ArrayList;
  * DomainReader which reads the values from a file.
  * The file must be in the same dir as the xml.
  * 
+ * File must use UTF8 encoding if it has "weird" chars
+ * 
  * XML syntax example:
  * 
  * <DOMAINREADER>
  *	<DRTYPE>file</DRTYPE>
  *	<DRFILENAME>example1</DRFILENAME>
  *	<DRFILEFIELDALIAS>gestion</DRFILEFIELDALIAS>
+ *  <DRADDVOIDVALUE>boolean</DRADDVOIDVALUE>
  * </DOMAINREADER>
  * 
  * @author Jorge López <jlopez@cartolab.es>
@@ -44,6 +47,7 @@ public class DomainReaderFile implements DomainReader {
 
     String fileName = null;
     String fieldAlias = null;
+	private boolean addVoidValue = false;;
 
     public DomainReaderFile() {
     }
@@ -54,6 +58,10 @@ public class DomainReaderFile implements DomainReader {
 
     public void setFieldAlias(String fieldAlias) {
 	this.fieldAlias = fieldAlias;
+    }
+    
+    public void setAddVoidValue(boolean addVoidValue) {
+    	this.addVoidValue  = addVoidValue;
     }
 
     public DomainValues getDomainValues() {
@@ -100,7 +108,7 @@ public class DomainReaderFile implements DomainReader {
 				}
 	    	}
 	    }
-	    return new DomainValues(list);
+	    return new DomainValues(list, addVoidValue);
 	}
 	return null;
     }
