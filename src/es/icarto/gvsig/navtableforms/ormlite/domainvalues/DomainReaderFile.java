@@ -18,10 +18,10 @@
 package es.icarto.gvsig.navtableforms.ormlite.domainvalues;
 
 import java.io.BufferedReader;
-import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 
@@ -59,11 +59,10 @@ public class DomainReaderFile implements DomainReader {
     public DomainValues getDomainValues() {
 	if (fileName != null && fieldAlias != null) {
 	    ArrayList<KeyValue> list = new ArrayList<KeyValue>();
+	    BufferedReader fileReader = null;
 	    try {
 		String line;
-		BufferedReader fileReader = new BufferedReader(new FileReader(
-			System.getProperty("user.dir") + File.separator
-			+ fileName));
+		fileReader = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), "UTF8"));
 		while ((line = fileReader.readLine()) != null) {
 		    String tokens[] = line.split("=");
 		    if (tokens.length == 2) {
@@ -93,6 +92,13 @@ public class DomainReaderFile implements DomainReader {
 	    } catch (IOException e) {
 		e.printStackTrace(System.out);
 		return null;
+	    } finally {
+	    	if (fileReader != null) {
+	    		try {
+					fileReader.close();
+				} catch (IOException e) {
+				}
+	    	}
 	    }
 	    return new DomainValues(list);
 	}
