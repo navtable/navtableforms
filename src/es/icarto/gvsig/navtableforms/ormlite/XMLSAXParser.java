@@ -80,7 +80,7 @@ public class XMLSAXParser extends DefaultHandler {
     }
 
     private String getXMLFileDir() {
-	return xmlFile.substring(0, xmlFile.lastIndexOf(File.separator) + 1);
+    	return new File(xmlFile).getParent() + File.separator;
     }
 
     private void setXMLFile(String xmlFile) {

@@ -2,6 +2,7 @@
 <plugin-config>
 	<depends plugin-name="com.iver.cit.gvsig" />
 	<depends plugin-name="com.iver.cit.gvsig.cad" />
+	<depends plugin-name="es.icarto.gvsig.commons"/>
 	<depends plugin-name="es.udc.cartolab.gvsig.navtable"/>
 	<depends plugin-name="es.udc.cartolab.gvsig.users"/>
 	<libraries library-dir="lib"/>

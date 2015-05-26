@@ -18,11 +18,14 @@
 package es.icarto.gvsig.navtableforms.ormlite.domainvalues;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+
+import org.apache.log4j.Logger;
 
 
 /**
@@ -45,6 +48,9 @@ import java.util.ArrayList;
  */
 public class DomainReaderFile implements DomainReader {
 
+	
+	private static final Logger logger = Logger
+			.getLogger(DomainReaderFile.class);
     String fileName = null;
     String fieldAlias = null;
 	private boolean addVoidValue = false;;
@@ -95,10 +101,10 @@ public class DomainReaderFile implements DomainReader {
 		    }
 		}
 	    } catch (FileNotFoundException e) {
-		e.printStackTrace(System.out);
+	    	logger.error(e.getStackTrace(), e);
 		return null;
 	    } catch (IOException e) {
-		e.printStackTrace(System.out);
+	    	logger.error(e.getStackTrace(), e);
 		return null;
 	    } finally {
 	    	if (fileReader != null) {
