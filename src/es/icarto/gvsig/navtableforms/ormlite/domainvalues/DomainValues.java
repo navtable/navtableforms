@@ -39,7 +39,7 @@ public class DomainValues {
 	    subset.add(new KeyValue("", " "));
 	}
 	subset.addAll(data);
-	return data;
+	return subset;
     }
 
     public ArrayList<KeyValue> getValuesFilteredBy(List<String> ids) {
