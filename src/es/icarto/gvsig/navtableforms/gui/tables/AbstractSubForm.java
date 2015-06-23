@@ -143,6 +143,10 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 	this.foreingKey = foreingKey;
     }
 
+    public Map<String, String> getForeingKey() {
+		return foreingKey;
+	}
+    
     private JPanel getSouthPanel() {
 	if (southPanel == null) {
 	    southPanel = new JPanel(new FlowLayout(FlowLayout.TRAILING));
