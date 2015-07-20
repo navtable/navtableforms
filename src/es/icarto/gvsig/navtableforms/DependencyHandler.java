@@ -13,12 +13,12 @@ import es.icarto.gvsig.navtableforms.ormlite.widgetsdependency.EnabledComponentB
 public class DependencyHandler {
 
     private ORMLite ormlite;
-    private HashMap<String, JComponent> widgets;
+    private Map<String, JComponent> widgets;
     private IValidatableForm form;
     private Map<JComponent, EnabledComponentBasedOnWidgets> enabledIfs = new HashMap<JComponent, EnabledComponentBasedOnWidgets>();
 
     public DependencyHandler(ORMLite ormlite,
-	    HashMap<String, JComponent> widgetsVector, IValidatableForm form) {
+	    Map<String, JComponent> widgetsVector, IValidatableForm form) {
 	this.ormlite = ormlite;
 	this.widgets = widgetsVector;
 	this.form = form;

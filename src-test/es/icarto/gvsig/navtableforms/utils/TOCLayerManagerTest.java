@@ -19,30 +19,32 @@ public class TOCLayerManagerTest {
 	FLyrVect lyrVect = new FLyrVectStub("test");
 	MapControlStub mapControl = new MapControlStub();
 	mapControl.addLayer(lyrVect);
-	
+
 	FLayers group = new FLayers();
 	group.setName("test group");
 	FLyrVect vectLyrInGroup = new FLyrVectStub("inner vect layer");
 	group.addLayer(vectLyrInGroup);
 	mapControl.addLayer(group);
-	
+
 	FLayers sameNameGroup = new FLayers();
 	sameNameGroup.setName("group and layer have same name");
-	FLyrVect sameNameLyr = new FLyrVectStub("group and layer have same name");
+	FLyrVect sameNameLyr = new FLyrVectStub(
+		"group and layer have same name");
 	sameNameGroup.addLayer(sameNameLyr);
 	mapControl.addLayer(sameNameGroup);
-	
+
 	TOCLayerManager tocLayerManager = new TOCLayerManager(mapControl);
-	
+
 	FLyrVect notFound = tocLayerManager.getLayerByName("test group");
 	assertNull(notFound);
-	
+
 	FLyrVect testLyrVect = tocLayerManager.getLayerByName("test");
 	assertEquals(testLyrVect, lyrVect);
-	
-	FLyrVect groupedLayer = tocLayerManager.getLayerByName("group and layer have same name");
+
+	FLyrVect groupedLayer = tocLayerManager
+		.getLayerByName("group and layer have same name");
 	assertEquals(groupedLayer, sameNameLyr);
-	
+
     }
 
     @Test
@@ -50,7 +52,7 @@ public class TOCLayerManagerTest {
 	FLyrVect lyrVect = new FLyrVectStub("test");
 	MapControlStub mapControl = new MapControlStub();
 	mapControl.addLayer(lyrVect);
-	
+
 	TOCLayerManager tocLayerManager = new TOCLayerManager(mapControl);
 	assertTrue(tocLayerManager.hasName(lyrVect, "test"));
     }
@@ -70,13 +72,13 @@ public class TOCLayerManagerTest {
 	FLyrVect lyrVect = new FLyrVectStub("test");
 	MapControlStub mapControl = new MapControlStub();
 	mapControl.addLayer(lyrVect);
-	
+
 	FLayers group = new FLayers();
 	group.setName("test group");
 	FLyrVect vectLyrInGroup = new FLyrVectStub("inner vect layer");
 	group.addLayer(vectLyrInGroup);
 	mapControl.addLayer(group);
-	
+
 	TOCLayerManager tocLayerManager = new TOCLayerManager(mapControl);
 	assertTrue(tocLayerManager.isFLayers(group));
     }

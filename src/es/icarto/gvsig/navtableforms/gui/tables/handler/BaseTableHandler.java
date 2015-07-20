@@ -1,6 +1,7 @@
 package es.icarto.gvsig.navtableforms.gui.tables.handler;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -69,7 +70,7 @@ public abstract class BaseTableHandler {
     protected BaseJTableContextualMenu listener;
 
     public BaseTableHandler(String tableName,
-	    HashMap<String, JComponent> widgets, String foreignKeyId,
+	    Map<String, JComponent> widgets, String foreignKeyId,
 	    String[] colNames, String[] colAliases) {
 	this.sourceTableName = tableName;
 	getJTable(widgets);
@@ -87,7 +88,7 @@ public abstract class BaseTableHandler {
 	}
     }
 
-    protected void getJTable(HashMap<String, JComponent> widgets) {
+    protected void getJTable(Map<String, JComponent> widgets) {
 	jtable = (JTable) widgets.get(sourceTableName);
     }
 
