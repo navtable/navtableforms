@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -35,6 +36,7 @@ import com.iver.andami.ui.mdiManager.IWindowListener;
 import com.iver.andami.ui.mdiManager.WindowInfo;
 import com.iver.cit.gvsig.exceptions.visitors.StopWriterVisitorException;
 import com.iver.cit.gvsig.fmap.edition.IEditableSource;
+import com.jeta.forms.components.image.ImageComponent;
 import com.jeta.forms.components.panel.FormPanel;
 import com.jeta.forms.gui.common.FormException;
 import com.toedter.calendar.JDateChooser;
@@ -46,6 +48,8 @@ import es.icarto.gvsig.navtableforms.ValidationHandler;
 import es.icarto.gvsig.navtableforms.calculation.Calculation;
 import es.icarto.gvsig.navtableforms.calculation.CalculationHandler;
 import es.icarto.gvsig.navtableforms.chained.ChainedHandler;
+import es.icarto.gvsig.navtableforms.gui.images.ImageHandler;
+import es.icarto.gvsig.navtableforms.gui.images.ImageHandlerManager;
 import es.icarto.gvsig.navtableforms.gui.tables.handler.BaseTableHandler;
 import es.icarto.gvsig.navtableforms.gui.tables.model.AlphanumericTableModel;
 import es.icarto.gvsig.navtableforms.ormlite.ORMLite;
@@ -71,6 +75,7 @@ IValidatableForm, IWindow, IWindowListener {
     private final DependencyHandler dependencyHandler;
     private final CalculationHandler calculationHandler;
     private final ChainedHandler chainedHandler;
+    private ImageHandlerManager imageHandlerManager;
     private boolean isFillingValues;
     private boolean changedValues;
 
@@ -97,6 +102,7 @@ IValidatableForm, IWindow, IWindowListener {
 	dependencyHandler = new DependencyHandler(ormlite, widgets, this);
 	calculationHandler = new CalculationHandler();
 	chainedHandler = new ChainedHandler();
+	imageHandlerManager = new ImageHandlerManager();
     }
 
     public AbstractSubForm() {
@@ -107,6 +113,7 @@ IValidatableForm, IWindow, IWindowListener {
 	dependencyHandler = new DependencyHandler(ormlite, widgets, this);
 	calculationHandler = new CalculationHandler();
 	chainedHandler = new ChainedHandler();
+	imageHandlerManager = new ImageHandlerManager();
     }
 
     private void initGUI() {
@@ -132,9 +139,9 @@ IValidatableForm, IWindow, IWindowListener {
 	c.setDateFormatString(dateFormat.toPattern());
 	c.getDateEditor().setEnabled(false);
 	c.getDateEditor().getUiComponent()
-		.setBackground(new Color(255, 255, 255));
+	.setBackground(new Color(255, 255, 255));
 	c.getDateEditor().getUiComponent()
-		.setFont(new Font("Arial", Font.PLAIN, 11));
+	.setFont(new Font("Arial", Font.PLAIN, 11));
 	c.getDateEditor().getUiComponent().setToolTipText(null);
 
     }
@@ -143,10 +150,10 @@ IValidatableForm, IWindow, IWindowListener {
 	this.foreingKey = foreingKey;
     }
 
-    public Map<String, String> getForeingKey() {
-		return foreingKey;
-	}
-    
+    public Map<String, String> getForeignKey() {
+	return foreingKey;
+    }
+
     private JPanel getSouthPanel() {
 	if (southPanel == null) {
 	    southPanel = new JPanel(new FlowLayout(FlowLayout.TRAILING));
@@ -166,6 +173,7 @@ IValidatableForm, IWindow, IWindowListener {
 	}
 	calculationHandler.setListeners();
 	chainedHandler.setListeners();
+	imageHandlerManager.setListeners();
     }
 
     public void removeListeners() {
@@ -176,6 +184,7 @@ IValidatableForm, IWindow, IWindowListener {
 	}
 	calculationHandler.removeListeners();
 	chainedHandler.removeListeners();
+	imageHandlerManager.removeListeners();
     }
 
     public void fillEmptyValues() {
@@ -203,6 +212,7 @@ IValidatableForm, IWindow, IWindowListener {
 	fillSpecificValues();
 	dependencyHandler.fillValues();
 	chainedHandler.fillEmptyValues();
+	imageHandlerManager.fillEmptyValues(); // fillValues()
 	setFillingValues(false);
     }
 
@@ -267,7 +277,7 @@ IValidatableForm, IWindow, IWindowListener {
 	return formPanel;
     }
 
-    private String getMetadataPath() {
+    protected String getMetadataPath() {
 	return this.getClass().getClassLoader()
 		.getResource("rules/" + getBasicName() + "_metadata.xml")
 		.getPath();
@@ -469,6 +479,25 @@ IValidatableForm, IWindow, IWindowListener {
 	}
 	chainedHandler.add(this, widgets.get(chained), parentList);
     }
+    
+    /**
+     * Instead of create an implementation of ImageHandler that only sets a path (FixedImageHandler) this utiliy method
+     * sets the image without doing anything more
+     * @param imgComponent
+     *            . Name of the abeille widget
+     * @param absPath
+     *            . Absolute path to the image or relative path from andami.jar
+     */
+    protected void addImageHandler(String imgComponent, String absPath) {
+	ImageComponent image = (ImageComponent) formPanel
+		.getComponentByName(imgComponent);
+	ImageIcon icon = new ImageIcon(absPath);
+	image.setIcon(icon);
+    }
+    
+    protected void addImageHandler(ImageHandler imageHandler) {
+	imageHandlerManager.addHandler(imageHandler);
+    }
 
     private final class CreateAction implements ActionListener {
 
@@ -517,14 +546,14 @@ IValidatableForm, IWindow, IWindowListener {
 			.replace("ERROR: ", "").replace(" ", "_")
 			.replace("\n", ""), auxMessageIntl = PluginServices
 			.getText(this, auxMessage);
-		if (auxMessageIntl.compareToIgnoreCase(auxMessage) != 0) {
-		    errorMessage = auxMessageIntl;
-		}
-		JOptionPane.showMessageDialog(
-			(Component) PluginServices.getMainFrame(),
-			errorMessage,
-			PluginServices.getText(this, "save_layer_error"),
-			JOptionPane.ERROR_MESSAGE);
+			if (auxMessageIntl.compareToIgnoreCase(auxMessage) != 0) {
+			    errorMessage = auxMessageIntl;
+			}
+			JOptionPane.showMessageDialog(
+				(Component) PluginServices.getMainFrame(),
+				errorMessage,
+				PluginServices.getText(this, "save_layer_error"),
+				JOptionPane.ERROR_MESSAGE);
 	    }
 	    PluginServices.getMDIManager().closeWindow(iWindow);
 	}
