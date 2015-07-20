@@ -57,7 +57,7 @@ import es.udc.cartolab.gvsig.navtable.format.DateFormatNT;
 
 @SuppressWarnings("serial")
 public abstract class AbstractSubForm extends JPanel implements IForm,
-	IValidatableForm, IWindow, IWindowListener {
+IValidatableForm, IWindow, IWindowListener {
 
     private static final Logger logger = Logger
 	    .getLogger(AbstractSubForm.class);
@@ -245,11 +245,12 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 	    logger.error(e.getStackTrace());
 	}
 	chainedHandler.fillValues();
+	imageHandlerManager.fillValues();
 	setFillingValues(false);
 	validationHandler.validate();
     }
 
-    protected FormPanel getFormPanel() {
+    public FormPanel getFormPanel() {
 	if (formPanel == null) {
 	    InputStream stream = getClass().getClassLoader()
 		    .getResourceAsStream("/forms/" + getBasicName() + ".jfrm");
