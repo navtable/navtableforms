@@ -76,7 +76,7 @@ public class I18nHandler {
     }
 
     /**
-     * The widget number must follow a syntax, which is
+     * The widget name must follow a syntax, which is
      *
      *     i18n.<i18n_key>[.<nr>][.<format_code>]*
      *
