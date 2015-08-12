@@ -43,11 +43,14 @@ import com.toedter.calendar.JDateChooser;
 
 import es.icarto.gvsig.navtableforms.DependencyHandler;
 import es.icarto.gvsig.navtableforms.FillHandler;
+import es.icarto.gvsig.navtableforms.I18nHandler;
+import es.icarto.gvsig.navtableforms.II18nForm;
 import es.icarto.gvsig.navtableforms.IValidatableForm;
 import es.icarto.gvsig.navtableforms.ValidationHandler;
 import es.icarto.gvsig.navtableforms.calculation.Calculation;
 import es.icarto.gvsig.navtableforms.calculation.CalculationHandler;
 import es.icarto.gvsig.navtableforms.chained.ChainedHandler;
+import es.icarto.gvsig.navtableforms.gui.i18n.resource.I18nResource;
 import es.icarto.gvsig.navtableforms.gui.images.ImageHandler;
 import es.icarto.gvsig.navtableforms.gui.images.ImageHandlerManager;
 import es.icarto.gvsig.navtableforms.gui.tables.handler.BaseTableHandler;
@@ -61,13 +64,14 @@ import es.udc.cartolab.gvsig.navtable.format.DateFormatNT;
 
 @SuppressWarnings("serial")
 public abstract class AbstractSubForm extends JPanel implements IForm,
-IValidatableForm, IWindow, IWindowListener {
+IValidatableForm, IWindow, IWindowListener, II18nForm {
 
     private static final Logger logger = Logger
 	    .getLogger(AbstractSubForm.class);
 
     private FormPanel formPanel;
     private HashMap<String, JComponent> widgets;
+    private final I18nHandler i18nHandler;
     private final ValidationHandler validationHandler;
     private IController iController;
     private final ORMLite ormlite;
@@ -96,6 +100,7 @@ IValidatableForm, IWindow, IWindowListener {
     public AbstractSubForm(String basicName) {
 	super(null);
 	this.basicName = basicName;
+	i18nHandler = new I18nHandler(this);
 	initGUI();
 	ormlite = new ORMLite(getMetadataPath());
 	validationHandler = new ValidationHandler(ormlite, this);
@@ -107,6 +112,7 @@ IValidatableForm, IWindow, IWindowListener {
 
     public AbstractSubForm() {
 	super();
+	i18nHandler = new I18nHandler(this);
 	initGUI();
 	ormlite = new ORMLite(getMetadataPath());
 	validationHandler = new ValidationHandler(ormlite, this);
@@ -132,6 +138,7 @@ IValidatableForm, IWindow, IWindowListener {
 	add(scrollPane);
 	add(getSouthPanel());
 	setFocusCycleRoot(true);
+	i18nHandler.translateFormStaticTexts();
     }
 
     private void initDateChooser(JDateChooser c) {
@@ -275,6 +282,10 @@ IValidatableForm, IWindow, IWindowListener {
 	    }
 	}
 	return formPanel;
+    }
+
+    public I18nResource[] getI18nResources() {
+	return null;
     }
 
     protected String getMetadataPath() {
