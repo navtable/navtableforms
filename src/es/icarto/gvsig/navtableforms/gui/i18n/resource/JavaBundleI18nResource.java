@@ -4,9 +4,12 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+
+import org.gvsig.i18n.Messages;
 
 /**
  * I18n resource based onto Java's default i18n support (based on properties files).
@@ -22,6 +25,20 @@ import java.util.ResourceBundle;
  *
  */
 public class JavaBundleI18nResource implements I18nResource {
+
+    private final static Locale defaultLocale;
+
+    // We try to retrieve the default Locale from gvSIG. If no locales
+    // are obtained, then we fall back to the Java VM's default one
+    static {
+	@SuppressWarnings("unchecked")
+	ArrayList<Locale> locales = (ArrayList<Locale>) Messages.getPreferredLocales();
+	if (locales.isEmpty()) {
+	    defaultLocale = Locale.getDefault();
+	} else {
+	    defaultLocale = locales.get(0);
+	}
+    }
 
     private ResourceBundle i18nBundle;
 
@@ -66,7 +83,7 @@ public class JavaBundleI18nResource implements I18nResource {
      */
     public JavaBundleI18nResource(String i18nName, String i18nJavaFolderPath)
 	    throws MalformedURLException {
-	this(i18nName, i18nJavaFolderPath, Locale.getDefault());
+	this(i18nName, i18nJavaFolderPath, defaultLocale);
     }
 
     @Override
