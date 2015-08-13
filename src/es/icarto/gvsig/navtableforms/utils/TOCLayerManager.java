@@ -127,6 +127,17 @@ public class TOCLayerManager {
 	return layers.toArray(new FLyrVect[0]);
     }
 
+    public List<FLyrVect> getJoinedLayers() {
+	FLyrVect[] layers = getAllLayers();
+	List<FLyrVect> joinedLayers = new ArrayList<FLyrVect>();
+	for (FLyrVect l : layers) {
+	    if (l.isJoined()) {
+		joinedLayers.add(l);
+	    }
+	}
+	return joinedLayers;
+    }
+
     public View getView() {
 	if (view instanceof View) {
 	    return (View) view;
