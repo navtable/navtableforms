@@ -141,8 +141,14 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	return getFormBody();
     }
 
+    @Override
     public I18nResource[] getI18nResources() {
 	return null;
+    }
+
+    @Override
+    public I18nHandler getI18nHandler() {
+	return i18nHandler;
     }
 
     public abstract String getXMLPath();

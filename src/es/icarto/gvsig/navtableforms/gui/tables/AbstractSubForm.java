@@ -284,8 +284,14 @@ IValidatableForm, IWindow, IWindowListener, II18nForm {
 	return formPanel;
     }
 
+    @Override
     public I18nResource[] getI18nResources() {
 	return null;
+    }
+
+    @Override
+    public I18nHandler getI18nHandler() {
+	return i18nHandler;
     }
 
     protected String getMetadataPath() {
