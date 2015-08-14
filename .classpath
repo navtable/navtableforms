@@ -20,6 +20,6 @@
 	<classpathentry kind="lib" path="/es.icarto.gvsig.commons/lib/jcalendar-1.4.jar"/>
 	<classpathentry kind="lib" path="/es.icarto.gvsig.commons/lib/miglayout-swing-5.1-20150404.220019-96.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/extNavTable"/>
-	<classpathentry kind="lib" path="/_fwAndami/lib/gvsig-i18n.jar" sourcepath="/libInternationalization/src"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/libInternationalization"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
