@@ -3,7 +3,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="src-test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/extNavTable"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/libFMap"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/libGDBMS"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/extCAD"/>
@@ -20,5 +19,7 @@
 	<classpathentry kind="lib" path="/es.icarto.gvsig.commons/lib/formsrt.jar"/>
 	<classpathentry kind="lib" path="/es.icarto.gvsig.commons/lib/jcalendar-1.4.jar"/>
 	<classpathentry kind="lib" path="/es.icarto.gvsig.commons/lib/miglayout-swing-5.1-20150404.220019-96.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/extNavTable"/>
+	<classpathentry kind="lib" path="/_fwAndami/lib/gvsig-i18n.jar" sourcepath="/libInternationalization/src"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
