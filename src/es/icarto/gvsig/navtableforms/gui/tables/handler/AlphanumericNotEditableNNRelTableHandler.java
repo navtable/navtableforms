@@ -6,6 +6,7 @@ import javax.swing.JComponent;
 
 import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
 
+import es.icarto.gvsig.navtableforms.gui.i18n.I18nResourceManager;
 import es.icarto.gvsig.navtableforms.gui.tables.AbstractSubForm;
 import es.icarto.gvsig.navtableforms.gui.tables.menu.AlphanumericUpdateJTableContextualMenu;
 import es.icarto.gvsig.navtableforms.gui.tables.model.AlphanumericTableModel;
@@ -35,14 +36,36 @@ public class AlphanumericNotEditableNNRelTableHandler extends
 	form = FormFactory.createSubFormRegistered(sourceTableName);
     }
 
-    protected void createTableModel() throws ReadDriverException {
-	AlphanumericTableModel model = TableModelFactory
-		.createFromTableWithOrFilter(sourceTableName, destinationKey,
-			destinationKeyValues, colNames, colAliases);
-	jtable.setModel(model);
-	if (form != null) {
-	    form.setModel(model);
+    /**
+     * Constructor w/o the column aliases, which will be retrieved from
+     * the form's i18n resources.
+     */
+    public AlphanumericNotEditableNNRelTableHandler(String sourceTableName,
+	    HashMap<String, JComponent> widgets, String dbSchema,
+	    String originKey, String relTable, String destinationKey,
+	    String[] colNames) {
+	super(sourceTableName, widgets, dbSchema, originKey, relTable,
+		destinationKey, colNames, new String[colNames.length]);
+	FormFactory.checkAndLoadTableRegistered(sourceTableName);
+	form = FormFactory.createSubFormRegistered(sourceTableName);
+	I18nResourceManager i18nManager = form.getI18nHandler().getResourceManager();
+	for (int i = 0, len = colNames.length; i<len; i++) {
+	    colAliases[i] = i18nManager.getString(colNames[i]);
 	}
+    }
+
+    protected void createTableModel() throws ReadDriverException {
+	AlphanumericTableModel model;
+	if (form != null) {
+	    model = TableModelFactory.createFromTableWithOrFilter(sourceTableName,
+		    destinationKey, destinationKeyValues, colNames, colAliases,
+		    form.getI18nHandler().getResourceManager().getResources());
+	    form.setModel(model);
+	} else {
+	    model = TableModelFactory.createFromTableWithOrFilter(sourceTableName,
+		    destinationKey, destinationKeyValues, colNames, colAliases);
+	}
+	jtable.setModel(model);
     }
 
     @Deprecated

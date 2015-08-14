@@ -7,6 +7,7 @@ import javax.swing.JComponent;
 
 import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
 
+import es.icarto.gvsig.navtableforms.gui.i18n.I18nResourceManager;
 import es.icarto.gvsig.navtableforms.gui.tables.AbstractSubForm;
 import es.icarto.gvsig.navtableforms.gui.tables.menu.AlphanumericCompleteJTableContextualMenu;
 import es.icarto.gvsig.navtableforms.gui.tables.model.AlphanumericTableModel;
@@ -33,15 +34,35 @@ public class AlphanumericTableHandler extends BaseTableHandler {
 	form = FormFactory.createSubFormRegistered(tableName);
     }
 
+    /**
+     * Constructor w/o the column aliases, which will be retrieved from
+     * the form's i18n resources.
+     */
+    public AlphanumericTableHandler(String tableName,
+	    HashMap<String, JComponent> widgets, String foreignKeyId,
+	    String[] colNames) {
+	super(tableName, widgets, foreignKeyId, colNames, new String[colNames.length]);
+	FormFactory.checkAndLoadTableRegistered(tableName);
+	form = FormFactory.createSubFormRegistered(tableName);
+	I18nResourceManager i18nManager = form.getI18nHandler().getResourceManager();
+	for (int i = 0, len = colNames.length; i<len; i++) {
+	    colAliases[i] = i18nManager.getString(colNames[i]);
+	}
+    }
+
     @Override
     protected void createTableModel() throws ReadDriverException {
-	AlphanumericTableModel model = TableModelFactory
-		.createFromTableWithFilter(sourceTableName, destinationKey,
-			originKeyValue, colNames, colAliases);
-	jtable.setModel(model);
+	AlphanumericTableModel model;
 	if (form != null) {
+	    model = TableModelFactory.createFromTableWithFilter(sourceTableName,
+		    destinationKey, originKeyValue, colNames, colAliases,
+		    form.getI18nHandler().getResourceManager().getResources());
 	    form.setModel(model);
+	} else {
+	    model = TableModelFactory.createFromTableWithFilter(sourceTableName,
+		    destinationKey, originKeyValue, colNames, colAliases);
 	}
+	jtable.setModel(model);
     }
 
     @Deprecated
