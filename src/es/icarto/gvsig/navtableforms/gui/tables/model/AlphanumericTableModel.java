@@ -1,7 +1,6 @@
 package es.icarto.gvsig.navtableforms.gui.tables.model;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import com.hardcode.gdbms.driver.exceptions.InitializeWriterException;
 import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
@@ -13,14 +12,12 @@ import com.iver.cit.gvsig.fmap.edition.IEditableSource;
 
 import es.icarto.gvsig.navtableforms.gui.tables.filter.IRowFilter;
 import es.udc.cartolab.gvsig.navtable.dataacces.TableController;
-import es.udc.cartolab.gvsig.users.utils.DBSessionSpatiaLite;
 
 @SuppressWarnings("serial")
 public class AlphanumericTableModel extends BaseTableModel {
 
     private final IEditableSource source;
     private final TableController tableController;
-    private Map<Integer, Integer> types = new HashMap<Integer, Integer>();
 
     public AlphanumericTableModel(IEditableSource source, String[] colNames,
 	    String[] colAliases, IRowFilter filter) {
@@ -39,51 +36,6 @@ public class AlphanumericTableModel extends BaseTableModel {
     }
 
     @Override
-    protected void initMetadata() {
-	super.initMetadata();
-	if (rowCount > 0) {
-	    try {
-		tableController.read(rowIndexes.get(0));
-	    } catch (ReadDriverException e1) {
-		e1.printStackTrace();
-	    }
-	    for (int i = 0, len = getColumnCount(); i < len; i++) {
-		int type = tableController.getType(getColumnNameInSource(i));
-		String driverName = source.getOriginalDriver().getName();
-		// If the column is a varchar and data was loaded from SQLite, it
-		// may store booleans and we must check it.
-		if ((DBSessionSpatiaLite.ALPHANUMERIC_DRIVER_NAME.equals(driverName) ||
-			DBSessionSpatiaLite.DRIVER_NAME.equals(driverName)) &&
-			type == java.sql.Types.VARCHAR) {
-		    boolean onlyBools = true, allNull = true;
-		    try {
-			// We assume the column stores booleans if it has at least
-			// one non-null value and all its non-null values are "true"
-			// or "false".
-			for (int j = 0, leng = rowCount; j < leng; j++) {
-			    tableController.read(rowIndexes.get(j));
-			    String value = tableController.getValue(getColumnNameInSource(i));
-			    if (value != null && value.length() >= 0) {
-				allNull = false;
-				if (!(value.equals("true") || value.equals("false"))) {
-				    onlyBools = false;
-				    break;
-				}
-			    }
-			}
-		    } catch (ReadDriverException e) {
-			e.printStackTrace();
-			onlyBools = false;
-		    }
-		    types.put(i, (onlyBools && !allNull) ? java.sql.Types.BOOLEAN : type);
-		} else {
-		    types.put(i, type);
-		}
-	    }
-	}
-    }
-
-    @Override
     public Object getValueAt(int row, int col) {
 	try {
 	    if (currentRow != row) {
@@ -91,7 +43,7 @@ public class AlphanumericTableModel extends BaseTableModel {
 		tableController.read(rowIndexes.get(row));
 	    }
 	    String value = tableController.getValue(getColumnNameInSource(col));
-	    int type = types.get(col);
+	    int type = tableController.getType(getColumnNameInSource(col));
 	    if ((type == java.sql.Types.BOOLEAN)
 		    || (type == java.sql.Types.BIT)) {
 		String translation;
