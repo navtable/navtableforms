@@ -1,5 +1,9 @@
 package es.icarto.gvsig.navtableforms.gui.i18n;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import es.icarto.gvsig.navtableforms.gui.i18n.resource.I18nResource;
 
 /**
@@ -13,15 +17,24 @@ import es.icarto.gvsig.navtableforms.gui.i18n.resource.I18nResource;
  */
 public class I18nResourceManager {
 
-    private I18nResource[] resources;
+    private List<I18nResource> resources;
 
     public I18nResourceManager(I18nResource[] resources) {
-	this.resources = (resources != null ? resources : new I18nResource[0]);
+	this.resources = (resources != null ?
+		new ArrayList<I18nResource>(Arrays.asList(resources)) : new ArrayList<I18nResource>());
+    }
+
+    public I18nResource[] getResources() {
+	return resources.toArray(new I18nResource[0]);
+    }
+
+    public void addResource(I18nResource resource) {
+	resources.add(resource);
     }
 
     public boolean containsKey(String key) {
-	for (int i = 0, len = resources.length; i < len; i++) {
-	    if (resources[i].containsKey(key)) {
+	for (I18nResource resource : resources) {
+	    if (resource.containsKey(key)) {
 		return true;
 	    }
 	}
@@ -30,8 +43,8 @@ public class I18nResourceManager {
 
     public String getString(String key, String defaultValue) {
 	String value;
-	for (int i = 0, len = resources.length; i < len; i++) {
-	    value = resources[i].getString(key);
+	for (I18nResource resource : resources) {
+	    value = resource.getString(key);
 	    if (value != null) {
 		return value;
 	    }
