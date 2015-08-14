@@ -4,12 +4,12 @@ import java.util.HashMap;
 
 import com.hardcode.gdbms.driver.exceptions.InitializeWriterException;
 import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
-import com.iver.andami.PluginServices;
 import com.iver.cit.gvsig.exceptions.visitors.StartWriterVisitorException;
 import com.iver.cit.gvsig.exceptions.visitors.StopWriterVisitorException;
 import com.iver.cit.gvsig.fmap.core.IRow;
 import com.iver.cit.gvsig.fmap.edition.IEditableSource;
 
+import es.icarto.gvsig.navtableforms.gui.i18n.I18nResourceManager;
 import es.icarto.gvsig.navtableforms.gui.tables.filter.IRowFilter;
 import es.udc.cartolab.gvsig.navtable.dataacces.TableController;
 
@@ -18,18 +18,21 @@ public class AlphanumericTableModel extends BaseTableModel {
 
     private final IEditableSource source;
     private final TableController tableController;
+    private I18nResourceManager i18nManager;
 
     public AlphanumericTableModel(IEditableSource source, String[] colNames,
-	    String[] colAliases, IRowFilter filter) {
+	    String[] colAliases, I18nResourceManager i18nManager, IRowFilter filter) {
 	super(colNames, colAliases, filter);
+	this.i18nManager = i18nManager;
 	this.source = source;
 	this.tableController = new TableController(source);
 	initMetadata();
     }
 
     public AlphanumericTableModel(IEditableSource source, String[] colNames,
-	    String[] colAliases) {
+	    String[] colAliases, I18nResourceManager i18nManager) {
 	super(colNames, colAliases);
+	this.i18nManager = i18nManager;
 	this.source = source;
 	this.tableController = new TableController(source);
 	initMetadata();
@@ -46,20 +49,10 @@ public class AlphanumericTableModel extends BaseTableModel {
 	    int type = tableController.getType(getColumnNameInSource(col));
 	    if ((type == java.sql.Types.BOOLEAN)
 		    || (type == java.sql.Types.BIT)) {
-		String translation;
-		if (value.length() == 0) {
-		    translation = PluginServices.getText(this,
-			    "table_null_value");
-		    // If there is no translation, we show the value itself.
-		    value = (!translation.equals("table_null_value")) ? translation
-			    : value;
-		} else {
-		    translation = PluginServices.getText(this, "table_" + value
-			    + "_value");
-		    // If there is no translation, we show the value itself.
-		    value = (!translation.equals("table_" + value + "_value")) ? translation
-			    : value;
-		}
+		// If there is no translation, we show the value itself.
+		value = (value.length() == 0) ?
+			i18nManager.getString("table_null_value", value) :
+			i18nManager.getString("table_" + value + "_value", value);
 	    }
 	    return value;
 	} catch (ReadDriverException e) {
