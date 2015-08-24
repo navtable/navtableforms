@@ -128,14 +128,23 @@ public class TOCLayerManager {
     }
 
     public List<FLyrVect> getJoinedLayers() {
-	FLyrVect[] layers = getAllLayers();
-	List<FLyrVect> joinedLayers = new ArrayList<FLyrVect>();
-	for (FLyrVect l : layers) {
+	List<FLyrVect> layers = new ArrayList<FLyrVect>();
+	for (FLyrVect l : getAllLayers()) {
 	    if (l.isJoined()) {
-		joinedLayers.add(l);
+		layers.add(l);
 	    }
 	}
-	return joinedLayers;
+	return layers;
+    }
+
+    public List<FLyrVect> getEditingLayers() {
+	List<FLyrVect> layers = new ArrayList<FLyrVect>();
+	for (FLyrVect l : getAllLayers()) {
+	    if (l.isEditing()) {
+		layers.add(l);
+	    }
+	}
+	return layers;
     }
 
     public View getView() {

@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.junit.Test;
 
+import com.iver.cit.gvsig.fmap.layers.FLayerStatus;
 import com.iver.cit.gvsig.fmap.layers.FLayers;
 import com.iver.cit.gvsig.fmap.layers.FLyrVect;
 
@@ -79,11 +80,43 @@ public class TOCLayerManagerTest {
 	assertTrue(cmp(expected, actual));
     }
 
-    private static <E> boolean cmp( List<E> l1, List<E> l2 ) {
-	// make a copy of the list so the original list is not changed, and remove() is supported
-	List<E> cp = new ArrayList<E>( l1 );
-	for ( Object o : l2 ) {
-	    if ( !cp.remove( o ) ) {
+    @Test
+    public void testGetEditingLayers() {
+	FLayerStatus status = new FLayerStatus();
+	status.editing = true;
+
+	FLyrVect lyrVect = new FLyrVectStub("test");
+	MapControlStub mapControl = new MapControlStub();
+	mapControl.addLayer(lyrVect);
+
+	FLayers group = new FLayers();
+	group.setName("test group");
+	FLyrVect vectLyrInGroup = new FLyrVectStub("inner vect layer");
+	vectLyrInGroup.setFLayerStatus(status);
+	group.addLayer(vectLyrInGroup);
+	mapControl.addLayer(group);
+
+	FLayers sameNameGroup = new FLayers();
+	final String sameName = "group and layer have same name";
+	sameNameGroup.setName(sameName);
+	FLyrVect sameNameLyr = new FLyrVectStub(sameName);
+	sameNameLyr.setFLayerStatus(status);
+	sameNameGroup.addLayer(sameNameLyr);
+	mapControl.addLayer(sameNameGroup);
+
+	TOCLayerManager tocLayerManager = new TOCLayerManager(mapControl);
+
+	List<FLyrVect> expected = Arrays.asList(vectLyrInGroup, sameNameLyr);
+	List<FLyrVect> actual = tocLayerManager.getEditingLayers();
+	assertTrue(cmp(expected, actual));
+    }
+
+    private static <E> boolean cmp(List<E> l1, List<E> l2) {
+	// make a copy of the list so the original list is not changed, and
+	// remove() is supported
+	List<E> cp = new ArrayList<E>(l1);
+	for (Object o : l2) {
+	    if (!cp.remove(o)) {
 		return false;
 	    }
 	}
