@@ -153,6 +153,7 @@ public class I18nHandler {
      * - lower: displays the text in lowercase.
      * - title: displays the text in title case (capitalizing the first
      *  letter of each word).
+     * - html: wraps the current text in html tags.
      */
     private static String formatValue(String value, String formatCode) {
 	if ("dd".equals(formatCode)) {
@@ -166,6 +167,9 @@ public class I18nHandler {
 	}
 	if ("title".equals(formatCode)) {
 	    return toTitleCase(value);
+	}
+	if ("html".equals(formatCode)) {
+	    return "<html>" + value + "</html>";
 	}
 	return value;
     }
