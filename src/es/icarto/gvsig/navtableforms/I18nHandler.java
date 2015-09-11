@@ -5,6 +5,7 @@ import java.awt.Container;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JCheckBox;
 import javax.swing.JTabbedPane;
 
 import com.jeta.forms.components.border.TitledBorderLabel;
@@ -67,6 +68,15 @@ public class I18nHandler {
 	} else if (comp instanceof TitledBorderLabel) {
 	    TitledBorderLabel title = (TitledBorderLabel) comp;
 	    title.setText(getTranslation(name, title.getText()));
+	} else if (comp instanceof JCheckBox) {
+	    JCheckBox chb = (JCheckBox) comp;
+	    // Checkboxes can't always have the i18n prefix because they must reference
+	    // a DB field name, so we add it manually in order to translate them when the
+	    // checkbox is already displaying a text
+	    if (!name.startsWith(i18nPrefix) && chb.getText() != null && !chb.getText().trim().isEmpty()) {
+		name = i18nPrefix + "." + name;
+	    }
+	    chb.setText(getTranslation(name, chb.getText()));
 	} else if (comp instanceof JTabbedPane) {
 	    JTabbedPane panel = (JTabbedPane) comp;
 	    for (int j = 0, leng = panel.getTabCount(); j < leng; j++) {
