@@ -34,6 +34,7 @@ public abstract class Calculation {
     protected IValidatableForm form;
     protected final NumberFormat formatter = DoubleFormatNT
 	    .getBigDecimalFormat();
+    private boolean calculateOnlyWhenValid = true;
 
     // TODO: Maybe this class should have a fillValues method. It will be used
     // to re-calculate the value and set it if the operator values have changed
@@ -51,12 +52,16 @@ public abstract class Calculation {
 	this.handler = new OperandComponentListener();
     }
 
+    protected void setCalculateOnlyWhenValid(boolean calculateOnlyWhenValid) {
+	this.calculateOnlyWhenValid = calculateOnlyWhenValid;
+    }
+
     protected abstract String resultName();
 
     protected abstract String[] operandNames();
 
     protected void setValue(boolean valid) {
-	if (!valid) {
+	if (calculateOnlyWhenValid && !valid) {
 	    return;
 	}
 
@@ -66,6 +71,9 @@ public abstract class Calculation {
 	}
 	resultWidget.setText(value);
 	form.getFormController().setValue(resultName(), value);
+	// We must assert that the new value in resultWidgets, passes the
+	// validation (or not)
+	form.validateForm();
     }
 
     protected abstract String calculate();
@@ -103,7 +111,7 @@ public abstract class Calculation {
     }
 
     public class OperandComponentListener implements KeyListener,
-	    ActionListener {
+    ActionListener {
 
 	@Override
 	public void keyTyped(KeyEvent e) {
@@ -132,7 +140,7 @@ public abstract class Calculation {
     }
 
     /**
-     * 
+     *
      * @return true when all the operator components are empty
      */
     protected boolean allEmpty() {
