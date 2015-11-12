@@ -30,6 +30,7 @@ import es.icarto.gvsig.navtableforms.ormlite.domainvalues.KeyValue;
 
 public class ValidatorComponent {
 
+    public static final Color INVALID_COLOR = new Color(249, 112, 140);
     private JComponent c = null;
     private Color defaultbg = null;
     private ValidatorDomain domain = null;
@@ -75,7 +76,7 @@ public class ValidatorComponent {
 		return true;
 	    }
 	    if (c.isEnabled() || (c instanceof JTextFieldDateEditor)) {
-		c.setBackground(new Color(249, 112, 140));
+		c.setBackground(INVALID_COLOR);
 	    } else {
 		setDisabledBackground();
 	    }
