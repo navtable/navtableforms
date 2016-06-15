@@ -18,7 +18,7 @@ public class RowsFilter {
 	int fieldFilterIndex;
 	fieldFilterIndex = source.getRecordset().getFieldIndexByName(
 		fieldFilterName);
-	for (int index = 0; index < source.getRowCount(); index++) {
+	for (int index = 0, lasti = source.getRowCount(); index < lasti; index++) {
 	    IRowEdited row = source.getRow(index);
 	    String value = row.getAttribute(fieldFilterIndex).toString();
 	    if (value.equalsIgnoreCase(fieldFilterValue)) {
@@ -39,7 +39,7 @@ public class RowsFilter {
 	ArrayList<Integer> columnIndexes = getIndexesOfColumns(
 		source.getRecordset(), columnNames);
 	ArrayList<Value> attributes = new ArrayList<Value>();
-	for (int index = 0; index < source.getRowCount(); index++) {
+	for (int index = 0, lasti=source.getRowCount(); index < lasti; index++) {
 	    IRowEdited row = source.getRow(index);
 	    String value = row.getAttribute(fieldFilterIndex).toString();
 	    if (value.equalsIgnoreCase(fieldFilterValue)) {
@@ -60,7 +60,7 @@ public class RowsFilter {
 	int fieldIndex;
 	try {
 	    fieldIndex = source.getFieldIndexByName(rowFilterName);
-	    for (int index = 0; index < source.getRowCount(); index++) {
+	    for (long index = 0, lasti=source.getRowCount(); index < lasti; index++) {
 		Value[] row = source.getRow(index);
 		String indexValue = row[fieldIndex].toString();
 		if (indexValue.equalsIgnoreCase(rowFilterValue)) {
