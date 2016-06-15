@@ -60,6 +60,7 @@ import es.icarto.gvsig.navtableforms.gui.i18n.resource.I18nResource;
 import es.icarto.gvsig.navtableforms.gui.images.ImageHandler;
 import es.icarto.gvsig.navtableforms.gui.images.ImageHandlerManager;
 import es.icarto.gvsig.navtableforms.gui.tables.handler.BaseTableHandler;
+import es.icarto.gvsig.navtableforms.gui.tables.model.BaseTableModel;
 import es.icarto.gvsig.navtableforms.ormlite.ORMLite;
 import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.ValidatorForm;
 import es.icarto.gvsig.navtableforms.utils.AbeilleParser;
@@ -265,9 +266,11 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	dependencyHandler.setListeners();
 	for (BaseTableHandler tableHandler : tableHandlers) {
 	    tableHandler.reload();
-	    // When the layer is in edition mode, subforms must be disabled, because if the user, adds a new subelement
+	    // When the layer is in edition mode, subforms must be disabled,
+	    // because if the user, adds a new subelement
 	    // with an fk or modifies the pk of the element it will fail
-	    // We remove it after the reload, to allow propper initializations, and avoid NullPointerException when 
+	    // We remove it after the reload, to allow propper initializations,
+	    // and avoid NullPointerException when
 	    // removing the listeners or when layerEvent is called
 	    if (layer.isEditing()) {
 		tableHandler.removeListeners();
@@ -527,8 +530,10 @@ public abstract class AbstractForm extends AbstractNavTable implements
     }
 
     /**
-     * Instead of create an implementation of ImageHandler that only sets a path (FixedImageHandler) this utiliy method
-     * sets the image without doing anything more
+     * Instead of create an implementation of ImageHandler that only sets a path
+     * (FixedImageHandler) this utiliy method sets the image without doing
+     * anything more
+     * 
      * @param imgComponent
      *            . Name of the abeille widget
      * @param absPath
@@ -540,17 +545,17 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	ImageIcon icon = new ImageIcon(absPath);
 	image.setIcon(icon);
     }
-    
+
     protected void addImageHandler(ImageHandler imageHandler) {
 	imageHandlerManager.addHandler(imageHandler);
     }
-    
+
     @Override
     public void layerEvent(LayerEvent e) {
 	super.layerEvent(e);
-	
-	
-	// When the layer is in edition mode, subforms must be disabled, because if the user, adds a new subelement
+
+	// When the layer is in edition mode, subforms must be disabled, because
+	// if the user, adds a new subelement
 	// with an fk or modifies the pk of the element it will fail
 	if (e.getEventType() == LayerEvent.EDITION_CHANGED) {
 	    if (layer.isEditing()) {
@@ -559,6 +564,13 @@ public abstract class AbstractForm extends AbstractNavTable implements
 		}
 	    } else {
 		for (BaseTableHandler bth : tableHandlers) {
+		    final BaseTableModel bthModel = bth.getModel();
+		    if (bthModel != null) {
+			// This should never happen, but tablehandlers are not
+			// correctly constructed and model field is not
+			// correctly set
+			bthModel.reloadUnderlyingData();
+		    }
 		    bth.reload();
 		}
 	    }

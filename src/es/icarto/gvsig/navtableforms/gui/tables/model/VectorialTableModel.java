@@ -1,6 +1,9 @@
 package es.icarto.gvsig.navtableforms.gui.tables.model;
 
+import org.apache.log4j.Logger;
+
 import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
+import com.iver.cit.gvsig.exceptions.layers.ReloadLayerException;
 import com.iver.cit.gvsig.fmap.core.IRow;
 import com.iver.cit.gvsig.fmap.layers.FLyrVect;
 
@@ -9,6 +12,9 @@ import es.icarto.gvsig.navtableforms.gui.tables.filter.IRowFilter;
 @SuppressWarnings("serial")
 public class VectorialTableModel extends BaseTableModel {
 
+    private static final Logger logger = Logger
+	    .getLogger(VectorialTableModel.class);
+    
     protected FLyrVect layer;
 
     public VectorialTableModel(FLyrVect layer, String[] colNames,
@@ -53,6 +59,15 @@ public class VectorialTableModel extends BaseTableModel {
 	} catch (Exception e) {
 	    e.printStackTrace();
 	    return null;
+	}
+    }
+
+    @Override
+    public void reloadUnderlyingData() {
+	try {
+	    layer.reload();
+	} catch (ReloadLayerException e) {
+	    logger.error(e.getStackTrace(), e);
 	}
     }
 

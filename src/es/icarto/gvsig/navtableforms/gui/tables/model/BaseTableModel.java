@@ -128,4 +128,13 @@ public abstract class BaseTableModel extends AbstractTableModel {
     @Override
     public abstract Object getValueAt(int row, int col);
 
+    /**
+     * Forces to reload the underlying datastore. For example call reload in the
+     * FLyrVect or the IEditableSource. In embed tables, where the data can
+     * change via triggers the layers/tables loaded in gvSIG will not change if
+     * this method is not called
+     *
+     */
+    public abstract void reloadUnderlyingData();
+
 }
