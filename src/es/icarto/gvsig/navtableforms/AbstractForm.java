@@ -552,8 +552,11 @@ public abstract class AbstractForm extends AbstractNavTable implements
 
     @Override
     public void layerEvent(LayerEvent e) {
+	layerEventTables(e);
 	super.layerEvent(e);
+    }
 
+    private void layerEventTables(LayerEvent e) {
 	// When the layer is in edition mode, subforms must be disabled, because
 	// if the user, adds a new subelement
 	// with an fk or modifies the pk of the element it will fail
