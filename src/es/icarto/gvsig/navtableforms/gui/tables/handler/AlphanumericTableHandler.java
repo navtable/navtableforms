@@ -52,12 +52,11 @@ public class AlphanumericTableHandler extends BaseTableHandler {
 
     @Override
     protected void createTableModel() throws ReadDriverException {
-	AlphanumericTableModel model;
 	if (form != null) {
 	    model = TableModelFactory.createFromTableWithFilter(sourceTableName,
 		    destinationKey, originKeyValue, colNames, colAliases,
 		    form.getI18nHandler().getResourceManager().getResources());
-	    form.setModel(model);
+	    form.setModel((AlphanumericTableModel) model);
 	} else {
 	    model = TableModelFactory.createFromTableWithFilter(sourceTableName,
 		    destinationKey, originKeyValue, colNames, colAliases);

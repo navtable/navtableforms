@@ -31,7 +31,7 @@ public class VectorialTableHandler extends BaseTableHandler {
 
     @Override
     protected void createTableModel() throws ReadDriverException {
-	VectorialTableModel model = TableModelFactory
+	model = TableModelFactory
 		.createFromLayerWithFilter(sourceTableName, destinationKey,
 			originKeyValue, colNames, colAliases);
 	jtable.setModel(model);

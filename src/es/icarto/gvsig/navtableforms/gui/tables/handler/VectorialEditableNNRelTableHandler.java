@@ -38,7 +38,7 @@ public class VectorialEditableNNRelTableHandler extends
     }
 
     protected void createTableModel() throws ReadDriverException {
-	TableModel model = TableModelFactory.createFromLayerWithOrFilter(
+	model = TableModelFactory.createFromLayerWithOrFilter(
 		sourceTableName, destinationKey, destinationKeyValues,
 		colNames, colAliases);
 	jtable.setModel(model);
