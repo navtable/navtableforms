@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+>
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>es.icarto</groupId>
+	<artifactId>es.icarto.gvsig.navtableforms</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<name>${project.artifactId}</name>
+	<packaging>jar</packaging>
+	<parent>
+		<groupId>org.gvsig</groupId>
+		<artifactId>org.gvsig.desktop.plugin</artifactId>
+		<version>2.0.100</version>
+	</parent>
+
+		<dependencies>
+
+
+		<dependency>
+			<groupId>org.gvsig</groupId>
+			<artifactId>org.gvsig.andami</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>es.icarto</groupId>
+			<artifactId>es.icarto.gvsig.commons</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.gvsig</groupId>
+			<artifactId>org.gvsig.app.mainplugin</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.gvsig</groupId>
+			<artifactId>org.gvsig.editing.app.mainplugin</artifactId>
+		</dependency>
+		<dependency>
+		     <groupId>es.icarto</groupId>
+			<artifactId>es.icarto.gvsig.navtable</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.thoughtworks.xstream</groupId>
+			<artifactId>xstream</artifactId>
+			<version>1.4.9</version>
+		</dependency>
+		<dependency>
+			<groupId>es.udc</groupId>
+			<artifactId>es.udc.cartolab.gvsig.users</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
+		</dependency>
+		</dependencies>
+
+
+
+
+	<properties>
+		<gvsig.package.info.name>NavTableForms</gvsig.package.info.name>
+		<gvsig.package.info.dependencies>required: org.gvsig.app.mainplugin -ge 2</gvsig.package.info.dependencies>
+		<gvsig.package.info.categories>Vector</gvsig.package.info.categories>
+		<gvsig.package.info.official>false</gvsig.package.info.official>
+		<gvsig.package.info.poolURL>http://no_site_jet.org</gvsig.package.info.poolURL>
+		<gvsig.package.info.state>devel</gvsig.package.info.state>
+	</properties>
+
+</project>
