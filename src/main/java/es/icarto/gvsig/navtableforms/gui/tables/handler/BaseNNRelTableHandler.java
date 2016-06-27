@@ -6,6 +6,9 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import es.udc.cartolab.gvsig.users.utils.DBSession;
 
 /**
@@ -22,6 +25,9 @@ import es.udc.cartolab.gvsig.users.utils.DBSession;
 
 public abstract class BaseNNRelTableHandler extends BaseTableHandler {
 
+	
+	private static final Logger logger = LoggerFactory
+			.getLogger(BaseNNRelTableHandler.class);
     /**
      * The name of the primary key in the current form (assumed to have the same
      * name in the n:n table).
@@ -67,7 +73,7 @@ public abstract class BaseNNRelTableHandler extends BaseTableHandler {
 			.setHorizontalAlignment(JLabel.CENTER);
 	    }
 	} catch (Exception e) {
-	    e.printStackTrace();
+	    logger.error(e.getMessage(), e);
 	}
 
     }

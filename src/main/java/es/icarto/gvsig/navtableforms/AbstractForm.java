@@ -38,15 +38,15 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import org.apache.log4j.Logger;
+import org.gvsig.andami.Launcher;
+import org.gvsig.andami.PluginServices;
+import org.gvsig.andami.ui.mdiManager.WindowInfo;
+import org.gvsig.fmap.dal.exception.DataException;
+import org.gvsig.fmap.mapcontext.layers.LayerEvent;
+import org.gvsig.fmap.mapcontext.layers.vectorial.FLyrVect;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
-import com.iver.andami.Launcher;
-import com.iver.andami.PluginServices;
-import com.iver.andami.ui.mdiManager.WindowInfo;
-import com.iver.cit.gvsig.exceptions.visitors.StopWriterVisitorException;
-import com.iver.cit.gvsig.fmap.layers.FLyrVect;
-import com.iver.cit.gvsig.fmap.layers.LayerEvent;
 import com.jeta.forms.components.image.ImageComponent;
 import com.jeta.forms.components.panel.FormPanel;
 import com.toedter.calendar.JDateChooser;
@@ -72,7 +72,9 @@ import es.udc.cartolab.gvsig.navtable.format.DateFormatNT;
 public abstract class AbstractForm extends AbstractNavTable implements
 	IValidatableForm, II18nForm {
 
-    private static final Logger logger = Logger.getLogger(AbstractForm.class);
+    
+	private static final Logger logger = LoggerFactory
+			.getLogger(AbstractForm.class);
 
     protected FormPanel formBody;
     private boolean isFillingValues;
@@ -157,11 +159,6 @@ public abstract class AbstractForm extends AbstractNavTable implements
     public String getFormWindowPropertiesXMLPath() {
 	return Launcher.getAppHomeDir() + File.separator
 		+ "FormWindowProperties.xml";
-    }
-
-    @Deprecated
-    public Logger getLoggerName() {
-	return Logger.getLogger(getClass());
     }
 
     @Override
@@ -390,7 +387,7 @@ public abstract class AbstractForm extends AbstractNavTable implements
     }
 
     @Override
-    public boolean saveRecord() throws StopWriterVisitorException {
+    public boolean saveRecord() throws DataException {
 	if (isSaveable()) {
 	    setSavingValues(true);
 	    try {
@@ -398,16 +395,13 @@ public abstract class AbstractForm extends AbstractNavTable implements
 		setChangedValues(false);
 		setSavingValues(false);
 		return true;
-	    } catch (ReadDriverException e) {
-		e.printStackTrace();
+	    } catch (DataException e) {
+		logger.error(e.getMessage(), e);
 		layerController.clearAll();
 		setChangedValues(false);
 		setSavingValues(false);
 		return false;
-	    } catch (StopWriterVisitorException e) {
-		setSavingValues(false);
-		throw e;
-	    }
+	    } 
 	}
 	return false;
     }
@@ -484,7 +478,7 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	setChangedValues(false);
 	try {
 	    layerController.read(getPosition());
-	} catch (ReadDriverException e) {
+	} catch (DataException e) {
 	    logger.error(e.getMessage(), e.getCause());
 	    layerController.clearAll();
 	}

@@ -2,7 +2,8 @@ package es.icarto.gvsig.navtableforms.gui.tables.filter;
 
 import java.util.List;
 
-import com.iver.cit.gvsig.fmap.core.IRow;
+import es.icarto.gvsig.commons.gvsig2.IRow;
+
 
 public class IRowMultipleOrFilterImplementer implements IRowFilter {
 

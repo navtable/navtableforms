@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import javax.swing.JComponent;
 
-import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
+import org.gvsig.fmap.dal.exception.DataException;
 
 import es.icarto.gvsig.navtableforms.gui.i18n.I18nResourceManager;
 import es.icarto.gvsig.navtableforms.gui.tables.AbstractSubForm;
@@ -54,7 +54,7 @@ public class AlphanumericNotEditableNNRelTableHandler extends
 	}
     }
 
-    protected void createTableModel() throws ReadDriverException {
+    protected void createTableModel() throws DataException {
 	if (form != null) {
 	    model = TableModelFactory.createFromTableWithOrFilter(sourceTableName,
 		    destinationKey, destinationKeyValues, colNames, colAliases,

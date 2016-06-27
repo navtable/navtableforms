@@ -1,7 +1,6 @@
 package es.icarto.gvsig.navtableforms.gui.tables;
 
-import com.iver.cit.gvsig.fmap.edition.IEditableSource;
-
+import es.icarto.gvsig.commons.gvsig2.IEditableSource;
 import es.icarto.gvsig.navtableforms.gui.tables.model.AlphanumericTableModel;
 
 

@@ -1,8 +1,8 @@
 package es.icarto.gvsig.navtableforms.gui.tables.filter;
 
-import com.hardcode.gdbms.engine.values.Value;
-import com.iver.cit.gvsig.fmap.core.IRow;
 
+import es.icarto.gvsig.commons.gvsig2.IRow;
+import es.icarto.gvsig.commons.gvsig2.Value;
 import es.udc.cartolab.gvsig.navtable.format.ValueFormatNT;
 
 public class IRowFilterImplementer implements IRowFilter {

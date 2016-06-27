@@ -8,7 +8,9 @@ import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.table.TableModel;
 
-import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
+import org.gvsig.fmap.dal.exception.DataException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.icarto.gvsig.navtableforms.AbstractForm;
 import es.icarto.gvsig.navtableforms.gui.tables.menu.VectorialEditableNNRelJTableContextualMenu;
@@ -28,6 +30,10 @@ import es.udc.cartolab.gvsig.users.utils.DBSession;
 public class VectorialEditableNNRelTableHandler extends
 	EditableNNRelTableHandler {
 
+	
+	private static final Logger logger = LoggerFactory
+			.getLogger(VectorialEditableNNRelTableHandler.class);
+	
     public VectorialEditableNNRelTableHandler(String sourceTableName,
 	    HashMap<String, JComponent> widgets, String dbSchema,
 	    String originKey, String relTable, String destinationKey,
@@ -37,7 +43,7 @@ public class VectorialEditableNNRelTableHandler extends
 	FormFactory.checkAndLoadLayerRegistered(sourceTableName);
     }
 
-    protected void createTableModel() throws ReadDriverException {
+    protected void createTableModel() throws DataException {
 	model = TableModelFactory.createFromLayerWithOrFilter(
 		sourceTableName, destinationKey, destinationKeyValues,
 		colNames, colAliases);
@@ -69,33 +75,25 @@ public class VectorialEditableNNRelTableHandler extends
 		    where);
 	    return Arrays.asList(values);
 	} catch (SQLException e) {
-	    e.printStackTrace();
+		logger.error(e.getMessage(), e);
 	}
 	return null;
     }
 
     public void insertRow(String secondaryPKValue) {
-	try {
 	    String[] columns = { originKey, destinationKey };
 	    String[] values = { originKeyValue, secondaryPKValue };
 	    DBSession.getCurrentSession().insertRow(dbSchema, relTable,
 		    columns, values);
 	    fillValues(originKeyValue);
-	} catch (SQLException e) {
-	    e.printStackTrace();
-	}
     }
 
     public void deleteRow(String secondaryPKValue) {
-	try {
 	    String where = "WHERE " + originKey + " = '" + originKeyValue
 		    + "' AND " + destinationKey + " = '" + secondaryPKValue
 		    + "'";
 	    DBSession.getCurrentSession().deleteRows(dbSchema, relTable, where);
 	    fillValues(originKeyValue);
-	} catch (SQLException e) {
-	    e.printStackTrace();
-	}
     }
 
 }

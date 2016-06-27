@@ -3,26 +3,25 @@ package es.icarto.gvsig.navtableforms.utils;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.iver.andami.PluginServices;
-import com.iver.andami.ui.mdiManager.IWindow;
-import com.iver.cit.gvsig.fmap.MapControl;
-import com.iver.cit.gvsig.fmap.layers.FLayer;
-import com.iver.cit.gvsig.fmap.layers.FLayers;
-import com.iver.cit.gvsig.fmap.layers.FLyrVect;
-import com.iver.cit.gvsig.project.documents.view.gui.BaseView;
-import com.iver.cit.gvsig.project.documents.view.gui.View;
+import org.gvsig.andami.PluginServices;
+import org.gvsig.andami.ui.mdiManager.IWindow;
+import org.gvsig.app.project.documents.view.gui.IView;
+import org.gvsig.fmap.mapcontext.layers.FLayer;
+import org.gvsig.fmap.mapcontext.layers.FLayers;
+import org.gvsig.fmap.mapcontext.layers.vectorial.FLyrVect;
+import org.gvsig.fmap.mapcontrol.MapControl;
 
 public class TOCLayerManager {
 
-    private BaseView view = null;
+    private IView view = null;
     private FLayers layersInTOC = null;
     private MapControl mapControl = null;
 
     public TOCLayerManager() {
 	IWindow[] windows = PluginServices.getMDIManager().getOrderedWindows();
 	for (IWindow w : windows) {
-	    if (w instanceof BaseView) {
-		view = (BaseView) w;
+	    if (w instanceof IView) {
+		view = (IView) w;
 		break;
 	    }
 	}
@@ -127,14 +126,16 @@ public class TOCLayerManager {
 	return layers.toArray(new FLyrVect[0]);
     }
 
+    @Deprecated
     public List<FLyrVect> getJoinedLayers() {
-	List<FLyrVect> layers = new ArrayList<FLyrVect>();
-	for (FLyrVect l : getAllLayers()) {
-	    if (l.isJoined()) {
-		layers.add(l);
-	    }
-	}
-	return layers;
+    	throw new RuntimeException("Not implemented");
+//	List<FLyrVect> layers = new ArrayList<FLyrVect>();
+//	for (FLyrVect l : getAllLayers()) {
+//	    if (l.isJoined()) {
+//		layers.add(l);
+//	    }
+//	}
+//	return layers;
     }
 
     public List<FLyrVect> getEditingLayers() {
@@ -147,9 +148,9 @@ public class TOCLayerManager {
 	return layers;
     }
 
-    public View getView() {
-	if (view instanceof View) {
-	    return (View) view;
+    public IView getView() {
+	if (view instanceof IView) {
+	    return (IView) view;
 	}
 	return null;
     }

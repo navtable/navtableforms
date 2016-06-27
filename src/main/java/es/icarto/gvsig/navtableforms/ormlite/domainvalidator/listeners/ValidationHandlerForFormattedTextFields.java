@@ -10,11 +10,18 @@ import java.text.ParseException;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFormattedTextField.AbstractFormatter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import es.icarto.gvsig.navtableforms.IValidatableForm;
 import es.icarto.gvsig.navtableforms.gui.formattedtextfields.FormatterFactory;
 
 public class ValidationHandlerForFormattedTextFields implements KeyListener, FocusListener {
 
+	
+	private static final Logger logger = LoggerFactory
+			.getLogger(ValidationHandlerForFormattedTextFields.class);
+	
     private IValidatableForm dialog = null;
 
     public ValidationHandlerForFormattedTextFields(IValidatableForm dialog) {
@@ -35,7 +42,7 @@ public class ValidationHandlerForFormattedTextFields implements KeyListener, Foc
 		dialog.setChangedValues(); // placed after updating widgetvalues
 		dialog.validateForm();
 	    } catch (ParseException e1) {
-		e1.printStackTrace();
+	    	logger.error(e1.getMessage(), e1);
 	    }
 	}
     }

@@ -3,7 +3,7 @@ package es.icarto.gvsig.navtableforms.gui.buttons.fileslink;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
-import com.iver.andami.PluginServices;
+import org.gvsig.andami.PluginServices;
 
 import es.icarto.gvsig.navtableforms.AbstractForm;
 

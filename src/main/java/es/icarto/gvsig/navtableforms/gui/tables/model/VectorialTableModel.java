@@ -1,26 +1,35 @@
 package es.icarto.gvsig.navtableforms.gui.tables.model;
 
-import org.apache.log4j.Logger;
 
-import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
-import com.iver.cit.gvsig.exceptions.layers.ReloadLayerException;
-import com.iver.cit.gvsig.fmap.core.IRow;
-import com.iver.cit.gvsig.fmap.layers.FLyrVect;
+import org.gvsig.fmap.dal.exception.DataException;
+import org.gvsig.fmap.mapcontext.exceptions.ReloadLayerException;
+import org.gvsig.fmap.mapcontext.layers.vectorial.FLyrVect;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import es.icarto.gvsig.commons.gvsig2.IRow;
+import es.icarto.gvsig.commons.gvsig2.SelectableDataSource;
 import es.icarto.gvsig.navtableforms.gui.tables.filter.IRowFilter;
 
 @SuppressWarnings("serial")
 public class VectorialTableModel extends BaseTableModel {
 
-    private static final Logger logger = Logger
-	    .getLogger(VectorialTableModel.class);
+   
+private static final Logger logger = LoggerFactory
+		.getLogger(VectorialTableModel.class);
     
     protected FLyrVect layer;
+	private SelectableDataSource sds;
 
     public VectorialTableModel(FLyrVect layer, String[] colNames,
 	    String[] colAliases) {
 	super(colNames, colAliases);
 	this.layer = layer;
+	try {
+		sds = new SelectableDataSource(layer.getFeatureStore());
+	} catch (DataException e) {
+		logger.error(e.getMessage(), e);
+	}
 	initMetadata();
     }
 
@@ -33,31 +42,27 @@ public class VectorialTableModel extends BaseTableModel {
 
     @Override
     public Object getValueAt(int row, int col) {
-	try {
-	    return layer.getRecordset().getFieldValue(rowIndexes.get(row),
-		    layer.getRecordset().getFieldIndexByName(colNames[col]));
-	} catch (ReadDriverException e) {
-	    e.printStackTrace();
-	    return null;
-	}
+	    return sds.getFieldValue(rowIndexes.get(row),
+		    sds.getFieldIndexByName(colNames[col]));
     }
 
     @Override
-    protected int getModelRowCount() {
+    protected long getModelRowCount() {
 	try {
-	    return (int) layer.getRecordset().getRowCount();
-	} catch (ReadDriverException e) {
-	    e.printStackTrace();
+		return layer.getFeatureStore().getFeatureCount();
+	} catch (DataException e) {
+		logger.error(e.getMessage(), e);
 	    return 0;
 	}
     }
 
     @Override
-    protected IRow getSourceRow(int row) {
+    protected IRow getSourceRow(long row) {
 	try {
-	    return layer.getSource().getFeature(row);
+		
+	    return sds.getRow(row);
 	} catch (Exception e) {
-	    e.printStackTrace();
+		logger.error(e.getMessage(), e);
 	    return null;
 	}
     }
@@ -66,8 +71,12 @@ public class VectorialTableModel extends BaseTableModel {
     public void reloadUnderlyingData() {
 	try {
 	    layer.reload();
+	    initMetadata();
+	    sds = new SelectableDataSource(layer.getFeatureStore());
 	} catch (ReloadLayerException e) {
-	    logger.error(e.getStackTrace(), e);
+		logger.error(e.getMessage(), e);
+	} catch (DataException e) {
+		logger.error(e.getMessage(), e);
 	}
     }
 

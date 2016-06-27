@@ -5,7 +5,7 @@ import java.util.Map;
 
 import javax.swing.JComponent;
 
-import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
+import org.gvsig.fmap.dal.exception.DataException;
 
 import es.icarto.gvsig.navtableforms.gui.i18n.I18nResourceManager;
 import es.icarto.gvsig.navtableforms.gui.tables.AbstractSubForm;
@@ -51,7 +51,7 @@ public class AlphanumericTableHandler extends BaseTableHandler {
     }
 
     @Override
-    protected void createTableModel() throws ReadDriverException {
+    protected void createTableModel() throws DataException {
 	if (form != null) {
 	    model = TableModelFactory.createFromTableWithFilter(sourceTableName,
 		    destinationKey, originKeyValue, colNames, colAliases,

@@ -7,7 +7,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 
-import com.iver.andami.PluginServices;
+import org.gvsig.andami.PluginServices;
+
 
 /**
  * BaseJTableContextualMenu

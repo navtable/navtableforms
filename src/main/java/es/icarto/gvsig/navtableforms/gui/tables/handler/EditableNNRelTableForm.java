@@ -11,9 +11,9 @@ import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.table.TableModel;
 
-import com.iver.andami.PluginServices;
-import com.iver.andami.ui.mdiManager.IWindow;
-import com.iver.andami.ui.mdiManager.WindowInfo;
+import org.gvsig.andami.PluginServices;
+import org.gvsig.andami.ui.mdiManager.IWindow;
+import org.gvsig.andami.ui.mdiManager.WindowInfo;
 
 
 @SuppressWarnings("serial")

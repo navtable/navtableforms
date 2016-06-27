@@ -8,7 +8,9 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
+import org.gvsig.fmap.dal.exception.DataException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.icarto.gvsig.navtableforms.gui.tables.menu.BaseJTableContextualMenu;
 import es.icarto.gvsig.navtableforms.gui.tables.model.BaseTableModel;
@@ -23,6 +25,10 @@ import es.icarto.gvsig.navtableforms.gui.tables.model.BaseTableModel;
  */
 
 public abstract class BaseTableHandler {
+	
+	
+	private static final Logger logger = LoggerFactory
+			.getLogger(BaseTableHandler.class);
 
     /**
      * The name of the table, which should also provide us the related form.
@@ -92,7 +98,7 @@ public abstract class BaseTableHandler {
 	jtable = (JTable) widgets.get(sourceTableName);
     }
 
-    protected abstract void createTableModel() throws ReadDriverException;
+    protected abstract void createTableModel() throws DataException;
 
     protected abstract void createTableListener();
 
@@ -116,8 +122,8 @@ public abstract class BaseTableHandler {
 	    ((DefaultTableCellRenderer) jtable.getTableHeader()
 		    .getDefaultRenderer())
 		    .setHorizontalAlignment(JLabel.CENTER);
-	} catch (ReadDriverException e) {
-	    e.printStackTrace();
+	} catch (DataException e) {
+		logger.error(e.getMessage(), e);
 	}
 
     }

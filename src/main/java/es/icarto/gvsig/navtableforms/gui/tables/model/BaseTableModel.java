@@ -5,13 +5,18 @@ import java.util.HashMap;
 
 import javax.swing.table.AbstractTableModel;
 
-import com.iver.cit.gvsig.fmap.core.IRow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import es.icarto.gvsig.commons.gvsig2.IRow;
 import es.icarto.gvsig.navtableforms.gui.tables.filter.IRowFilter;
 
 @SuppressWarnings("serial")
 public abstract class BaseTableModel extends AbstractTableModel {
 
+	
+	private static final Logger logger = LoggerFactory
+			.getLogger(BaseTableModel.class);
     protected static final int NO_ROW = -1;
 
     protected IRowFilter filter = null;
@@ -19,7 +24,7 @@ public abstract class BaseTableModel extends AbstractTableModel {
     protected String[] colNames;
     protected String[] colAliases;
 
-    protected HashMap<Integer, Integer> rowIndexes;
+    protected HashMap<Long, Long> rowIndexes;
     protected int currentRow = NO_ROW;
 
     protected int rowCount;
@@ -48,25 +53,25 @@ public abstract class BaseTableModel extends AbstractTableModel {
 	currentRow = NO_ROW;
     }
 
-    protected HashMap<Integer, Integer> getRowIndexes() {
-	int indexInJTable = 0;
-	this.rowIndexes = new HashMap<Integer, Integer>();
+    protected HashMap<Long, Long> getRowIndexes() {
+	long indexInJTable = 0;
+	this.rowIndexes = new HashMap<Long, Long>();
 	try {
 	    if (filter != null) {
-		for (int indexInSource = 0, num = getModelRowCount(); indexInSource < num; indexInSource++) {
+		for (long indexInSource = 0, num = getModelRowCount(); indexInSource < num; indexInSource++) {
 		    if (filter.evaluate(getSourceRow(indexInSource))) {
 			rowIndexes.put(indexInJTable, indexInSource);
 			indexInJTable++;
 		    }
 		}
 	    } else {
-		for (int indexInSource = 0, num = getModelRowCount(); indexInSource < num; indexInSource++) {
+		for (long indexInSource = 0, num = getModelRowCount(); indexInSource < num; indexInSource++) {
 		    rowIndexes.put(indexInSource, indexInSource);
 		}
 	    }
 	    return rowIndexes;
 	} catch (Exception e) {
-	    e.printStackTrace();
+		logger.error(e.getMessage(), e);
 	    rowIndexes.clear();
 	    currentRow = NO_ROW;
 	    return rowIndexes;
@@ -97,7 +102,7 @@ public abstract class BaseTableModel extends AbstractTableModel {
 	return false;
     }
 
-    public int convertRowIndexToModel(int row) {
+    public long convertRowIndexToModel(long row) {
 	return rowIndexes.get(row);
     }
 
@@ -121,9 +126,9 @@ public abstract class BaseTableModel extends AbstractTableModel {
 	return maxLengths;
     }
 
-    protected abstract int getModelRowCount();
+    protected abstract long getModelRowCount();
 
-    protected abstract IRow getSourceRow(int rowIndex);
+    protected abstract IRow getSourceRow(long rowIndex);
 
     @Override
     public abstract Object getValueAt(int row, int col);

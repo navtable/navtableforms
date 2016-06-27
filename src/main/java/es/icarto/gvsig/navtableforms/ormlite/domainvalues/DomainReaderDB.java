@@ -20,6 +20,9 @@ package es.icarto.gvsig.navtableforms.ormlite.domainvalues;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import es.udc.cartolab.gvsig.users.utils.DBSession;
 
 /**
@@ -41,6 +44,9 @@ import es.udc.cartolab.gvsig.users.utils.DBSession;
  */
 public class DomainReaderDB implements DomainReader {
 
+	
+	private static final Logger logger = LoggerFactory
+			.getLogger(DomainReaderDB.class);
     private String table = null;
     private String schema = null;
     private String columnAlias = null;
@@ -118,10 +124,10 @@ public class DomainReaderDB implements DomainReader {
 		    list.add(kv);
 		}
 	    } catch (SQLException e) {
-		e.printStackTrace(System.out);
+	    	logger.error(e.getMessage(), e);
 		return null;
 	    } catch (NullPointerException e) {
-		e.printStackTrace(System.out);
+	    	logger.error(e.getMessage(), e);
 		return null;
 	    }
 	    return new DomainValues(list, addVoidValue);

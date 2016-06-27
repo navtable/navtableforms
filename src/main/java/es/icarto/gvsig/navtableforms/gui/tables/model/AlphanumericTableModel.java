@@ -2,17 +2,14 @@ package es.icarto.gvsig.navtableforms.gui.tables.model;
 
 import java.util.HashMap;
 
-import org.apache.log4j.Logger;
+import org.gvsig.app.project.documents.table.TableDocument;
+import org.gvsig.fmap.dal.exception.DataException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.hardcode.gdbms.driver.exceptions.InitializeWriterException;
-import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
-import com.hardcode.gdbms.driver.exceptions.ReloadDriverException;
-import com.iver.andami.PluginServices;
-import com.iver.cit.gvsig.exceptions.visitors.StartWriterVisitorException;
-import com.iver.cit.gvsig.exceptions.visitors.StopWriterVisitorException;
-import com.iver.cit.gvsig.fmap.core.IRow;
-import com.iver.cit.gvsig.fmap.edition.IEditableSource;
-
+import es.icarto.gvsig.commons.gvsig2.IEditableSource;
+import es.icarto.gvsig.commons.gvsig2.IRow;
+import es.icarto.gvsig.commons.gvsig2.SelectableDataSource;
 import es.icarto.gvsig.navtableforms.gui.i18n.I18nResourceManager;
 import es.icarto.gvsig.navtableforms.gui.tables.filter.IRowFilter;
 import es.udc.cartolab.gvsig.navtable.dataacces.TableController;
@@ -20,28 +17,29 @@ import es.udc.cartolab.gvsig.navtable.dataacces.TableController;
 @SuppressWarnings("serial")
 public class AlphanumericTableModel extends BaseTableModel {
     
-    private static final Logger logger = Logger
-	    .getLogger(AlphanumericTableModel.class);
+    
+	private static final Logger logger = LoggerFactory
+			.getLogger(AlphanumericTableModel.class);
 
-    private final IEditableSource source;
     private final TableController tableController;
     private I18nResourceManager i18nManager;
+	private final TableDocument tableDocument;
 
-    public AlphanumericTableModel(IEditableSource source, String[] colNames,
+    public AlphanumericTableModel(TableDocument tableDocument, String[] colNames,
 	    String[] colAliases, I18nResourceManager i18nManager, IRowFilter filter) {
 	super(colNames, colAliases, filter);
 	this.i18nManager = i18nManager;
-	this.source = source;
-	this.tableController = new TableController(source);
+	this.tableDocument = tableDocument;
+	this.tableController = new TableController(tableDocument);
 	initMetadata();
     }
 
-    public AlphanumericTableModel(IEditableSource source, String[] colNames,
+    public AlphanumericTableModel(TableDocument tableDocument, String[] colNames,
 	    String[] colAliases, I18nResourceManager i18nManager) {
 	super(colNames, colAliases);
 	this.i18nManager = i18nManager;
-	this.source = source;
-	this.tableController = new TableController(source);
+	this.tableDocument = tableDocument;
+	this.tableController = new TableController(tableDocument);
 	initMetadata();
     }
 
@@ -62,14 +60,19 @@ public class AlphanumericTableModel extends BaseTableModel {
 			i18nManager.getString("table_" + value + "_value", value);
 	    }
 	    return value;
-	} catch (ReadDriverException e) {
-	    e.printStackTrace();
+	} catch (DataException e) {
+	    logger.error(e.getMessage(), e);
 	    return null;
 	}
     }
 
     public IEditableSource getSource() {
-	return source;
+	try {
+		return new SelectableDataSource(tableDocument.getStore());
+	} catch (DataException e) {
+		logger.error(e.getMessage(), e);
+	}
+	return null;
     }
 
     public void create(HashMap<String, String> values) throws Exception {
@@ -80,7 +83,7 @@ public class AlphanumericTableModel extends BaseTableModel {
 	}
     }
 
-    public HashMap<String, String> read(int row) throws ReadDriverException {
+    public HashMap<String, String> read(int row) throws DataException {
 	if (currentRow != row) {
 	    currentRow = row;
 	    tableController.read(rowIndexes.get(row));
@@ -92,14 +95,12 @@ public class AlphanumericTableModel extends BaseTableModel {
 	tableController.setValue(fieldName, fieldValue);
     }
 
-    public void update(int row) throws ReadDriverException {
+    public void update(int row) throws DataException {
 	tableController.update(rowIndexes.get(row));
 	this.fireTableDataChanged();
     }
 
-    public void delete(int row) throws StopWriterVisitorException,
-	    StartWriterVisitorException, InitializeWriterException,
-	    ReadDriverException {
+    public void delete(int row) {
 	tableController.delete(rowIndexes.get(row));
 	this.fireTableDataChanged();
 	initMetadata();
@@ -110,21 +111,21 @@ public class AlphanumericTableModel extends BaseTableModel {
     }
 
     @Override
-    protected int getModelRowCount() {
+    protected long getModelRowCount() {
 	try {
-	    return source.getRowCount();
-	} catch (ReadDriverException e) {
-	    e.printStackTrace();
+	    return tableDocument.getStore().getFeatureCount();
+	} catch (DataException e) {
+		logger.error(e.getMessage(), e);
 	    return 0;
 	}
     }
 
     @Override
-    protected IRow getSourceRow(int row) {
+    protected IRow getSourceRow(long row) {
 	try {
-	    return source.getRow(row);
+	    return new SelectableDataSource(tableDocument.getStore()).getRow(row);
 	} catch (Exception e) {
-	    e.printStackTrace();
+	    logger.error(e.getMessage(), e);
 	    return null;
 	}
     }
@@ -132,11 +133,9 @@ public class AlphanumericTableModel extends BaseTableModel {
     @Override
     public void reloadUnderlyingData() {
 	try {
-	    source.getRecordset().reload();
-	} catch (ReloadDriverException e) {
-	    logger.error(e.getStackTrace(), e);
-	} catch (ReadDriverException e) {
-	    logger.error(e.getStackTrace(), e);
+	    tableDocument.getStore().refresh();
+	} catch (DataException e) {
+		logger.error(e.getMessage(), e);
 	}
     }
 

@@ -1,6 +1,6 @@
 package es.icarto.gvsig.navtableforms.utils;
 
-import com.iver.cit.gvsig.fmap.layers.FLyrVect;
+import org.gvsig.fmap.mapcontext.layers.vectorial.FLyrVect;
 
 import es.icarto.gvsig.navtableforms.AbstractForm;
 import es.icarto.gvsig.navtableforms.gui.tables.AbstractSubForm;

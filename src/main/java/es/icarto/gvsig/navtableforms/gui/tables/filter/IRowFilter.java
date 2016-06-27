@@ -1,6 +1,7 @@
 package es.icarto.gvsig.navtableforms.gui.tables.filter;
 
-import com.iver.cit.gvsig.fmap.core.IRow;
+import es.icarto.gvsig.commons.gvsig2.IRow;
+
 
 public interface IRowFilter {
 

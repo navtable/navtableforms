@@ -16,14 +16,17 @@
  */
 package es.icarto.gvsig.navtableforms.ormlite;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public class ORMLite {
 
     private ORMLiteAppDomain appDomain = null;
     private String xmlFile;
 
-    private Logger logger = Logger.getLogger("ORMLite logger");
+    
+	private static final Logger logger = LoggerFactory.getLogger(ORMLite.class);
 
     public ORMLite(String xmlFile) {
 	this.xmlFile = xmlFile;
@@ -35,7 +38,7 @@ public class ORMLite {
 		XMLSAXParser fp = new XMLSAXParser(xmlFile);
 		appDomain = fp.getAD();
 	    } catch (Exception e) {
-		logger.error(e.getMessage(), e.getCause());
+		logger.error(e.getMessage(), e);
 		appDomain = null;
 	    }
 	}
@@ -48,7 +51,7 @@ public class ORMLite {
 	    fp = new XMLSAXParser(xmlFile);
 	    appDomain = fp.getAD();
 	} catch (Exception e) {
-	    logger.error(e.getMessage(), e.getCause());
+	    logger.error(e.getMessage(), e);
 	    appDomain = null;
 	}
 	return appDomain;

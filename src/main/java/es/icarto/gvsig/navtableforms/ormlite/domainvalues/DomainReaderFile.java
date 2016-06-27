@@ -25,7 +25,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -49,7 +50,8 @@ import org.apache.log4j.Logger;
 public class DomainReaderFile implements DomainReader {
 
 	
-	private static final Logger logger = Logger
+	
+	private static final Logger logger = LoggerFactory
 			.getLogger(DomainReaderFile.class);
     String fileName = null;
     String fieldAlias = null;
@@ -101,10 +103,10 @@ public class DomainReaderFile implements DomainReader {
 		    }
 		}
 	    } catch (FileNotFoundException e) {
-	    	logger.error(e.getStackTrace(), e);
+	    	logger.error(e.getMessage(), e);
 		return null;
 	    } catch (IOException e) {
-	    	logger.error(e.getStackTrace(), e);
+	    	logger.error(e.getMessage(), e);
 		return null;
 	    } finally {
 	    	if (fileReader != null) {

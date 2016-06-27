@@ -6,7 +6,7 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.JTable;
 
-import com.iver.andami.PluginServices;
+import org.gvsig.andami.PluginServices;
 
 import es.icarto.gvsig.navtableforms.gui.tables.JTableUtils;
 import es.icarto.gvsig.navtableforms.gui.tables.handler.EditableNNRelTableForm;

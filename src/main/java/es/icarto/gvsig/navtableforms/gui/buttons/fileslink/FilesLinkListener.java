@@ -8,11 +8,17 @@ import java.io.IOException;
 
 import javax.swing.JOptionPane;
 
-import com.iver.andami.PluginServices;
+import org.gvsig.andami.PluginServices;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.icarto.gvsig.navtableforms.AbstractForm;
 
 public class FilesLinkListener implements ActionListener {
+	
+	
+	private static final Logger logger = LoggerFactory
+			.getLogger(FilesLinkListener.class);
 
     private AbstractForm dialog;
     private FilesLinkData data;
@@ -90,7 +96,7 @@ public class FilesLinkListener implements ActionListener {
 	try {
 	    desktop.open(folder);
 	} catch (IOException e) {
-	    dialog.getLoggerName().error("Folder can not be opened");
+	    logger.error(e.getMessage(), e);
 	}
 
     }

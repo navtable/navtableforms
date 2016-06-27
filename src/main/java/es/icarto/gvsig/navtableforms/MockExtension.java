@@ -17,7 +17,8 @@
 
 package es.icarto.gvsig.navtableforms;
 
-import com.iver.andami.plugins.Extension;
+import org.gvsig.andami.plugins.Extension;
+
 
 public class MockExtension extends Extension {
 

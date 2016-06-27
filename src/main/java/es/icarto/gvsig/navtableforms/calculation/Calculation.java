@@ -17,7 +17,8 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.icarto.gvsig.navtableforms.IValidatableForm;
 import es.icarto.gvsig.navtableforms.ormlite.domainvalues.KeyValue;
@@ -25,8 +26,8 @@ import es.udc.cartolab.gvsig.navtable.format.DoubleFormatNT;
 
 public abstract class Calculation {
 
-    private static final Logger logger = Logger.getLogger(Calculation.class);
-
+	private static final Logger logger = LoggerFactory.getLogger(Calculation.class);
+	
     protected JTextField resultWidget;
     protected HashMap<String, JComponent> operands;
     protected OperandComponentListener handler;
@@ -191,7 +192,7 @@ public abstract class Calculation {
 	    try {
 		value = (BigDecimal) formatter.parse(importe);
 	    } catch (ParseException e) {
-		logger.error(e.getStackTrace(), e);
+		logger.error(e.getMessage(), e);
 	    }
 	}
 	return value;

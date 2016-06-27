@@ -1,6 +1,6 @@
 package es.icarto.gvsig.navtableforms.gui.tables.menu;
 
-import com.iver.andami.PluginServices;
+import org.gvsig.andami.PluginServices;
 
 import es.icarto.gvsig.navtableforms.AbstractForm;
 import es.icarto.gvsig.navtableforms.gui.tables.model.BaseTableModel;

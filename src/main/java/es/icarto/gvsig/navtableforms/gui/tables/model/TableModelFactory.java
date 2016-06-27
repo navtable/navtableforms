@@ -3,10 +3,13 @@ package es.icarto.gvsig.navtableforms.gui.tables.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
-import com.iver.cit.gvsig.fmap.edition.IEditableSource;
-import com.iver.cit.gvsig.fmap.layers.FLyrVect;
+import org.gvsig.app.project.documents.table.TableDocument;
+import org.gvsig.fmap.dal.exception.DataException;
+import org.gvsig.fmap.dal.feature.FeatureType;
+import org.gvsig.fmap.mapcontext.layers.vectorial.FLyrVect;
 
+import es.icarto.gvsig.commons.gvsig2.IEditableSource;
+import es.icarto.gvsig.commons.gvsig2.SelectableDataSource;
 import es.icarto.gvsig.navtableforms.gui.i18n.I18nResourceManager;
 import es.icarto.gvsig.navtableforms.gui.i18n.resource.GvSIGI18nResource;
 import es.icarto.gvsig.navtableforms.gui.i18n.resource.I18nResource;
@@ -27,6 +30,7 @@ import es.icarto.gvsig.navtableforms.utils.TOCTableManager;
  */
 public class TableModelFactory {
 
+
     /**
      * The default i18n resource for the translations that requests them
      * to gvSIG.
@@ -37,10 +41,10 @@ public class TableModelFactory {
 	    String[] columnNames, String[] columnAliases, I18nResource[] i18nResources) {
 
 	TOCTableManager toc = new TOCTableManager();
-	IEditableSource model = toc.getTableModelByName(sourceTable);
+	TableDocument tableDocument = toc.getTableDocumentByName(sourceTable);
 	I18nResourceManager i18nManager = new I18nResourceManager(i18nResources);
 	i18nManager.addResource(defaultI18n);
-	return new AlphanumericTableModel(model, columnNames, columnAliases,
+	return new AlphanumericTableModel(tableDocument, columnNames, columnAliases,
 		i18nManager);
     }
 
@@ -55,23 +59,24 @@ public class TableModelFactory {
 	    String rowFilterValue,
 	    String[] columnNames,
 	    String[] columnAliases, I18nResource[] i18nResources)
-		    throws ReadDriverException {
+		    throws DataException {
 
 	TOCTableManager toc = new TOCTableManager();
-	IEditableSource model = toc.getTableModelByName(sourceTable);
-	int fieldIndex = model.getRecordset()
-		.getFieldIndexByName(rowFilterName);
+	TableDocument tableDocument = toc.getTableDocumentByName(sourceTable);
+	IEditableSource model = new SelectableDataSource(tableDocument.getStore());
+	int fieldIndex = model.getFieldIndexByName(rowFilterName);
 	IRowFilter filter = new IRowFilterImplementer(
 		fieldIndex, rowFilterValue);
 	I18nResourceManager i18nManager = new I18nResourceManager(i18nResources);
 	i18nManager.addResource(defaultI18n);
-	return new AlphanumericTableModel(model, columnNames, columnAliases,
+	
+	return new AlphanumericTableModel(tableDocument, columnNames, columnAliases,
 		i18nManager, filter);
     }
 
     public static AlphanumericTableModel createFromTableWithFilter(String sourceTable,
 	    String rowFilterName, String rowFilterValue, String[] columnNames, String[] columnAliases)
-	    throws ReadDriverException {
+	    throws DataException {
 	return createFromTableWithFilter(sourceTable, rowFilterName, rowFilterValue,
 		columnNames, columnAliases, new I18nResource[0]);
     }
@@ -79,24 +84,24 @@ public class TableModelFactory {
     public static AlphanumericTableModel createFromTableWithNotFilter(
 	    String sourceTable, String rowFilterName, String rowFilterValue,
 	    String[] columnNames, String[] columnAliases, I18nResource[] i18nResources)
-	    throws ReadDriverException {
+	    throws DataException {
 
 	TOCTableManager toc = new TOCTableManager();
-	IEditableSource model = toc.getTableModelByName(sourceTable);
-	int fieldIndex = model.getRecordset()
-		.getFieldIndexByName(rowFilterName);
+	TableDocument tableDocument = toc.getTableDocumentByName(sourceTable);
+	IEditableSource model = new SelectableDataSource(tableDocument.getStore());
+	int fieldIndex = model.getFieldIndexByName(rowFilterName);
 	IRowFilter filter = new IRowNotFilterImplementer(
 		new IRowFilterImplementer(fieldIndex, rowFilterValue));
 	I18nResourceManager i18nManager = new I18nResourceManager(i18nResources);
 	i18nManager.addResource(defaultI18n);
-	return new AlphanumericTableModel(model, columnNames, columnAliases,
+	return new AlphanumericTableModel(tableDocument, columnNames, columnAliases,
 		i18nManager, filter);
     }
 
     public static AlphanumericTableModel createFromTableWithNotFilter(
 	    String sourceTable, String rowFilterName, String rowFilterValue,
 	    String[] columnNames, String[] columnAliases)
-	    throws ReadDriverException {
+	    throws DataException {
 	return createFromTableWithNotFilter(sourceTable, rowFilterName, rowFilterValue,
 		columnNames, columnAliases, new I18nResource[0]);
     }
@@ -105,19 +110,19 @@ public class TableModelFactory {
 	    String sourceTable,
 	    String rowFilterName, String[] rowFilterValues,
 	    String[] columnNames, String[] columnAliases, I18nResource[] i18nResources)
-	    throws ReadDriverException {
+	    throws DataException {
 
 	TOCTableManager toc = new TOCTableManager();
-	IEditableSource model = toc.getTableModelByName(sourceTable);
-	int fieldIndex = model.getRecordset()
-		.getFieldIndexByName(rowFilterName);
+	TableDocument tableDocument = toc.getTableDocumentByName(sourceTable);
+	IEditableSource model = new SelectableDataSource(tableDocument.getStore());
+	int fieldIndex = model.getFieldIndexByName(rowFilterName);
 	List<IRowFilter> filters = new ArrayList<IRowFilter>();
 	for (String rowFilterValue : rowFilterValues) {
 	    filters.add(new IRowFilterImplementer(fieldIndex, rowFilterValue));
 	}
 	I18nResourceManager i18nManager = new I18nResourceManager(i18nResources);
 	i18nManager.addResource(defaultI18n);
-	return new AlphanumericTableModel(model, columnNames, columnAliases,
+	return new AlphanumericTableModel(tableDocument, columnNames, columnAliases,
 		i18nManager, new IRowMultipleOrFilterImplementer(filters));
     }
 
@@ -125,7 +130,7 @@ public class TableModelFactory {
 	    String sourceTable,
 	    String rowFilterName, String[] rowFilterValues,
 	    String[] columnNames, String[] columnAliases)
-	    throws ReadDriverException {
+	    throws DataException {
 	return createFromTableWithOrFilter(sourceTable, rowFilterName, rowFilterValues,
 		columnNames, columnAliases, new I18nResource[0]);
     }
@@ -140,11 +145,11 @@ public class TableModelFactory {
     public static VectorialTableModel createFromLayerWithFilter(
 	    String layerName, String rowFilterName, String rowFilterValue,
 	    String[] columnNames, String[] columnAliases)
-	    throws ReadDriverException {
+	    throws DataException {
 
 	FLyrVect layer = new TOCLayerManager().getLayerByName(layerName);
-	int fieldIndex = layer.getRecordset()
-		.getFieldIndexByName(rowFilterName);
+	FeatureType type = layer.getFeatureStore().getDefaultFeatureType();
+	int fieldIndex = type.getIndex(rowFilterName);
 	IRowFilter filter = new IRowFilterImplementer(fieldIndex,
 		rowFilterValue);
 	return new VectorialTableModel(layer, columnNames, columnAliases,
@@ -154,11 +159,11 @@ public class TableModelFactory {
     public static VectorialTableModel createFromLayerWithNotFilter(
 	    String layerName, String rowFilterName, String rowFilterValue,
 	    String[] columnNames, String[] columnAliases)
-	    throws ReadDriverException {
-
+	    throws DataException {
+    	
 	FLyrVect layer = new TOCLayerManager().getLayerByName(layerName);
-	int fieldIndex = layer.getRecordset()
-		.getFieldIndexByName(rowFilterName);
+	FeatureType type = layer.getFeatureStore().getDefaultFeatureType();
+	int fieldIndex = type.getIndex(rowFilterName);
 	IRowFilter filter = new IRowNotFilterImplementer(
 		new IRowFilterImplementer(fieldIndex, rowFilterValue));
 	return new VectorialTableModel(layer, columnNames, columnAliases,
@@ -168,11 +173,11 @@ public class TableModelFactory {
     public static VectorialTableModel createFromLayerWithOrFilter(
 	    String layerName, String rowFilterName, String[] rowFilterValues,
 	    String[] columnNames, String[] columnAliases)
-	    throws ReadDriverException {
+	    throws DataException {
 
 	FLyrVect layer = new TOCLayerManager().getLayerByName(layerName);
-	int fieldIndex = layer.getRecordset()
-		.getFieldIndexByName(rowFilterName);
+	FeatureType type = layer.getFeatureStore().getDefaultFeatureType();
+	int fieldIndex = type.getIndex(rowFilterName);
 	List<IRowFilter> filters = new ArrayList<IRowFilter>();
 	for (String rowFilterValue : rowFilterValues) {
 	    filters.add(new IRowFilterImplementer(fieldIndex, rowFilterValue));

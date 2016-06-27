@@ -23,12 +23,13 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.log4j.Logger;
+import org.gvsig.fmap.dal.feature.EditableFeatureAttributeDescriptor;
+import org.gvsig.fmap.dal.feature.impl.DefaultEditableFeatureAttributeDescriptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-
-import com.iver.cit.gvsig.fmap.drivers.FieldDescription;
 
 import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.DomainRulesFactory;
 import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.ValidatorDomain;
@@ -61,11 +62,13 @@ public class XMLSAXParser extends DefaultHandler {
 
     private String tmpVal = null;
     private DomainReader tmpDomainReader = null;
-    private FieldDescription tmpFieldDescription = null;
+    private EditableFeatureAttributeDescriptor tmpFieldDescription = null;
     private DependencyReader tmpDependencyReader = null;
     private String latestDpnComponent, latestDpnValue;
 
-    private static Logger logger = Logger.getLogger("SAX Parser");
+    
+	private static final Logger logger = LoggerFactory
+			.getLogger(XMLSAXParser.class);
 
     public XMLSAXParser(String xmlFile) throws ParserConfigurationException,
 	    SAXException, IOException {
@@ -120,7 +123,8 @@ public class XMLSAXParser extends DefaultHandler {
 	tmpVal = "";
 	if (qName.equalsIgnoreCase("FIELD")) {
 	    // set field
-	    tmpFieldDescription = new FieldDescription();
+	    tmpFieldDescription = new DefaultEditableFeatureAttributeDescriptor();
+	    
 	}
 
 	else if (qName.equalsIgnoreCase("ENABLEIF")) {
@@ -157,7 +161,8 @@ public class XMLSAXParser extends DefaultHandler {
 
 	// set tmp field structure
 	if (qName.equalsIgnoreCase("FIELDNAME")) {
-	    tmpFieldDescription.setFieldName(tmpVal);
+	    tmpFieldDescription.setName(tmpVal);
+	    
 	}
 
 	else if (qName.equalsIgnoreCase("DRTYPE")) {
@@ -210,19 +215,19 @@ public class XMLSAXParser extends DefaultHandler {
 	    ValidationRule rule = DomainRulesFactory.createRule(tmpVal);
 	    if (rule != null) {
 		if (getAD().getDomainValidatorForComponent(
-			tmpFieldDescription.getFieldName()) == null) {
+			tmpFieldDescription.getName()) == null) {
 		    getAD().addDomainValidator(
-			    tmpFieldDescription.getFieldName(),
+			    tmpFieldDescription.getName(),
 			    new ValidatorDomain(null));
 		}
 		getAD().getDomainValidatorForComponent(
-			tmpFieldDescription.getFieldName()).addRule(rule);
+			tmpFieldDescription.getName()).addRule(rule);
 	    }
 	}
 
 	// save tmp values of DomainReader in AplicationDomain
 	else if (qName.equalsIgnoreCase("DOMAINREADER")) {
-	    getAD().addDomainValues(tmpFieldDescription.getFieldName(),
+	    getAD().addDomainValues(tmpFieldDescription.getName(),
 		    tmpDomainReader.getDomainValues());
 	}
 
@@ -244,12 +249,12 @@ public class XMLSAXParser extends DefaultHandler {
 
 	// save tmp values of DependencyReader in ApplicationDomain
 	else if (qName.equalsIgnoreCase("ENABLEIF")) {
-	    getAD().addDependencyValues(tmpFieldDescription.getFieldName(),
+	    getAD().addDependencyValues(tmpFieldDescription.getName(),
 		    tmpDependencyReader);
 	}
 
 	else if (qName.equalsIgnoreCase("NONEDITABLE")) {
-	    getAD().addNonEditableComponent(tmpFieldDescription.getFieldName(),
+	    getAD().addNonEditableComponent(tmpFieldDescription.getName(),
 		    true);
 	}
     }

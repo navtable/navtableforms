@@ -25,22 +25,22 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
-import org.apache.log4j.Logger;
+import org.gvsig.andami.PluginServices;
+import org.gvsig.andami.messages.NotificationManager;
+import org.gvsig.andami.ui.mdiFrame.MDIFrame;
+import org.gvsig.andami.ui.mdiManager.IWindow;
+import org.gvsig.andami.ui.mdiManager.IWindowListener;
+import org.gvsig.andami.ui.mdiManager.WindowInfo;
+import org.gvsig.fmap.dal.exception.DataException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
-import com.iver.andami.PluginServices;
-import com.iver.andami.messages.NotificationManager;
-import com.iver.andami.ui.mdiFrame.MDIFrame;
-import com.iver.andami.ui.mdiManager.IWindow;
-import com.iver.andami.ui.mdiManager.IWindowListener;
-import com.iver.andami.ui.mdiManager.WindowInfo;
-import com.iver.cit.gvsig.exceptions.visitors.StopWriterVisitorException;
-import com.iver.cit.gvsig.fmap.edition.IEditableSource;
 import com.jeta.forms.components.image.ImageComponent;
 import com.jeta.forms.components.panel.FormPanel;
 import com.jeta.forms.gui.common.FormException;
 import com.toedter.calendar.JDateChooser;
 
+import es.icarto.gvsig.commons.gvsig2.IEditableSource;
 import es.icarto.gvsig.navtableforms.DependencyHandler;
 import es.icarto.gvsig.navtableforms.FillHandler;
 import es.icarto.gvsig.navtableforms.I18nHandler;
@@ -66,8 +66,9 @@ import es.udc.cartolab.gvsig.navtable.format.DateFormatNT;
 public abstract class AbstractSubForm extends JPanel implements IForm,
 IValidatableForm, IWindow, IWindowListener, II18nForm {
 
-    private static final Logger logger = Logger
-	    .getLogger(AbstractSubForm.class);
+    
+	private static final Logger logger = LoggerFactory
+			.getLogger(AbstractSubForm.class);
 
     private FormPanel formPanel;
     private HashMap<String, JComponent> widgets;
@@ -258,8 +259,8 @@ IValidatableForm, IWindow, IWindowListener, II18nForm {
 	    fillHandler.fillValues();
 	    dependencyHandler.fillValues();
 	    fillSpecificValues();
-	} catch (ReadDriverException e) {
-	    logger.error(e.getStackTrace());
+	} catch (DataException e) {
+	    logger.error(e.getMessage(), e);
 	}
 	chainedHandler.fillValues();
 	imageHandlerManager.fillValues();
@@ -278,7 +279,7 @@ IValidatableForm, IWindow, IWindowListener, II18nForm {
 	    try {
 		formPanel = new FormPanel(stream);
 	    } catch (FormException e) {
-		e.printStackTrace();
+	    	logger.error(e.getMessage(), e);
 	    }
 	}
 	return formPanel;
@@ -533,7 +534,7 @@ IValidatableForm, IWindow, IWindowListener, II18nForm {
 	    } catch (Exception e) {
 		iController.clearAll();
 		position = -1;
-		logger.error(e.getStackTrace(), e);
+		logger.error(e.getMessage(), e);
 	    }
 	    PluginServices.getMDIManager().closeWindow(iWindow);
 	}
@@ -552,26 +553,24 @@ IValidatableForm, IWindow, IWindowListener, II18nForm {
 	    try {
 		iController.update((int) position);
 		model.dataChanged();
-	    } catch (ReadDriverException e) {
+	    } catch (DataException e) {
 		iController.clearAll();
 		position = -1;
-		logger.error(e.getStackTrace());
-	    } catch (StopWriterVisitorException e) {
-		logger.error(e.getStackTrace());
+		logger.error(e.getMessage(), e);
 		String errorMessage = (e.getCause() != null) ? e.getCause()
-			.getMessage() : e.getMessage(), auxMessage = errorMessage
-			.replace("ERROR: ", "").replace(" ", "_")
-			.replace("\n", ""), auxMessageIntl = PluginServices
-			.getText(this, auxMessage);
-			if (auxMessageIntl.compareToIgnoreCase(auxMessage) != 0) {
-			    errorMessage = auxMessageIntl;
-			}
-			JOptionPane.showMessageDialog(
-				(Component) PluginServices.getMainFrame(),
-				errorMessage,
-				PluginServices.getText(this, "save_layer_error"),
-				JOptionPane.ERROR_MESSAGE);
-	    }
+				.getMessage() : e.getMessage(), auxMessage = errorMessage
+				.replace("ERROR: ", "").replace(" ", "_")
+				.replace("\n", ""), auxMessageIntl = PluginServices
+				.getText(this, auxMessage);
+				if (auxMessageIntl.compareToIgnoreCase(auxMessage) != 0) {
+				    errorMessage = auxMessageIntl;
+				}
+				JOptionPane.showMessageDialog(
+					(Component) PluginServices.getMainFrame(),
+					errorMessage,
+					PluginServices.getText(this, "save_layer_error"),
+					JOptionPane.ERROR_MESSAGE);
+	    } 
 	    PluginServices.getMDIManager().closeWindow(iWindow);
 	}
     }

@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import javax.swing.JComponent;
 
-import com.hardcode.gdbms.driver.exceptions.ReadDriverException;
+import org.gvsig.fmap.dal.exception.DataException;
 
 import es.icarto.gvsig.navtableforms.AbstractForm;
 import es.icarto.gvsig.navtableforms.gui.tables.menu.VectorialUpdateJTableContextualMenu;
@@ -30,7 +30,7 @@ public class VectorialTableHandler extends BaseTableHandler {
     }
 
     @Override
-    protected void createTableModel() throws ReadDriverException {
+    protected void createTableModel() throws DataException {
 	model = TableModelFactory
 		.createFromLayerWithFilter(sourceTableName, destinationKey,
 			originKeyValue, colNames, colAliases);
