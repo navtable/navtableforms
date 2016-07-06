@@ -1,5 +1,7 @@
 package es.icarto.gvsig.navtableforms.gui.tables.menu;
 
+import static es.icarto.gvsig.commons.i18n.I18n._;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 
@@ -101,7 +103,7 @@ public class AlphanumericCompleteJTableContextualMenu extends
     private class CreateAction extends AbstractAction {
 
 	public CreateAction() {
-	    super("Añadir");
+	    super(_("add"));
 	}
 
 	@Override
@@ -119,10 +121,7 @@ public class AlphanumericCompleteJTableContextualMenu extends
 	@Override
 	public void actionPerformed(ActionEvent e) {
 	    if ((table == null) || (table.getSelectedRowCount() != 1)) {
-		JOptionPane.showMessageDialog(null,
-			"Debe seleccionar una fila para editar los datos.",
-			"Ninguna fila seleccionada",
-			JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(null, _("no_file_selected"), _("no_file_selected_title"), JOptionPane.INFORMATION_MESSAGE);
 		return;
 	    }
 	    TableModel model = table.getModel();
@@ -140,25 +139,22 @@ public class AlphanumericCompleteJTableContextualMenu extends
     private class DeleteAction extends AbstractAction {
 
 	public DeleteAction() {
-	    super("Eliminar");
+	    super(_("delete"));
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 
 	    if ((table == null) || (table.getSelectedRowCount() != 1)) {
-		JOptionPane.showMessageDialog(null,
-			"Debe seleccionar una fila para eliminar los datos.",
-			"Ninguna fila seleccionada",
-			JOptionPane.INFORMATION_MESSAGE);
+	    	JOptionPane.showMessageDialog(null, _("no_file_selected"), _("no_file_selected_title"), JOptionPane.INFORMATION_MESSAGE);
 		return;
 	    } else {
-		Object[] options = { "Eliminar", "Cancelar" };
+		Object[] options = { _("delete"), _("cancel") };
 		int response = JOptionPane
 			.showOptionDialog(
 				null,
-				"Los datos seleccionados se eliminarán de forma permanente.",
-				"Eliminar", JOptionPane.YES_NO_OPTION,
+				_("ask_for_deletion"),
+				_("delete"), JOptionPane.YES_NO_OPTION,
 				JOptionPane.WARNING_MESSAGE, null, options,
 				options[0]);
 		if (response == JOptionPane.YES_OPTION) {

@@ -1,5 +1,7 @@
 package es.icarto.gvsig.navtableforms.gui.tables.menu;
 
+import static es.icarto.gvsig.commons.i18n.I18n._;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -31,12 +33,9 @@ public class VectorialEditableNNRelJTableContextualMenu extends
     public VectorialEditableNNRelJTableContextualMenu(
 	    VectorialEditableNNRelTableHandler tableRelationship) {
 	super(tableRelationship.getSourceTableName());
-	newMenuItem
-		.setText(PluginServices.getText(this, "create_new_relation"));
-	updateMenuItem.setText(PluginServices.getText(this,
-		"update_item_relation"));
-	deleteMenuItem.setText(PluginServices.getText(this,
-		"delete_item_relation"));
+	newMenuItem.setText(_("create_new_relation"));
+	updateMenuItem.setText(_("update_item_relation"));
+	deleteMenuItem.setText(_("delete_item_relation"));
 	this.form = FormFactory
 		.createSingletonFormRegistered(tableRelationship
 			.getSourceTableName());

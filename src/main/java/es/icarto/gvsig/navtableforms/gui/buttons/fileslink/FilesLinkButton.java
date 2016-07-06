@@ -1,5 +1,7 @@
 package es.icarto.gvsig.navtableforms.gui.buttons.fileslink;
 
+import static es.icarto.gvsig.commons.i18n.I18n._;
+
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
@@ -17,7 +19,7 @@ public class FilesLinkButton extends JButton {
     public FilesLinkButton(AbstractForm form, FilesLinkData data) {
 	this.setIcon(new ImageIcon(AbstractForm.class
 		.getResource("/fileslink.png")));
-	this.setToolTipText(PluginServices.getText(this, "fileslink_tooltip"));
+	this.setToolTipText(_("fileslink_tooltip"));
 	this.addActionListener(new FilesLinkListener(form, data));
     }
 

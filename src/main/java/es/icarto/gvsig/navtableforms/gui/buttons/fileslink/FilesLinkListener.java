@@ -1,5 +1,7 @@
 package es.icarto.gvsig.navtableforms.gui.buttons.fileslink;
 
+import static es.icarto.gvsig.commons.i18n.I18n._;
+
 import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -47,20 +49,12 @@ public class FilesLinkListener implements ActionListener {
 
     private boolean createFolder(File folder) {
 	boolean folderCreated = false;
-	int answer = JOptionPane.showConfirmDialog(null, String.format(
-		PluginServices.getText(this,
-			"fileslink_folder_not_exists_create_it"),
-			folder.getAbsolutePath()), PluginServices.getText(this,
-				"warning"), JOptionPane.YES_NO_OPTION);
+	String msg = _("fileslink_folder_not_exists_create_it", folder.getAbsolutePath());
+	int answer = JOptionPane.showConfirmDialog(null, msg, _("warning"), JOptionPane.YES_NO_OPTION);
 	if (answer == JOptionPane.YES_OPTION) {
 	    // will make *all* directories in the path
 	    if (!folder.mkdirs()) {
-		JOptionPane.showMessageDialog(
-			null,
-			PluginServices.getText(this,
-				"fileslink_folder_could_not_be_created")
-				+ ": "
-				+ folder.getAbsolutePath());
+		JOptionPane.showMessageDialog(null, _("fileslink_folder_could_not_be_created", folder.getAbsolutePath()));
 	    } else {
 		folderCreated = true;
 	    }

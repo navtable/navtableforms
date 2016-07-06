@@ -16,6 +16,8 @@
  */
 package es.icarto.gvsig.navtableforms;
 
+import static es.icarto.gvsig.commons.i18n.I18n._;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
@@ -333,9 +335,7 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	boolean hasError = validationHandler.hasValidationErrors();
 	if (hasError) {
 	    JOptionPane.showMessageDialog(this,
-		    validationHandler.getMessages(),
-		    PluginServices.getText(this, "Error de validacion"),
-		    JOptionPane.ERROR_MESSAGE);
+		    validationHandler.getMessages(),_("validation_error"), JOptionPane.ERROR_MESSAGE);
 	}
 	return hasError;
     }

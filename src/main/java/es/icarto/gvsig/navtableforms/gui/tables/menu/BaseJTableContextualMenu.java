@@ -1,5 +1,7 @@
 package es.icarto.gvsig.navtableforms.gui.tables.menu;
 
+import static es.icarto.gvsig.commons.i18n.I18n._;
+
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -24,12 +26,9 @@ public abstract class BaseJTableContextualMenu implements MouseListener {
     protected static final int BUTTON_RIGHT = 3;
 
     protected JTable table;
-    protected JMenuItem newMenuItem = new JMenuItem(PluginServices.getText(
-	    this, "create_new"));
-    protected JMenuItem updateMenuItem = new JMenuItem(PluginServices.getText(
-	    this, "update_item"));
-    protected JMenuItem deleteMenuItem = new JMenuItem(PluginServices.getText(
-	    this, "delete_item"));
+    protected JMenuItem newMenuItem = new JMenuItem(_("create_new"));
+    protected JMenuItem updateMenuItem = new JMenuItem(_("update_item"));
+    protected JMenuItem deleteMenuItem = new JMenuItem(_("delete_item"));
     protected JPopupMenu popupMenu = new JPopupMenu();
 
     public BaseJTableContextualMenu() {

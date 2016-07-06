@@ -1,5 +1,7 @@
 package es.icarto.gvsig.navtableforms.gui.tables.handler;
 
+import static es.icarto.gvsig.commons.i18n.I18n._;
+
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -56,7 +58,7 @@ public class EditableNNRelTableForm extends JPanel implements IWindow,
 	c.gridy = 0;
 	this.add(secondaryPKValueCB, c);
 
-	addButton = new JButton(PluginServices.getText(this, "add_relation"));
+	addButton = new JButton(_("add"));
 	c.insets = new Insets(10, 10, 10, 10);
 	c.ipady = 0;
 	c.gridy = 1;

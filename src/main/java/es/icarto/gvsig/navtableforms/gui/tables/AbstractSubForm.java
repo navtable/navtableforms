@@ -1,5 +1,7 @@
 package es.icarto.gvsig.navtableforms.gui.tables;
 
+import static es.icarto.gvsig.commons.i18n.I18n._;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -373,7 +375,7 @@ IValidatableForm, IWindow, IWindowListener, II18nForm {
     public WindowInfo getWindowInfo() {
 	if (windowInfo == null) {
 	    windowInfo = new WindowInfo(windowInfoCode);
-	    windowInfo.setTitle(PluginServices.getText(this, getBasicName()));
+	    windowInfo.setTitle(_(getBasicName()));
 	    Dimension dim = getPreferredSize();
 	    // To calculate the maximum size of a form we take the size of the
 	    // main frame minus a "magic number" for the menus, toolbar, state
@@ -560,15 +562,14 @@ IValidatableForm, IWindow, IWindowListener, II18nForm {
 		String errorMessage = (e.getCause() != null) ? e.getCause()
 				.getMessage() : e.getMessage(), auxMessage = errorMessage
 				.replace("ERROR: ", "").replace(" ", "_")
-				.replace("\n", ""), auxMessageIntl = PluginServices
-				.getText(this, auxMessage);
+				.replace("\n", ""), auxMessageIntl = _(auxMessage);
 				if (auxMessageIntl.compareToIgnoreCase(auxMessage) != 0) {
 				    errorMessage = auxMessageIntl;
 				}
 				JOptionPane.showMessageDialog(
 					(Component) PluginServices.getMainFrame(),
 					errorMessage,
-					PluginServices.getText(this, "save_layer_error"),
+					_("save_layer_error"),
 					JOptionPane.ERROR_MESSAGE);
 	    } 
 	    PluginServices.getMDIManager().closeWindow(iWindow);
