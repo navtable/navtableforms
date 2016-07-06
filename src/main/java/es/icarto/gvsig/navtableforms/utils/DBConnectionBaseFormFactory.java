@@ -1,24 +1,20 @@
 package es.icarto.gvsig.navtableforms.utils;
 
-import javax.swing.JInternalFrame;
 
+import org.cresques.cts.IProjection;
 import org.gvsig.andami.PluginServices;
 import org.gvsig.andami.ui.mdiManager.IWindow;
-import org.gvsig.app.ApplicationLocator;
-import org.gvsig.app.extension.ProjectExtension;
 import org.gvsig.app.project.ProjectManager;
 import org.gvsig.app.project.documents.table.TableDocument;
 import org.gvsig.app.project.documents.table.TableManager;
 import org.gvsig.app.project.documents.table.gui.FeatureTableDocumentPanel;
-import org.gvsig.app.project.documents.view.gui.AbstractViewPanel;
 import org.gvsig.app.project.documents.view.gui.IView;
 import org.gvsig.fmap.dal.DALLocator;
 import org.gvsig.fmap.dal.DataManager;
-import org.gvsig.fmap.dal.exception.InitializeException;
-import org.gvsig.fmap.dal.exception.ProviderNotRegisteredException;
-import org.gvsig.fmap.dal.exception.ValidateDataParametersException;
 import org.gvsig.fmap.dal.feature.FeatureStore;
 import org.gvsig.fmap.dal.store.jdbc.JDBCStoreParameters;
+import org.gvsig.fmap.mapcontext.MapContext;
+import org.gvsig.fmap.mapcontext.layers.FLayer;
 import org.gvsig.fmap.mapcontext.layers.vectorial.FLyrVect;
 import org.gvsig.tools.exception.BaseException;
 import org.slf4j.Logger;
@@ -50,78 +46,21 @@ public abstract class DBConnectionBaseFormFactory extends FormFactory {
     public boolean checkTableLoaded(String tableName) {
 	return (new TOCTableManager().getTableDocumentByName(tableName) != null);
     }
+    
+    protected void loadLayer(String layerName, String dbSchema) {
+    	IWindow iWindow = PluginServices.getMDIManager().getActiveWindow();
+    	if (iWindow instanceof IView) {
+    		MapContext mc = ((IView) iWindow).getMapControl().getMapContext();
+    		IProjection projection = mc.getProjection();
+			try {
+				FLayer layer = DBSession.getCurrentSession().getLayer(layerName, layerName, dbSchema, null, projection);
+				mc.getLayers().addLayer(layer);
+			} catch (BaseException e) {
+				logger.error(e.getMessage(), e);
+			}
+    	}
+    }
 
-//    protected void loadLayer(String layerName, String dbSchema) {
-//	IWindow[] windows = PluginServices.getMDIManager().getOrderedWindows();
-//	IView view = null;
-//	for (IWindow w : windows) {
-//	    if (w instanceof IView) {
-//		view = (IView) w;
-//		break;
-//	    }
-//	}
-//	try {
-//	    view.getMapControl()
-//		    .getMapContext()
-//		    .getLayers()
-//		    .addLayer(
-//			    DBSession.getCurrentSession().getLayer(layerName,
-//				    layerName, dbSchema, null,
-//				    view.getMapControl().getProjection()));
-//	} catch (Exception e) {
-//		logger.error(e.getMessage(), e);
-//	}
-//    }
-//
-//    protected void loadTable(String tableName, String dbSchema) {
-//	IWindow[] ws = PluginServices.getMDIManager().getAllWindows();
-//	AbstractViewPanel baseView = null;
-//	for (IWindow w : ws) {
-//	    if (w instanceof AbstractViewPanel) {
-//		baseView = (AbstractViewPanel) w;
-//	    }
-//	}
-//	DBSession session = DBSession.getCurrentSession();
-//
-//	String completeTableName = session.getCompleteTableName(tableName,
-//		dbSchema);
-//
-//	LayerFactory.getDataSourceFactory().addDBDataSourceByTable(tableName,
-//		session.getServer(), session.getPort(), session.getUserName(),
-//		session.getPassword(), session.getDatabase(),
-//		completeTableName, session.getAlphanumericDriverName());
-//
-//	try {
-//	    DataSource dataSource;
-//	    dataSource = LayerFactory.getDataSourceFactory()
-//		    .createRandomDataSource(tableName,
-//			    DataSourceFactory.AUTOMATIC_OPENING);
-//	    SelectableDataSource sds = new SelectableDataSource(dataSource);
-//	    EditableAdapter auxea = new EditableAdapter();
-//
-//	    auxea.setOriginalDataSource(sds);
-//
-//	    ProjectTable projectTable = ProjectFactory.createTable(tableName,
-//		    auxea);
-//	    Table t = new Table();
-//	    t.setModel(projectTable);
-//
-//	    PluginServices.getMDIManager().addWindow(t);
-//	    JInternalFrame frame = (JInternalFrame) t.getRootPane().getParent();
-//
-//	    ProjectExtension ext = (ProjectExtension) PluginServices.getExtension(ProjectExtension.class);
-//	    
-//	    ext.getProject().addDocument(projectTable);
-//	    frame.toBack();
-//	    frame.setSelected(false);
-//	    if (baseView != null) {
-//		JInternalFrame frameBaseView = (JInternalFrame) baseView.getRootPane().getParent();
-//		frameBaseView.setSelected(true);
-//	    }
-//	} catch (Exception e) {
-//	   logger.error(e.getMessage(), e);
-//	}
-//    }
     protected void loadTable(String tableName, String dbSchema) {
     	try {
 			loadTableDocument(tableName, dbSchema);
