@@ -10,6 +10,7 @@ import org.gvsig.app.project.documents.Document;
 import org.gvsig.app.project.documents.table.TableDocument;
 import org.gvsig.app.project.documents.table.TableManager;
 import org.gvsig.app.project.documents.table.gui.FeatureTableDocumentPanel;
+import org.gvsig.fmap.mapcontext.layers.vectorial.FLyrVect;
 
 public class TOCTableManager {
 
@@ -49,6 +50,15 @@ public class TOCTableManager {
 
 	public TableDocument getTableDocumentByName(String sourceTable) {
 		return projectTables.get(sourceTable);
+	}
+
+	public TableDocument getTableForLayer(FLyrVect l) {
+		for (TableDocument t : projectTables.values()) {
+			if (t.getAssociatedLayer() == l) {
+				return t;
+			}
+		}
+		return null;
 	}
 
 }

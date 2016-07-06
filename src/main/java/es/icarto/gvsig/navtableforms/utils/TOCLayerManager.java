@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.gvsig.andami.PluginServices;
 import org.gvsig.andami.ui.mdiManager.IWindow;
+import org.gvsig.app.project.documents.table.TableDocument;
 import org.gvsig.app.project.documents.view.gui.IView;
 import org.gvsig.fmap.mapcontext.layers.FLayer;
 import org.gvsig.fmap.mapcontext.layers.FLayers;
@@ -126,16 +127,16 @@ public class TOCLayerManager {
 	return layers.toArray(new FLyrVect[0]);
     }
 
-    @Deprecated
     public List<FLyrVect> getJoinedLayers() {
-    	throw new RuntimeException("Not implemented");
-//	List<FLyrVect> layers = new ArrayList<FLyrVect>();
-//	for (FLyrVect l : getAllLayers()) {
-//	    if (l.isJoined()) {
-//		layers.add(l);
-//	    }
-//	}
-//	return layers;
+    	TOCTableManager tableManager = new TOCTableManager();
+    	List<FLyrVect> layers = new ArrayList<FLyrVect>();
+    	for (FLyrVect l : getAllLayers()) {
+    		TableDocument t = tableManager.getTableForLayer(l);
+    	    if ((t != null) && t.hasLinks()) {
+    	    	layers.add(l);
+    	    }
+    	}
+    	return layers;
     }
 
     public List<FLyrVect> getEditingLayers() {
