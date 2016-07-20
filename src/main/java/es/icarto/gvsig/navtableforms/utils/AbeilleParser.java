@@ -32,18 +32,30 @@ import javax.swing.JTextField;
 import com.toedter.calendar.JDateChooser;
 
 public class AbeilleParser {
-
-    /**
-     * A legacy method to guarantee backwards compatibility. Should be sage
-     * remove it in modern versions of navtableforms.
-     */
-    private static String getNameBeforeDots(String widgetName) {
-	if (widgetName.contains(".")) {
-	    return widgetName.substring(0, widgetName.indexOf("."));
-	} else {
-	    return widgetName;
+	
+	private static class NameTransformation {
+		public String transform(String org) {
+			String name = getNameBeforeDots(org);
+			return name.toLowerCase();
+		}
+		
+		/**
+	     * A legacy method to guarantee backwards compatibility. Should be sage
+	     * remove it in modern versions of navtableforms.
+	     */
+	    private String getNameBeforeDots(String widgetName) {
+		if (widgetName.contains(".")) {
+		    return widgetName.substring(0, widgetName.indexOf("."));
+		} else {
+		    return widgetName;
+		}
+	    }
+		
 	}
-    }
+
+	private final static NameTransformation nameTransform = new NameTransformation();
+	
+    
 
     /**
      * This method used to return a map with the names of components uppercased,
@@ -67,7 +79,7 @@ public class AbeilleParser {
 		    || (comp instanceof JTextArea)
 		    || (comp instanceof JComboBox) || (comp instanceof JTable)
 		    || (comp instanceof JDateChooser)) {
-		String newName = getNameBeforeDots(comp.getName());
+		String newName = nameTransform.transform(comp.getName());
 		comp.setName(newName);
 		map.put(comp.getName(), (JComponent) comp);
 	    }
@@ -84,7 +96,7 @@ public class AbeilleParser {
 	while (c.getComponentCount() > count) {
 	    Component comp = c.getComponent(count++);
 	    if (comp.getClass().isAssignableFrom(JButton.class)) {
-		String newName = getNameBeforeDots(comp.getName());
+	    	String newName = nameTransform.transform(comp.getName());
 		comp.setName(newName);
 		map.put(comp.getName(), (JButton) comp);
 		return map;
@@ -92,7 +104,7 @@ public class AbeilleParser {
 		HashMap<String, JButton> recursiveMap = getButtonsFromContainer((Container) comp);
 		if (recursiveMap.size() > 0) {
 		    for (JButton w : recursiveMap.values()) {
-			String newName = getNameBeforeDots(w.getName());
+		    	String newName = nameTransform.transform(comp.getName());
 			comp.setName(newName);
 			map.put(w.getName(), w);
 		    }
