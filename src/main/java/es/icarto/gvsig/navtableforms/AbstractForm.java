@@ -21,11 +21,6 @@ import static es.icarto.gvsig.commons.i18n.I18n._;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,8 +35,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import org.gvsig.andami.Launcher;
-import org.gvsig.andami.ui.mdiManager.WindowInfo;
 import org.gvsig.fmap.dal.exception.DataException;
 import org.gvsig.fmap.mapcontext.layers.LayerEvent;
 import org.gvsig.fmap.mapcontext.layers.vectorial.FLyrVect;
@@ -52,11 +45,10 @@ import com.jeta.forms.components.image.ImageComponent;
 import com.jeta.forms.components.panel.FormPanel;
 import com.toedter.calendar.JDateChooser;
 
+import es.icarto.gvsig.navtable.windowproperties.FormWindowProperties;
 import es.icarto.gvsig.navtableforms.calculation.Calculation;
 import es.icarto.gvsig.navtableforms.calculation.CalculationHandler;
 import es.icarto.gvsig.navtableforms.chained.ChainedHandler;
-import es.icarto.gvsig.navtableforms.forms.windowproperties.FormWindowProperties;
-import es.icarto.gvsig.navtableforms.forms.windowproperties.FormWindowPropertiesSerializator;
 import es.icarto.gvsig.navtableforms.gui.i18n.resource.I18nResource;
 import es.icarto.gvsig.navtableforms.gui.images.ImageHandler;
 import es.icarto.gvsig.navtableforms.gui.images.ImageHandlerManager;
@@ -71,7 +63,7 @@ import es.udc.cartolab.gvsig.navtable.format.DateFormatNT;
 
 @SuppressWarnings("serial")
 public abstract class AbstractForm extends AbstractNavTable implements
-IValidatableForm, II18nForm {
+		IValidatableForm, II18nForm {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(AbstractForm.class);
@@ -94,8 +86,6 @@ IValidatableForm, II18nForm {
 	private final ChainedHandler chainedHandler;
 	private ImageHandlerManager imageHandlerManager;
 
-	private String title;
-
 	public AbstractForm(FLyrVect layer) {
 		super(layer);
 		formBody = getFormPanel();
@@ -107,30 +97,12 @@ IValidatableForm, II18nForm {
 		calculationHandler = new CalculationHandler();
 		chainedHandler = new ChainedHandler();
 		imageHandlerManager = new ImageHandlerManager();
-	}
 
-	@Override
-	public WindowInfo getWindowInfo() {
-		if (windowInfo == null) {
-			super.getWindowInfo();
-			if (title != null) {
-				windowInfo.setTitle(title);
-			}
-			for (FormWindowProperties fwp : getFormWindowProperties()) {
-				if (fwp.getFormName().equalsIgnoreCase(getClass().getName())) {
-					// WindowInfoSupport.getWindowInfo adds 40 to the
-					// getWindowInfo declared
-					// by IWindow objects
-					final int ANDAMI_CORRECTION = 40;
-					windowInfo.setHeight(fwp.getFormWindowHeight()
-							- ANDAMI_CORRECTION);
-					windowInfo.setWidth(fwp.getFormWindowWidth());
-					windowInfo.setX(fwp.getFormWindowXPosition());
-					windowInfo.setY(fwp.getFormWindowYPosition());
-				}
+		for (FormWindowProperties fwp : getFormWindowProperties()) {
+			if (fwp.getFormName().equalsIgnoreCase(getClass().getName())) {
+				setProps(fwp);
 			}
 		}
-		return windowInfo;
 	}
 
 	@Deprecated
@@ -156,11 +128,6 @@ IValidatableForm, II18nForm {
 	}
 
 	public abstract String getXMLPath();
-
-	public String getFormWindowPropertiesXMLPath() {
-		return Launcher.getAppHomeDir() + File.separator
-				+ "FormWindowProperties.xml";
-	}
 
 	@Override
 	public void validateForm() {
@@ -218,9 +185,9 @@ IValidatableForm, II18nForm {
 		c.setDateFormatString(dateFormat.toPattern());
 		c.getDateEditor().setEnabled(false);
 		c.getDateEditor().getUiComponent()
-		.setBackground(new Color(255, 255, 255));
+				.setBackground(new Color(255, 255, 255));
 		c.getDateEditor().getUiComponent()
-		.setFont(new Font("Arial", Font.PLAIN, 11));
+				.setFont(new Font("Arial", Font.PLAIN, 11));
 		c.getDateEditor().getUiComponent().setToolTipText(null);
 
 	}
@@ -400,61 +367,6 @@ IValidatableForm, II18nForm {
 		super.windowClosed();
 		removeListeners();
 		writeFormWindowProperties();
-	}
-
-	private void writeFormWindowProperties() {
-		boolean update = false;
-		List<FormWindowProperties> formWindowPropertiesList = getFormWindowProperties();
-		for (FormWindowProperties fwp : formWindowPropertiesList) {
-			if (fwp.getFormName().equalsIgnoreCase(getClass().getName())) {
-				fwp.setFormWindowHeight(windowInfo.getHeight());
-				fwp.setFormWindowWidth(windowInfo.getWidth());
-				fwp.setFormWindowXPosition(windowInfo.getX());
-				fwp.setFormWindowYPosition(windowInfo.getY());
-				update = true;
-				break;
-			}
-		}
-
-		if (!update) {
-			FormWindowProperties fwpToAdd = new FormWindowProperties();
-			fwpToAdd.setFormName(getClass().getName());
-			fwpToAdd.setFormWindowHeight(windowInfo.getHeight());
-			fwpToAdd.setFormWindowWidth(windowInfo.getWidth());
-			fwpToAdd.setFormWindowXPosition(windowInfo.getX());
-			fwpToAdd.setFormWindowYPosition(windowInfo.getY());
-			formWindowPropertiesList.add(fwpToAdd);
-		}
-
-		String xml = FormWindowPropertiesSerializator
-				.toXML(formWindowPropertiesList);
-		try {
-			FileWriter fileWriter = new FileWriter(new File(
-					getFormWindowPropertiesXMLPath()));
-			Writer writer = new BufferedWriter(fileWriter);
-			writer.write(xml);
-			writer.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private List<FormWindowProperties> getFormWindowProperties() {
-		if (!new File(getFormWindowPropertiesXMLPath()).exists()) {
-			return new ArrayList<FormWindowProperties>();
-		} else {
-			return FormWindowPropertiesSerializator.fromXML(new File(
-					getFormWindowPropertiesXMLPath()));
-		}
-	}
-
-	@Override
-	public Object getWindowProfile() {
-		return null;
-	}
-
-	protected void setTitle(String title) {
-		this.title = title;
 	}
 
 	@Override
