@@ -2,7 +2,7 @@
 <plugin-config>
 	<depends plugin-name="org.gvsig.app.mainplugin"/>
 	<depends plugin-name="org.gvsig.app.document.table.app.mainplugin" />
-	<depends plugin-name="org.gvsig.editing.app.mainplugin"/>
+	<depends plugin-name="org.gvsig.vectorediting.app.mainplugin"/>
 	<depends plugin-name="es.icarto.gvsig.commons"/>
 	<depends plugin-name="es.icarto.gvsig.navtable"/>
 	<depends plugin-name="es.udc.cartolab.gvsig.users"/>
