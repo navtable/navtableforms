@@ -51,13 +51,8 @@ public class AbeilleParser {
      */
     public static HashMap<String, JComponent> getWidgetsFromContainer(
 	    Container c) {
-	HashMap<String, JComponent> map = new HashMap<String, JComponent>();
-	addContainerWidgets(c, map);
-	return map;
-    }
 
-    private static void addContainerWidgets(
-	    Container c, HashMap<String, JComponent> map) {
+	HashMap<String, JComponent> map = new HashMap<String, JComponent>();
 	int count = 0;
 	while (c.getComponentCount() > count) {
 	    Component comp = c.getComponent(count++);
@@ -70,12 +65,21 @@ public class AbeilleParser {
 		String newName = getNameBeforeDots(comp.getName());
 		comp.setName(newName);
 		map.put(comp.getName(), (JComponent) comp);
+		return map;
 	    }
 
 	    if (comp instanceof Container) {
-		addContainerWidgets((Container) comp, map);
+		HashMap<String, JComponent> recursiveMap = getWidgetsFromContainer((Container) comp);
+		if (recursiveMap.size() > 0) {
+		    for (JComponent w : recursiveMap.values()) {
+			String newName = getNameBeforeDots(w.getName());
+			comp.setName(newName);
+			map.put(w.getName(), w);
+		    }
+		}
 	    }
 	}
+	return map;
     }
 
     public static HashMap<String, JButton> getButtonsFromContainer(Container c) {
