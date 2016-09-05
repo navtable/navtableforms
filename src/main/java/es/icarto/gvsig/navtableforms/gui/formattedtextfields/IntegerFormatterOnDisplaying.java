@@ -25,32 +25,33 @@ import javax.swing.JFormattedTextField.AbstractFormatter;
 import es.udc.cartolab.gvsig.navtable.format.IntegerFormatNT;
 import es.udc.cartolab.gvsig.navtable.format.ValueFormatNT;
 
+@SuppressWarnings("serial")
 public class IntegerFormatterOnDisplaying extends AbstractFormatter {
 
-    private NumberFormat integerFormat;
-    private ValueFormatNT valueFormatter;
+	private NumberFormat integerFormat;
+	private ValueFormatNT valueFormatter;
 
-    public IntegerFormatterOnDisplaying() {
-	valueFormatter = new ValueFormatNT();
-	integerFormat = IntegerFormatNT.getDisplayingFormat();
-    }
-
-    @Override
-    public Object stringToValue(String arg) throws ParseException {
-	if(arg.equals("") || (arg == null)) {
-	    return null;
+	public IntegerFormatterOnDisplaying() {
+		valueFormatter = new ValueFormatNT();
+		integerFormat = IntegerFormatNT.getDisplayingFormat();
 	}
-	return integerFormat.parseObject(arg);
-    }
 
-    @Override
-    public String valueToString(Object arg) throws ParseException {
-	if(arg == null) {
-	    return valueFormatter.getNullStatementString();
-	} else if (arg instanceof String) {
-	    return (String) arg;
+	@Override
+	public Object stringToValue(String arg) throws ParseException {
+		if (arg.equals("") || (arg == null)) {
+			return null;
+		}
+		return integerFormat.parseObject(arg);
 	}
-	return integerFormat.format(arg);
-    }
+
+	@Override
+	public String valueToString(Object arg) throws ParseException {
+		if (arg == null) {
+			return valueFormatter.getNullStatementString();
+		} else if (arg instanceof String) {
+			return (String) arg;
+		}
+		return integerFormat.format(arg);
+	}
 
 }

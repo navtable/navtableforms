@@ -34,6 +34,7 @@ import org.gvsig.andami.ui.mdiManager.IWindow;
 import org.gvsig.andami.ui.mdiManager.IWindowListener;
 import org.gvsig.andami.ui.mdiManager.WindowInfo;
 import org.gvsig.fmap.dal.exception.DataException;
+import org.gvsig.fmap.dal.feature.Feature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +43,6 @@ import com.jeta.forms.components.panel.FormPanel;
 import com.jeta.forms.gui.common.FormException;
 import com.toedter.calendar.JDateChooser;
 
-import es.icarto.gvsig.commons.gvsig2.IEditableSource;
 import es.icarto.gvsig.navtableforms.DependencyHandler;
 import es.icarto.gvsig.navtableforms.FillHandler;
 import es.icarto.gvsig.navtableforms.I18nHandler;
@@ -65,7 +65,7 @@ import es.udc.cartolab.gvsig.navtable.format.DateFormatNT;
 
 @SuppressWarnings("serial")
 public abstract class AbstractSubForm extends JPanel implements IForm,
-		IValidatableForm, IWindow, IWindowListener, II18nForm {
+IValidatableForm, IWindow, IWindowListener, II18nForm {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(AbstractSubForm.class);
@@ -92,7 +92,8 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 	private WindowInfo windowInfo;
 	private final static int windowInfoCode = WindowInfo.MODELESSDIALOG
 			| WindowInfo.PALETTE | WindowInfo.RESIZABLE;
-	protected long position;
+	// protected long position;
+	private Feature feat;
 	protected ActionListener action;
 	protected AlphanumericTableModel model;
 
@@ -147,9 +148,9 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 		c.setDateFormatString(dateFormat.toPattern());
 		c.getDateEditor().setEnabled(false);
 		c.getDateEditor().getUiComponent()
-				.setBackground(new Color(255, 255, 255));
+		.setBackground(new Color(255, 255, 255));
 		c.getDateEditor().getUiComponent()
-				.setFont(new Font("Arial", Font.PLAIN, 11));
+		.setFont(new Font("Arial", Font.PLAIN, 11));
 		c.getDateEditor().getUiComponent().setToolTipText(null);
 
 	}
@@ -252,14 +253,10 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 
 	public void fillValues() {
 		setFillingValues(true);
-		try {
-			iController.read(position);
-			fillHandler.fillValues();
-			dependencyHandler.fillValues();
-			fillSpecificValues();
-		} catch (DataException e) {
-			logger.error(e.getMessage(), e);
-		}
+		iController.read(feat);
+		fillHandler.fillValues();
+		dependencyHandler.fillValues();
+		fillSpecificValues();
 		chainedHandler.fillValues();
 		imageHandlerManager.fillValues();
 		setFillingValues(false);
@@ -333,7 +330,7 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 
 	protected void enableSaveButton(boolean bool) {
 
-		if (model != null && model.getSource().isEditing()) {
+		if (model != null && iController.isEditing()) {
 			saveButton.setEnabled(false);
 		} else if (!isChangedValues()) {
 			saveButton.setEnabled(false);
@@ -422,7 +419,7 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 
 	@Override
 	public void actionCreateRecord() {
-		this.position = -1;
+		feat = iController.newEmptyRecord();
 		saveButton.removeActionListener(action);
 		action = new CreateAction(this);
 		saveButton.addActionListener(action);
@@ -432,8 +429,8 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 	}
 
 	@Override
-	public void actionUpdateRecord(long position) {
-		this.position = position;
+	public void actionUpdateRecord(Feature feat) {
+		this.feat = feat;
 		saveButton.removeActionListener(action);
 		action = new SaveAction(this);
 		saveButton.addActionListener(action);
@@ -443,18 +440,13 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 	}
 
 	@Override
-	public void actionDeleteRecord(long position) {
+	public void actionDeleteRecord(Feature feat) {
 		try {
-			iController.delete((int) position);
+			iController.delete(feat);
 			model.dataChanged();
 		} catch (Exception e) {
 			NotificationManager.addError(e);
 		}
-	}
-
-	@Override
-	public IEditableSource getSource() {
-		return model.getSource();
 	}
 
 	@Override
@@ -501,7 +493,7 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 	 * Instead of create an implementation of ImageHandler that only sets a path
 	 * (FixedImageHandler) this utiliy method sets the image without doing
 	 * anything more
-	 * 
+	 *
 	 * @param imgComponent
 	 *            . Name of the abeille widget
 	 * @param absPath
@@ -533,7 +525,6 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 				iController.create(values);
 				model.dataChanged();
 			} catch (Exception e) {
-				position = -1;
 				logger.error(e.getMessage(), e);
 			}
 			PluginServices.getMDIManager().closeWindow(iWindow);
@@ -551,22 +542,21 @@ public abstract class AbstractSubForm extends JPanel implements IForm,
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			try {
-				iController.update((int) position);
+				iController.update(feat);
 				model.dataChanged();
 			} catch (DataException e) {
-				position = -1;
 				logger.error(e.getMessage(), e);
 				String errorMessage = (e.getCause() != null) ? e.getCause()
 						.getMessage() : e.getMessage(), auxMessage = errorMessage
 						.replace("ERROR: ", "").replace(" ", "_")
 						.replace("\n", ""), auxMessageIntl = _(auxMessage);
-						if (auxMessageIntl.compareToIgnoreCase(auxMessage) != 0) {
-					errorMessage = auxMessageIntl;
-						}
-						JOptionPane.showMessageDialog(
-						(Component) PluginServices.getMainFrame(),
-						errorMessage, _("save_layer_error"),
-						JOptionPane.ERROR_MESSAGE);
+				if (auxMessageIntl.compareToIgnoreCase(auxMessage) != 0) {
+							errorMessage = auxMessageIntl;
+				}
+				JOptionPane.showMessageDialog(
+								(Component) PluginServices.getMainFrame(),
+								errorMessage, _("save_layer_error"),
+								JOptionPane.ERROR_MESSAGE);
 			}
 			PluginServices.getMDIManager().closeWindow(iWindow);
 		}

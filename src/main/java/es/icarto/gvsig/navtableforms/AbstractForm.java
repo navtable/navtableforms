@@ -36,7 +36,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import org.gvsig.fmap.dal.exception.DataException;
-import org.gvsig.fmap.mapcontext.layers.LayerEvent;
 import org.gvsig.fmap.mapcontext.layers.vectorial.FLyrVect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,7 +69,6 @@ public abstract class AbstractForm extends AbstractNavTable implements
 
 	protected FormPanel formBody;
 	private boolean isFillingValues;
-	private boolean isSavingValues = false;
 	private final List<BaseTableHandler> tableHandlers = new ArrayList<BaseTableHandler>();
 
 	HashMap<String, JComponent> widgets;
@@ -335,20 +333,11 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	}
 
 	@Override
-	public boolean isSavingValues() {
-		return isSavingValues;
-	}
-
-	public void setSavingValues(boolean bool) {
-		isSavingValues = bool;
-	}
-
-	@Override
 	public boolean saveRecord() throws DataException {
 		if (isSaveable()) {
 			setSavingValues(true);
 			try {
-				layerController.update(getPosition());
+				layerController.update(navigation.getFeature());
 				setChangedValues(false);
 				setSavingValues(false);
 				return true;
@@ -377,11 +366,7 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	@Override
 	protected void undoAction() {
 		setChangedValues(false);
-		try {
-			layerController.read(getPosition());
-		} catch (DataException e) {
-			logger.error(e.getMessage(), e.getCause());
-		}
+		layerController.read(navigation.getFeature());
 		refreshGUI();
 	}
 
@@ -445,32 +430,32 @@ public abstract class AbstractForm extends AbstractNavTable implements
 	}
 
 	@Override
-	public void layerEvent(LayerEvent e) {
-		layerEventTables(e);
-		super.layerEvent(e);
+	public void editionFinished() {
+		layerEventTables();
+		super.editionFinished();
 	}
 
-	private void layerEventTables(LayerEvent e) {
+	@Override
+	public void editionStarted() {
 		// When the layer is in edition mode, subforms must be disabled, because
 		// if the user, adds a new subelement
 		// with an fk or modifies the pk of the element it will fail
-		if (e.getEventType() == LayerEvent.EDITION_CHANGED) {
-			if (layer.isEditing()) {
-				for (BaseTableHandler bth : tableHandlers) {
-					bth.removeListeners();
-				}
-			} else {
-				for (BaseTableHandler bth : tableHandlers) {
-					final BaseTableModel bthModel = bth.getModel();
-					if (bthModel != null) {
-						// This should never happen, but tablehandlers are not
-						// correctly constructed and model field is not
-						// correctly set
-						bthModel.reloadUnderlyingData();
-					}
-					bth.reload();
-				}
-			}
+		for (BaseTableHandler bth : tableHandlers) {
+			bth.removeListeners();
 		}
 	}
+
+	private void layerEventTables() {
+		for (BaseTableHandler bth : tableHandlers) {
+			final BaseTableModel bthModel = bth.getModel();
+			if (bthModel != null) {
+				// This should never happen, but tablehandlers are not
+				// correctly constructed and model field is not
+				// correctly set
+				bthModel.reloadUnderlyingData();
+			}
+			bth.reload();
+		}
+	}
+
 }

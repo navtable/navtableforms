@@ -1,6 +1,5 @@
 package es.icarto.gvsig.navtableforms.gui.tables.handler;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.JComponent;
@@ -17,155 +16,153 @@ import es.icarto.gvsig.navtableforms.gui.tables.model.BaseTableModel;
 
 /**
  * BaseTableHandler
- * 
+ *
  * Core code for table handlers (handlers of tables that contain info on
  * entities related to the one displayed in the current form).
- * 
+ *
  * @author Jorge López Fernández <jlopez@cartolab.es>
  */
 
 public abstract class BaseTableHandler {
-	
-	
+
 	private static final Logger logger = LoggerFactory
 			.getLogger(BaseTableHandler.class);
 
-    /**
-     * The name of the table, which should also provide us the related form.
-     */
-    protected String sourceTableName;
+	/**
+	 * The name of the table, which should also provide us the related form.
+	 */
+	protected String sourceTableName;
 
-    /**
-     * The table widget.
-     */
-    protected JTable jtable;
+	/**
+	 * The table widget.
+	 */
+	protected JTable jtable;
 
-    /**
-     * The table model.
-     */
-    protected BaseTableModel model;
+	/**
+	 * The table model.
+	 */
+	protected BaseTableModel model;
 
-    /**
-     * The name of the foreign key in the related entity.
-     */
-    protected String destinationKey;
+	/**
+	 * The name of the foreign key in the related entity.
+	 */
+	protected String destinationKey;
 
-    /**
-     * The current value of the primary key in the current form.
-     */
-    protected String originKeyValue;
+	/**
+	 * The current value of the primary key in the current form.
+	 */
+	protected String originKeyValue;
 
-    /**
-     * The columns we want to show of those related entities.
-     */
-    protected String[] colNames;
+	/**
+	 * The columns we want to show of those related entities.
+	 */
+	protected String[] colNames;
 
-    /**
-     * The titles for those columns.
-     */
-    protected String[] colAliases;
+	/**
+	 * The titles for those columns.
+	 */
+	protected String[] colAliases;
 
-    /**
-     * The column which contains the foreign key.
-     */
-    protected int keyColumn = 0;
+	/**
+	 * The column which contains the foreign key.
+	 */
+	protected int keyColumn = 0;
 
-    /**
-     * The contextual menu for the table.
-     */
-    protected BaseJTableContextualMenu listener;
+	/**
+	 * The contextual menu for the table.
+	 */
+	protected BaseJTableContextualMenu listener;
 
-    public BaseTableHandler(String tableName,
-	    Map<String, JComponent> widgets, String foreignKeyId,
-	    String[] colNames, String[] colAliases) {
-	this.sourceTableName = tableName;
-	getJTable(widgets);
-	jtable.getTableHeader().setReorderingAllowed(false);
-	this.destinationKey = foreignKeyId;
-	this.colNames = colNames;
-	this.colAliases = colAliases;
-	if (colNames != null) {
-	    for (int i = 0, columns = colNames.length; i < columns; i++) {
-		if (colNames[i].equals(destinationKey)) {
-		    keyColumn = i;
-		    break;
+	public BaseTableHandler(String tableName, Map<String, JComponent> widgets,
+			String foreignKeyId, String[] colNames, String[] colAliases) {
+		this.sourceTableName = tableName;
+		getJTable(widgets);
+		jtable.getTableHeader().setReorderingAllowed(false);
+		this.destinationKey = foreignKeyId;
+		this.colNames = colNames;
+		this.colAliases = colAliases;
+		if (colNames != null) {
+			for (int i = 0, columns = colNames.length; i < columns; i++) {
+				if (colNames[i].equals(destinationKey)) {
+					keyColumn = i;
+					break;
+				}
+			}
 		}
-	    }
-	}
-    }
-
-    protected void getJTable(Map<String, JComponent> widgets) {
-	jtable = (JTable) widgets.get(sourceTableName);
-    }
-
-    protected abstract void createTableModel() throws DataException;
-
-    protected abstract void createTableListener();
-
-    public void reload() {
-	createTableListener();
-	if (listener != null) {
-	    jtable.addMouseListener(listener);
-	}
-	reloadGUI();
-    }
-
-    public void reloadGUI() {
-	// for the popUp to work on empty tables
-	jtable.setFillsViewportHeight(true);
-    }
-
-    public void fillValues(String foreignKeyValue) {
-	this.originKeyValue = foreignKeyValue;
-	try {
-	    createTableModel();
-	    ((DefaultTableCellRenderer) jtable.getTableHeader()
-		    .getDefaultRenderer())
-		    .setHorizontalAlignment(JLabel.CENTER);
-	} catch (DataException e) {
-		logger.error(e.getMessage(), e);
 	}
 
-    }
+	protected void getJTable(Map<String, JComponent> widgets) {
+		jtable = (JTable) widgets.get(sourceTableName);
+	}
 
-    public void removeListeners() {
-	jtable.removeMouseListener(listener);
-    }
+	protected abstract void createTableModel() throws DataException;
 
-    public String getSourceTableName() {
-	return sourceTableName;
-    }
+	protected abstract void createTableListener();
 
-    public String getDestinationKey() {
-	return destinationKey;
-    }
+	public void reload() {
+		createTableListener();
+		if (listener != null) {
+			jtable.addMouseListener(listener);
+		}
+		reloadGUI();
+	}
 
-    public String getOriginKeyValue() {
-	return originKeyValue;
-    }
+	public void reloadGUI() {
+		// for the popUp to work on empty tables
+		jtable.setFillsViewportHeight(true);
+	}
 
-    public BaseJTableContextualMenu getListener() {
-	return listener;
-    }
+	public void fillValues(String foreignKeyValue) {
+		this.originKeyValue = foreignKeyValue;
+		try {
+			createTableModel();
+			((DefaultTableCellRenderer) jtable.getTableHeader()
+					.getDefaultRenderer())
+					.setHorizontalAlignment(JLabel.CENTER);
+		} catch (DataException e) {
+			logger.error(e.getMessage(), e);
+		}
 
-    public JTable getJTable() {
-	return jtable;
-    }
+	}
 
-    public BaseTableModel getModel() {
-	return model;
-    }
+	public void removeListeners() {
+		jtable.removeMouseListener(listener);
+	}
 
-    public String[] getColNames() {
-	return colNames;
-    }
+	public String getSourceTableName() {
+		return sourceTableName;
+	}
 
-    public String[] getColAliases() {
-	return colAliases;
-    }
+	public String getDestinationKey() {
+		return destinationKey;
+	}
 
-    public int getKeyColumn() {
-	return keyColumn;
-    }
+	public String getOriginKeyValue() {
+		return originKeyValue;
+	}
+
+	public BaseJTableContextualMenu getListener() {
+		return listener;
+	}
+
+	public JTable getJTable() {
+		return jtable;
+	}
+
+	public BaseTableModel getModel() {
+		return model;
+	}
+
+	public String[] getColNames() {
+		return colNames;
+	}
+
+	public String[] getColAliases() {
+		return colAliases;
+	}
+
+	public int getKeyColumn() {
+		return keyColumn;
+	}
 
 }
