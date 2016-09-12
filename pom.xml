@@ -12,7 +12,7 @@
 	<parent>
 		<groupId>org.gvsig</groupId>
 		<artifactId>org.gvsig.desktop.plugin</artifactId>
-		<version>2.0.150</version>
+		<version>2.0.151</version>
 	</parent>
 
 	<dependencies>
