@@ -34,11 +34,7 @@ public class FilesLinkListener implements ActionListener {
 	}
 
 	public void showFiles() {
-		String registerValue = dialog.getFormController().getValue(
-				data.getRegisterField());
-
-		String folderName = data.getBaseDirectory() + File.separator
-				+ registerValue;
+		String folderName = data.getFoler(dialog);
 		File folder = new File(folderName);
 
 		if (folder.exists() || createFolder(folder)) {
