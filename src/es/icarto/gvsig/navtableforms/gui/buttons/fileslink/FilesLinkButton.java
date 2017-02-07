@@ -7,6 +7,7 @@ import com.iver.andami.PluginServices;
 
 import es.icarto.gvsig.navtableforms.AbstractForm;
 
+@SuppressWarnings("serial")
 public class FilesLinkButton extends JButton {
 
     /**

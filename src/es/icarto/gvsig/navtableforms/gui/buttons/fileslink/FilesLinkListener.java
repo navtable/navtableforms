@@ -8,30 +8,32 @@ import java.io.IOException;
 
 import javax.swing.JOptionPane;
 
+import org.apache.log4j.Logger;
+
 import com.iver.andami.PluginServices;
 
 import es.icarto.gvsig.navtableforms.AbstractForm;
 
 public class FilesLinkListener implements ActionListener {
 
-    private AbstractForm dialog;
-    private FilesLinkData data;
+    private static final Logger logger = Logger
+	    .getLogger(FilesLinkListener.class);
+
+    private final AbstractForm dialog;
+    private final FilesLinkData data;
 
     public FilesLinkListener(AbstractForm dialog, FilesLinkData data) {
 	this.dialog = dialog;
 	this.data = data;
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
 	showFiles();
     }
 
     public void showFiles() {
-	String registerValue = dialog.getFormController().getValue(
-		data.getRegisterField());
-
-	String folderName = data.getBaseDirectory() + File.separator
-		+ registerValue;
+	String folderName = data.getFolder(dialog);
 	File folder = new File(folderName);
 
 	if (folder.exists() || createFolder(folder)) {
@@ -43,9 +45,9 @@ public class FilesLinkListener implements ActionListener {
 	boolean folderCreated = false;
 	int answer = JOptionPane.showConfirmDialog(null, String.format(
 		PluginServices.getText(this,
-			"fileslink_folder_not_exists_create_it"),
-			folder.getAbsolutePath()), PluginServices.getText(this,
-				"warning"), JOptionPane.YES_NO_OPTION);
+			"fileslink_folder_not_exists_create_it"), folder
+			.getAbsolutePath()), PluginServices.getText(this,
+		"warning"), JOptionPane.YES_NO_OPTION);
 	if (answer == JOptionPane.YES_OPTION) {
 	    // will make *all* directories in the path
 	    if (!folder.mkdirs()) {
@@ -65,17 +67,17 @@ public class FilesLinkListener implements ActionListener {
     private void openFolder(File folder) {
 	/*
 	 * TODO: Improve how to do this. *Theorically*, Java is multiplatform :/
-	 * 
+	 *
 	 * Desktop API only works with JVM 1.6, so when using this extension
 	 * with gvSIG portable on windows (jvm 1.5) is needed to change for the
 	 * next.
-	 * 
+	 *
 	 * Disclaimer: I do know that is possible to do
 	 * System.getProperty(os.version) to know which OS you are running, but
 	 * as users can use different versions of Windows and I don't know which
 	 * information gives each one depending on its version (if "W7",
 	 * "Windows 2000", "Win XP",...) I prefer do that explicity.
-	 * 
+	 *
 	 * Patches to improve this are welcome!
 	 */
 
@@ -90,7 +92,7 @@ public class FilesLinkListener implements ActionListener {
 	try {
 	    desktop.open(folder);
 	} catch (IOException e) {
-	    dialog.getLoggerName().error("Folder can not be opened");
+	    logger.error(e.getMessage(), e);
 	}
 
     }
