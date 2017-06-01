@@ -34,7 +34,7 @@ public class FilesLinkListener implements ActionListener {
 	}
 
 	public void showFiles() {
-		String folderName = data.getFoler(dialog);
+		String folderName = data.getFolder(dialog);
 		File folder = new File(folderName);
 
 		if (folder.exists() || createFolder(folder)) {
@@ -65,17 +65,17 @@ public class FilesLinkListener implements ActionListener {
 	private void openFolder(File folder) {
 		/*
 		 * TODO: Improve how to do this. *Theorically*, Java is multiplatform :/
-		 * 
+		 *
 		 * Desktop API only works with JVM 1.6, so when using this extension
 		 * with gvSIG portable on windows (jvm 1.5) is needed to change for the
 		 * next.
-		 * 
+		 *
 		 * Disclaimer: I do know that is possible to do
 		 * System.getProperty(os.version) to know which OS you are running, but
 		 * as users can use different versions of Windows and I don't know which
 		 * information gives each one depending on its version (if "W7",
 		 * "Windows 2000", "Win XP",...) I prefer do that explicity.
-		 * 
+		 *
 		 * Patches to improve this are welcome!
 		 */
 
