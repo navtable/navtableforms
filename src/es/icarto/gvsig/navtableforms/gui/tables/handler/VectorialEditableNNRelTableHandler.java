@@ -38,8 +38,8 @@ public class VectorialEditableNNRelTableHandler extends
     }
 
     protected void createTableModel() throws ReadDriverException {
-	model = TableModelFactory.createFromLayerWithOrFilter(
-		sourceTableName, destinationKey, destinationKeyValues,
+	TableModel model = TableModelFactory.createFromLayerWithOrFilter(
+		sourceTableName, getDestinationKey(), destinationKeyValues,
 		colNames, colAliases);
 	jtable.setModel(model);
     }
@@ -58,14 +58,14 @@ public class VectorialEditableNNRelTableHandler extends
 	try {
 	    String where = "";
 	    if (destinationKeyValues.length > 0) {
-		where = " WHERE " + destinationKey + " NOT IN (";
+		where = " WHERE " + getDestinationKey() + " NOT IN (";
 		for (String val : destinationKeyValues) {
 		    where += "'" + val + "', ";
 		}
 		where = where.substring(0, where.length() - 2) + ")";
 	    }
 	    String[] values = DBSession.getCurrentSession().getDistinctValues(
-		    sourceTableName, dbSchema, destinationKey, false, false,
+		    sourceTableName, dbSchema, getDestinationKey(), false, false,
 		    where);
 	    return Arrays.asList(values);
 	} catch (SQLException e) {
@@ -76,11 +76,11 @@ public class VectorialEditableNNRelTableHandler extends
 
     public void insertRow(String secondaryPKValue) {
 	try {
-	    String[] columns = { originKey, destinationKey };
-	    String[] values = { originKeyValue, secondaryPKValue };
+	    String[] columns = { originKey, getDestinationKey() };
+	    String[] values = { getOriginKeyValue(), secondaryPKValue };
 	    DBSession.getCurrentSession().insertRow(dbSchema, relTable,
 		    columns, values);
-	    fillValues(originKeyValue);
+	    fillValues(getOriginKeyValue());
 	} catch (SQLException e) {
 	    e.printStackTrace();
 	}
@@ -88,11 +88,11 @@ public class VectorialEditableNNRelTableHandler extends
 
     public void deleteRow(String secondaryPKValue) {
 	try {
-	    String where = "WHERE " + originKey + " = '" + originKeyValue
-		    + "' AND " + destinationKey + " = '" + secondaryPKValue
+	    String where = "WHERE " + originKey + " = '" + getOriginKeyValue()
+		    + "' AND " + getDestinationKey() + " = '" + secondaryPKValue
 		    + "'";
 	    DBSession.getCurrentSession().deleteRows(dbSchema, relTable, where);
-	    fillValues(originKeyValue);
+	    fillValues(getOriginKeyValue());
 	} catch (SQLException e) {
 	    e.printStackTrace();
 	}

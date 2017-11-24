@@ -1,16 +1,16 @@
 /*
  * Copyright (c) 2011. iCarto
- * 
+ *
  * This file is part of extNavTableForms
- * 
+ *
  * extNavTableForms is free software: you can redistribute it and/or modify it under the terms
  * of the GNU General Public License as published by the Free Software Foundation, either
  * version 3 of the License, or any later version.
- * 
+ *
  * extNavTableForms is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with extNavTableForms.
  * If not, see <http://www.gnu.org/licenses/>.
  */
@@ -90,7 +90,7 @@ public abstract class AbstractForm extends AbstractNavTable implements
     private final DependencyHandler dependencyHandler;
     private final CalculationHandler calculationHandler;
     private final ChainedHandler chainedHandler;
-    private ImageHandlerManager imageHandlerManager;
+    private final ImageHandlerManager imageHandlerManager;
 
     private String title;
 
@@ -552,31 +552,31 @@ public abstract class AbstractForm extends AbstractNavTable implements
 
     @Override
     public void layerEvent(LayerEvent e) {
-	layerEventTables(e);
-	super.layerEvent(e);
+    layerEventTables(e);
+    super.layerEvent(e);
     }
 
     private void layerEventTables(LayerEvent e) {
-	// When the layer is in edition mode, subforms must be disabled, because
-	// if the user, adds a new subelement
-	// with an fk or modifies the pk of the element it will fail
-	if (e.getEventType() == LayerEvent.EDITION_CHANGED) {
-	    if (layer.isEditing()) {
-		for (BaseTableHandler bth : tableHandlers) {
-		    bth.removeListeners();
-		}
-	    } else {
-		for (BaseTableHandler bth : tableHandlers) {
-		    final BaseTableModel bthModel = bth.getModel();
-		    if (bthModel != null) {
-			// This should never happen, but tablehandlers are not
-			// correctly constructed and model field is not
-			// correctly set
-			bthModel.reloadUnderlyingData();
-		    }
-		    bth.reload();
-		}
-	    }
-	}
+    // When the layer is in edition mode, subforms must be disabled, because
+    // if the user, adds a new subelement
+    // with an fk or modifies the pk of the element it will fail
+    if (e.getEventType() == LayerEvent.EDITION_CHANGED) {
+        if (layer.isEditing()) {
+        for (BaseTableHandler bth : tableHandlers) {
+            bth.removeListeners();
+        }
+        } else {
+        for (BaseTableHandler bth : tableHandlers) {
+            final BaseTableModel bthModel = bth.getModel();
+            if (bthModel != null) {
+            // This should never happen, but tablehandlers are not
+            // correctly constructed and model field is not
+            // correctly set
+            bthModel.reloadUnderlyingData();
+            }
+            bth.reload();
+        }
+        }
+    }
     }
 }

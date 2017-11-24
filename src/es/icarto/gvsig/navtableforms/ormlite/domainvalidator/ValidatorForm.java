@@ -22,44 +22,49 @@ import java.util.ArrayList;
 public class ValidatorForm {
 
     private boolean hasValidationErrors = false;
-    private ArrayList<ValidatorComponent> cvs = new ArrayList<ValidatorComponent>();
+    private final ArrayList<ValidatorComponent> cvs = new ArrayList<ValidatorComponent>();
 
     public boolean hasValidationErrors() {
-	return hasValidationErrors;
+        return hasValidationErrors;
     }
 
     public String getMessages() {
-	// TODO: improve by allowing to define messages
-	return "El formulario tiene errores";
+        // TODO: improve by allowing to define messages
+        return "El formulario tiene errores";
     }
 
     public void setValidationErrors(boolean bol) {
-	hasValidationErrors = bol;
+        hasValidationErrors = bol;
     }
 
     public void addComponentValidator(ValidatorComponent cv) {
-	cvs.add(cv);
+        for (ValidatorComponent existent : cvs) {
+            if (existent.getComponentName().equals(cv.getComponentName())) {
+                return;
+            }
+        }
+        cvs.add(cv);
     }
 
     public ArrayList<ValidatorComponent> getComponentValidators() {
-	return cvs;
+        return cvs;
     }
 
     public ValidatorComponent getComponentValidator(String name) {
-	for (ValidatorComponent cv : cvs) {
-	    if (cv.getComponentName().equalsIgnoreCase(name)) {
-		return cv;
-	    }
-	}
-	return null;
+        for (ValidatorComponent cv : cvs) {
+            if (cv.getComponentName().equalsIgnoreCase(name)) {
+                return cv;
+            }
+        }
+        return null;
     }
 
     public void validate() {
-	setValidationErrors(false);
-	for (ValidatorComponent cv : cvs) {
-	    if (!cv.validate()) {
-		setValidationErrors(true);
-	    }
-	}
+        setValidationErrors(false);
+        for (ValidatorComponent cv : cvs) {
+            if (!cv.validate()) {
+                setValidationErrors(true);
+            }
+        }
     }
 }

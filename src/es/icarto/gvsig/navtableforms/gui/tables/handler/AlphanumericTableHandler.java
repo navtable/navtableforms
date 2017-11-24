@@ -29,7 +29,7 @@ public class AlphanumericTableHandler extends BaseTableHandler {
     public AlphanumericTableHandler(String tableName,
 	    HashMap<String, JComponent> widgets, String foreignKeyId,
 	    String[] colNames, String[] colAliases) {
-	super(tableName, widgets, foreignKeyId, colNames, colAliases);
+	super(tableName, widgets, new String[] {foreignKeyId}, colNames, colAliases);
 	FormFactory.checkAndLoadTableRegistered(tableName);
 	form = FormFactory.createSubFormRegistered(tableName);
     }
@@ -41,7 +41,7 @@ public class AlphanumericTableHandler extends BaseTableHandler {
     public AlphanumericTableHandler(String tableName,
 	    HashMap<String, JComponent> widgets, String foreignKeyId,
 	    String[] colNames) {
-	super(tableName, widgets, foreignKeyId, colNames, new String[colNames.length]);
+	super(tableName, widgets, new String[] {foreignKeyId}, colNames, new String[colNames.length]);
 	FormFactory.checkAndLoadTableRegistered(tableName);
 	form = FormFactory.createSubFormRegistered(tableName);
 	I18nResourceManager i18nManager = form.getI18nHandler().getResourceManager();
@@ -52,16 +52,13 @@ public class AlphanumericTableHandler extends BaseTableHandler {
 
     @Override
     protected void createTableModel() throws ReadDriverException {
-	if (form != null) {
-	    model = TableModelFactory.createFromTableWithFilter(sourceTableName,
-		    destinationKey, originKeyValue, colNames, colAliases,
-		    form.getI18nHandler().getResourceManager().getResources());
-	    form.setModel((AlphanumericTableModel) model);
-	} else {
-	    model = TableModelFactory.createFromTableWithFilter(sourceTableName,
-		    destinationKey, originKeyValue, colNames, colAliases);
-	}
+	AlphanumericTableModel model = TableModelFactory
+		.createFromTableWithFilter(sourceTableName, getDestinationKey(),
+			getOriginKeyValue(), colNames, colAliases);
 	jtable.setModel(model);
+	if (form != null) {
+	    form.setModel(model);
+	}
     }
 
     @Deprecated
@@ -74,7 +71,7 @@ public class AlphanumericTableHandler extends BaseTableHandler {
     public void fillValues(String foreignKeyValue) {
 	super.fillValues(foreignKeyValue);
 	Map<String, String> foreignKey = new HashMap<String, String>(1);
-	foreignKey.put(destinationKey, originKeyValue);
+	foreignKey.put(getDestinationKey(), getOriginKeyValue());
 	if (form != null) {
 	    form.setForeingKey(foreignKey);
 	}

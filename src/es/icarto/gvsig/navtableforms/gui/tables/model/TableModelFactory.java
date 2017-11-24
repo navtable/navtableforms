@@ -14,6 +14,7 @@ import es.icarto.gvsig.navtableforms.gui.tables.filter.IRowFilter;
 import es.icarto.gvsig.navtableforms.gui.tables.filter.IRowFilterImplementer;
 import es.icarto.gvsig.navtableforms.gui.tables.filter.IRowMultipleOrFilterImplementer;
 import es.icarto.gvsig.navtableforms.gui.tables.filter.IRowNotFilterImplementer;
+import es.icarto.gvsig.navtableforms.gui.tables.filter.MultipleKeyRowFilter;
 import es.icarto.gvsig.navtableforms.utils.TOCLayerManager;
 import es.icarto.gvsig.navtableforms.utils.TOCTableManager;
 
@@ -138,17 +139,12 @@ public class TableModelFactory {
     }
 
     public static VectorialTableModel createFromLayerWithFilter(
-	    String layerName, String rowFilterName, String rowFilterValue,
-	    String[] columnNames, String[] columnAliases)
+	    String layerName, String[] destinationKey, String[] originKeyValue,
+	    String[] colNames, String[] colAliases)
 	    throws ReadDriverException {
-
 	FLyrVect layer = new TOCLayerManager().getLayerByName(layerName);
-	int fieldIndex = layer.getRecordset()
-		.getFieldIndexByName(rowFilterName);
-	IRowFilter filter = new IRowFilterImplementer(fieldIndex,
-		rowFilterValue);
-	return new VectorialTableModel(layer, columnNames, columnAliases,
-		filter);
+	IRowFilter filter = new MultipleKeyRowFilter(layer, destinationKey, originKeyValue);
+	return new VectorialTableModel(layer, colNames, colAliases, filter);
     }
 
     public static VectorialTableModel createFromLayerWithNotFilter(

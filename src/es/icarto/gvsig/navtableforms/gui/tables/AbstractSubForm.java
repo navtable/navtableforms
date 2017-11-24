@@ -79,7 +79,7 @@ IValidatableForm, IWindow, IWindowListener, II18nForm {
     private final DependencyHandler dependencyHandler;
     private final CalculationHandler calculationHandler;
     private final ChainedHandler chainedHandler;
-    private ImageHandlerManager imageHandlerManager;
+    private final ImageHandlerManager imageHandlerManager;
     private boolean isFillingValues;
     private boolean changedValues;
 
@@ -89,8 +89,7 @@ IValidatableForm, IWindow, IWindowListener, II18nForm {
     private final List<BaseTableHandler> tableHandlers = new ArrayList<BaseTableHandler>();
 
     private WindowInfo windowInfo;
-    private final static int windowInfoCode = WindowInfo.MODELESSDIALOG
-	    | WindowInfo.PALETTE | WindowInfo.RESIZABLE;
+    private final static int windowInfoCode = WindowInfo.MODELESSDIALOG | WindowInfo.PALETTE | WindowInfo.RESIZABLE;
     protected long position;
     protected ActionListener action;
     protected AlphanumericTableModel model;
@@ -154,90 +153,91 @@ IValidatableForm, IWindow, IWindowListener, II18nForm {
     }
 
     public void setForeingKey(Map<String, String> foreingKey) {
-	this.foreingKey = foreingKey;
+        this.foreingKey = foreingKey;
     }
 
     public Map<String, String> getForeignKey() {
-	return foreingKey;
+        return foreingKey;
     }
 
     private JPanel getSouthPanel() {
-	if (southPanel == null) {
-	    southPanel = new JPanel(new FlowLayout(FlowLayout.TRAILING));
-	    saveButton = new JButton("Guardar");
-	    action = new CreateAction(this);
-	    saveButton.addActionListener(action);
-	    southPanel.add(saveButton);
-	}
-	return southPanel;
+        if (southPanel == null) {
+            southPanel = new JPanel(new FlowLayout(FlowLayout.TRAILING));
+            saveButton = new JButton("Guardar");
+            action = new CreateAction(this);
+            saveButton.addActionListener(action);
+            southPanel.add(saveButton);
+        }
+        return southPanel;
     }
 
     public void setListeners() {
-	validationHandler.setListeners(widgets);
-	dependencyHandler.setListeners();
-	for (BaseTableHandler tableHandler : tableHandlers) {
-	    tableHandler.reload();
-	}
-	calculationHandler.setListeners();
-	chainedHandler.setListeners();
-	imageHandlerManager.setListeners();
+        validationHandler.setListeners(widgets);
+        dependencyHandler.setListeners();
+        for (BaseTableHandler tableHandler : tableHandlers) {
+            tableHandler.reload();
+        }
+        calculationHandler.setListeners();
+        chainedHandler.setListeners();
+        imageHandlerManager.setListeners();
     }
 
     public void removeListeners() {
-	validationHandler.removeListeners(widgets);
-	dependencyHandler.removeListeners();
-	for (BaseTableHandler tableHandler : tableHandlers) {
-	    tableHandler.removeListeners();
-	}
-	calculationHandler.removeListeners();
-	chainedHandler.removeListeners();
-	imageHandlerManager.removeListeners();
+        validationHandler.removeListeners(widgets);
+        dependencyHandler.removeListeners();
+        for (BaseTableHandler tableHandler : tableHandlers) {
+            tableHandler.removeListeners();
+        }
+        calculationHandler.removeListeners();
+        chainedHandler.removeListeners();
+        imageHandlerManager.removeListeners();
     }
 
     public void fillEmptyValues() {
-	setFillingValues(true);
-	iController.clearAll();
-	((TableController) iController).initMetadata();
-	fillHandler.fillEmptyWidgetsAndController();
-	for (String f : foreingKey.keySet()) {
-	    String value = foreingKey.get(f);
-	    JComponent widget = widgets.get(f);
-	    if (widget != null) {
-		if (widget instanceof JTextField) {
-		    ((JTextField) widgets.get(f)).setText(value);
-		} else if (widget instanceof JComboBox) {
-		    JComboBox combo = (JComboBox) widgets.get(f);
-		    for (int i = combo.getItemCount() - 1; i >= 0; i--) {
-			if (combo.getItemAt(i).equals(value)) {
-			    combo.setSelectedIndex(i);
-			}
-		    }
-		}
-	    }
-	    iController.setValue(f, value);
-	}
-	fillSpecificValues();
-	dependencyHandler.fillValues();
-	chainedHandler.fillEmptyValues();
-	imageHandlerManager.fillEmptyValues(); // fillValues()
-	setFillingValues(false);
+        setFillingValues(true);
+        iController.clearAll();
+        ((TableController) iController).initMetadata();
+        fillHandler.fillEmptyWidgetsAndController();
+        for (String f : foreingKey.keySet()) {
+            String value = foreingKey.get(f);
+            JComponent widget = widgets.get(f);
+            if (widget != null) {
+                if (widget instanceof JTextField) {
+                    ((JTextField) widgets.get(f)).setText(value);
+                } else if (widget instanceof JComboBox) {
+                    JComboBox combo = (JComboBox) widgets.get(f);
+                    for (int i = combo.getItemCount() - 1; i >= 0; i--) {
+                        if (combo.getItemAt(i).equals(value)) {
+                            combo.setSelectedIndex(i);
+                        }
+                    }
+                }
+            }
+            iController.setValue(f, value);
+        }
+        fillSpecificValues();
+        dependencyHandler.fillValues();
+        chainedHandler.fillEmptyValues();
+        imageHandlerManager.fillEmptyValues(); // fillValues()
+        setFillingValues(false);
+        validateForm();
     }
 
     protected void setFillingValues(boolean b) {
-	isFillingValues = b;
+        isFillingValues = b;
     }
 
     protected void fillSpecificValues() {
-	String key = getPrimaryKeyValue();
-	if (key != null) {
-	    for (BaseTableHandler tableHandler : tableHandlers) {
-		tableHandler.fillValues(key);
-	    }
-	}
+        String key = getPrimaryKeyValue();
+        if (key != null) {
+            for (BaseTableHandler tableHandler : tableHandlers) {
+                tableHandler.fillValues(key);
+            }
+        }
     }
 
     protected String getPrimaryKeyValue() {
-	return null;
+        return null;
     }
 
     /*
@@ -248,7 +248,7 @@ IValidatableForm, IWindow, IWindowListener, II18nForm {
      * changed
      */
     protected String getBasicName() {
-	return this.basicName;
+        return this.basicName;
     }
 
     public void fillValues() {
@@ -295,125 +295,123 @@ IValidatableForm, IWindow, IWindowListener, II18nForm {
     }
 
     protected String getMetadataPath() {
-	return this.getClass().getClassLoader()
-		.getResource("rules/" + getBasicName() + "_metadata.xml")
-		.getPath();
+        return this.getClass().getClassLoader().getResource("rules/" + getBasicName() + "_metadata.xml").getPath();
     }
 
     @Deprecated
     public HashMap<String, JComponent> getWidgetComponents() {
-	return widgets;
+        return widgets;
     }
 
     @Override
     public Map<String, JComponent> getWidgets() {
-	return widgets;
+        return widgets;
     }
 
     @Override
     public boolean isFillingValues() {
-	return isFillingValues;
+        return isFillingValues;
     }
 
     @Override
     public IController getFormController() {
-	return iController;
+        return iController;
     }
 
     @Override
     public void setChangedValues() {
-	int[] indexes = iController.getIndexesOfValuesChanged();
+        int[] indexes = iController.getIndexesOfValuesChanged();
 
-	if (indexes.length > 0) {
-	    setChangedValues(true);
-	} else {
-	    setChangedValues(false);
-	}
+        if (indexes.length > 0) {
+            setChangedValues(true);
+        } else {
+            setChangedValues(false);
+        }
     }
 
     protected void enableSaveButton(boolean bool) {
 
-	if (model != null && model.getSource().isEditing()) {
-	    saveButton.setEnabled(false);
-	} else if (!isChangedValues()) {
-	    saveButton.setEnabled(false);
-	} else if (validationHandler.hasValidationErrors()) {
-	    saveButton.setEnabled(false);
-	} else {
-	    saveButton.setEnabled(bool);
-	}
+        if (model != null && model.getSource().isEditing()) {
+            saveButton.setEnabled(false);
+        } else if (!isChangedValues()) {
+            saveButton.setEnabled(false);
+        } else if (validationHandler.hasValidationErrors()) {
+            saveButton.setEnabled(false);
+        } else {
+            saveButton.setEnabled(bool);
+        }
     }
 
     protected boolean isChangedValues() {
-	return changedValues;
+        return changedValues;
     }
 
     @Override
     public FillHandler getFillHandler() {
-	return fillHandler;
+        return fillHandler;
     }
 
     @Override
     public void validateForm() {
-	validationHandler.validate();
-	enableSaveButton(isChangedValues());
+        validationHandler.validate();
+        enableSaveButton(isChangedValues());
     }
 
     @Override
     public ValidatorForm getValidatorForm() {
-	return validationHandler.getValidatorForm();
+        return validationHandler.getValidatorForm();
     }
 
     protected void setChangedValues(boolean bool) {
-	changedValues = bool;
+        changedValues = bool;
     }
 
     @Override
     public WindowInfo getWindowInfo() {
-	if (windowInfo == null) {
-	    windowInfo = new WindowInfo(windowInfoCode);
-	    windowInfo.setTitle(PluginServices.getText(this, getBasicName()));
-	    Dimension dim = getPreferredSize();
-	    // To calculate the maximum size of a form we take the size of the
-	    // main frame minus a "magic number" for the menus, toolbar, state
-	    // bar
-	    // Take into account that in edition mode there is less available
-	    // space
-	    MDIFrame a = (MDIFrame) PluginServices.getMainFrame();
-	    int maxHeight = a.getHeight() - 205;
-	    int maxWidth = a.getWidth() - 15;
+        if (windowInfo == null) {
+            windowInfo = new WindowInfo(windowInfoCode);
+            windowInfo.setTitle(PluginServices.getText(this, getBasicName()));
+            Dimension dim = getPreferredSize();
+            // To calculate the maximum size of a form we take the size of the
+            // main frame minus a "magic number" for the menus, toolbar, state
+            // bar
+            // Take into account that in edition mode there is less available
+            // space
+            MDIFrame a = (MDIFrame) PluginServices.getMainFrame();
+            int maxHeight = a.getHeight() - 205;
+            int maxWidth = a.getWidth() - 15;
 
-	    int width, heigth = 0;
-	    if (dim.getHeight() > maxHeight) {
-		heigth = maxHeight;
-	    } else {
-		heigth = new Double(dim.getHeight()).intValue();
-	    }
-	    if (dim.getWidth() > maxWidth) {
-		width = maxWidth;
-	    } else {
-		width = new Double(dim.getWidth()).intValue();
-	    }
+            int width, heigth = 0;
+            if (dim.getHeight() > maxHeight) {
+                heigth = maxHeight;
+            } else {
+                heigth = new Double(dim.getHeight()).intValue();
+            }
+            if (dim.getWidth() > maxWidth) {
+                width = maxWidth;
+            } else {
+                width = new Double(dim.getWidth()).intValue();
+            }
 
-	    // getPreferredSize doesn't take into account the borders and other
-	    // stuff
-	    // introduced by Andami, neither scroll bars so we must increase the
-	    // "preferred"
-	    // dimensions
-	    windowInfo.setWidth(width + 25);
-	    windowInfo.setHeight(heigth + 15);
-	}
-	return windowInfo;
+            // getPreferredSize doesn't take into account the borders and other
+            // stuff
+            // introduced by Andami, neither scroll bars so we must increase the
+            // "preferred"
+            // dimensions
+            windowInfo.setWidth(width + 25);
+            windowInfo.setHeight(heigth + 15);
+        }
+        return windowInfo;
     }
 
     @Override
     public Object getWindowProfile() {
-	return WindowInfo.DIALOG_PROFILE;
+        return WindowInfo.DIALOG_PROFILE;
     }
 
     @Override
     public void windowClosed() {
-	removeListeners();
+        removeListeners();
     }
 
     @Override
@@ -422,157 +420,151 @@ IValidatableForm, IWindow, IWindowListener, II18nForm {
 
     @Override
     public void actionCreateRecord() {
-	this.position = -1;
-	saveButton.removeActionListener(action);
-	action = new CreateAction(this);
-	saveButton.addActionListener(action);
-	setListeners();
-	fillEmptyValues();
-	PluginServices.getMDIManager().addCentredWindow(this);
+        this.position = -1;
+        saveButton.removeActionListener(action);
+        action = new CreateAction(this);
+        saveButton.addActionListener(action);
+        setListeners();
+        fillEmptyValues();
+        PluginServices.getMDIManager().addCentredWindow(this);
     }
 
     @Override
     public void actionUpdateRecord(long position) {
-	this.position = position;
-	saveButton.removeActionListener(action);
-	action = new SaveAction(this);
-	saveButton.addActionListener(action);
-	setListeners();
-	fillValues();
-	PluginServices.getMDIManager().addCentredWindow(this);
+        this.position = position;
+        saveButton.removeActionListener(action);
+        action = new SaveAction(this);
+        saveButton.addActionListener(action);
+        setListeners();
+        fillValues();
+        PluginServices.getMDIManager().addCentredWindow(this);
     }
 
     @Override
     public void actionDeleteRecord(long position) {
-	try {
-	    iController.delete((int) position);
-	    model.dataChanged();
-	} catch (Exception e) {
-	    NotificationManager.addError(e);
-	}
+        try {
+            iController.delete((int) position);
+            model.dataChanged();
+        } catch (Exception e) {
+            NotificationManager.addError(e);
+        }
     }
 
     @Override
     public IEditableSource getSource() {
-	return model.getSource();
+        return model.getSource();
     }
 
     @Override
     public void setModel(AlphanumericTableModel model) {
-	this.model = model;
-	iController = model.getController().clone();
-	fillHandler = new FillHandler(widgets, iController,
-		ormlite.getAppDomain());
+        this.model = model;
+        iController = model.getController().clone();
+        fillHandler = new FillHandler(widgets, iController, ormlite.getAppDomain());
     }
 
     protected void addTableHandler(BaseTableHandler tableHandler) {
-	tableHandlers.add(tableHandler);
+        tableHandlers.add(tableHandler);
     }
 
     public List<BaseTableHandler> getTableHandlers() {
-	return tableHandlers;
+        return tableHandlers;
     }
 
     protected void addCalculation(Calculation calculation) {
-	calculationHandler.add(calculation);
+        calculationHandler.add(calculation);
     }
 
     protected void addChained(JComponent chained, JComponent parent) {
-	chainedHandler.add(this, chained, parent);
+        chainedHandler.add(this, chained, parent);
     }
 
     protected void addChained(String chained, String parent) {
-	chainedHandler.add(this, widgets.get(chained), widgets.get(parent));
+        chainedHandler.add(this, widgets.get(chained), widgets.get(parent));
     }
 
     protected void addChained(JComponent chained, JComponent... parents) {
-	chainedHandler.add(this, chained, Arrays.asList(parents));
+        chainedHandler.add(this, chained, Arrays.asList(parents));
     }
 
     protected void addChained(String chained, String... parents) {
-	List<JComponent> parentList = new ArrayList<JComponent>();
-	for (String parent : parents) {
-	    parentList.add(widgets.get(parent));
-	}
-	chainedHandler.add(this, widgets.get(chained), parentList);
+        List<JComponent> parentList = new ArrayList<JComponent>();
+        for (String parent : parents) {
+            parentList.add(widgets.get(parent));
+        }
+        chainedHandler.add(this, widgets.get(chained), parentList);
     }
-    
+
     /**
      * Instead of create an implementation of ImageHandler that only sets a path (FixedImageHandler) this utiliy method
      * sets the image without doing anything more
+     *
      * @param imgComponent
      *            . Name of the abeille widget
      * @param absPath
      *            . Absolute path to the image or relative path from andami.jar
      */
     protected void addImageHandler(String imgComponent, String absPath) {
-	ImageComponent image = (ImageComponent) formPanel
-		.getComponentByName(imgComponent);
-	ImageIcon icon = new ImageIcon(absPath);
-	image.setIcon(icon);
+        ImageComponent image = (ImageComponent) formPanel.getComponentByName(imgComponent);
+        ImageIcon icon = new ImageIcon(absPath);
+        image.setIcon(icon);
     }
-    
+
     protected void addImageHandler(ImageHandler imageHandler) {
-	imageHandlerManager.addHandler(imageHandler);
+        imageHandlerManager.addHandler(imageHandler);
     }
 
     private final class CreateAction implements ActionListener {
 
-	private final IWindow iWindow;
+        private final IWindow iWindow;
 
-	public CreateAction(IWindow iWindow) {
-	    this.iWindow = iWindow;
-	}
+        public CreateAction(IWindow iWindow) {
+            this.iWindow = iWindow;
+        }
 
-	@Override
-	public void actionPerformed(ActionEvent arg0) {
-	    HashMap<String, String> values = iController.getValues();
-	    try {
-		iController.create(values);
-		model.dataChanged();
-	    } catch (Exception e) {
-		iController.clearAll();
-		position = -1;
-		logger.error(e.getStackTrace(), e);
-	    }
-	    PluginServices.getMDIManager().closeWindow(iWindow);
-	}
+        @Override
+        public void actionPerformed(ActionEvent arg0) {
+            HashMap<String, String> values = iController.getValues();
+            try {
+                iController.create(values);
+                model.dataChanged();
+            } catch (Exception e) {
+                iController.clearAll();
+                position = -1;
+                logger.error(e.getStackTrace(), e);
+            }
+            PluginServices.getMDIManager().closeWindow(iWindow);
+        }
     }
 
     private final class SaveAction implements ActionListener {
 
-	private final IWindow iWindow;
+        private final IWindow iWindow;
 
-	public SaveAction(IWindow iWindow) {
-	    this.iWindow = iWindow;
-	}
+        public SaveAction(IWindow iWindow) {
+            this.iWindow = iWindow;
+        }
 
-	@Override
-	public void actionPerformed(ActionEvent arg0) {
-	    try {
-		iController.update((int) position);
-		model.dataChanged();
-	    } catch (ReadDriverException e) {
-		iController.clearAll();
-		position = -1;
-		logger.error(e.getStackTrace());
-	    } catch (StopWriterVisitorException e) {
-		logger.error(e.getStackTrace());
-		String errorMessage = (e.getCause() != null) ? e.getCause()
-			.getMessage() : e.getMessage(), auxMessage = errorMessage
-			.replace("ERROR: ", "").replace(" ", "_")
-			.replace("\n", ""), auxMessageIntl = PluginServices
-			.getText(this, auxMessage);
-			if (auxMessageIntl.compareToIgnoreCase(auxMessage) != 0) {
-			    errorMessage = auxMessageIntl;
-			}
-			JOptionPane.showMessageDialog(
-				(Component) PluginServices.getMainFrame(),
-				errorMessage,
-				PluginServices.getText(this, "save_layer_error"),
-				JOptionPane.ERROR_MESSAGE);
-	    }
-	    PluginServices.getMDIManager().closeWindow(iWindow);
-	}
+        @Override
+        public void actionPerformed(ActionEvent arg0) {
+            try {
+                iController.update((int) position);
+                model.dataChanged();
+            } catch (ReadDriverException e) {
+                iController.clearAll();
+                position = -1;
+                logger.error(e.getStackTrace());
+            } catch (StopWriterVisitorException e) {
+                logger.error(e.getStackTrace());
+                String errorMessage = (e.getCause() != null) ? e.getCause().getMessage() : e.getMessage(), auxMessage = errorMessage
+                        .replace("ERROR: ", "").replace(" ", "_").replace("\n", ""), auxMessageIntl = PluginServices
+                        .getText(this, auxMessage);
+                if (auxMessageIntl.compareToIgnoreCase(auxMessage) != 0) {
+                    errorMessage = auxMessageIntl;
+                }
+                JOptionPane.showMessageDialog((Component) PluginServices.getMainFrame(), errorMessage,
+                        PluginServices.getText(this, "save_layer_error"), JOptionPane.ERROR_MESSAGE);
+            }
+            PluginServices.getMDIManager().closeWindow(iWindow);
+        }
     }
 }

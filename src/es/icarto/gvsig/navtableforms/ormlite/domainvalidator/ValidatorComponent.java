@@ -32,74 +32,73 @@ public class ValidatorComponent {
 
     public static final Color INVALID_COLOR = new Color(249, 112, 140);
     private JComponent c = null;
-    private Color defaultbg = null;
+    private final Color defaultbg;
     private ValidatorDomain domain = null;
 
     public ValidatorComponent(JComponent c, ValidatorDomain dv) {
-	if (c instanceof JDateChooser) {
-	    this.c = ((JDateChooser) c).getDateEditor().getUiComponent();
-	    this.c.setName(c.getName());
-	} else {
-	    this.c = c;
-	}
-	defaultbg = this.c.getBackground();
-	this.domain = dv;
+        if (c instanceof JDateChooser) {
+            this.c = ((JDateChooser) c).getDateEditor().getUiComponent();
+            this.c.setName(c.getName());
+        } else {
+            this.c = c;
+        }
+        defaultbg = this.c.getBackground();
+        this.domain = dv;
     }
 
     public boolean validate() {
-	String name = null;
-	String value = null;
+        String name = null;
+        String value = null;
 
-	// The editor of JDateChooser is also a JTextField, so is handled in this path
-	if (c instanceof JTextField) {
-	    name = c.getName();
-	    value = ((JTextField) c).getText();
-	} else if (c instanceof JComboBox) {
-	    if (((JComboBox) c).getSelectedItem() != null) {
-		name = c.getName();
-		if (((JComboBox) c).getSelectedItem() instanceof KeyValue) {
-		    value = ((KeyValue) ((JComboBox) c).getSelectedItem())
-			    .getValue();
-		} else {
-		    value = ((JComboBox) c).getSelectedItem().toString();
-		}
-	    }
-	}
+        // The editor of JDateChooser is also a JTextField, so is handled in this path
+        if (c instanceof JTextField) {
+            name = c.getName();
+            value = ((JTextField) c).getText();
+        } else if (c instanceof JComboBox) {
+            if (((JComboBox) c).getSelectedItem() != null) {
+                name = c.getName();
+                if (((JComboBox) c).getSelectedItem() instanceof KeyValue) {
+                    value = ((KeyValue) ((JComboBox) c).getSelectedItem()).getValue();
+                } else {
+                    value = ((JComboBox) c).getSelectedItem().toString();
+                }
+            }
+        }
 
-	if (name != null) {
-	    if (isValid(name, value)) {
-		if (c.isEnabled() || (c instanceof JTextFieldDateEditor) ) {
-		    c.setBackground(defaultbg);
-		} else {
-		    setDisabledBackground();
-		}
-		return true;
-	    }
-	    if (c.isEnabled() || (c instanceof JTextFieldDateEditor)) {
-		c.setBackground(INVALID_COLOR);
-	    } else {
-		setDisabledBackground();
-	    }
-	    return false;
-	}
-	return true;
+        if (name != null) {
+            if (isValid(name, value)) {
+                if (c.isEnabled() || (c instanceof JTextFieldDateEditor)) {
+                    c.setBackground(defaultbg);
+                } else {
+                    setDisabledBackground();
+                }
+                return true;
+            }
+            if (c.isEnabled() || (c instanceof JTextFieldDateEditor)) {
+                c.setBackground(INVALID_COLOR);
+            } else {
+                setDisabledBackground();
+            }
+            return false;
+        }
+        return true;
 
     }
 
     private void setDisabledBackground() {
-	// Only way I found that works properly in both windows and
-	// linux for setting the default disabled background
-	c.setEnabled(true);
-	c.setBackground(defaultbg);
-	c.setEnabled(false);
+        // Only way I found that works properly in both windows and
+        // linux for setting the default disabled background
+        c.setEnabled(true);
+        c.setBackground(defaultbg);
+        c.setEnabled(false);
     }
 
     public boolean isValid(String name, String value) {
-	boolean val = domain.validate(value);
-	return val;
+        boolean val = domain.validate(value);
+        return val;
     }
 
     public String getComponentName() {
-	return c.getName();
+        return c.getName();
     }
 }
