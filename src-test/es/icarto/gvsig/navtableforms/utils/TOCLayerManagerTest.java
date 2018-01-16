@@ -14,8 +14,10 @@ import com.iver.cit.gvsig.fmap.layers.FLayerStatus;
 import com.iver.cit.gvsig.fmap.layers.FLayers;
 import com.iver.cit.gvsig.fmap.layers.FLyrVect;
 
-import es.udc.cartolab.gvsig.testutils.FLyrVectStub;
-import es.udc.cartolab.gvsig.testutils.MapControlStub;
+import es.icarto.gvsig.commons.testutils.FLyrVectStub;
+import es.icarto.gvsig.commons.testutils.MapControlStub;
+
+
 
 public class TOCLayerManagerTest {
 
