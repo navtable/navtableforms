@@ -19,7 +19,7 @@ public class TOCLayerManager {
     private MapControl mapControl = null;
 
     public TOCLayerManager() {
-	IWindow[] windows = PluginServices.getMDIManager().getOrderedWindows();
+	IWindow[] windows = PluginServices.getMDIManager().getAllWindows();
 	for (IWindow w : windows) {
 	    if (w instanceof BaseView) {
 		view = (BaseView) w;

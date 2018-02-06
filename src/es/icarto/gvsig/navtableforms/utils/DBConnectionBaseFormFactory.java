@@ -39,7 +39,7 @@ public abstract class DBConnectionBaseFormFactory extends FormFactory {
     }
 
     protected void loadLayer(String layerName, String dbSchema) {
-	IWindow[] windows = PluginServices.getMDIManager().getOrderedWindows();
+	IWindow[] windows = PluginServices.getMDIManager().getAllWindows();
 	BaseView view = null;
 	for (IWindow w : windows) {
 	    if (w instanceof BaseView) {
