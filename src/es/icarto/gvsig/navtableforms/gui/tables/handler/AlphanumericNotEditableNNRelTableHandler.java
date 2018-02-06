@@ -55,16 +55,14 @@ public class AlphanumericNotEditableNNRelTableHandler extends
     }
 
     protected void createTableModel() throws ReadDriverException {
-//        model = TableModelFactory.createFromTableWithOrFilter(sourceTableName,
-//                destinationKey, destinationKeyValues, colNames, colAliases,
-//                form.getI18nHandler().getResourceManager().getResources());
-	AlphanumericTableModel model = TableModelFactory
-		.createFromTableWithOrFilter(sourceTableName, getDestinationKey(),
-			destinationKeyValues, colNames, colAliases);
-	jtable.setModel(model);
-	if (form != null) {
-	    form.setModel(model);
-	}
+        model = TableModelFactory.createFromTableWithOrFilter(sourceTableName,
+                getDestinationKey(), destinationKeyValues, colNames, colAliases,
+                form.getI18nHandler().getResourceManager().getResources());
+
+        jtable.setModel(model);
+        if (form != null) {
+            form.setModel((AlphanumericTableModel) model);
+        }
     }
 
     @Deprecated
