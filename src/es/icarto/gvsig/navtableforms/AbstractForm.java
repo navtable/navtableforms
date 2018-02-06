@@ -47,6 +47,7 @@ import com.iver.andami.ui.mdiManager.WindowInfo;
 import com.iver.cit.gvsig.exceptions.visitors.StopWriterVisitorException;
 import com.iver.cit.gvsig.fmap.layers.FLyrVect;
 import com.iver.cit.gvsig.fmap.layers.LayerEvent;
+import com.iver.cit.gvsig.project.documents.table.gui.TablesFor;
 import com.jeta.forms.components.image.ImageComponent;
 import com.jeta.forms.components.panel.FormPanel;
 import com.toedter.calendar.JDateChooser;
@@ -393,6 +394,7 @@ public abstract class AbstractForm extends AbstractNavTable implements
     public boolean saveRecord() throws StopWriterVisitorException {
 	if (isSaveable()) {
 	    setSavingValues(true);
+	    TablesFor.layer(layer).closeWindow();
 	    try {
 		layerController.update(getPosition());
 		setChangedValues(false);
