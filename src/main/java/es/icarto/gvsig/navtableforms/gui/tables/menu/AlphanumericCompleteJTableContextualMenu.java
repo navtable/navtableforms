@@ -147,7 +147,7 @@ AlphanumericJTableContextualMenu {
 				if (response == JOptionPane.YES_OPTION) {
 					BaseTableModel model = (BaseTableModel) table.getModel();
 					final int position = getSelectedRowIdx();
-					form.actionUpdateRecord(model.getFeatureAt(position));
+					form.actionDeleteRecord(model.getFeatureAt(position));
 				}
 
 			}
