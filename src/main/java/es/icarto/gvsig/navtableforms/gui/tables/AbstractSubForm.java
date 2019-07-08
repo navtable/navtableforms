@@ -319,9 +319,9 @@ IValidatableForm, IWindow, IWindowListener, II18nForm {
 
 	@Override
 	public void setChangedValues() {
-		int[] indexes = iController.getIndexesOfValuesChanged();
+		Map<String, String> valuesChanged = iController.getValuesChanged();
 
-		if (indexes.length > 0) {
+		if (valuesChanged.size() > 0) {
 			setChangedValues(true);
 		} else {
 			setChangedValues(false);

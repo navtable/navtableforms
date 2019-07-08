@@ -302,24 +302,12 @@ public abstract class AbstractForm extends AbstractNavTable implements
 		return true;
 	}
 
-	/**
-	 * Use getFormController.getIndexesOfValuesChanged() instead
-	 */
-	@Deprecated
-	protected Vector<Integer> getIndexesOfChangedValues() {
-		int[] idxs = layerController.getIndexesOfValuesChanged();
-		Vector<Integer> indexes = new Vector<Integer>();
-		for (int i = 0; i < idxs.length; i++) {
-			indexes.add(idxs[i]);
-		}
-		return indexes;
-	}
 
 	@Override
 	public void setChangedValues() {
-		int[] indexes = layerController.getIndexesOfValuesChanged();
+		Map<String, String> valuesChanged = layerController.getValuesChanged();
 
-		if (indexes.length > 0) {
+		if (valuesChanged.size() > 0) {
 			setChangedValues(true);
 		} else {
 			setChangedValues(false);
