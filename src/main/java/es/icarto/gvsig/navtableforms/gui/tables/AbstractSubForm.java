@@ -166,7 +166,7 @@ IValidatableForm, IWindow, IWindowListener, II18nForm {
 	private JPanel getSouthPanel() {
 		if (southPanel == null) {
 			southPanel = new JPanel(new FlowLayout(FlowLayout.TRAILING));
-			saveButton = new JButton("Guardar");
+			saveButton = new JButton(_("guardar"));
 			action = new CreateAction(this);
 			saveButton.addActionListener(action);
 			southPanel.add(saveButton);
