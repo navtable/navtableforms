@@ -27,7 +27,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -62,7 +61,7 @@ import es.udc.cartolab.gvsig.navtable.format.DateFormatNT;
 
 @SuppressWarnings("serial")
 public abstract class AbstractForm extends AbstractNavTable implements
-		IValidatableForm, II18nForm {
+IValidatableForm, II18nForm {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(AbstractForm.class);
@@ -183,9 +182,9 @@ public abstract class AbstractForm extends AbstractNavTable implements
 		c.setDateFormatString(dateFormat.toPattern());
 		c.getDateEditor().setEnabled(false);
 		c.getDateEditor().getUiComponent()
-				.setBackground(new Color(255, 255, 255));
+		.setBackground(new Color(255, 255, 255));
 		c.getDateEditor().getUiComponent()
-				.setFont(new Font("Arial", Font.PLAIN, 11));
+		.setFont(new Font("Arial", Font.PLAIN, 11));
 		c.getDateEditor().getUiComponent().setToolTipText(null);
 
 	}
@@ -260,7 +259,7 @@ public abstract class AbstractForm extends AbstractNavTable implements
 		}
 	}
 
-	protected String getPrimaryKeyValue() {
+	public String getPrimaryKeyValue() {
 		return null;
 	}
 
@@ -301,7 +300,6 @@ public abstract class AbstractForm extends AbstractNavTable implements
 		}
 		return true;
 	}
-
 
 	@Override
 	public void setChangedValues() {
