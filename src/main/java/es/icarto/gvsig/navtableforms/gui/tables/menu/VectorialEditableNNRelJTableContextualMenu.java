@@ -9,6 +9,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.JTable;
 
 import org.gvsig.andami.PluginServices;
+import org.gvsig.andami.ui.mdiManager.MDIManagerFactory;
 
 import es.icarto.gvsig.navtableforms.gui.tables.JTableUtils;
 import es.icarto.gvsig.navtableforms.gui.tables.handler.EditableNNRelTableForm;
@@ -93,12 +94,12 @@ public class VectorialEditableNNRelJTableContextualMenu extends
 			if ((form != null) && (form.init())) {
 				formInitialized = true;
 				readSelectedPosition();
-				PluginServices.getMDIManager().addWindow(form);
+				MDIManagerFactory.getManager().addWindow(form);
 			}
 		} else {
 			form.reinit();
 			readSelectedPosition();
-			PluginServices.getMDIManager().addWindow(form);
+			MDIManagerFactory.getManager().addWindow(form);
 		}
 	}
 

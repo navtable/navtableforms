@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.gvsig.andami.PluginServices;
 import org.gvsig.andami.ui.mdiManager.IWindow;
+import org.gvsig.andami.ui.mdiManager.MDIManagerFactory;
 import org.gvsig.app.project.documents.table.TableDocument;
 import org.gvsig.app.project.documents.view.gui.IView;
 import org.gvsig.fmap.mapcontext.layers.FLayer;
@@ -19,7 +20,7 @@ public class TOCLayerManager {
     private MapControl mapControl = null;
 
     public TOCLayerManager() {
-	IWindow[] windows = PluginServices.getMDIManager().getOrderedWindows();
+	IWindow[] windows = MDIManagerFactory.getManager().getOrderedWindows();
 	for (IWindow w : windows) {
 	    if (w instanceof IView) {
 		view = (IView) w;

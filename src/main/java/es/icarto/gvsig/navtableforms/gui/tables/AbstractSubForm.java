@@ -32,6 +32,7 @@ import org.gvsig.andami.messages.NotificationManager;
 import org.gvsig.andami.ui.mdiFrame.MDIFrame;
 import org.gvsig.andami.ui.mdiManager.IWindow;
 import org.gvsig.andami.ui.mdiManager.IWindowListener;
+import org.gvsig.andami.ui.mdiManager.MDIManagerFactory;
 import org.gvsig.andami.ui.mdiManager.WindowInfo;
 import org.gvsig.fmap.dal.exception.DataException;
 import org.gvsig.fmap.dal.feature.Feature;
@@ -425,7 +426,7 @@ IValidatableForm, IWindow, IWindowListener, II18nForm {
 		saveButton.addActionListener(action);
 		setListeners();
 		fillEmptyValues();
-		PluginServices.getMDIManager().addCentredWindow(this);
+		MDIManagerFactory.getManager().addCentredWindow(this);
 	}
 
 	@Override
@@ -436,7 +437,7 @@ IValidatableForm, IWindow, IWindowListener, II18nForm {
 		saveButton.addActionListener(action);
 		setListeners();
 		fillValues();
-		PluginServices.getMDIManager().addCentredWindow(this);
+		MDIManagerFactory.getManager().addCentredWindow(this);
 	}
 
 	@Override
@@ -527,7 +528,7 @@ IValidatableForm, IWindow, IWindowListener, II18nForm {
 			} catch (Exception e) {
 				logger.error(e.getMessage(), e);
 			}
-			PluginServices.getMDIManager().closeWindow(iWindow);
+			MDIManagerFactory.getManager().closeWindow(iWindow);
 		}
 	}
 
@@ -558,7 +559,7 @@ IValidatableForm, IWindow, IWindowListener, II18nForm {
 								errorMessage, _("save_layer_error"),
 								JOptionPane.ERROR_MESSAGE);
 			}
-			PluginServices.getMDIManager().closeWindow(iWindow);
+			MDIManagerFactory.getManager().closeWindow(iWindow);
 		}
 	}
 }

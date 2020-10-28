@@ -1,6 +1,6 @@
 package es.icarto.gvsig.navtableforms.gui.tables.menu;
 
-import org.gvsig.andami.PluginServices;
+import org.gvsig.andami.ui.mdiManager.MDIManagerFactory;
 
 import es.icarto.gvsig.navtableforms.AbstractForm;
 import es.icarto.gvsig.navtableforms.utils.FormFactory;
@@ -13,8 +13,7 @@ import es.icarto.gvsig.navtableforms.utils.FormFactory;
  * @author Jorge López Fernández <jlopez@cartolab.es>
  */
 
-public abstract class VectorialJTableContextualMenu extends
-		BaseJTableContextualMenu {
+public abstract class VectorialJTableContextualMenu extends BaseJTableContextualMenu {
 
 	protected AbstractForm form;
 	protected boolean formInitialized = false;
@@ -24,15 +23,15 @@ public abstract class VectorialJTableContextualMenu extends
 	}
 
 	protected void openDialog() {
-		if (!formInitialized) {
-			formInitialized = true;
-			form.init();
+		if (!this.formInitialized) {
+			this.formInitialized = true;
+			this.form.init();
 		} else {
-			form.reinit();
+			this.form.reinit();
 		}
-		int position = table.convertRowIndexToModel(table.getSelectedRow());
-		form.setPosition(position);
-		PluginServices.getMDIManager().addWindow(form);
+		final int position = this.table.convertRowIndexToModel(this.table.getSelectedRow());
+		this.form.setPosition(position);
+		MDIManagerFactory.getManager().addWindow(this.form);
 	}
 
 	@Deprecated

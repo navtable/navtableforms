@@ -4,6 +4,7 @@ package es.icarto.gvsig.navtableforms.utils;
 import org.cresques.cts.IProjection;
 import org.gvsig.andami.PluginServices;
 import org.gvsig.andami.ui.mdiManager.IWindow;
+import org.gvsig.andami.ui.mdiManager.MDIManagerFactory;
 import org.gvsig.app.project.ProjectManager;
 import org.gvsig.app.project.documents.table.TableDocument;
 import org.gvsig.app.project.documents.table.TableManager;
@@ -48,7 +49,7 @@ public abstract class DBConnectionBaseFormFactory extends FormFactory {
     }
     
     protected void loadLayer(String layerName, String dbSchema) {
-    	IWindow iWindow = PluginServices.getMDIManager().getActiveWindow();
+    	IWindow iWindow = MDIManagerFactory.getManager().getActiveWindow();
     	if (iWindow instanceof IView) {
     		MapContext mc = ((IView) iWindow).getMapControl().getMapContext();
     		IProjection projection = mc.getProjection();
@@ -100,7 +101,7 @@ public TableDocument addAssociatedTable(FLyrVect lyr) {
 	projectManager.getCurrentProject().addDocument(tableDocument);
 	
 	FeatureTableDocumentPanel featureTableDocumentPanel = (FeatureTableDocumentPanel) tableDocument.getFactory().getMainWindow(tableDocument);
-	PluginServices.getMDIManager().addWindow(featureTableDocumentPanel);
+	MDIManagerFactory.getManager().addWindow(featureTableDocumentPanel);
 	
 	
 	return tableDocument; 

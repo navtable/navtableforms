@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.gvsig.andami.PluginServices;
 import org.gvsig.andami.ui.mdiManager.IWindow;
+import org.gvsig.andami.ui.mdiManager.MDIManagerFactory;
 import org.gvsig.app.extension.ProjectExtension;
 import org.gvsig.app.project.documents.Document;
 import org.gvsig.app.project.documents.table.TableDocument;
@@ -26,7 +27,7 @@ public class TOCTableManager {
 	    projectTables.put(table.getName(), ((TableDocument) table));
 	}
 	tables = new HashMap<String, FeatureTableDocumentPanel>();
-	IWindow[] windows = PluginServices.getMDIManager().getAllWindows();
+	IWindow[] windows = MDIManagerFactory.getManager().getAllWindows();
 	for (IWindow w : windows) {
 	    if (w instanceof FeatureTableDocumentPanel) {
 		tables.put(((FeatureTableDocumentPanel) w).getModel().getName(), (FeatureTableDocumentPanel) w);

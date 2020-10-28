@@ -13,66 +13,64 @@ import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.table.TableModel;
 
-import org.gvsig.andami.PluginServices;
 import org.gvsig.andami.ui.mdiManager.IWindow;
+import org.gvsig.andami.ui.mdiManager.MDIManagerFactory;
 import org.gvsig.andami.ui.mdiManager.WindowInfo;
 
 @SuppressWarnings("serial")
-public class EditableNNRelTableForm extends JPanel implements IWindow,
-		ActionListener {
+public class EditableNNRelTableForm extends JPanel implements IWindow, ActionListener {
 
 	private WindowInfo viewInfo;
 
-	private EditableNNRelTableHandler tableRelationship;
+	private final EditableNNRelTableHandler tableRelationship;
 
 	private JComboBox secondaryPKValueCB;
 	private JButton addButton;
 	private int keyColumn = 0;
 
-	public EditableNNRelTableForm(EditableNNRelTableHandler tableRelationship,
-			int keyColumn) {
+	public EditableNNRelTableForm(EditableNNRelTableHandler tableRelationship, int keyColumn) {
 		this.tableRelationship = tableRelationship;
 		this.keyColumn = keyColumn;
-		viewInfo = this.getWindowInfo();
+		this.viewInfo = this.getWindowInfo();
 		createForm();
 	}
 
 	public EditableNNRelTableForm(EditableNNRelTableHandler tableRelationship) {
 		this.tableRelationship = tableRelationship;
-		viewInfo = this.getWindowInfo();
+		this.viewInfo = this.getWindowInfo();
 		createForm();
 	}
 
 	private void createForm() {
 
 		this.setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
+		final GridBagConstraints c = new GridBagConstraints();
 
-		secondaryPKValueCB = new JComboBox();
+		this.secondaryPKValueCB = new JComboBox();
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.ipady = 5; // make this component tall
 		c.insets = new Insets(10, 5, 10, 5);
 		c.gridwidth = 1;
 		c.gridx = 0;
 		c.gridy = 0;
-		this.add(secondaryPKValueCB, c);
+		this.add(this.secondaryPKValueCB, c);
 
-		addButton = new JButton(_("add"));
+		this.addButton = new JButton(_("add"));
 		c.insets = new Insets(10, 10, 10, 10);
 		c.ipady = 0;
 		c.gridy = 1;
 		c.anchor = GridBagConstraints.PAGE_END; // bottom of space
-		this.add(addButton, c);
+		this.add(this.addButton, c);
 
-		for (String value : tableRelationship.getUnlinkedSecondaryValues()) {
-			secondaryPKValueCB.addItem(value);
+		for (final String value : this.tableRelationship.getUnlinkedSecondaryValues()) {
+			this.secondaryPKValueCB.addItem(value);
 		}
 
-		addButton.addActionListener(this);
+		this.addButton.addActionListener(this);
 	}
 
 	public void open() {
-		PluginServices.getMDIManager().addCentredWindow(this);
+		MDIManagerFactory.getManager().addCentredWindow(this);
 	}
 
 	public void addAction() {
@@ -80,22 +78,20 @@ public class EditableNNRelTableForm extends JPanel implements IWindow,
 	}
 
 	public void deleteAction() {
-		int row = tableRelationship.getJTable().getSelectedRow();
-		TableModel tableModel = tableRelationship.getJTable().getModel();
-		String secondaryPKValue = tableModel.getValueAt(row, keyColumn)
-				.toString();
-		tableRelationship.deleteRow(secondaryPKValue);
+		final int row = this.tableRelationship.getJTable().getSelectedRow();
+		final TableModel tableModel = this.tableRelationship.getJTable().getModel();
+		final String secondaryPKValue = tableModel.getValueAt(row, this.keyColumn).toString();
+		this.tableRelationship.deleteRow(secondaryPKValue);
 	}
 
 	@Override
 	public WindowInfo getWindowInfo() {
-		if (viewInfo == null) {
-			viewInfo = new WindowInfo(WindowInfo.MODELESSDIALOG
-					| WindowInfo.RESIZABLE | WindowInfo.PALETTE);
+		if (this.viewInfo == null) {
+			this.viewInfo = new WindowInfo(WindowInfo.MODELESSDIALOG | WindowInfo.RESIZABLE | WindowInfo.PALETTE);
 		}
-		viewInfo.setHeight(75);
-		viewInfo.setWidth(200);
-		return viewInfo;
+		this.viewInfo.setHeight(75);
+		this.viewInfo.setWidth(200);
+		return this.viewInfo;
 	}
 
 	@Override
@@ -105,11 +101,10 @@ public class EditableNNRelTableForm extends JPanel implements IWindow,
 
 	@Override
 	public void actionPerformed(ActionEvent event) {
-		if (event.getSource() == addButton) {
-			if (secondaryPKValueCB.getSelectedItem() != null) {
-				tableRelationship.insertRow(secondaryPKValueCB
-						.getSelectedItem().toString());
-				PluginServices.getMDIManager().closeWindow(this);
+		if (event.getSource() == this.addButton) {
+			if (this.secondaryPKValueCB.getSelectedItem() != null) {
+				this.tableRelationship.insertRow(this.secondaryPKValueCB.getSelectedItem().toString());
+				MDIManagerFactory.getManager().closeWindow(this);
 			}
 		}
 	}
