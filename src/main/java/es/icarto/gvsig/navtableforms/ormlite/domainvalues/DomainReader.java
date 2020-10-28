@@ -17,7 +17,6 @@
 
 package es.icarto.gvsig.navtableforms.ormlite.domainvalues;
 
-
 /**
  * Interface for all DomainReaders.
  * 
@@ -27,8 +26,8 @@ package es.icarto.gvsig.navtableforms.ormlite.domainvalues;
  */
 public interface DomainReader {
 
-    public DomainValues getDomainValues();
-    
-    public void setAddVoidValue(boolean addVoidValue);
+	public DomainValues getDomainValues();
+
+	public void setAddVoidValue(boolean addVoidValue);
 
 }

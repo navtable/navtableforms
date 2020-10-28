@@ -13,13 +13,11 @@ import es.udc.cartolab.gvsig.navtable.dataacces.TableController;
 @SuppressWarnings("serial")
 public class AlphanumericTableModel extends BaseTableModel {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(AlphanumericTableModel.class);
+	private static final Logger logger = LoggerFactory.getLogger(AlphanumericTableModel.class);
 
 	private final TableDocument tableDocument;
 
-	public AlphanumericTableModel(TableDocument tableDocument,
-			String[] colNames, String[] colAliases,
+	public AlphanumericTableModel(TableDocument tableDocument, String[] colNames, String[] colAliases,
 			I18nResourceManager i18nManager, FeaturePagingHelper set) {
 		super(colNames, colAliases, set, i18nManager);
 		this.tableDocument = tableDocument;

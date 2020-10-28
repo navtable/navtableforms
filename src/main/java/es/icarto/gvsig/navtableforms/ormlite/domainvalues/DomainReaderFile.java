@@ -44,8 +44,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DomainReaderFile implements DomainReader {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(DomainReaderFile.class);
+	private static final Logger logger = LoggerFactory.getLogger(DomainReaderFile.class);
 	String fileName = null;
 	String fieldAlias = null;
 	private boolean addVoidValue = false;;
@@ -73,8 +72,7 @@ public class DomainReaderFile implements DomainReader {
 			BufferedReader fileReader = null;
 			try {
 				String line;
-				fileReader = new BufferedReader(new InputStreamReader(
-						new FileInputStream(fileName), "UTF8"));
+				fileReader = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), "UTF8"));
 				while ((line = fileReader.readLine()) != null) {
 					String tokens[] = line.split("=");
 					if (tokens.length == 2) {

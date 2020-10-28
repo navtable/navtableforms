@@ -10,13 +10,12 @@ import es.icarto.gvsig.navtableforms.gui.tables.IForm;
  * @author Jorge López Fernández <jlopez@cartolab.es>
  */
 
-public abstract class AlphanumericJTableContextualMenu extends
-	BaseJTableContextualMenu {
+public abstract class AlphanumericJTableContextualMenu extends BaseJTableContextualMenu {
 
-    protected IForm form;
+	protected IForm form;
 
-    public AlphanumericJTableContextualMenu(IForm form) {
-	this.form = form;
-    }
+	public AlphanumericJTableContextualMenu(IForm form) {
+		this.form = form;
+	}
 
 }

@@ -23,20 +23,20 @@ import es.udc.cartolab.gvsig.navtable.format.DoubleFormatNT;
 
 public class DoubleRule extends ValidationRule {
 
-    public DoubleRule() {
-	super();
-    }
+	public DoubleRule() {
+		super();
+	}
 
-    @Override
-    public boolean validate(String value) {
-	return isEmpty(value) || isDouble(value);
-    }
+	@Override
+	public boolean validate(String value) {
+		return isEmpty(value) || isDouble(value);
+	}
 
-    private boolean isDouble(String value) {
-	value = value == null ? "" : value.trim();
-	NumberFormat formatter = DoubleFormatNT.getDisplayingFormat();
-	ParsePosition pos = new ParsePosition(0);
-	formatter.parse(value, pos);
-	return value.length() == pos.getIndex();
-    }
+	private boolean isDouble(String value) {
+		value = value == null ? "" : value.trim();
+		NumberFormat formatter = DoubleFormatNT.getDisplayingFormat();
+		ParsePosition pos = new ParsePosition(0);
+		formatter.parse(value, pos);
+		return value.length() == pos.getIndex();
+	}
 }

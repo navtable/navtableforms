@@ -19,18 +19,18 @@ package es.icarto.gvsig.navtableforms.ormlite.domainvalidator.rules;
 
 public class IntegerRule extends ValidationRule {
 
-    @Override
-    public boolean validate(String value) {
-	return isEmpty(value) || isInteger(value);
-    }
-
-    private boolean isInteger(String value) {
-	try {
-	    Integer.parseInt(value);
-	   return true;
-	} catch (NumberFormatException nfe) {
-	    return false;
+	@Override
+	public boolean validate(String value) {
+		return isEmpty(value) || isInteger(value);
 	}
-    }
+
+	private boolean isInteger(String value) {
+		try {
+			Integer.parseInt(value);
+			return true;
+		} catch (NumberFormatException nfe) {
+			return false;
+		}
+	}
 
 }

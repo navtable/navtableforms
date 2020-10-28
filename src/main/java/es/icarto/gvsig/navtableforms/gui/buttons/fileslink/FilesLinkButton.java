@@ -11,13 +11,11 @@ import es.icarto.gvsig.navtableforms.AbstractForm;
 public class FilesLinkButton extends JButton {
 
 	/**
-	 * Will open the folder defined as: baseDirectory + File.separator +
-	 * folderField value (the value in the field folderField from the current
-	 * form register).
+	 * Will open the folder defined as: baseDirectory + File.separator + folderField
+	 * value (the value in the field folderField from the current form register).
 	 */
 	public FilesLinkButton(AbstractForm form, FilesLinkData data) {
-		this.setIcon(new ImageIcon(AbstractForm.class
-				.getResource("/fileslink.png")));
+		this.setIcon(new ImageIcon(AbstractForm.class.getResource("/fileslink.png")));
 		this.setToolTipText(_("fileslink_tooltip"));
 		this.addActionListener(new FilesLinkListener(form, data));
 	}

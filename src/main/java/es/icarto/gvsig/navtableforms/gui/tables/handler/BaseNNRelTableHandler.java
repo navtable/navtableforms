@@ -25,73 +25,67 @@ import es.udc.cartolab.gvsig.users.utils.DBSession;
 
 public abstract class BaseNNRelTableHandler extends BaseTableHandler {
 
-	
-	private static final Logger logger = LoggerFactory
-			.getLogger(BaseNNRelTableHandler.class);
-    /**
-     * The name of the primary key in the current form (assumed to have the same
-     * name in the n:n table).
-     */
-    protected String originKey;
+	private static final Logger logger = LoggerFactory.getLogger(BaseNNRelTableHandler.class);
+	/**
+	 * The name of the primary key in the current form (assumed to have the same
+	 * name in the n:n table).
+	 */
+	protected String originKey;
 
-    /**
-     * The name of the n:n table.
-     */
-    protected String relTable;
+	/**
+	 * The name of the n:n table.
+	 */
+	protected String relTable;
 
-    /**
-     * The name of the n:n table's schema.
-     */
-    protected String dbSchema;
+	/**
+	 * The name of the n:n table's schema.
+	 */
+	protected String dbSchema;
 
-    /**
-     * The related entities' primary key values.
-     */
-    protected String[] destinationKeyValues;
+	/**
+	 * The related entities' primary key values.
+	 */
+	protected String[] destinationKeyValues;
 
-    public BaseNNRelTableHandler(String sourceTableName,
-	    HashMap<String, JComponent> widgets, String dbSchema,
-	    String originKey, String relTable, String destinationKey,
-	    String[] colNames, String[] colAliases) {
-	super(sourceTableName, widgets, destinationKey, colNames, colAliases);
-	this.originKey = originKey;
-	this.dbSchema = dbSchema;
-	this.relTable = relTable;
-    }
-
-    public void fillValues(String value) {
-	try {
-	    originKeyValue = value;
-	    DBSession session = DBSession.getCurrentSession();
-	    if (session != null) {
-		destinationKeyValues = session.getDistinctValues(relTable,
-			dbSchema, destinationKey, false, false, "WHERE "
-				+ originKey + "='" + originKeyValue + "'");
-		createTableModel();
-		((DefaultTableCellRenderer) jtable.getTableHeader()
-			.getDefaultRenderer())
-			.setHorizontalAlignment(JLabel.CENTER);
-	    }
-	} catch (Exception e) {
-	    logger.error(e.getMessage(), e);
+	public BaseNNRelTableHandler(String sourceTableName, HashMap<String, JComponent> widgets, String dbSchema,
+			String originKey, String relTable, String destinationKey, String[] colNames, String[] colAliases) {
+		super(sourceTableName, widgets, destinationKey, colNames, colAliases);
+		this.originKey = originKey;
+		this.dbSchema = dbSchema;
+		this.relTable = relTable;
 	}
 
-    }
+	public void fillValues(String value) {
+		try {
+			originKeyValue = value;
+			DBSession session = DBSession.getCurrentSession();
+			if (session != null) {
+				destinationKeyValues = session.getDistinctValues(relTable, dbSchema, destinationKey, false, false,
+						"WHERE " + originKey + "='" + originKeyValue + "'");
+				createTableModel();
+				((DefaultTableCellRenderer) jtable.getTableHeader().getDefaultRenderer())
+						.setHorizontalAlignment(JLabel.CENTER);
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
 
-    public String getOriginKey() {
-	return originKey;
-    }
+	}
 
-    public String getDbSchema() {
-	return dbSchema;
-    }
+	public String getOriginKey() {
+		return originKey;
+	}
 
-    public String getRelTable() {
-	return relTable;
-    }
+	public String getDbSchema() {
+		return dbSchema;
+	}
 
-    public String[] getDestinationKeyValues() {
-	return destinationKeyValues;
-    }
+	public String getRelTable() {
+		return relTable;
+	}
+
+	public String[] getDestinationKeyValues() {
+		return destinationKeyValues;
+	}
 
 }

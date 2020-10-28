@@ -1,8 +1,6 @@
 package es.icarto.gvsig.navtableforms.utils;
 
-
 import org.cresques.cts.IProjection;
-import org.gvsig.andami.PluginServices;
 import org.gvsig.andami.ui.mdiManager.IWindow;
 import org.gvsig.andami.ui.mdiManager.MDIManagerFactory;
 import org.gvsig.app.project.ProjectManager;
@@ -35,82 +33,79 @@ import es.udc.cartolab.gvsig.users.utils.DBSession;
 
 public abstract class DBConnectionBaseFormFactory extends FormFactory {
 
-	
-	private static final Logger logger = LoggerFactory
-			.getLogger(DBConnectionBaseFormFactory.class);
-    @Override
-    public boolean checkLayerLoaded(String layerName) {
-	return (new TOCLayerManager().getLayerByName(layerName) != null);
-    }
+	private static final Logger logger = LoggerFactory.getLogger(DBConnectionBaseFormFactory.class);
 
-    @Override
-    public boolean checkTableLoaded(String tableName) {
-	return (new TOCTableManager().getTableDocumentByName(tableName) != null);
-    }
-    
-    protected void loadLayer(String layerName, String dbSchema) {
-    	IWindow iWindow = MDIManagerFactory.getManager().getActiveWindow();
-    	if (iWindow instanceof IView) {
-    		MapContext mc = ((IView) iWindow).getMapControl().getMapContext();
-    		IProjection projection = mc.getProjection();
+	@Override
+	public boolean checkLayerLoaded(String layerName) {
+		return (new TOCLayerManager().getLayerByName(layerName) != null);
+	}
+
+	@Override
+	public boolean checkTableLoaded(String tableName) {
+		return (new TOCTableManager().getTableDocumentByName(tableName) != null);
+	}
+
+	protected void loadLayer(String layerName, String dbSchema) {
+		IWindow iWindow = MDIManagerFactory.getManager().getActiveWindow();
+		if (iWindow instanceof IView) {
+			MapContext mc = ((IView) iWindow).getMapControl().getMapContext();
+			IProjection projection = mc.getProjection();
 			try {
 				FLayer layer = DBSession.getCurrentSession().getLayer(layerName, layerName, dbSchema, null, projection);
 				mc.getLayers().addLayer(layer);
 			} catch (BaseException e) {
 				logger.error(e.getMessage(), e);
 			}
-    	}
-    }
+		}
+	}
 
-    protected void loadTable(String tableName, String dbSchema) {
-    	try {
+	protected void loadTable(String tableName, String dbSchema) {
+		try {
 			loadTableDocument(tableName, dbSchema);
 		} catch (BaseException e) {
 			logger.error(e.getMessage(), e);
 		}
-    }
+	}
 
-    public TableDocument loadTableDocument(String tableName, String dbSchema) throws BaseException {
-    	ConnectionWithParams cwp = DBSession.getCurrentSession().getConnectionWithParams();
-    	JDBCStoreParameters storeParams = cwp.getStoreParams();
-    	storeParams.setTable(tableName);
-    	storeParams.setSchema(dbSchema);
-    	
-    	DataManager dataManager = DALLocator.getDataManager();
-    	
-    	ProjectManager projectManager = ProjectManager.getInstance();
-    	FeatureStore fs = (FeatureStore) dataManager.openStore(storeParams.getDataStoreName(), storeParams);
-        TableDocument tableDocument = (TableDocument) projectManager.createDocument(TableManager.TYPENAME, tableName);
-        tableDocument.setStore(fs);
-        projectManager.getCurrentProject().addDocument(tableDocument);
-        return tableDocument;
-    }
-    
+	public TableDocument loadTableDocument(String tableName, String dbSchema) throws BaseException {
+		ConnectionWithParams cwp = DBSession.getCurrentSession().getConnectionWithParams();
+		JDBCStoreParameters storeParams = cwp.getStoreParams();
+		storeParams.setTable(tableName);
+		storeParams.setSchema(dbSchema);
 
+		DataManager dataManager = DALLocator.getDataManager();
 
-public TableDocument addAssociatedTable(FLyrVect lyr) {
-	TableDocument tableDocument = getAssociatedTable(lyr);
-	if (tableDocument != null) {
+		ProjectManager projectManager = ProjectManager.getInstance();
+		FeatureStore fs = (FeatureStore) dataManager.openStore(storeParams.getDataStoreName(), storeParams);
+		TableDocument tableDocument = (TableDocument) projectManager.createDocument(TableManager.TYPENAME, tableName);
+		tableDocument.setStore(fs);
+		projectManager.getCurrentProject().addDocument(tableDocument);
 		return tableDocument;
 	}
-	FeatureStore fs = lyr.getFeatureStore();
-	ProjectManager projectManager = ProjectManager.getInstance();
-	tableDocument = (TableDocument) projectManager.createDocument( TableManager.TYPENAME, "table:" + lyr.getName());
-	tableDocument.setStore(fs);
-	tableDocument.setAssociatedLayer(lyr);
-	projectManager.getCurrentProject().addDocument(tableDocument);
-	
-	FeatureTableDocumentPanel featureTableDocumentPanel = (FeatureTableDocumentPanel) tableDocument.getFactory().getMainWindow(tableDocument);
-	MDIManagerFactory.getManager().addWindow(featureTableDocumentPanel);
-	
-	
-	return tableDocument; 
-}
 
-public TableDocument getAssociatedTable(FLyrVect lyr) {
-	ProjectManager projectManager = ProjectManager.getInstance();
-	TableManager tableManager = (TableManager) projectManager.getDocumentManager(TableManager.TYPENAME);
-	return tableManager.getTableDocument(lyr);
-}
+	public TableDocument addAssociatedTable(FLyrVect lyr) {
+		TableDocument tableDocument = getAssociatedTable(lyr);
+		if (tableDocument != null) {
+			return tableDocument;
+		}
+		FeatureStore fs = lyr.getFeatureStore();
+		ProjectManager projectManager = ProjectManager.getInstance();
+		tableDocument = (TableDocument) projectManager.createDocument(TableManager.TYPENAME, "table:" + lyr.getName());
+		tableDocument.setStore(fs);
+		tableDocument.setAssociatedLayer(lyr);
+		projectManager.getCurrentProject().addDocument(tableDocument);
+
+		FeatureTableDocumentPanel featureTableDocumentPanel = (FeatureTableDocumentPanel) tableDocument.getFactory()
+				.getMainWindow(tableDocument);
+		MDIManagerFactory.getManager().addWindow(featureTableDocumentPanel);
+
+		return tableDocument;
+	}
+
+	public TableDocument getAssociatedTable(FLyrVect lyr) {
+		ProjectManager projectManager = ProjectManager.getInstance();
+		TableManager tableManager = (TableManager) projectManager.getDocumentManager(TableManager.TYPENAME);
+		return tableManager.getTableDocument(lyr);
+	}
 
 }

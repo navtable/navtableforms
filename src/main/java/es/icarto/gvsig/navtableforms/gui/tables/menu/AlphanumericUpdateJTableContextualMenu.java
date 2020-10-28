@@ -19,8 +19,7 @@ import es.icarto.gvsig.navtableforms.gui.tables.model.BaseTableModel;
  * @author Jorge López Fernández <jlopez@cartolab.es>
  */
 
-public class AlphanumericUpdateJTableContextualMenu extends
-		AlphanumericJTableContextualMenu {
+public class AlphanumericUpdateJTableContextualMenu extends AlphanumericJTableContextualMenu {
 
 	public AlphanumericUpdateJTableContextualMenu(IForm form) {
 		super(form);
@@ -31,12 +30,10 @@ public class AlphanumericUpdateJTableContextualMenu extends
 		table = (JTable) e.getComponent();
 		if ((e.getClickCount() == 2) && (table.getSelectedRow() > -1)) {
 			BaseTableModel model = (BaseTableModel) table.getModel();
-			int position = table.convertColumnIndexToModel(table
-					.getSelectedRow());
+			int position = table.convertColumnIndexToModel(table.getSelectedRow());
 			form.actionUpdateRecord(model.getFeatureAt(position));
 		} else if (e.getButton() == BUTTON_RIGHT) {
-			if (!JTableUtils.hasRows(table)
-					|| (table.getSelectedRow() == NO_ROW_SELECTED)) {
+			if (!JTableUtils.hasRows(table) || (table.getSelectedRow() == NO_ROW_SELECTED)) {
 				updateMenuItem.setEnabled(false);
 			} else {
 				updateMenuItem.setEnabled(true);
@@ -51,8 +48,7 @@ public class AlphanumericUpdateJTableContextualMenu extends
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				BaseTableModel model = (BaseTableModel) table.getModel();
-				int position = table.convertColumnIndexToModel(table
-						.getSelectedRow());
+				int position = table.convertColumnIndexToModel(table.getSelectedRow());
 				form.actionUpdateRecord(model.getFeatureAt(position));
 			}
 		});

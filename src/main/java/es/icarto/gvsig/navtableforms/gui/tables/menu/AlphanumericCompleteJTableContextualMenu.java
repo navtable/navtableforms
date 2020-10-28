@@ -21,8 +21,7 @@ import es.icarto.gvsig.navtableforms.gui.tables.model.BaseTableModel;
  *
  * @author Jorge López Fernández <jlopez@cartolab.es>
  */
-public class AlphanumericCompleteJTableContextualMenu extends
-AlphanumericJTableContextualMenu {
+public class AlphanumericCompleteJTableContextualMenu extends AlphanumericJTableContextualMenu {
 
 	private CreateAction createAction;
 	private UpdateAction updateAction;
@@ -113,8 +112,7 @@ AlphanumericJTableContextualMenu {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if ((table == null) || (table.getSelectedRowCount() != 1)) {
-				JOptionPane.showMessageDialog(null, _("no_file_selected"),
-						_("no_file_selected_title"),
+				JOptionPane.showMessageDialog(null, _("no_file_selected"), _("no_file_selected_title"),
 						JOptionPane.INFORMATION_MESSAGE);
 				return;
 			}
@@ -134,16 +132,13 @@ AlphanumericJTableContextualMenu {
 		public void actionPerformed(ActionEvent e) {
 
 			if ((table == null) || (table.getSelectedRowCount() != 1)) {
-				JOptionPane.showMessageDialog(null, _("no_file_selected"),
-						_("no_file_selected_title"),
+				JOptionPane.showMessageDialog(null, _("no_file_selected"), _("no_file_selected_title"),
 						JOptionPane.INFORMATION_MESSAGE);
 				return;
 			} else {
 				Object[] options = { _("delete"), _("cancel") };
-				int response = JOptionPane.showOptionDialog(null,
-						_("ask_for_deletion"), _("delete"),
-						JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE,
-						null, options, options[0]);
+				int response = JOptionPane.showOptionDialog(null, _("ask_for_deletion"), _("delete"),
+						JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
 				if (response == JOptionPane.YES_OPTION) {
 					BaseTableModel model = (BaseTableModel) table.getModel();
 					final int position = getSelectedRowIdx();

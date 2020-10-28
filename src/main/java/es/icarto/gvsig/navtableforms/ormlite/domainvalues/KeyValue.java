@@ -21,73 +21,72 @@ import java.util.ArrayList;
 
 public class KeyValue {
 
-    private String key;
-    private String value;
-    private ArrayList<String> foreignKeys = new ArrayList<String>();
+	private String key;
+	private String value;
+	private ArrayList<String> foreignKeys = new ArrayList<String>();
 
-    public KeyValue() {
-    }
-
-    public KeyValue(String key, String value, String fk) {
-	this.key = key;
-	this.value = value;
-	this.foreignKeys.add(fk);
-    }
-
-    public KeyValue(String key, String value, ArrayList<String> fk) {
-	this.key = key;
-	this.value = value;
-	this.foreignKeys = fk;
-    }
-
-    public KeyValue(String key, String value) {
-	this.key = key;
-	this.value = value;
-    }
-
-    public String getKey() {
-	return this.key;
-    }
-
-    public void setKey(String key) {
-	this.key = key;
-    }
-
-    public void addForeignKey(String d) {
-	this.foreignKeys.add(d);
-    }
-
-    public ArrayList<String> getForeignKeys() {
-	return this.foreignKeys;
-    }
-
-    public String getValue() {
-	return this.value;
-    }
-
-    public void setValue(String value) {
-	this.value = value;
-    }
-
-    @Override
-    public String toString() {
-	return this.value;
-    }
-    
-    /**
-     * Returns true if obj is a KeyValue object with the same key and value fields, or
-     * if obj is a string equals to the value field 
-     */
-    @Override
-    public boolean equals(Object obj) {
-	if (obj instanceof String) {
-	    return getValue().equals(obj);
-	} else if (obj instanceof KeyValue) {
-	    KeyValue kvObj = (KeyValue) obj;
-	    return getValue().equals(kvObj.getValue())
-		    && getKey().equals(kvObj.getKey());
+	public KeyValue() {
 	}
-	return false;
+
+	public KeyValue(String key, String value, String fk) {
+		this.key = key;
+		this.value = value;
+		this.foreignKeys.add(fk);
+	}
+
+	public KeyValue(String key, String value, ArrayList<String> fk) {
+		this.key = key;
+		this.value = value;
+		this.foreignKeys = fk;
+	}
+
+	public KeyValue(String key, String value) {
+		this.key = key;
+		this.value = value;
+	}
+
+	public String getKey() {
+		return this.key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
+	}
+
+	public void addForeignKey(String d) {
+		this.foreignKeys.add(d);
+	}
+
+	public ArrayList<String> getForeignKeys() {
+		return this.foreignKeys;
+	}
+
+	public String getValue() {
+		return this.value;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
+	}
+
+	@Override
+	public String toString() {
+		return this.value;
+	}
+
+	/**
+	 * Returns true if obj is a KeyValue object with the same key and value fields,
+	 * or if obj is a string equals to the value field
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof String) {
+			return getValue().equals(obj);
+		} else if (obj instanceof KeyValue) {
+			KeyValue kvObj = (KeyValue) obj;
+			return getValue().equals(kvObj.getValue()) && getKey().equals(kvObj.getKey());
+		}
+		return false;
 	}
 
 }

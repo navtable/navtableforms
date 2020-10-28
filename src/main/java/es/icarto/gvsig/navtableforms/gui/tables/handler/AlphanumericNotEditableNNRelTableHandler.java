@@ -21,60 +21,54 @@ import es.icarto.gvsig.navtableforms.utils.FormFactory;
  * @author Jorge López Fernández <jlopez@cartolab.es>
  */
 
-public class AlphanumericNotEditableNNRelTableHandler extends
-	BaseNNRelTableHandler {
+public class AlphanumericNotEditableNNRelTableHandler extends BaseNNRelTableHandler {
 
-    private AbstractSubForm form;
+	private AbstractSubForm form;
 
-    public AlphanumericNotEditableNNRelTableHandler(String sourceTableName,
-	    HashMap<String, JComponent> widgets, String dbSchema,
-	    String originKey, String relTable, String destinationKey,
-	    String[] colNames, String[] colAliases) {
-	super(sourceTableName, widgets, dbSchema, originKey, relTable,
-		destinationKey, colNames, colAliases);
-	FormFactory.checkAndLoadTableRegistered(sourceTableName);
-	form = FormFactory.createSubFormRegistered(sourceTableName);
-    }
-
-    /**
-     * Constructor w/o the column aliases, which will be retrieved from
-     * the form's i18n resources.
-     */
-    public AlphanumericNotEditableNNRelTableHandler(String sourceTableName,
-	    HashMap<String, JComponent> widgets, String dbSchema,
-	    String originKey, String relTable, String destinationKey,
-	    String[] colNames) {
-	super(sourceTableName, widgets, dbSchema, originKey, relTable,
-		destinationKey, colNames, new String[colNames.length]);
-	FormFactory.checkAndLoadTableRegistered(sourceTableName);
-	form = FormFactory.createSubFormRegistered(sourceTableName);
-	I18nResourceManager i18nManager = form.getI18nHandler().getResourceManager();
-	for (int i = 0, len = colNames.length; i<len; i++) {
-	    colAliases[i] = i18nManager.getString(colNames[i]);
+	public AlphanumericNotEditableNNRelTableHandler(String sourceTableName, HashMap<String, JComponent> widgets,
+			String dbSchema, String originKey, String relTable, String destinationKey, String[] colNames,
+			String[] colAliases) {
+		super(sourceTableName, widgets, dbSchema, originKey, relTable, destinationKey, colNames, colAliases);
+		FormFactory.checkAndLoadTableRegistered(sourceTableName);
+		form = FormFactory.createSubFormRegistered(sourceTableName);
 	}
-    }
 
-    protected void createTableModel() throws DataException {
-	if (form != null) {
-	    model = TableModelFactory.createFromTableWithOrFilter(sourceTableName,
-		    destinationKey, destinationKeyValues, colNames, colAliases,
-		    form.getI18nHandler().getResourceManager().getResources());
-	    form.setModel((AlphanumericTableModel) model);
-	} else {
-	    model = TableModelFactory.createFromTableWithOrFilter(sourceTableName,
-		    destinationKey, destinationKeyValues, colNames, colAliases);
+	/**
+	 * Constructor w/o the column aliases, which will be retrieved from the form's
+	 * i18n resources.
+	 */
+	public AlphanumericNotEditableNNRelTableHandler(String sourceTableName, HashMap<String, JComponent> widgets,
+			String dbSchema, String originKey, String relTable, String destinationKey, String[] colNames) {
+		super(sourceTableName, widgets, dbSchema, originKey, relTable, destinationKey, colNames,
+				new String[colNames.length]);
+		FormFactory.checkAndLoadTableRegistered(sourceTableName);
+		form = FormFactory.createSubFormRegistered(sourceTableName);
+		I18nResourceManager i18nManager = form.getI18nHandler().getResourceManager();
+		for (int i = 0, len = colNames.length; i < len; i++) {
+			colAliases[i] = i18nManager.getString(colNames[i]);
+		}
 	}
-	jtable.setModel(model);
-    }
 
-    @Deprecated
-    public void reload(AbstractSubForm form) {
-	this.form = form;
-	reload();
-    }
+	protected void createTableModel() throws DataException {
+		if (form != null) {
+			model = TableModelFactory.createFromTableWithOrFilter(sourceTableName, destinationKey, destinationKeyValues,
+					colNames, colAliases, form.getI18nHandler().getResourceManager().getResources());
+			form.setModel((AlphanumericTableModel) model);
+		} else {
+			model = TableModelFactory.createFromTableWithOrFilter(sourceTableName, destinationKey, destinationKeyValues,
+					colNames, colAliases);
+		}
+		jtable.setModel(model);
+	}
 
-    protected void createTableListener() {
-	listener = new AlphanumericUpdateJTableContextualMenu(form);
-    }
+	@Deprecated
+	public void reload(AbstractSubForm form) {
+		this.form = form;
+		reload();
+	}
+
+	protected void createTableListener() {
+		listener = new AlphanumericUpdateJTableContextualMenu(form);
+	}
 
 }

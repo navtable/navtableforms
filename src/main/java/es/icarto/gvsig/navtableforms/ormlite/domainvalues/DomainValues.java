@@ -16,50 +16,51 @@
  */
 
 package es.icarto.gvsig.navtableforms.ormlite.domainvalues;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class DomainValues {
 
-    private ArrayList<KeyValue> data;
-    private boolean addVoidValue = false;
+	private ArrayList<KeyValue> data;
+	private boolean addVoidValue = false;
 
-    public DomainValues(ArrayList<KeyValue> values) {
-	this.data = values;
-    }
-
-    public DomainValues(ArrayList<KeyValue> values, boolean addVoidValue) {
-	this.data = values;
-	this.addVoidValue = addVoidValue;
-    }
-
-    public ArrayList<KeyValue> getValues() {
-	ArrayList<KeyValue> subset = new ArrayList<KeyValue>();
-	if (addVoidValue) {
-	    subset.add(new KeyValue("", " "));
+	public DomainValues(ArrayList<KeyValue> values) {
+		this.data = values;
 	}
-	subset.addAll(data);
-	return subset;
-    }
 
-    public ArrayList<KeyValue> getValuesFilteredBy(List<String> ids) {
-	ArrayList<KeyValue> subset = new ArrayList<KeyValue>();
-	if (addVoidValue) {
-	    subset.add(new KeyValue("", " "));
+	public DomainValues(ArrayList<KeyValue> values, boolean addVoidValue) {
+		this.data = values;
+		this.addVoidValue = addVoidValue;
 	}
-	for (KeyValue kv : data) {
-	    if (kv.getForeignKeys().equals(ids)) {
-		subset.add(kv);
-	    }
+
+	public ArrayList<KeyValue> getValues() {
+		ArrayList<KeyValue> subset = new ArrayList<KeyValue>();
+		if (addVoidValue) {
+			subset.add(new KeyValue("", " "));
+		}
+		subset.addAll(data);
+		return subset;
 	}
-	return subset;
-    }
 
-    public void addValue(KeyValue value) {
-	data.add(value);
-    }
+	public ArrayList<KeyValue> getValuesFilteredBy(List<String> ids) {
+		ArrayList<KeyValue> subset = new ArrayList<KeyValue>();
+		if (addVoidValue) {
+			subset.add(new KeyValue("", " "));
+		}
+		for (KeyValue kv : data) {
+			if (kv.getForeignKeys().equals(ids)) {
+				subset.add(kv);
+			}
+		}
+		return subset;
+	}
 
-    public void addValues(ArrayList<KeyValue> values) {
-	values.addAll(values);
-    }
+	public void addValue(KeyValue value) {
+		data.add(value);
+	}
+
+	public void addValues(ArrayList<KeyValue> values) {
+		values.addAll(values);
+	}
 }

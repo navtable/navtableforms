@@ -11,13 +11,11 @@ import es.icarto.gvsig.navtableforms.gui.i18n.I18nResourceManager;
 @SuppressWarnings("serial")
 public class VectorialTableModel extends BaseTableModel {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(VectorialTableModel.class);
+	private static final Logger logger = LoggerFactory.getLogger(VectorialTableModel.class);
 
 	protected FLyrVect layer;
 
-	public VectorialTableModel(FLyrVect layer, String[] colNames,
-			String[] colAliases, FeaturePagingHelper set,
+	public VectorialTableModel(FLyrVect layer, String[] colNames, String[] colAliases, FeaturePagingHelper set,
 			I18nResourceManager i18nManager) {
 		super(colNames, colAliases, set, i18nManager);
 		this.layer = layer;

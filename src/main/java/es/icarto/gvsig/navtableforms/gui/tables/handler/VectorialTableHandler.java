@@ -21,8 +21,7 @@ import es.icarto.gvsig.navtableforms.utils.FormFactory;
 
 public class VectorialTableHandler extends BaseTableHandler {
 
-	public VectorialTableHandler(String layerName,
-			HashMap<String, JComponent> widgets, String foreignKeyId,
+	public VectorialTableHandler(String layerName, HashMap<String, JComponent> widgets, String foreignKeyId,
 			String[] colNames, String[] colAliases) {
 		super(layerName, widgets, foreignKeyId, colNames, colAliases);
 		FormFactory.checkAndLoadLayerRegistered(layerName);
@@ -30,8 +29,8 @@ public class VectorialTableHandler extends BaseTableHandler {
 
 	@Override
 	protected void createTableModel() throws DataException {
-		model = TableModelFactory.createFromLayerWithFilter(sourceTableName,
-				destinationKey, originKeyValue, colNames, colAliases);
+		model = TableModelFactory.createFromLayerWithFilter(sourceTableName, destinationKey, originKeyValue, colNames,
+				colAliases);
 		jtable.setModel(model);
 	}
 

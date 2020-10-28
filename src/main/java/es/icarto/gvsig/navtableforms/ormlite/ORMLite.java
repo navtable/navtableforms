@@ -19,42 +19,40 @@ package es.icarto.gvsig.navtableforms.ormlite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public class ORMLite {
 
-    private ORMLiteAppDomain appDomain = null;
-    private String xmlFile;
+	private ORMLiteAppDomain appDomain = null;
+	private String xmlFile;
 
-    
 	private static final Logger logger = LoggerFactory.getLogger(ORMLite.class);
 
-    public ORMLite(String xmlFile) {
-	this.xmlFile = xmlFile;
-    }
-
-    public ORMLiteAppDomain getAppDomain() {
-	if (appDomain == null) {
-	    try {
-		XMLSAXParser fp = new XMLSAXParser(xmlFile);
-		appDomain = fp.getAD();
-	    } catch (Exception e) {
-		logger.error(e.getMessage(), e);
-		appDomain = null;
-	    }
+	public ORMLite(String xmlFile) {
+		this.xmlFile = xmlFile;
 	}
-	return appDomain;
-    }
 
-    public ORMLiteAppDomain reloadAppDomain() {
-	XMLSAXParser fp;
-	try {
-	    fp = new XMLSAXParser(xmlFile);
-	    appDomain = fp.getAD();
-	} catch (Exception e) {
-	    logger.error(e.getMessage(), e);
-	    appDomain = null;
+	public ORMLiteAppDomain getAppDomain() {
+		if (appDomain == null) {
+			try {
+				XMLSAXParser fp = new XMLSAXParser(xmlFile);
+				appDomain = fp.getAD();
+			} catch (Exception e) {
+				logger.error(e.getMessage(), e);
+				appDomain = null;
+			}
+		}
+		return appDomain;
 	}
-	return appDomain;
-    }
+
+	public ORMLiteAppDomain reloadAppDomain() {
+		XMLSAXParser fp;
+		try {
+			fp = new XMLSAXParser(xmlFile);
+			appDomain = fp.getAD();
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			appDomain = null;
+		}
+		return appDomain;
+	}
 
 }

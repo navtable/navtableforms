@@ -18,55 +18,52 @@ import es.icarto.gvsig.navtableforms.gui.formattedtextfields.FormatterFactory;
 
 public class ValidationHandlerForFormattedTextFields implements KeyListener, FocusListener {
 
-	
-	private static final Logger logger = LoggerFactory
-			.getLogger(ValidationHandlerForFormattedTextFields.class);
-	
-    private IValidatableForm dialog = null;
+	private static final Logger logger = LoggerFactory.getLogger(ValidationHandlerForFormattedTextFields.class);
 
-    public ValidationHandlerForFormattedTextFields(IValidatableForm dialog) {
-	this.dialog = dialog;
-    }
+	private IValidatableForm dialog = null;
 
-    private void confirmChange(ComponentEvent e) {
-	if (!dialog.isFillingValues()) {
-	    JFormattedTextField c = ((JFormattedTextField) e.getSource());
-	    try {
-		c.commitEdit(); // make sure value and displayed text are the
-				// same
-		AbstractFormatter formatter = FormatterFactory
-			.createFormatter(dialog.getFormController().getType(
-				c.getName()));
-		String value = formatter.valueToString(c.getValue());
-		dialog.getFormController().setValue(c.getName(), value);
-		dialog.setChangedValues(); // placed after updating widgetvalues
-		dialog.validateForm();
-	    } catch (ParseException e1) {
-	    	logger.error(e1.getMessage(), e1);
-	    }
+	public ValidationHandlerForFormattedTextFields(IValidatableForm dialog) {
+		this.dialog = dialog;
 	}
-    }
 
-    @Override
-    public void keyTyped(KeyEvent e) {
-    }
+	private void confirmChange(ComponentEvent e) {
+		if (!dialog.isFillingValues()) {
+			JFormattedTextField c = ((JFormattedTextField) e.getSource());
+			try {
+				c.commitEdit(); // make sure value and displayed text are the
+				// same
+				AbstractFormatter formatter = FormatterFactory
+						.createFormatter(dialog.getFormController().getType(c.getName()));
+				String value = formatter.valueToString(c.getValue());
+				dialog.getFormController().setValue(c.getName(), value);
+				dialog.setChangedValues(); // placed after updating widgetvalues
+				dialog.validateForm();
+			} catch (ParseException e1) {
+				logger.error(e1.getMessage(), e1);
+			}
+		}
+	}
 
-    @Override
-    public void keyPressed(KeyEvent e) {
-    }
+	@Override
+	public void keyTyped(KeyEvent e) {
+	}
 
-    @Override
-    public void keyReleased(KeyEvent e) {
-	confirmChange(e);
-    }
+	@Override
+	public void keyPressed(KeyEvent e) {
+	}
 
-    @Override
-    public void focusGained(FocusEvent e) {
-    }
+	@Override
+	public void keyReleased(KeyEvent e) {
+		confirmChange(e);
+	}
 
-    @Override
-    public void focusLost(FocusEvent e) {
-	confirmChange(e);
-    }
+	@Override
+	public void focusGained(FocusEvent e) {
+	}
+
+	@Override
+	public void focusLost(FocusEvent e) {
+		confirmChange(e);
+	}
 
 }

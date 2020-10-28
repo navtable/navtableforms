@@ -26,25 +26,21 @@ import es.udc.cartolab.gvsig.users.utils.DBSession;
  * @author Jorge López Fernández <jlopez@cartolab.es>
  */
 
-public class VectorialEditableNNRelTableHandler extends
-		EditableNNRelTableHandler {
+public class VectorialEditableNNRelTableHandler extends EditableNNRelTableHandler {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(VectorialEditableNNRelTableHandler.class);
+	private static final Logger logger = LoggerFactory.getLogger(VectorialEditableNNRelTableHandler.class);
 
-	public VectorialEditableNNRelTableHandler(String sourceTableName,
-			HashMap<String, JComponent> widgets, String dbSchema,
-			String originKey, String relTable, String destinationKey,
-			String[] colNames, String[] colAliases) {
-		super(sourceTableName, widgets, dbSchema, originKey, relTable,
-				destinationKey, colNames, colAliases);
+	public VectorialEditableNNRelTableHandler(String sourceTableName, HashMap<String, JComponent> widgets,
+			String dbSchema, String originKey, String relTable, String destinationKey, String[] colNames,
+			String[] colAliases) {
+		super(sourceTableName, widgets, dbSchema, originKey, relTable, destinationKey, colNames, colAliases);
 		FormFactory.checkAndLoadLayerRegistered(sourceTableName);
 	}
 
 	@Override
 	protected void createTableModel() throws DataException {
-		model = TableModelFactory.createFromLayerWithOrFilter(sourceTableName,
-				destinationKey, destinationKeyValues, colNames, colAliases);
+		model = TableModelFactory.createFromLayerWithOrFilter(sourceTableName, destinationKey, destinationKeyValues,
+				colNames, colAliases);
 		jtable.setModel(model);
 	}
 
@@ -70,9 +66,8 @@ public class VectorialEditableNNRelTableHandler extends
 				}
 				where = where.substring(0, where.length() - 2) + ")";
 			}
-			String[] values = DBSession.getCurrentSession().getDistinctValues(
-					sourceTableName, dbSchema, destinationKey, false, false,
-					where);
+			String[] values = DBSession.getCurrentSession().getDistinctValues(sourceTableName, dbSchema, destinationKey,
+					false, false, where);
 			return Arrays.asList(values);
 		} catch (SQLException e) {
 			logger.error(e.getMessage(), e);
@@ -84,15 +79,14 @@ public class VectorialEditableNNRelTableHandler extends
 	public void insertRow(String secondaryPKValue) {
 		String[] columns = { originKey, destinationKey };
 		String[] values = { originKeyValue, secondaryPKValue };
-		DBSession.getCurrentSession().insertRow(dbSchema, relTable, columns,
-				values);
+		DBSession.getCurrentSession().insertRow(dbSchema, relTable, columns, values);
 		fillValues(originKeyValue);
 	}
 
 	@Override
 	public void deleteRow(String secondaryPKValue) {
-		String where = "WHERE " + originKey + " = '" + originKeyValue
-				+ "' AND " + destinationKey + " = '" + secondaryPKValue + "'";
+		String where = "WHERE " + originKey + " = '" + originKeyValue + "' AND " + destinationKey + " = '"
+				+ secondaryPKValue + "'";
 		DBSession.getCurrentSession().deleteRows(dbSchema, relTable, where);
 		fillValues(originKeyValue);
 	}

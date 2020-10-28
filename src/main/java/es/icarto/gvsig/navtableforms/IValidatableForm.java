@@ -11,20 +11,20 @@ import es.udc.cartolab.gvsig.navtable.dataacces.IController;
 
 public interface IValidatableForm {
 
-    public boolean isFillingValues();
+	public boolean isFillingValues();
 
-    public IController getFormController();
+	public IController getFormController();
 
-    public void setChangedValues();
+	public void setChangedValues();
 
-    public FillHandler getFillHandler();
+	public FillHandler getFillHandler();
 
-    public void validateForm();
+	public void validateForm();
 
-    public ValidatorForm getValidatorForm();
+	public ValidatorForm getValidatorForm();
 
-    public Map<String, JComponent> getWidgets();
-    
-    public FormPanel getFormPanel();
+	public Map<String, JComponent> getWidgets();
+
+	public FormPanel getFormPanel();
 
 }

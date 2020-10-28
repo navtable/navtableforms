@@ -8,19 +8,19 @@ import org.junit.Test;
 
 public class DoubleRuleTests extends DoublePositiveRule {
 
-    ValidationRule rule;
+	ValidationRule rule;
 
-    @Before
-    public void setUp() {
-	rule = new DoubleRule();
-    }
+	@Before
+	public void setUp() {
+		rule = new DoubleRule();
+	}
 
-    @Test
-    public void signedNumbers() {
-	assertTrue(rule.validate("-7,2"));
-	assertFalse(rule.validate("- 7,2"));
-	assertFalse(rule.validate("+7,2"));
+	@Test
+	public void signedNumbers() {
+		assertTrue(rule.validate("-7,2"));
+		assertFalse(rule.validate("- 7,2"));
+		assertFalse(rule.validate("+7,2"));
 
-    }
+	}
 
 }

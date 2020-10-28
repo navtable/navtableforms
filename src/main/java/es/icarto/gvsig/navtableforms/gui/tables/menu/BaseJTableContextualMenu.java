@@ -9,9 +9,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 
-import org.gvsig.andami.PluginServices;
-
-
 /**
  * BaseJTableContextualMenu
  * 
@@ -22,33 +19,33 @@ import org.gvsig.andami.PluginServices;
 
 public abstract class BaseJTableContextualMenu implements MouseListener {
 
-    protected static final int NO_ROW_SELECTED = -1;
-    protected static final int BUTTON_RIGHT = 3;
+	protected static final int NO_ROW_SELECTED = -1;
+	protected static final int BUTTON_RIGHT = 3;
 
-    protected JTable table;
-    protected JMenuItem newMenuItem = new JMenuItem(_("create_new"));
-    protected JMenuItem updateMenuItem = new JMenuItem(_("update_item"));
-    protected JMenuItem deleteMenuItem = new JMenuItem(_("delete_item"));
-    protected JPopupMenu popupMenu = new JPopupMenu();
+	protected JTable table;
+	protected JMenuItem newMenuItem = new JMenuItem(_("create_new"));
+	protected JMenuItem updateMenuItem = new JMenuItem(_("update_item"));
+	protected JMenuItem deleteMenuItem = new JMenuItem(_("delete_item"));
+	protected JPopupMenu popupMenu = new JPopupMenu();
 
-    public BaseJTableContextualMenu() {
-	initContextualMenu();
-    }
+	public BaseJTableContextualMenu() {
+		initContextualMenu();
+	}
 
-    public abstract void mouseClicked(MouseEvent e);
+	public abstract void mouseClicked(MouseEvent e);
 
-    protected abstract void initContextualMenu();
+	protected abstract void initContextualMenu();
 
-    public void mouseEntered(MouseEvent arg0) {
-    }
+	public void mouseEntered(MouseEvent arg0) {
+	}
 
-    public void mouseExited(MouseEvent arg0) {
-    }
+	public void mouseExited(MouseEvent arg0) {
+	}
 
-    public void mousePressed(MouseEvent arg0) {
-    }
+	public void mousePressed(MouseEvent arg0) {
+	}
 
-    public void mouseReleased(MouseEvent arg0) {
-    }
+	public void mouseReleased(MouseEvent arg0) {
+	}
 
 }

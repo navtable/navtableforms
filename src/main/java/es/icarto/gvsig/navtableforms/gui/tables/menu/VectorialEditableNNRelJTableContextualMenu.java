@@ -8,7 +8,6 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.JTable;
 
-import org.gvsig.andami.PluginServices;
 import org.gvsig.andami.ui.mdiManager.MDIManagerFactory;
 
 import es.icarto.gvsig.navtableforms.gui.tables.JTableUtils;
@@ -25,19 +24,16 @@ import es.icarto.gvsig.navtableforms.utils.FormFactory;
  * @author Jorge López Fernández <jlopez@cartolab.es>
  */
 
-public class VectorialEditableNNRelJTableContextualMenu extends
-		VectorialJTableContextualMenu {
+public class VectorialEditableNNRelJTableContextualMenu extends VectorialJTableContextualMenu {
 
 	protected VectorialEditableNNRelTableHandler tableRelationship;
 
-	public VectorialEditableNNRelJTableContextualMenu(
-			VectorialEditableNNRelTableHandler tableRelationship) {
+	public VectorialEditableNNRelJTableContextualMenu(VectorialEditableNNRelTableHandler tableRelationship) {
 		super(tableRelationship.getSourceTableName());
 		newMenuItem.setText(_("create_new_relation"));
 		updateMenuItem.setText(_("update_item_relation"));
 		deleteMenuItem.setText(_("delete_item_relation"));
-		this.form = FormFactory.createSingletonFormRegistered(tableRelationship
-				.getSourceTableName());
+		this.form = FormFactory.createSingletonFormRegistered(tableRelationship.getSourceTableName());
 		this.tableRelationship = tableRelationship;
 	}
 
@@ -46,8 +42,7 @@ public class VectorialEditableNNRelJTableContextualMenu extends
 		newMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				new EditableNNRelTableForm(tableRelationship, tableRelationship
-						.getKeyColumn()).addAction();
+				new EditableNNRelTableForm(tableRelationship, tableRelationship.getKeyColumn()).addAction();
 			}
 		});
 		popupMenu.add(newMenuItem);
@@ -63,8 +58,7 @@ public class VectorialEditableNNRelJTableContextualMenu extends
 		deleteMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				new EditableNNRelTableForm(tableRelationship, tableRelationship
-						.getKeyColumn()).deleteAction();
+				new EditableNNRelTableForm(tableRelationship, tableRelationship.getKeyColumn()).deleteAction();
 			}
 		});
 		popupMenu.add(deleteMenuItem);
@@ -76,8 +70,7 @@ public class VectorialEditableNNRelJTableContextualMenu extends
 		if ((e.getClickCount() == 2) && (table.getSelectedRow() > -1)) {
 			openDialog();
 		} else if (e.getButton() == BUTTON_RIGHT) {
-			if (!JTableUtils.hasRows(table)
-					|| (table.getSelectedRow() == NO_ROW_SELECTED)) {
+			if (!JTableUtils.hasRows(table) || (table.getSelectedRow() == NO_ROW_SELECTED)) {
 				deleteMenuItem.setEnabled(false);
 				updateMenuItem.setEnabled(false);
 			} else {

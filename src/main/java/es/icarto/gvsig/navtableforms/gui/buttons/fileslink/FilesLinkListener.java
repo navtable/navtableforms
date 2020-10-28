@@ -17,8 +17,7 @@ import es.icarto.gvsig.navtableforms.AbstractForm;
 
 public class FilesLinkListener implements ActionListener {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(FilesLinkListener.class);
+	private static final Logger logger = LoggerFactory.getLogger(FilesLinkListener.class);
 
 	private AbstractForm dialog;
 	private FilesLinkData data;
@@ -44,17 +43,13 @@ public class FilesLinkListener implements ActionListener {
 
 	private boolean createFolder(File folder) {
 		boolean folderCreated = false;
-		String msg = _("fileslink_folder_not_exists_create_it",
-				folder.getAbsolutePath());
-		int answer = JOptionPane.showConfirmDialog(null, msg, _("warning"),
-				JOptionPane.YES_NO_OPTION);
+		String msg = _("fileslink_folder_not_exists_create_it", folder.getAbsolutePath());
+		int answer = JOptionPane.showConfirmDialog(null, msg, _("warning"), JOptionPane.YES_NO_OPTION);
 		if (answer == JOptionPane.YES_OPTION) {
 			// will make *all* directories in the path
 			if (!folder.mkdirs()) {
-				JOptionPane.showMessageDialog(
-						null,
-						_("fileslink_folder_could_not_be_created",
-								folder.getAbsolutePath()));
+				JOptionPane.showMessageDialog(null,
+						_("fileslink_folder_could_not_be_created", folder.getAbsolutePath()));
 			} else {
 				folderCreated = true;
 			}
@@ -66,15 +61,13 @@ public class FilesLinkListener implements ActionListener {
 		/*
 		 * TODO: Improve how to do this. *Theorically*, Java is multiplatform :/
 		 *
-		 * Desktop API only works with JVM 1.6, so when using this extension
-		 * with gvSIG portable on windows (jvm 1.5) is needed to change for the
-		 * next.
+		 * Desktop API only works with JVM 1.6, so when using this extension with gvSIG
+		 * portable on windows (jvm 1.5) is needed to change for the next.
 		 *
-		 * Disclaimer: I do know that is possible to do
-		 * System.getProperty(os.version) to know which OS you are running, but
-		 * as users can use different versions of Windows and I don't know which
-		 * information gives each one depending on its version (if "W7",
-		 * "Windows 2000", "Win XP",...) I prefer do that explicity.
+		 * Disclaimer: I do know that is possible to do System.getProperty(os.version)
+		 * to know which OS you are running, but as users can use different versions of
+		 * Windows and I don't know which information gives each one depending on its
+		 * version (if "W7", "Windows 2000", "Win XP",...) I prefer do that explicity.
 		 *
 		 * Patches to improve this are welcome!
 		 */

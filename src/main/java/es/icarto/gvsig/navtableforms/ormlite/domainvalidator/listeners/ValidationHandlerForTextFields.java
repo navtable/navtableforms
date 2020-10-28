@@ -27,44 +27,43 @@ import javax.swing.JTextField;
 
 import es.icarto.gvsig.navtableforms.IValidatableForm;
 
-public class ValidationHandlerForTextFields implements KeyListener,
-	FocusListener {
+public class ValidationHandlerForTextFields implements KeyListener, FocusListener {
 
-    private IValidatableForm dialog = null;
+	private IValidatableForm dialog = null;
 
-    public ValidationHandlerForTextFields(IValidatableForm dialog) {
-	this.dialog = dialog;
-    }
-
-    private void confirmChange(ComponentEvent e) {
-	if (!dialog.isFillingValues()) {
-	    JTextField c = ((JTextField) e.getSource());
-	    dialog.getFormController().setValue(c.getName(), c.getText());
-	    dialog.setChangedValues(); // placed after updating widgetvalues
-	    dialog.validateForm();
+	public ValidationHandlerForTextFields(IValidatableForm dialog) {
+		this.dialog = dialog;
 	}
-    }
 
-    @Override
-    public void keyTyped(KeyEvent e) {
-    }
+	private void confirmChange(ComponentEvent e) {
+		if (!dialog.isFillingValues()) {
+			JTextField c = ((JTextField) e.getSource());
+			dialog.getFormController().setValue(c.getName(), c.getText());
+			dialog.setChangedValues(); // placed after updating widgetvalues
+			dialog.validateForm();
+		}
+	}
 
-    @Override
-    public void keyPressed(KeyEvent e) {
-    }
+	@Override
+	public void keyTyped(KeyEvent e) {
+	}
 
-    @Override
-    public void keyReleased(KeyEvent e) {
-	confirmChange(e);
-    }
+	@Override
+	public void keyPressed(KeyEvent e) {
+	}
 
-    @Override
-    public void focusGained(FocusEvent e) {
-    }
+	@Override
+	public void keyReleased(KeyEvent e) {
+		confirmChange(e);
+	}
 
-    @Override
-    public void focusLost(FocusEvent e) {
-	confirmChange(e);
-    }
+	@Override
+	public void focusGained(FocusEvent e) {
+	}
+
+	@Override
+	public void focusLost(FocusEvent e) {
+		confirmChange(e);
+	}
 
 }

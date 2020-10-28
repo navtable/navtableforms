@@ -25,59 +25,56 @@ import es.icarto.gvsig.navtableforms.ormlite.widgetsdependency.DependencyReader;
 
 public class ORMLiteAppDomain {
 
-    private HashMap<String, ValidatorDomain> domainValidators;
-    private HashMap<String, DomainValues> domainValues;
-    private HashMap<String, DependencyReader> dependencyValues;
-    private HashMap<String, Boolean> nonEditableComponents;
+	private HashMap<String, ValidatorDomain> domainValidators;
+	private HashMap<String, DomainValues> domainValues;
+	private HashMap<String, DependencyReader> dependencyValues;
+	private HashMap<String, Boolean> nonEditableComponents;
 
-    public ORMLiteAppDomain() {
-	domainValidators = new HashMap<String, ValidatorDomain>();
-	domainValues = new HashMap<String, DomainValues>();
-	dependencyValues = new HashMap<String, DependencyReader>();
-	nonEditableComponents = new HashMap<String, Boolean>();
-    }
+	public ORMLiteAppDomain() {
+		domainValidators = new HashMap<String, ValidatorDomain>();
+		domainValues = new HashMap<String, DomainValues>();
+		dependencyValues = new HashMap<String, DependencyReader>();
+		nonEditableComponents = new HashMap<String, Boolean>();
+	}
 
-    public HashMap<String, DomainValues> getDomainValues() {
-	return this.domainValues;
-    }
+	public HashMap<String, DomainValues> getDomainValues() {
+		return this.domainValues;
+	}
 
-    public DomainValues getDomainValuesForComponent(String componentName) {
-	return domainValues.get(componentName);
-    }
+	public DomainValues getDomainValuesForComponent(String componentName) {
+		return domainValues.get(componentName);
+	}
 
-    public void addDomainValues(String component, DomainValues values) {
-	this.domainValues.put(component, values);
-    }
+	public void addDomainValues(String component, DomainValues values) {
+		this.domainValues.put(component, values);
+	}
 
-    public HashMap<String, ValidatorDomain> getDomainValidators() {
-	return this.domainValidators;
-    }
+	public HashMap<String, ValidatorDomain> getDomainValidators() {
+		return this.domainValidators;
+	}
 
-    public ValidatorDomain getDomainValidatorForComponent(String componentName) {
-	return domainValidators.get(componentName);
-    }
+	public ValidatorDomain getDomainValidatorForComponent(String componentName) {
+		return domainValidators.get(componentName);
+	}
 
-    public void addDomainValidator(String componentName,
-	    ValidatorDomain validatorDomain) {
-	domainValidators.put(componentName, validatorDomain);
-    }
+	public void addDomainValidator(String componentName, ValidatorDomain validatorDomain) {
+		domainValidators.put(componentName, validatorDomain);
+	}
 
-    public DependencyReader getDependencyValuesForComponent(String componentName) {
-	return dependencyValues.get(componentName);
-    }
+	public DependencyReader getDependencyValuesForComponent(String componentName) {
+		return dependencyValues.get(componentName);
+	}
 
-    public void addDependencyValues(String componentName,
-	    DependencyReader dependencyReader) {
-	dependencyValues.put(componentName, dependencyReader);
-    }
+	public void addDependencyValues(String componentName, DependencyReader dependencyReader) {
+		dependencyValues.put(componentName, dependencyReader);
+	}
 
-    public Boolean isNonEditableComponent(String componentName) {
-	return nonEditableComponents.get(componentName);
-    }
+	public Boolean isNonEditableComponent(String componentName) {
+		return nonEditableComponents.get(componentName);
+	}
 
-    public void addNonEditableComponent(String componentName,
-	    Boolean nonEditable) {
-	nonEditableComponents.put(componentName, nonEditable);
-    }
+	public void addNonEditableComponent(String componentName, Boolean nonEditable) {
+		nonEditableComponents.put(componentName, nonEditable);
+	}
 
 }

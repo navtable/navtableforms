@@ -24,27 +24,27 @@ import es.udc.cartolab.gvsig.navtable.format.DoubleFormatNT;
 
 public class PercentageRule extends ValidationRule {
 
-    private NumberFormat format;
+	private NumberFormat format;
 
-    public PercentageRule() {
-	format = DoubleFormatNT.getDisplayingFormat();
-    }
-
-    @Override
-    public boolean validate(String value) {
-	return isEmpty(value) || isPercentage(value);
-    }
-
-    private boolean isPercentage(String value) {
-	try {
-	    double double_value = Math.abs(format.parse(value).doubleValue());
-	    if ((double_value >= 0) && (double_value <= 100)) {
-		return true;
-	    }
-	    return false;
-	} catch (ParseException nfe) {
-	    return false;
+	public PercentageRule() {
+		format = DoubleFormatNT.getDisplayingFormat();
 	}
-    }
+
+	@Override
+	public boolean validate(String value) {
+		return isEmpty(value) || isPercentage(value);
+	}
+
+	private boolean isPercentage(String value) {
+		try {
+			double double_value = Math.abs(format.parse(value).doubleValue());
+			if ((double_value >= 0) && (double_value <= 100)) {
+				return true;
+			}
+			return false;
+		} catch (ParseException nfe) {
+			return false;
+		}
+	}
 
 }

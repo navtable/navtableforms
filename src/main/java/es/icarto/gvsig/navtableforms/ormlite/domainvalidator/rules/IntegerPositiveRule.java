@@ -19,21 +19,21 @@ package es.icarto.gvsig.navtableforms.ormlite.domainvalidator.rules;
 
 public class IntegerPositiveRule extends ValidationRule {
 
-    @Override
-    public boolean validate(String value) {
-	return isEmpty(value) || isIntegerPositive(value);
-    }
-
-    private boolean isIntegerPositive(String value) {
-	boolean integerPositive = false;
-	try {
-	    if (Integer.parseInt(value) >= 0) {
-		integerPositive = true;
-	    }
-	    return integerPositive;
-	} catch (NumberFormatException nfe) {
-	    return integerPositive;
+	@Override
+	public boolean validate(String value) {
+		return isEmpty(value) || isIntegerPositive(value);
 	}
-    }
+
+	private boolean isIntegerPositive(String value) {
+		boolean integerPositive = false;
+		try {
+			if (Integer.parseInt(value) >= 0) {
+				integerPositive = true;
+			}
+			return integerPositive;
+		} catch (NumberFormatException nfe) {
+			return integerPositive;
+		}
+	}
 
 }

@@ -24,19 +24,19 @@ import es.udc.cartolab.gvsig.navtable.format.DateFormatNT;
 
 public class DateRule extends ValidationRule {
 
-    @Override
-    public boolean validate(String value) {
-	return isEmpty(value) || isDate(value);
-    }
-
-    private boolean isDate(String value) {
-	SimpleDateFormat formatter = DateFormatNT.getDateFormat();
-	try {
-	    formatter.parse(value);
-	    return true;
-	} catch (ParseException e) {
-	    return false;
+	@Override
+	public boolean validate(String value) {
+		return isEmpty(value) || isDate(value);
 	}
-    }
+
+	private boolean isDate(String value) {
+		SimpleDateFormat formatter = DateFormatNT.getDateFormat();
+		try {
+			formatter.parse(value);
+			return true;
+		} catch (ParseException e) {
+			return false;
+		}
+	}
 
 }

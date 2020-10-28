@@ -2,14 +2,14 @@ package es.icarto.gvsig.navtableforms.gui.images;
 
 public interface ImageHandler {
 
-    void setListeners();
+	void setListeners();
 
-    String getName();
+	String getName();
 
-    void removeListeners();
+	void removeListeners();
 
-    void fillValues();
+	void fillValues();
 
-    void fillEmptyValues();
+	void fillEmptyValues();
 
 }

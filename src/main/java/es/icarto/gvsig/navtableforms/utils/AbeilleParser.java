@@ -40,8 +40,8 @@ public class AbeilleParser {
 		}
 
 		/**
-		 * A legacy method to guarantee backwards compatibility. Should be sage
-		 * remove it in modern versions of navtableforms.
+		 * A legacy method to guarantee backwards compatibility. Should be sage remove
+		 * it in modern versions of navtableforms.
 		 */
 		private String getNameBeforeDots(String widgetName) {
 			if (widgetName.contains(".")) {
@@ -59,18 +59,14 @@ public class AbeilleParser {
 	 * This method used to return a map with the names of components uppercased,
 	 * that was changed in named of performance and now is retrieved as it is.
 	 */
-	public static HashMap<String, JComponent> getWidgetsFromContainer(
-			Container c) {
+	public static HashMap<String, JComponent> getWidgetsFromContainer(Container c) {
 
 		HashMap<String, JComponent> map = new HashMap<String, JComponent>();
 		int count = 0;
 		while (c.getComponentCount() > count) {
 			Component comp = c.getComponent(count++);
-			if ((comp instanceof JTextField)
-					|| (comp instanceof JFormattedTextField)
-					|| (comp instanceof JCheckBox)
-					|| (comp instanceof JTextArea)
-					|| (comp instanceof JComboBox) || (comp instanceof JTable)
+			if ((comp instanceof JTextField) || (comp instanceof JFormattedTextField) || (comp instanceof JCheckBox)
+					|| (comp instanceof JTextArea) || (comp instanceof JComboBox) || (comp instanceof JTable)
 					|| (comp instanceof JDateChooser)) {
 				String newName = nameTransform.transform(comp.getName());
 				comp.setName(newName);
@@ -106,8 +102,7 @@ public class AbeilleParser {
 				HashMap<String, JButton> recursiveMap = getButtonsFromContainer((Container) comp);
 				if (recursiveMap.size() > 0) {
 					for (JButton w : recursiveMap.values()) {
-						String newName = nameTransform
-								.transform(comp.getName());
+						String newName = nameTransform.transform(comp.getName());
 						comp.setName(newName);
 						map.put(w.getName(), w);
 					}

@@ -27,37 +27,31 @@ import es.icarto.gvsig.navtableforms.utils.TOCTableManager;
  * @author Jorge López Fernández <jlopez@cartolab.es>
  */
 public class TableModelFactory {
-	private static final Logger logger = LoggerFactory
-			.getLogger(TableModelFactory.class);
+	private static final Logger logger = LoggerFactory.getLogger(TableModelFactory.class);
 
 	/**
-	 * The default i18n resource for the translations that requests them to
-	 * gvSIG.
+	 * The default i18n resource for the translations that requests them to gvSIG.
 	 */
 	private static final I18nResource defaultI18n = new GvSIGI18nResource();
 
-	public static AlphanumericTableModel createFromTable(String sourceTable,
-			String[] columnNames, String[] columnAliases,
-			I18nResource[] i18nResources) {
+	public static AlphanumericTableModel createFromTable(String sourceTable, String[] columnNames,
+			String[] columnAliases, I18nResource[] i18nResources) {
 
 		try {
-			return createFromTableWithFilter(sourceTable, null, null,
-					columnNames, columnAliases);
+			return createFromTableWithFilter(sourceTable, null, null, columnNames, columnAliases);
 		} catch (DataException e) {
 			return null;
 		}
 	}
 
-	public static AlphanumericTableModel createFromTable(String sourceTable,
-			String[] columnNames, String[] columnAliases) {
-		return createFromTable(sourceTable, columnNames, columnAliases,
-				new I18nResource[0]);
+	public static AlphanumericTableModel createFromTable(String sourceTable, String[] columnNames,
+			String[] columnAliases) {
+		return createFromTable(sourceTable, columnNames, columnAliases, new I18nResource[0]);
 	}
 
-	public static AlphanumericTableModel createFromTableWithFilter(
-			String sourceTable, String rowFilterName, String rowFilterValue,
-			String[] columnNames, String[] columnAliases,
-			I18nResource[] i18nResources) throws DataException {
+	public static AlphanumericTableModel createFromTableWithFilter(String sourceTable, String rowFilterName,
+			String rowFilterValue, String[] columnNames, String[] columnAliases, I18nResource[] i18nResources)
+			throws DataException {
 
 		TOCTableManager toc = new TOCTableManager();
 		TableDocument tableDocument = toc.getTableDocumentByName(sourceTable);
@@ -67,10 +61,8 @@ public class TableModelFactory {
 
 		FeatureStore store = tableDocument.getFeatureStore();
 		try {
-			FeaturePagingHelper set = getSet(store, rowFilterName,
-					rowFilterValue);
-			return new AlphanumericTableModel(tableDocument, columnNames,
-					columnAliases, i18nManager, set);
+			FeaturePagingHelper set = getSet(store, rowFilterName, rowFilterValue);
+			return new AlphanumericTableModel(tableDocument, columnNames, columnAliases, i18nManager, set);
 		} catch (BaseException e) {
 			logger.error(e.getMessage(), e);
 		}
@@ -78,33 +70,30 @@ public class TableModelFactory {
 		return null;
 	}
 
-	private static FeaturePagingHelper getSet(FeatureStore store,
-			String rowFilterName, String rowFilterValue) throws BaseException {
+	private static FeaturePagingHelper getSet(FeatureStore store, String rowFilterName, String rowFilterValue)
+			throws BaseException {
 		DataManager manager = DALLocator.getDataManager();
 		FeatureQuery query = null;
 		if (rowFilterName != null) {
 			String fkValue = "'" + rowFilterValue.replace("'", "''") + "'";
 			String where = rowFilterName + " = " + fkValue;
-			query = store.createFeatureQuery(where, "", false);	
+			query = store.createFeatureQuery(where, "", false);
 		} else {
-			query = store.createFeatureQuery("", "", false);	
+			query = store.createFeatureQuery("", "", false);
 		}
-		FeaturePagingHelper set = manager.createFeaturePagingHelper(store,
-				query, 10);
+		FeaturePagingHelper set = manager.createFeaturePagingHelper(store, query, 10);
 		return set;
 	}
 
-	public static AlphanumericTableModel createFromTableWithFilter(
-			String sourceTable, String rowFilterName, String rowFilterValue,
-			String[] columnNames, String[] columnAliases) throws DataException {
-		return createFromTableWithFilter(sourceTable, rowFilterName,
-				rowFilterValue, columnNames, columnAliases, new I18nResource[0]);
+	public static AlphanumericTableModel createFromTableWithFilter(String sourceTable, String rowFilterName,
+			String rowFilterValue, String[] columnNames, String[] columnAliases) throws DataException {
+		return createFromTableWithFilter(sourceTable, rowFilterName, rowFilterValue, columnNames, columnAliases,
+				new I18nResource[0]);
 	}
 
-	public static AlphanumericTableModel createFromTableWithOrFilter(
-			String sourceTable, String rowFilterName, String[] rowFilterValues,
-			String[] columnNames, String[] columnAliases,
-			I18nResource[] i18nResources) throws DataException {
+	public static AlphanumericTableModel createFromTableWithOrFilter(String sourceTable, String rowFilterName,
+			String[] rowFilterValues, String[] columnNames, String[] columnAliases, I18nResource[] i18nResources)
+			throws DataException {
 		throw new RuntimeException("Not implemented!");
 		// TOCTableManager toc = new TOCTableManager();
 		// TableDocument tableDocument =
@@ -124,34 +113,28 @@ public class TableModelFactory {
 		// new IRowMultipleOrFilterImplementer(filters));
 	}
 
-	public static AlphanumericTableModel createFromTableWithOrFilter(
-			String sourceTable, String rowFilterName, String[] rowFilterValues,
-			String[] columnNames, String[] columnAliases) throws DataException {
-		return createFromTableWithOrFilter(sourceTable, rowFilterName,
-				rowFilterValues, columnNames, columnAliases,
+	public static AlphanumericTableModel createFromTableWithOrFilter(String sourceTable, String rowFilterName,
+			String[] rowFilterValues, String[] columnNames, String[] columnAliases) throws DataException {
+		return createFromTableWithOrFilter(sourceTable, rowFilterName, rowFilterValues, columnNames, columnAliases,
 				new I18nResource[0]);
 	}
 
-	public static VectorialTableModel createFromLayer(String layerName,
-			String[] columnNames, String[] columnAliases) {
+	public static VectorialTableModel createFromLayer(String layerName, String[] columnNames, String[] columnAliases) {
 
 		FLyrVect layer = new TOCLayerManager().getLayerByName(layerName);
 		FeatureStore store = layer.getFeatureStore();
 		try {
 			DataManager manager = DALLocator.getDataManager();
-			FeaturePagingHelper set = manager.createFeaturePagingHelper(store,
-					10);
-			return new VectorialTableModel(layer, columnNames, columnAliases,
-					set, null);
+			FeaturePagingHelper set = manager.createFeaturePagingHelper(store, 10);
+			return new VectorialTableModel(layer, columnNames, columnAliases, set, null);
 		} catch (BaseException e) {
 			logger.error(e.getMessage(), e);
 		}
 		return null;
 	}
 
-	public static VectorialTableModel createFromLayerWithFilter(
-			String layerName, String rowFilterName, String rowFilterValue,
-			String[] columnNames, String[] columnAliases) throws DataException {
+	public static VectorialTableModel createFromLayerWithFilter(String layerName, String rowFilterName,
+			String rowFilterValue, String[] columnNames, String[] columnAliases) throws DataException {
 
 		FLyrVect layer = new TOCLayerManager().getLayerByName(layerName);
 
@@ -161,19 +144,16 @@ public class TableModelFactory {
 			String fkValue = "'" + rowFilterValue.replace("'", "''") + "'";
 			String where = rowFilterName + " = " + fkValue;
 			FeatureQuery query = store.createFeatureQuery(where, "", false);
-			FeaturePagingHelper set = manager.createFeaturePagingHelper(store,
-					query, 10);
-			return new VectorialTableModel(layer, columnNames, columnAliases,
-					set, null);
+			FeaturePagingHelper set = manager.createFeaturePagingHelper(store, query, 10);
+			return new VectorialTableModel(layer, columnNames, columnAliases, set, null);
 		} catch (BaseException e) {
 			logger.error(e.getMessage(), e);
 		}
 		return null;
 	}
 
-	public static VectorialTableModel createFromLayerWithOrFilter(
-			String layerName, String rowFilterName, String[] rowFilterValues,
-			String[] columnNames, String[] columnAliases) throws DataException {
+	public static VectorialTableModel createFromLayerWithOrFilter(String layerName, String rowFilterName,
+			String[] rowFilterValues, String[] columnNames, String[] columnAliases) throws DataException {
 		throw new RuntimeException("Not implemented!");
 		//
 		// FLyrVect layer = new TOCLayerManager().getLayerByName(layerName);

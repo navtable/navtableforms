@@ -24,32 +24,32 @@ import es.icarto.gvsig.navtableforms.ormlite.domainvalidator.rules.ValidationRul
 
 public class ValidatorDomain {
 
-    private Set<ValidationRule> rules = null;
+	private Set<ValidationRule> rules = null;
 
-    public ValidatorDomain(Set<ValidationRule> rules) {
-	this.rules = rules;
-    }
-
-    public void addRule(ValidationRule rule) {
-	if (rules == null) {
-	    rules = new HashSet<ValidationRule>();
+	public ValidatorDomain(Set<ValidationRule> rules) {
+		this.rules = rules;
 	}
-	this.rules.add(rule);
-    }
 
-    public Set<ValidationRule> getRules() {
-	return rules;
-    }
-
-    public boolean validate(String value) {
-	if (rules != null) {
-	    for (ValidationRule rule : rules) {
-		if (!rule.validate(value)) {
-		    return false;
+	public void addRule(ValidationRule rule) {
+		if (rules == null) {
+			rules = new HashSet<ValidationRule>();
 		}
-	    }
+		this.rules.add(rule);
 	}
-	return true;
-    }
+
+	public Set<ValidationRule> getRules() {
+		return rules;
+	}
+
+	public boolean validate(String value) {
+		if (rules != null) {
+			for (ValidationRule rule : rules) {
+				if (!rule.validate(value)) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
 
 }

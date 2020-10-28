@@ -25,7 +25,6 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.gvsig.fmap.dal.DALLocator;
 import org.gvsig.fmap.dal.feature.EditableFeatureAttributeDescriptor;
-import org.gvsig.fmap.dal.feature.impl.DefaultEditableFeatureAttributeDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
@@ -52,212 +51,196 @@ import es.icarto.gvsig.navtableforms.ormlite.widgetsdependency.DependencyReader;
  */
 public class XMLSAXParser extends DefaultHandler {
 
-    // TODO check where gvSIG do that and take values from there
-    static final String GVSIG_DEFAULT_STRING = "";
-    static final int GVSIG_DEFAULT_INT = 0;
-    static final double GVSIG_DEFAULT_DOUBLE = 0.0;
-    static final boolean GVSIG_DEFAULT_BOOLEAN = false;
+	// TODO check where gvSIG do that and take values from there
+	static final String GVSIG_DEFAULT_STRING = "";
+	static final int GVSIG_DEFAULT_INT = 0;
+	static final double GVSIG_DEFAULT_DOUBLE = 0.0;
+	static final boolean GVSIG_DEFAULT_BOOLEAN = false;
 
-    private String xmlFile = null;
-    private ORMLiteAppDomain ad = null;
+	private String xmlFile = null;
+	private ORMLiteAppDomain ad = null;
 
-    private String tmpVal = null;
-    private DomainReader tmpDomainReader = null;
-    private EditableFeatureAttributeDescriptor tmpFieldDescription = null;
-    private DependencyReader tmpDependencyReader = null;
-    private String latestDpnComponent, latestDpnValue;
+	private String tmpVal = null;
+	private DomainReader tmpDomainReader = null;
+	private EditableFeatureAttributeDescriptor tmpFieldDescription = null;
+	private DependencyReader tmpDependencyReader = null;
+	private String latestDpnComponent, latestDpnValue;
 
-    
-	private static final Logger logger = LoggerFactory
-			.getLogger(XMLSAXParser.class);
+	private static final Logger logger = LoggerFactory.getLogger(XMLSAXParser.class);
 
-    public XMLSAXParser(String xmlFile) throws ParserConfigurationException,
-	    SAXException, IOException {
-	setXMLFile(xmlFile);
-	setAD(new ORMLiteAppDomain());
+	public XMLSAXParser(String xmlFile) throws ParserConfigurationException, SAXException, IOException {
+		setXMLFile(xmlFile);
+		setAD(new ORMLiteAppDomain());
 
-	parseDocument();
-    }
-
-    private String getXMLFile() {
-	return xmlFile;
-    }
-
-    private String getXMLFileDir() {
-    	return new File(xmlFile).getParent() + File.separator;
-    }
-
-    private void setXMLFile(String xmlFile) {
-	this.xmlFile = xmlFile;
-    }
-
-    public ORMLiteAppDomain getAD() {
-	return ad;
-    }
-
-    public void setAD(ORMLiteAppDomain ad) {
-	this.ad = ad;
-    }
-
-    private void parseDocument() throws ParserConfigurationException,
-	    SAXException, IOException {
-
-	// get a factory
-	SAXParserFactory spf = SAXParserFactory.newInstance();
-
-	// get a new instance of parser
-	SAXParser sp = spf.newSAXParser();
-
-	// parse the file and also register this class for call backs
-	sp.parse(getXMLFile(), this);
-
-    }
-
-    // Event Handlers
-    /**
-     * Callback called every time SAX parser gets a new tag. ie: " < field > "
-     */
-    @Override
-    public void startElement(String uri, String localName, String qName,
-	    Attributes attributes) throws SAXException {
-	// reset
-	tmpVal = "";
-	if (qName.equalsIgnoreCase("FIELD")) {
-	    // set field
-	    tmpFieldDescription = DALLocator.getDataManager().createFeatureAttributeDescriptor();
-	    
+		parseDocument();
 	}
 
-	else if (qName.equalsIgnoreCase("ENABLEIF")) {
-	    tmpDependencyReader = new DependencyReader();
+	private String getXMLFile() {
+		return xmlFile;
 	}
 
-	else if (qName.equalsIgnoreCase("CONDITION")) {
-	    latestDpnComponent = null;
-	    latestDpnValue = null;
-	}
-    }
-
-    /**
-     * Callback called every time SAX parser gets text (spaces, text between
-     * tags, ...).
-     * 
-     * SAX parsers may return all contiguous character data in a single chunk,
-     * or they may split it into several chunks. See:
-     * http://download.oracle.com/javase/1.5.0/docs/api/org/xml/sax/
-     * ContentHandler.html#characters%28char%5b%5d,%20int,%20int%29
-     */
-    @Override
-    public void characters(char[] ch, int start, int length)
-	    throws SAXException {
-	tmpVal = tmpVal + new String(ch, start, length);
-    }
-
-    /**
-     * Callback called every time SAX parser gets a end tag like "< / field >"
-     */
-    @Override
-    public void endElement(String uri, String localName, String qName)
-	    throws SAXException {
-
-	// set tmp field structure
-	if (qName.equalsIgnoreCase("FIELDNAME")) {
-	    tmpFieldDescription.setName(tmpVal);
-	    
+	private String getXMLFileDir() {
+		return new File(xmlFile).getParent() + File.separator;
 	}
 
-	else if (qName.equalsIgnoreCase("DRTYPE")) {
-	    if (tmpVal.equalsIgnoreCase("DB")) {
-		tmpDomainReader = new DomainReaderDB();
-	    } else if (tmpVal.equalsIgnoreCase("FILE")) {
-		tmpDomainReader = new DomainReaderFile();
-	    }
+	private void setXMLFile(String xmlFile) {
+		this.xmlFile = xmlFile;
 	}
 
-	// set tmp domain db reader configuration
-	else if (qName.equalsIgnoreCase("DRDBTABLE")) {
-	    if (tmpDomainReader instanceof DomainReaderDB) {
-		((DomainReaderDB) tmpDomainReader).setTable(tmpVal);
-	    }
-	} else if (qName.equalsIgnoreCase("DRDBSCHEMA")) {
-	    if (tmpDomainReader instanceof DomainReaderDB) {
-		((DomainReaderDB) tmpDomainReader).setSchema(tmpVal);
-	    }
-	} else if (qName.equalsIgnoreCase("DRDBCOLUMNALIAS")) {
-	    if (tmpDomainReader instanceof DomainReaderDB) {
-		((DomainReaderDB) tmpDomainReader).setColumnAlias(tmpVal);
-	    }
-	} else if (qName.equalsIgnoreCase("DRDBCOLUMNVALUE")) {
-	    if (tmpDomainReader instanceof DomainReaderDB) {
-		((DomainReaderDB) tmpDomainReader).setColumnValue(tmpVal);
-	    }
-	} else if (qName.equalsIgnoreCase("DRDBFOREIGNKEY")) {
-	    if (tmpDomainReader instanceof DomainReaderDB) {
-		((DomainReaderDB) tmpDomainReader).addColumnForeignKey(tmpVal);
-	    }
-	} else if (qName.equalsIgnoreCase("DRADDVOIDVALUE")) {
-		tmpDomainReader.setAddVoidValue(Boolean.parseBoolean(tmpVal));
+	public ORMLiteAppDomain getAD() {
+		return ad;
 	}
 
-	// set tmp domain file reader configuration
-	else if (qName.equalsIgnoreCase("DRFILENAME")) {
-	    if (tmpDomainReader instanceof DomainReaderFile) {
-		((DomainReaderFile) tmpDomainReader).setFileName(this
-			.getXMLFileDir() + tmpVal);
-	    }
-	} else if (qName.equalsIgnoreCase("DRFILEFIELDALIAS")) {
-	    if (tmpDomainReader instanceof DomainReaderFile) {
-		((DomainReaderFile) tmpDomainReader).setFieldAlias(tmpVal);
-	    }
+	public void setAD(ORMLiteAppDomain ad) {
+		this.ad = ad;
 	}
 
-	// save validation rule for the field
-	else if (qName.equalsIgnoreCase("VALIDATIONRULE")) {
-	    ValidationRule rule = DomainRulesFactory.createRule(tmpVal);
-	    if (rule != null) {
-		if (getAD().getDomainValidatorForComponent(
-			tmpFieldDescription.getName()) == null) {
-		    getAD().addDomainValidator(
-			    tmpFieldDescription.getName(),
-			    new ValidatorDomain(null));
+	private void parseDocument() throws ParserConfigurationException, SAXException, IOException {
+
+		// get a factory
+		SAXParserFactory spf = SAXParserFactory.newInstance();
+
+		// get a new instance of parser
+		SAXParser sp = spf.newSAXParser();
+
+		// parse the file and also register this class for call backs
+		sp.parse(getXMLFile(), this);
+
+	}
+
+	// Event Handlers
+	/**
+	 * Callback called every time SAX parser gets a new tag. ie: " < field > "
+	 */
+	@Override
+	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+		// reset
+		tmpVal = "";
+		if (qName.equalsIgnoreCase("FIELD")) {
+			// set field
+			tmpFieldDescription = DALLocator.getDataManager().createFeatureAttributeDescriptor();
+
 		}
-		getAD().getDomainValidatorForComponent(
-			tmpFieldDescription.getName()).addRule(rule);
-	    }
+
+		else if (qName.equalsIgnoreCase("ENABLEIF")) {
+			tmpDependencyReader = new DependencyReader();
+		}
+
+		else if (qName.equalsIgnoreCase("CONDITION")) {
+			latestDpnComponent = null;
+			latestDpnValue = null;
+		}
 	}
 
-	// save tmp values of DomainReader in AplicationDomain
-	else if (qName.equalsIgnoreCase("DOMAINREADER")) {
-	    getAD().addDomainValues(tmpFieldDescription.getName(),
-		    tmpDomainReader.getDomainValues());
+	/**
+	 * Callback called every time SAX parser gets text (spaces, text between tags,
+	 * ...).
+	 * 
+	 * SAX parsers may return all contiguous character data in a single chunk, or
+	 * they may split it into several chunks. See:
+	 * http://download.oracle.com/javase/1.5.0/docs/api/org/xml/sax/
+	 * ContentHandler.html#characters%28char%5b%5d,%20int,%20int%29
+	 */
+	@Override
+	public void characters(char[] ch, int start, int length) throws SAXException {
+		tmpVal = tmpVal + new String(ch, start, length);
 	}
 
-	// save tmp values of widgets dependency
-	else if (qName.equalsIgnoreCase("COMPONENT")) {
-	    latestDpnComponent = tmpVal;
-	}
+	/**
+	 * Callback called every time SAX parser gets a end tag like "< / field >"
+	 */
+	@Override
+	public void endElement(String uri, String localName, String qName) throws SAXException {
 
-	else if (qName.equalsIgnoreCase("VALUE")) {
-	    latestDpnValue = tmpVal;
-	}
+		// set tmp field structure
+		if (qName.equalsIgnoreCase("FIELDNAME")) {
+			tmpFieldDescription.setName(tmpVal);
 
-	else if (qName.equalsIgnoreCase("CONDITION")) {
-	    if ((latestDpnValue != null) && (latestDpnComponent != null)) {
-		tmpDependencyReader.addCondition(latestDpnComponent,
-			latestDpnValue);
-	    }
-	}
+		}
 
-	// save tmp values of DependencyReader in ApplicationDomain
-	else if (qName.equalsIgnoreCase("ENABLEIF")) {
-	    getAD().addDependencyValues(tmpFieldDescription.getName(),
-		    tmpDependencyReader);
-	}
+		else if (qName.equalsIgnoreCase("DRTYPE")) {
+			if (tmpVal.equalsIgnoreCase("DB")) {
+				tmpDomainReader = new DomainReaderDB();
+			} else if (tmpVal.equalsIgnoreCase("FILE")) {
+				tmpDomainReader = new DomainReaderFile();
+			}
+		}
 
-	else if (qName.equalsIgnoreCase("NONEDITABLE")) {
-	    getAD().addNonEditableComponent(tmpFieldDescription.getName(),
-		    true);
+		// set tmp domain db reader configuration
+		else if (qName.equalsIgnoreCase("DRDBTABLE")) {
+			if (tmpDomainReader instanceof DomainReaderDB) {
+				((DomainReaderDB) tmpDomainReader).setTable(tmpVal);
+			}
+		} else if (qName.equalsIgnoreCase("DRDBSCHEMA")) {
+			if (tmpDomainReader instanceof DomainReaderDB) {
+				((DomainReaderDB) tmpDomainReader).setSchema(tmpVal);
+			}
+		} else if (qName.equalsIgnoreCase("DRDBCOLUMNALIAS")) {
+			if (tmpDomainReader instanceof DomainReaderDB) {
+				((DomainReaderDB) tmpDomainReader).setColumnAlias(tmpVal);
+			}
+		} else if (qName.equalsIgnoreCase("DRDBCOLUMNVALUE")) {
+			if (tmpDomainReader instanceof DomainReaderDB) {
+				((DomainReaderDB) tmpDomainReader).setColumnValue(tmpVal);
+			}
+		} else if (qName.equalsIgnoreCase("DRDBFOREIGNKEY")) {
+			if (tmpDomainReader instanceof DomainReaderDB) {
+				((DomainReaderDB) tmpDomainReader).addColumnForeignKey(tmpVal);
+			}
+		} else if (qName.equalsIgnoreCase("DRADDVOIDVALUE")) {
+			tmpDomainReader.setAddVoidValue(Boolean.parseBoolean(tmpVal));
+		}
+
+		// set tmp domain file reader configuration
+		else if (qName.equalsIgnoreCase("DRFILENAME")) {
+			if (tmpDomainReader instanceof DomainReaderFile) {
+				((DomainReaderFile) tmpDomainReader).setFileName(this.getXMLFileDir() + tmpVal);
+			}
+		} else if (qName.equalsIgnoreCase("DRFILEFIELDALIAS")) {
+			if (tmpDomainReader instanceof DomainReaderFile) {
+				((DomainReaderFile) tmpDomainReader).setFieldAlias(tmpVal);
+			}
+		}
+
+		// save validation rule for the field
+		else if (qName.equalsIgnoreCase("VALIDATIONRULE")) {
+			ValidationRule rule = DomainRulesFactory.createRule(tmpVal);
+			if (rule != null) {
+				if (getAD().getDomainValidatorForComponent(tmpFieldDescription.getName()) == null) {
+					getAD().addDomainValidator(tmpFieldDescription.getName(), new ValidatorDomain(null));
+				}
+				getAD().getDomainValidatorForComponent(tmpFieldDescription.getName()).addRule(rule);
+			}
+		}
+
+		// save tmp values of DomainReader in AplicationDomain
+		else if (qName.equalsIgnoreCase("DOMAINREADER")) {
+			getAD().addDomainValues(tmpFieldDescription.getName(), tmpDomainReader.getDomainValues());
+		}
+
+		// save tmp values of widgets dependency
+		else if (qName.equalsIgnoreCase("COMPONENT")) {
+			latestDpnComponent = tmpVal;
+		}
+
+		else if (qName.equalsIgnoreCase("VALUE")) {
+			latestDpnValue = tmpVal;
+		}
+
+		else if (qName.equalsIgnoreCase("CONDITION")) {
+			if ((latestDpnValue != null) && (latestDpnComponent != null)) {
+				tmpDependencyReader.addCondition(latestDpnComponent, latestDpnValue);
+			}
+		}
+
+		// save tmp values of DependencyReader in ApplicationDomain
+		else if (qName.equalsIgnoreCase("ENABLEIF")) {
+			getAD().addDependencyValues(tmpFieldDescription.getName(), tmpDependencyReader);
+		}
+
+		else if (qName.equalsIgnoreCase("NONEDITABLE")) {
+			getAD().addNonEditableComponent(tmpFieldDescription.getName(), true);
+		}
 	}
-    }
 
 }

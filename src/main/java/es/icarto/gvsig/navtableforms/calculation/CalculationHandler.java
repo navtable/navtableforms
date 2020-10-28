@@ -5,22 +5,22 @@ import java.util.List;
 
 public class CalculationHandler {
 
-    List<Calculation> list = new ArrayList<Calculation>();
+	List<Calculation> list = new ArrayList<Calculation>();
 
-    public void add(Calculation calculation) {
-	list.add(calculation);
-    }
-
-    public void setListeners() {
-	for (Calculation c : list) {
-	    c.setListeners();
+	public void add(Calculation calculation) {
+		list.add(calculation);
 	}
-    }
 
-    public void removeListeners() {
-	for (Calculation c : list) {
-	    c.removeListeners();
+	public void setListeners() {
+		for (Calculation c : list) {
+			c.setListeners();
+		}
 	}
-    }
+
+	public void removeListeners() {
+		for (Calculation c : list) {
+			c.removeListeners();
+		}
+	}
 
 }

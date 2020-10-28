@@ -16,8 +16,7 @@ import es.udc.cartolab.gvsig.navtable.dataacces.IController;
 @SuppressWarnings("serial")
 public abstract class BaseTableModel extends AbstractTableModel {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(BaseTableModel.class);
+	private static final Logger logger = LoggerFactory.getLogger(BaseTableModel.class);
 
 	private final I18nResourceManager i18nManager;
 	protected final String[] colNames;
@@ -31,8 +30,8 @@ public abstract class BaseTableModel extends AbstractTableModel {
 
 	protected IController iController;
 
-	protected BaseTableModel(String[] colNames, String[] colAliases,
-			FeaturePagingHelper set, I18nResourceManager i18nManager) {
+	protected BaseTableModel(String[] colNames, String[] colAliases, FeaturePagingHelper set,
+			I18nResourceManager i18nManager) {
 		this.set = set;
 		this.colNames = colNames;
 		this.colAliases = colAliases;
@@ -90,9 +89,8 @@ public abstract class BaseTableModel extends AbstractTableModel {
 		int type = iController.getType(getColumnNameInSource(col));
 		if ((type == java.sql.Types.BOOLEAN) || (type == java.sql.Types.BIT)) {
 			// If there is no translation, we show the value itself.
-			value = (value.length() == 0) ? i18nManager.getString(
-					"table_null_value", value) : i18nManager.getString("table_"
-							+ value + "_value", value);
+			value = (value.length() == 0) ? i18nManager.getString("table_null_value", value)
+					: i18nManager.getString("table_" + value + "_value", value);
 		}
 		return value;
 	}
@@ -165,9 +163,9 @@ public abstract class BaseTableModel extends AbstractTableModel {
 
 	/**
 	 * Forces to reload the underlying datastore. For example call reload in the
-	 * FLyrVect or the IEditableSource. In embed tables, where the data can
-	 * change via triggers the layers/tables loaded in gvSIG will not change if
-	 * this method is not called
+	 * FLyrVect or the IEditableSource. In embed tables, where the data can change
+	 * via triggers the layers/tables loaded in gvSIG will not change if this method
+	 * is not called
 	 *
 	 */
 	public void reloadUnderlyingData() {

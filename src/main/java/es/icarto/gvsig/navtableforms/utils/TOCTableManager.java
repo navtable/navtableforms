@@ -15,39 +15,37 @@ import org.gvsig.fmap.mapcontext.layers.vectorial.FLyrVect;
 
 public class TOCTableManager {
 
-    private HashMap<String, FeatureTableDocumentPanel> tables;
-    private HashMap<String, TableDocument> projectTables;
+	private HashMap<String, FeatureTableDocumentPanel> tables;
+	private HashMap<String, TableDocument> projectTables;
 
-    public TOCTableManager() {
-	ProjectExtension projectExt = (ProjectExtension) PluginServices.getExtension(ProjectExtension.class);
-	List<Document> documents = projectExt.getProject().getDocuments(TableManager.TYPENAME);
-	
-	projectTables = new HashMap<String, TableDocument>();
-	for (Document table : documents) {
-	    projectTables.put(table.getName(), ((TableDocument) table));
+	public TOCTableManager() {
+		ProjectExtension projectExt = (ProjectExtension) PluginServices.getExtension(ProjectExtension.class);
+		List<Document> documents = projectExt.getProject().getDocuments(TableManager.TYPENAME);
+
+		projectTables = new HashMap<String, TableDocument>();
+		for (Document table : documents) {
+			projectTables.put(table.getName(), ((TableDocument) table));
+		}
+		tables = new HashMap<String, FeatureTableDocumentPanel>();
+		IWindow[] windows = MDIManagerFactory.getManager().getAllWindows();
+		for (IWindow w : windows) {
+			if (w instanceof FeatureTableDocumentPanel) {
+				tables.put(((FeatureTableDocumentPanel) w).getModel().getName(), (FeatureTableDocumentPanel) w);
+			}
+		}
 	}
-	tables = new HashMap<String, FeatureTableDocumentPanel>();
-	IWindow[] windows = MDIManagerFactory.getManager().getAllWindows();
-	for (IWindow w : windows) {
-	    if (w instanceof FeatureTableDocumentPanel) {
-		tables.put(((FeatureTableDocumentPanel) w).getModel().getName(), (FeatureTableDocumentPanel) w);
-	    }
+
+	public void closeTableByName(String tableName) {
+		ProjectExtension projectExt = (ProjectExtension) PluginServices.getExtension(ProjectExtension.class);
+		TableDocument table = projectTables.get(tableName);
+		if (table != null) {
+			projectExt.getProject().removeDocument(table);
+		}
 	}
-    }
 
-    public void closeTableByName(String tableName) {
-	ProjectExtension projectExt = (ProjectExtension) PluginServices
-		.getExtension(ProjectExtension.class);
-	TableDocument table = projectTables.get(tableName);
-	if (table != null) {
-		projectExt.getProject().removeDocument(table);
+	public FeatureTableDocumentPanel getTableByName(String tableName) {
+		return tables.get(tableName);
 	}
-    }
-
-    public FeatureTableDocumentPanel getTableByName(String tableName) {
-	return tables.get(tableName);
-    }
-
 
 	public TableDocument getTableDocumentByName(String sourceTable) {
 		return projectTables.get(sourceTable);

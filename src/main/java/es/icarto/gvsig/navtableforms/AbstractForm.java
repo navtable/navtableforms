@@ -60,11 +60,9 @@ import es.udc.cartolab.gvsig.navtable.dataacces.IController;
 import es.udc.cartolab.gvsig.navtable.format.DateFormatNT;
 
 @SuppressWarnings("serial")
-public abstract class AbstractForm extends AbstractNavTable implements
-IValidatableForm, II18nForm {
+public abstract class AbstractForm extends AbstractNavTable implements IValidatableForm, II18nForm {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(AbstractForm.class);
+	private static final Logger logger = LoggerFactory.getLogger(AbstractForm.class);
 
 	protected FormPanel formBody;
 	private boolean isFillingValues;
@@ -105,6 +103,7 @@ IValidatableForm, II18nForm {
 	@Deprecated
 	/**
 	 * Use getFormPanel instead
+	 * 
 	 * @return
 	 */
 	public abstract FormPanel getFormBody();
@@ -168,8 +167,7 @@ IValidatableForm, II18nForm {
 	@Override
 	protected void initWidgets() {
 		setListeners();
-		fillHandler = new FillHandler(getWidgets(), layerController,
-				ormlite.getAppDomain());
+		fillHandler = new FillHandler(getWidgets(), layerController, ormlite.getAppDomain());
 		for (JComponent c : getWidgets().values()) {
 			if (c instanceof JDateChooser) {
 				initDateChooser((JDateChooser) c);
@@ -181,10 +179,8 @@ IValidatableForm, II18nForm {
 		SimpleDateFormat dateFormat = DateFormatNT.getDateFormat();
 		c.setDateFormatString(dateFormat.toPattern());
 		c.getDateEditor().setEnabled(false);
-		c.getDateEditor().getUiComponent()
-		.setBackground(new Color(255, 255, 255));
-		c.getDateEditor().getUiComponent()
-		.setFont(new Font("Arial", Font.PLAIN, 11));
+		c.getDateEditor().getUiComponent().setBackground(new Color(255, 255, 255));
+		c.getDateEditor().getUiComponent().setFont(new Font("Arial", Font.PLAIN, 11));
 		c.getDateEditor().getUiComponent().setToolTipText(null);
 
 	}
@@ -287,8 +283,7 @@ IValidatableForm, II18nForm {
 	protected boolean validationHasErrors() {
 		boolean hasError = validationHandler.hasValidationErrors();
 		if (hasError) {
-			JOptionPane.showMessageDialog(this,
-					validationHandler.getMessages(), _("validation_error"),
+			JOptionPane.showMessageDialog(this, validationHandler.getMessages(), _("validation_error"),
 					JOptionPane.ERROR_MESSAGE);
 		}
 		return hasError;
@@ -314,8 +309,7 @@ IValidatableForm, II18nForm {
 	}
 
 	protected String[] getValues() {
-		return layerController.getValuesChanged().values()
-				.toArray(new String[0]);
+		return layerController.getValuesChanged().values().toArray(new String[0]);
 	}
 
 	@Override
@@ -396,17 +390,15 @@ IValidatableForm, II18nForm {
 
 	/**
 	 * Instead of create an implementation of ImageHandler that only sets a path
-	 * (FixedImageHandler) this utiliy method sets the image without doing
-	 * anything more
+	 * (FixedImageHandler) this utiliy method sets the image without doing anything
+	 * more
 	 *
-	 * @param imgComponent
-	 *            . Name of the abeille widget
-	 * @param absPath
-	 *            . Absolute path to the image or relative path from andami.jar
+	 * @param imgComponent . Name of the abeille widget
+	 * @param absPath      . Absolute path to the image or relative path from
+	 *                     andami.jar
 	 */
 	protected void addImageHandler(String imgComponent, String absPath) {
-		ImageComponent image = (ImageComponent) formBody
-				.getComponentByName(imgComponent);
+		ImageComponent image = (ImageComponent) formBody.getComponentByName(imgComponent);
 		ImageIcon icon = new ImageIcon(absPath);
 		image.setIcon(icon);
 	}

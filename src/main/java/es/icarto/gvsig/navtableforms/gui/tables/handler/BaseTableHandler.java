@@ -25,8 +25,7 @@ import es.icarto.gvsig.navtableforms.gui.tables.model.BaseTableModel;
 
 public abstract class BaseTableHandler {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(BaseTableHandler.class);
+	private static final Logger logger = LoggerFactory.getLogger(BaseTableHandler.class);
 
 	/**
 	 * The name of the table, which should also provide us the related form.
@@ -73,8 +72,8 @@ public abstract class BaseTableHandler {
 	 */
 	protected BaseJTableContextualMenu listener;
 
-	public BaseTableHandler(String tableName, Map<String, JComponent> widgets,
-			String foreignKeyId, String[] colNames, String[] colAliases) {
+	public BaseTableHandler(String tableName, Map<String, JComponent> widgets, String foreignKeyId, String[] colNames,
+			String[] colAliases) {
 		this.sourceTableName = tableName;
 		getJTable(widgets);
 		jtable.getTableHeader().setReorderingAllowed(false);
@@ -116,8 +115,7 @@ public abstract class BaseTableHandler {
 		this.originKeyValue = foreignKeyValue;
 		try {
 			createTableModel();
-			((DefaultTableCellRenderer) jtable.getTableHeader()
-					.getDefaultRenderer())
+			((DefaultTableCellRenderer) jtable.getTableHeader().getDefaultRenderer())
 					.setHorizontalAlignment(JLabel.CENTER);
 		} catch (DataException e) {
 			logger.error(e.getMessage(), e);

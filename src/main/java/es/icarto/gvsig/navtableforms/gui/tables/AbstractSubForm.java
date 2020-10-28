@@ -65,11 +65,10 @@ import es.udc.cartolab.gvsig.navtable.dataacces.IController;
 import es.udc.cartolab.gvsig.navtable.format.DateFormatNT;
 
 @SuppressWarnings("serial")
-public abstract class AbstractSubForm extends JPanel implements IForm,
-IValidatableForm, IWindow, IWindowListener, II18nForm {
+public abstract class AbstractSubForm extends JPanel
+		implements IForm, IValidatableForm, IWindow, IWindowListener, II18nForm {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(AbstractSubForm.class);
+	private static final Logger logger = LoggerFactory.getLogger(AbstractSubForm.class);
 
 	private FormPanel formPanel;
 	private HashMap<String, JComponent> widgets;
@@ -91,8 +90,7 @@ IValidatableForm, IWindow, IWindowListener, II18nForm {
 	private final List<BaseTableHandler> tableHandlers = new ArrayList<BaseTableHandler>();
 
 	private WindowInfo windowInfo;
-	private final static int windowInfoCode = WindowInfo.MODELESSDIALOG
-			| WindowInfo.PALETTE | WindowInfo.RESIZABLE;
+	private final static int windowInfoCode = WindowInfo.MODELESSDIALOG | WindowInfo.PALETTE | WindowInfo.RESIZABLE;
 	// protected long position;
 	private Feature feat;
 	protected ActionListener action;
@@ -148,10 +146,8 @@ IValidatableForm, IWindow, IWindowListener, II18nForm {
 		SimpleDateFormat dateFormat = DateFormatNT.getDateFormat();
 		c.setDateFormatString(dateFormat.toPattern());
 		c.getDateEditor().setEnabled(false);
-		c.getDateEditor().getUiComponent()
-		.setBackground(new Color(255, 255, 255));
-		c.getDateEditor().getUiComponent()
-		.setFont(new Font("Arial", Font.PLAIN, 11));
+		c.getDateEditor().getUiComponent().setBackground(new Color(255, 255, 255));
+		c.getDateEditor().getUiComponent().setFont(new Font("Arial", Font.PLAIN, 11));
 		c.getDateEditor().getUiComponent().setToolTipText(null);
 
 	}
@@ -242,11 +238,10 @@ IValidatableForm, IWindow, IWindowListener, II18nForm {
 	}
 
 	/*
-	 * TODO call a method in a constructor (getBasicName) that can be override
-	 * for subclasses is no considered a good programming practice, in the
-	 * medium term this should be changed override for subclasses is no
-	 * considered a good programming practice, in the medium term this should be
-	 * changed
+	 * TODO call a method in a constructor (getBasicName) that can be override for
+	 * subclasses is no considered a good programming practice, in the medium term
+	 * this should be changed override for subclasses is no considered a good
+	 * programming practice, in the medium term this should be changed
 	 */
 	protected String getBasicName() {
 		return this.basicName;
@@ -267,11 +262,9 @@ IValidatableForm, IWindow, IWindowListener, II18nForm {
 	@Override
 	public FormPanel getFormPanel() {
 		if (formPanel == null) {
-			InputStream stream = getClass().getClassLoader()
-					.getResourceAsStream("/forms/" + getBasicName() + ".jfrm");
+			InputStream stream = getClass().getClassLoader().getResourceAsStream("/forms/" + getBasicName() + ".jfrm");
 			if (stream == null) {
-				stream = getClass().getClassLoader().getResourceAsStream(
-						"/forms/" + getBasicName() + ".xml");
+				stream = getClass().getClassLoader().getResourceAsStream("/forms/" + getBasicName() + ".xml");
 			}
 			try {
 				formPanel = new FormPanel(stream);
@@ -293,9 +286,7 @@ IValidatableForm, IWindow, IWindowListener, II18nForm {
 	}
 
 	protected String getMetadataPath() {
-		return this.getClass().getClassLoader()
-				.getResource("rules/" + getBasicName() + "_metadata.xml")
-				.getPath();
+		return this.getClass().getClassLoader().getResource("rules/" + getBasicName() + "_metadata.xml").getPath();
 	}
 
 	@Deprecated
@@ -454,8 +445,7 @@ IValidatableForm, IWindow, IWindowListener, II18nForm {
 	public void setModel(AlphanumericTableModel model) {
 		this.model = model;
 		iController = model.getController().clone();
-		fillHandler = new FillHandler(widgets, iController,
-				ormlite.getAppDomain());
+		fillHandler = new FillHandler(widgets, iController, ormlite.getAppDomain());
 	}
 
 	protected void addTableHandler(BaseTableHandler tableHandler) {
@@ -492,17 +482,15 @@ IValidatableForm, IWindow, IWindowListener, II18nForm {
 
 	/**
 	 * Instead of create an implementation of ImageHandler that only sets a path
-	 * (FixedImageHandler) this utiliy method sets the image without doing
-	 * anything more
+	 * (FixedImageHandler) this utiliy method sets the image without doing anything
+	 * more
 	 *
-	 * @param imgComponent
-	 *            . Name of the abeille widget
-	 * @param absPath
-	 *            . Absolute path to the image or relative path from andami.jar
+	 * @param imgComponent . Name of the abeille widget
+	 * @param absPath      . Absolute path to the image or relative path from
+	 *                     andami.jar
 	 */
 	protected void addImageHandler(String imgComponent, String absPath) {
-		ImageComponent image = (ImageComponent) formPanel
-				.getComponentByName(imgComponent);
+		ImageComponent image = (ImageComponent) formPanel.getComponentByName(imgComponent);
 		ImageIcon icon = new ImageIcon(absPath);
 		image.setIcon(icon);
 	}
@@ -547,17 +535,14 @@ IValidatableForm, IWindow, IWindowListener, II18nForm {
 				model.dataChanged();
 			} catch (DataException e) {
 				logger.error(e.getMessage(), e);
-				String errorMessage = (e.getCause() != null) ? e.getCause()
-						.getMessage() : e.getMessage(), auxMessage = errorMessage
-						.replace("ERROR: ", "").replace(" ", "_")
-						.replace("\n", ""), auxMessageIntl = _(auxMessage);
+				String errorMessage = (e.getCause() != null) ? e.getCause().getMessage() : e.getMessage(),
+						auxMessage = errorMessage.replace("ERROR: ", "").replace(" ", "_").replace("\n", ""),
+						auxMessageIntl = _(auxMessage);
 				if (auxMessageIntl.compareToIgnoreCase(auxMessage) != 0) {
-							errorMessage = auxMessageIntl;
+					errorMessage = auxMessageIntl;
 				}
-				JOptionPane.showMessageDialog(
-								(Component) PluginServices.getMainFrame(),
-								errorMessage, _("save_layer_error"),
-								JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog((Component) PluginServices.getMainFrame(), errorMessage,
+						_("save_layer_error"), JOptionPane.ERROR_MESSAGE);
 			}
 			MDIManagerFactory.getManager().closeWindow(iWindow);
 		}

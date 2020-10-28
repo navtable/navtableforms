@@ -19,21 +19,20 @@ package es.icarto.gvsig.navtableforms;
 
 import org.gvsig.andami.plugins.Extension;
 
-
 public class MockExtension extends Extension {
 
-    public void initialize() {
-    }
+	public void initialize() {
+	}
 
-    public void execute(String actionCommand) {
-    }
+	public void execute(String actionCommand) {
+	}
 
-    public boolean isEnabled() {
-	return false;
-    }
+	public boolean isEnabled() {
+		return false;
+	}
 
-    public boolean isVisible() {
-	return false;
-    }
+	public boolean isVisible() {
+		return false;
+	}
 
 }

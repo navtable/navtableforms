@@ -19,8 +19,8 @@ package es.icarto.gvsig.navtableforms.ormlite.domainvalidator.rules;
 
 public class MandatoryRule extends ValidationRule {
 
-    @Override
-    public boolean validate(String value) {
-	return !isEmpty(value);
-    }
+	@Override
+	public boolean validate(String value) {
+		return !isEmpty(value);
+	}
 }
