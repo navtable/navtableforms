@@ -81,11 +81,13 @@ public class TableModelFactory {
 	private static FeaturePagingHelper getSet(FeatureStore store,
 			String rowFilterName, String rowFilterValue) throws BaseException {
 		DataManager manager = DALLocator.getDataManager();
-		FeatureQuery query = store.createFeatureQuery();
+		FeatureQuery query = null;
 		if (rowFilterName != null) {
 			String fkValue = "'" + rowFilterValue.replace("'", "''") + "'";
 			String where = rowFilterName + " = " + fkValue;
-			query.addFilter(manager.createExpresion(where));
+			query = store.createFeatureQuery(where, "", false);	
+		} else {
+			query = store.createFeatureQuery("", "", false);	
 		}
 		FeaturePagingHelper set = manager.createFeaturePagingHelper(store,
 				query, 10);
@@ -156,10 +158,9 @@ public class TableModelFactory {
 		try {
 			DataManager manager = DALLocator.getDataManager();
 			FeatureStore store = layer.getFeatureStore();
-			FeatureQuery query = store.createFeatureQuery();
 			String fkValue = "'" + rowFilterValue.replace("'", "''") + "'";
 			String where = rowFilterName + " = " + fkValue;
-			query.addFilter(manager.createExpresion(where));
+			FeatureQuery query = store.createFeatureQuery(where, "", false);
 			FeaturePagingHelper set = manager.createFeaturePagingHelper(store,
 					query, 10);
 			return new VectorialTableModel(layer, columnNames, columnAliases,

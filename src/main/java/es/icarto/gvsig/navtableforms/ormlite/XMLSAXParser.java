@@ -23,6 +23,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.gvsig.fmap.dal.DALLocator;
 import org.gvsig.fmap.dal.feature.EditableFeatureAttributeDescriptor;
 import org.gvsig.fmap.dal.feature.impl.DefaultEditableFeatureAttributeDescriptor;
 import org.slf4j.Logger;
@@ -123,7 +124,7 @@ public class XMLSAXParser extends DefaultHandler {
 	tmpVal = "";
 	if (qName.equalsIgnoreCase("FIELD")) {
 	    // set field
-	    tmpFieldDescription = new DefaultEditableFeatureAttributeDescriptor();
+	    tmpFieldDescription = DALLocator.getDataManager().createFeatureAttributeDescriptor();
 	    
 	}
 
